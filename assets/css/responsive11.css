@@ -1,0 +1,1120 @@
+@charset "utf-8";
+/* CSS Document */
+ @media (min-width:1200px){
+    
+
+}
+
+@media (min-width:992px) and (max-width:1199px){
+    .payoutParBox .payoutPar{transform: translatex(0);}
+    .groundSec .previewBg{width: 80%;}
+    .footerSec p {
+        font-size: 13px;
+    }
+    .teamPreviewRow.wicketkeeperPosition, 
+    .teamPreviewRow.batsmanPosition, 
+    .teamPreviewRow.bowlerPosition, 
+    .teamPreviewRow.allrounderPosition{min-width: 85%;}
+    .footerSec .quicLink ul li a {
+        padding-left: 5px;
+        font-size: 13px;
+    }
+    .creatTeamTable .nav.nav-tabs .nav-item a {
+        font-size: 11px;
+    }
+    .previewBg .playerName {
+        padding: 3px 5px 1px;
+        font-size: 11px;
+    }
+    /*.previewBg .teamPreviewRow {
+        width: 32%;
+    }*/
+    .teamPreviewRow.teamOne ul li.Batsman4 {
+        left: -26px;
+    }
+    .teamPreviewRow.teamOne ul li.Batsman3 {
+        left: 68px;
+    }
+    .teamPreviewRow.teamThree li:nth-child(2) {
+        left: -90px;
+    }
+    .teamPreviewRow.teamThree li:first-child {
+        top: 236px;
+        left: 0;
+    }
+    .teamPreviewRow.teamTwo ul li:nth-child(4) {
+        top: 106px;
+        right: -178px;
+    }
+    .teamPreviewRow.teamTwo ul li:nth-child(2) {
+        right: -60px;
+    }
+    .teamPreviewRow.teamThree ul li:nth-child(5) {
+        top: 164px;
+        left: 53px;
+    }
+    .teamPreviewRow.teamThree ul li:nth-child(4) {
+        right: 9px;
+    }
+    .teamPreviewRow.teamOne ul li.Batsman1 {
+        top: 98px;
+        right: -17px;
+    }
+    .footerSec .mediaIcon li {
+        margin-right: 5px;
+    }
+    .logoBx {
+        max-width: 130px;
+    }
+}
+    
+@media (min-width:768px) and (max-width:880px){
+    /* .payoutParBox .payoutPar{
+        transform: translatex( 0);
+    } */
+}
+    
+@media (min-width:768px) and (max-width:991px){
+    /*.payoutParBox .payoutPar{transform: translateX(0);}*/
+    .creatTeamTable {
+        min-width: 280px;
+    }
+    .previewBg ul li{
+        padding: 0 1px;
+    }
+    .leagueTeamTable{width: 100%; min-width: 350px;}
+    .navbar-nav.rightNav li{ justify-content: left;
+    }
+    .withoutLogin .navbar-nav.rightNav{
+        width: 100%;
+        justify-content: left;
+        margin-top: 0;
+    }
+    .groundSec .previewBg{width: 90%;}
+
+    .navbar-brand ,nav.navbar.navbar-expand-lg[ng-if="isLoggedIn"] .navbar-brand{
+        position: static;
+    }
+
+    .headerSec .headerBottom {
+        background: #000;
+    }
+    .navbar-toggler.navbar-toggler-right {
+        border: 2px solid var(--primaryClr);
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        height: 23px;
+        width: 31px;
+        position: relative;
+    }
+    .navbar-toggler.navbar-toggler-right::after {
+        content: "";
+        position: absolute;
+        height: 2px;
+        width: 78%;
+        background: var(--primaryClr);
+        right: 0;
+        top: 9px;
+    }
+    .headerBottom {
+        padding-top: 6px;
+        padding-bottom: 5px;
+    }
+    .navbar-expand-lg .navbar-nav.mr-auto {
+        margin-left: 0;
+    }
+    .headerBottom .navbar-expand-lg .navbar-nav .nav-link {
+        padding: 7px 6px 7px;
+        border-bottom: 1px solid #fff;
+    }
+    .headerBottom  .navbar-collapse {
+        margin-top: 10px;
+        border-top: 1px solid #fff;
+        padding-top: 7px;
+    }
+    .headerBottom .navbar-expand-lg .navbar-nav .nav-link::after {
+        display: none;
+    }
+    .homeBanner h1 {
+        font-size: 80px;
+    }
+    .bannertimer {
+        font-size: 50px;
+        padding: 0;
+    }
+    .btnOfMdi li {
+        max-width: 90%;
+    }
+    .bannerTxt h1 {
+        line-height: 48px;
+        font-size: 1.6rem;
+    }
+    .howToPaySec {
+        padding: 50px 0 0;
+    }
+    .howToPaySec .howToRow {
+        margin-top: 50px;
+    }
+    .bannerForm .btn-danger {
+        padding: 10px;
+        width: 46%;
+    }
+    .featureSec {
+        padding: 50px 0;
+    }
+    .logoBx {
+        max-width: 120px;
+    }
+    .footerSec {
+        padding: 45px 0 0;
+    }
+    .footerSec .mediaIcon li {
+        margin-right: 3px;
+    }
+    .footerSec .mediaIcon li a {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+    .comonBg {
+        padding-top: 70px;
+    }
+    .matchcenterDetail .nav.nav-tabs li a, .nav.nav-tabs.matchTabs li a {
+        padding: 4px;
+        font-size: 12px;
+    }
+    .matchtypeHead ul li,.matchtypeBody ul li {
+        padding: 10px 15px;
+    }
+    .table_scroll table td {
+        padding: 5px;
+    }
+    #mySidenav[style="width: 58%;"] {
+        width: 90% !important;
+    }
+    .fantasyHist .tab-content {
+        padding-top: 20px;
+    }
+    .criteriaBox {
+        padding: 10px;
+    }
+    .criteriaBox table td, .criteriaBox table th {
+        font-size: 12px;
+    }
+    .groundSec {
+        margin-top: 20px;
+    }
+    .teamLogo {
+        height: 30px;
+        width: 30px;
+    }
+    .matchCenterHeader ul li {
+        padding: 0 3px;
+        font-size: 12px;
+    }
+        .leagueCenter .matchtypeBody a.btn.btn-submit {
+            margin-left: -55px;
+        }
+    }
+@media (max-width:767px){
+    .creatTeamTable .table_scroll table td{min-height: 60px; 
+        word-break: break-all;}
+
+    /* .payoutParBox .payoutPar:after{
+        left: auto;
+        right:  60px;
+    } */
+    .gradList ul > li .payoutMsg .payoutParBox .payoutPar {
+        position: relative;
+        left: 50%;
+        top: 10px;
+    }
+    .gradList ul > li .payoutMsg .payoutParBox .payoutPar:after{
+        left: 37px;
+     right: auto; 
+    }
+/*
+    .payoutPar ul li{border-bottom: none;}*/
+    .criteriaBox{padding: 10px 5px;}
+    .matchcenterDetail .creatTeamTop .col-sm-5.offset-sm-3 {
+        margin-left: 0;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .ng-scope .col-sm-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .creatTeamTop .col-sm-4.offset-sm-4 ,  .creatTeamTop .col-sm-4{
+        margin-left: 0;
+        flex: 0 0 49.333333%;
+        max-width: 49.333333%;
+    }
+    .headerSec{z-index: 999;}
+    #withdrawPopup .custom_popup .modal-content .button_right .btn{min-width: auto;}
+    .leagueTeamTable{
+        width: 100%;
+        min-width: 300px;
+    }
+
+    .withoutLogin .navbar-nav.rightNav{
+        width: 100%;
+        justify-content: left;
+        margin-top: 0;
+    }
+   
+    .groundSec .previewBg{width: 100% !important;}
+
+.Subscr_banner  .banner_img_text{
+    left: 35px;
+}
+.subsc_list{
+    margin:30px 0;
+}
+.navbar-brand,nav.navbar.navbar-expand-lg[ng-if="isLoggedIn"] .navbar-brand {
+    position: static;
+}
+.headerSec .headerBottom {
+    background: #000;
+}
+.navbar-toggler.navbar-toggler-right {
+    border: 2px solid var(--primaryClr);
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    height: 23px;
+    width: 31px;
+    position: relative;
+}
+.navbar-toggler.navbar-toggler-right::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 78%;
+    background: var(--primaryClr);
+    right: 0;
+    top: 9px;
+}
+.headerBottom {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.navbar-expand-lg .navbar-nav.mr-auto {
+    margin-left: 0;
+}
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link {
+    padding: 7px 6px 7px;
+    border-bottom: 1px solid #fff;
+}
+.headerBottom  .navbar-collapse {
+    margin-top: 10px;
+    border-top: 1px solid #fff;
+    padding-top: 0px;
+}
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link::after {
+    display: none;
+}
+.homeBanner h1 {
+    font-weight: 600;
+    font-size: 40px;
+}
+.homeBanner {
+    padding: 80px 0 40px;
+}
+.homeBanner h4 {
+    font-size: 28px;
+    padding: 10px 0;
+}
+.bannertimer {
+    font-size: 28px;
+    line-height: 35px;
+    padding: 0;
+}
+.bannertimer::after {
+    bottom: -18px;
+}
+.comnHead h4 {
+    font-size: 24px;
+}
+.comnHead h6 {
+    font-size: 18px;
+    padding: 5px 0 5px;
+}
+.kidnessBox p {
+    font-size: 13px;
+    line-height: 22px;
+}
+.heartBox {
+    padding: 25px 0 30px;
+}
+.charityPartners {
+    background-image: none;
+    padding: 25px 0;
+}
+.charitySlide.slick-slide img {
+    max-width: 80px;
+}
+.nflteamSec {
+    padding: 10px 0;
+}
+.nflteamSec .comnHead {
+    padding-bottom: 15px;
+}
+.footerSec p {
+    text-align: center;
+}
+.quicLink {
+    text-align: center;
+    padding-top: 5px;
+}
+.homeBody {
+    padding-bottom: 60px;
+}
+.comonBg {
+    padding-top: 70px;
+    padding-bottom: 60px;
+}
+.comnOpecity {
+    padding: 15px;
+}
+.primarHead h1 {
+    font-size: 24px;
+}
+.comnOpecity .mb-30 {
+    margin-bottom: 15px;
+}
+.settingContent {
+    padding: 5px;
+}
+.settingHead.comnnFour .btn.btnClone, .accountHead .btn.btnClone {
+    font-size: 11px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.accountContent {
+    padding: 10px;
+}
+.referRightBox {
+    padding: 15px;
+}
+.rightNav li {
+    align-items: start;
+    justify-content: start;
+}
+.withoutLogin .navbar-nav.rightNav {
+    width: 100%;
+    margin-top: 0;
+    justify-content: flex-start;
+}
+.withoutLogin .navbar-nav.rightNav li {
+    padding: 0;
+    border-bottom: 0;
+    display: block;
+}
+.accountDrop .dropdown-menu {
+    position: static;
+    width: 100%;
+    background: transparent;
+}
+.notification .dropdown-menu {
+    min-width: auto;
+}
+.bannerConte.d-flex.align-items-center {
+    flex-wrap: wrap;
+}
+.bannerSec .bannerForm {
+    width: 100%;
+}
+.bannerTxt {
+    padding-left: 0;
+}
+.bannerTxt h1 {
+    font-size: 30px;
+    line-height: 40px;
+    padding-top: 15px;
+}
+.bannerTxt h2 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+.bannerSec {
+    padding: 70px 0 0px;
+}
+.featureSec {
+    padding: 30px 0;
+}
+.howToPaySec {
+    padding: 30px 0 0;
+}
+.howToPaySec .howToRow {
+    margin-top: 25px;
+}
+.howToTxt {
+    padding: 0;
+    margin-top: 15px;
+}
+.howToTxt h4 {
+    margin-bottom: 10px;
+}
+.howToTxt.text-right {
+    text-align: left !important;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+.footRow .footCol {
+    max-width: 100%;
+    flex-basis: 100%;
+}
+.testimonialSec {
+    padding: 25px 0 45px;
+    margin-top: 0;
+}
+.testimonSliderPar .slick-list.draggable {
+    margin: 15px -15px 0;
+}
+.quicLink {
+    text-align: left;
+}
+.footerSec .quicLink ul li a {
+    padding-left: 0;
+}
+.footerSec {
+    padding: 30px 0 0;
+}
+.footer_bottom {
+    margin-top: 20px;
+}
+.logoBx {
+    max-width: 150px;
+    margin-bottom: 15px;
+}
+.loginModal .modal-content .modal-body {
+    padding: 15px;
+}
+.contactBox::after{
+    display: none;
+}
+.contactBox {
+    margin: 0px auto 0;
+}
+.contectInformation {
+    padding-top: 0px;
+}
+.contectSec {
+    padding-bottom: 0;
+}
+.comonBg {
+    padding-bottom: 20px;
+}
+.primarHead.text-left.mb-30 {
+    margin-bottom: 10px;
+}
+.pointHead ul li:first-child, .pointBody ul li:first-child {
+    flex-basis: 83%;
+}
+.pointBody ul li ,.pointHead ul li{
+    flex: 0 0 17%;
+    padding: 10px 8px;
+}
+.footerSec .quicLink ul li a:after{
+    display: none;
+}
+.settingContent .tab-content {
+    padding: 15px;
+}
+.previewBg ul li {
+    position: static;
+    width: 100% !important;
+    max-width: 80px;
+}
+.previewBg .teamPreviewRow {
+    width: 100%;
+    vertical-align: middle;
+}
+.previewBg .playerName {
+    padding: 1px 4px 1px;
+    font-size: 11px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+}
+.previewBg ul li span {
+    font-size: 11px;
+    margin-top: 0px;
+}
+.groundSec .previewBg .teamPar,.previewBg .teamPar {
+    max-width: 100%;
+}
+.creatTeamHead {
+    line-height: 23px;
+    margin: 10px 0;
+}
+.creatTeamTable .nav.nav-tabs .nav-item a {
+    font-size: 11px;
+}
+h3.main-block-header {
+    font-size: 15px;
+}
+.fantasyHist h4 {
+    font-size: 16px;
+}
+.fantasyHist .matchtypeHead ul li {
+    padding:10px 17.6px;
+}
+.fantasyHist .tab-content {
+    padding-top: 15px;
+}
+div#mySidenav[style="width: 58%;"] {
+    max-width: 700px;
+    width: 100% !important;
+}
+.sidenav .closebtn {
+    top: -30px;
+}
+.matchcenterDetail .nav.nav-tabs li a {
+    color: #fff;
+    text-align: center;
+    border: 0;
+    padding: 2px;
+    position: relative;
+    font-size: 10px;
+}
+.matchcenterDetail .matchtypeHead ul li {
+    padding: 6px 5px;
+    font-size: 11px;
+}
+/* .btn.btn-submit {
+    padding: 7px 12px;
+    font-size: 12px;
+    margin: 5px;
+} */
+.gradList ul > li {
+    font-size: 10px;
+    margin-bottom: 15px;
+    padding: 0 7px;
+}
+.gradList ul li img {
+    width: 50px;
+}
+.text-right.mb-5.leagueStatusParent {
+    margin: 0 !important;
+}
+.gradList.mb-5 {
+    margin-bottom: 10px !important;
+}
+.creatTeamTop .matchCenterbox {
+    margin-top: 15px;
+}
+.accountHolder {
+    font-size: 14px;
+    padding-left: 110px;
+    min-height: 115px;
+}
+.accountHolder span {
+    word-break: break-all;
+}
+.profilePage .accountHead {
+    margin-bottom: 15px;
+}
+.accountHead ul li {
+    font-size: 12px;
+}
+.transictionOption table td:last-child {
+    min-width: 100px;
+}
+.transictionOption .tab_sarch ul {
+    flex-wrap: wrap;
+}
+.tab_sarch ul li {
+    min-width: 135px;
+    text-align: left;
+}
+.transictionOption .nav.nav-tabs .nav-link {
+    padding: 0;
+}
+.transictionOption .nav.nav-tabs .nav-item {
+    font-size: 12px;
+}
+.settingContent .nav.nav-tabs .nav-item {
+    width: 31%;
+}
+.settingContent .nav.nav-tabs .nav-item .nav-link {
+    padding: 8px 2px;
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+}
+.matchcenterDetail.leagueCenter ul.nav.nav-tabs a {
+    font-size: 13px;
+}
+.matchtypeBody ul {
+    flex-wrap: wrap;
+}
+.matchcenterDetail.leagueCenter .matchtypeBody ul li {
+    padding: 10px 5px;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+}
+.matchcenterDetail.leagueCenter .matchtypeBody ul li strong {
+    font-size: 11px;
+}
+.text-center.primarHead.mb-5 {
+    margin-bottom: 20px !important;
+}
+.featureSec ul li {
+    width: 50%;
+}
+.howToImg .vidBtn {
+    top: 50%;
+    width: 76px;
+    transform: translate(0,-50%);
+}
+.bannerTxt .btn {
+    margin-bottom: 10px;
+    padding: 10px 30px;
+}
+#accordion .card .fa {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    transform: translate(0,-50%);
+}
+.featureSec ul li p {
+    font-size: 13px;
+    margin-top: 15px;
+}
+/* .table_scroll table td:first-child {
+    padding: 2px;
+} */
+.transictionOption tbody {
+    display: table-row-group;
+    max-height: inherit;
+}
+.transictionOption tr {
+    display: table-row;
+}
+.transictionOption tbody td {
+    flex: inherit;
+    max-width: inherit;
+    word-break: inherit;
+}
+.matchcenterDetail .container-fluid{
+    overflow: auto;
+  }
+  /* .matchcenterDetail .container-fluid ul{
+    display: table !important;
+  } */
+  .matchcenterDetail .container-fluid ul li{
+    font-size: 10px !important;
+    padding: 5px !important;
+    display: table-cell;
+    min-width: 100px;
+    min-height: 130px;
+  }
+ .matchtypeBody ul{margin-bottom: 2px;}
+  /* .payoutParBox{min-height: 95px;} */
+  .payoutPar ul{width: 100%;}
+  .payoutPar p {
+    font-size: 10px;
+    line-height: 13px;
+}
+/* .payoutParBox .payoutPar {
+        padding: 4px 5px;
+        width: 315px;
+        transform: translateX(-65%);
+} */
+
+  .onlyMobileMenu ul.navbar-nav.rightNav {
+    display: block;
+}
+.onlyMobileMenu ul.navbar-nav.rightNav li {
+    display: inline-block;
+    margin: 0;
+}
+.headerBottom .container-fluid {
+    padding: 0 5px;
+}
+.rightNav li .btn {
+    margin-left: 3px;
+}
+.rightNav li a .badge {
+    left: -4px;
+    top: -8px;
+    padding: 0;
+}
+.onlyMobileMenu {
+    display: block;
+    position: absolute;
+    top: 6px;
+    right: 53px;
+}
+.rightNav li .btn {
+    position: relative;
+    top: -3px;
+}
+.notification .dropdown-menu {
+    min-width: 202px;
+    top: 28px !important;
+    left: -28px !important;
+}
+.onlyMobileMenu ul.navbar-nav.rightNav li.notification li {
+    display: block !important;
+    width: 100%;
+    padding-left: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+.notification .dropdown-menu ul li::after {
+    height: 6px;
+    width: 6px;
+    top: 10px;
+    left: 0px;
+}
+.navbar ul.navbar-nav.rightNav li.nav-item.notification, .navbar ul.navbar-nav.rightNav li.nav-item.notification + li {
+    display: none;
+}
+.navbar-brand img {
+    max-width: 115px;
+}
+.add_money ul li {
+    padding: 0px 0px 0px;
+}
+.headerBottom .navbar-collapse {
+    padding-top: 10px;
+}
+li.list-inline-item.dropdown.accountDrop {
+    border-bottom: 1px solid #fff;
+    padding-bottom: 5px;
+}
+.accountDrop .dropdown-menu ul li a {
+    padding: 6px;
+    font-size: 14px;
+    color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+.accountDrop .dropdown-menu ul li:last-child a{
+    border: 0;
+}
+
+/********** res css 17-01-19 vinita**********/
+    .matchcenterDetail .sortHead .dFlex li {
+        padding-left: 30px !important;
+        min-width: 33%;
+    }
+    .matchcenterDetail .sortHead .dFlex li span {
+        margin-left: -27px;
+    }
+    .matchcenterDetail .container-fluid ul {
+        display: table !important;
+        width: 100%;
+        padding: 5px;
+    }
+    .matchcenterDetail .matchtypeBody ul li {
+        min-width: 19%;
+    }
+    .matchcenterDetail .matchtypeBody ul li:last-child{
+        position: absolute;
+        right: 20px !important;
+        margin-top: 35px !important;
+    }
+    .matchcenterDetail .matchtypeBody ul li .payoutParBox ul li {
+        position: none;
+    }
+    .payoutPar ul li:last-child {
+        position: inherit !important;
+    }
+    .matchcenterDetail .sortHead .matchtypeHead ul li {
+        min-width: 20%;
+    }
+    .matchcenterDetail .sortHead .matchtypeHead ul li:last-child {
+        display: none;
+    }
+    .matchcenterDetail .sortHead .matchtypeHead ul li:first-child {
+        min-width: 38%;
+    }
+    .lobby_res .matchtypeBody ul li .payoutParBox {
+        position: absolute;
+        right: 15px;
+    }
+    .lobby_res .sortHead .matchtypeHead ul li:nth-child(2) {
+        display: none;
+    }
+    .matchcenterDetail .payoutParBox .payoutPar {
+        top: -20px;
+        left: -120px;
+    }
+    .matchcenterDetail .payoutParBox .payoutPar:after {
+        left: auto;
+        right: -14px;
+        transform: rotate(90deg);
+        top: 30px;
+    }
+    .leagueCenter .matchtypeBody ul li .btn.btn-submit {
+        white-space: nowrap;
+        font-size: 12px;
+    }
+    .res_upcoming .btn-submit {
+        margin-left: -25px;
+    }
+    .leagueCenter .flex-child-3par .content.float-left {
+        float: inherit !important;
+    }
+    .leagueCenter .tab-pane .matchtypeBody .ng-scope li:first-child {
+        width: 50%;
+    }
+    .leagueCenter .tab-pane .matchtypeBody .ng-scope li {
+        width: 38%;
+    }
+    .leagueCenter .container-fluid ul li {
+        min-width: inherit !important;
+    }
+    .leagueCenter .container-fluid .flex-child-3par li {
+        min-width: 43% !important;
+    }
+    .modal-dialog.custom_popup.small_popup {
+        max-width: 330px;
+        margin: 0 auto;
+    }
+    .lobby_res .nav-item {
+        min-width: 20% !important;
+    }
+    .lobby_res .matchtypeBody ul.ng-scope li {
+        min-width: 16% !important;
+    }
+    .custom_popup .modal-content {
+        width: 265px;
+        margin: 0 auto;
+    }
+    .res_team_btn li:last-child {
+        margin-top: 0 !important;
+        position: inherit !important;
+    }
+    .res_team_btn .btn.btn-submit {
+        padding: 5px !important;
+        font-size: 12px;
+        min-width: 50px !important;
+        position: inherit !important;
+    }
+    .res_list {
+        height: 80px;
+    }
+    .res_list li:last-child {
+        margin-top: 5px !important;
+    }
+    .joinedUser_small_popup {
+        margin: 0 auto !important;
+        max-width: 280px !important;
+    }
+    .creatTeamTable {
+       margin-bottom: 20px;
+    }
+    .league_join {
+        margin: 0;
+    }
+    .league_join .creatTeamHead {
+        flex-direction: column;
+    }
+    .league_join h4 {
+        margin-bottom: 20px;
+    }
+    .league_join .btn.btn-submit {
+        margin-bottom: 20px;
+    }
+    .res_account table thead tr {
+        display: flex;
+    }
+    .res_account .transictionOption tbody tr td:first-child {
+        max-width: 85px !important;
+        word-wrap: break-word;
+    }
+    .leagueCenter .container-fluid .flex-child-3par li:last-child {
+        right: 5px !important;
+    }
+    .res_font {
+        width: 50%;
+    }
+    .creatTeamHead .btn, .creatTeamHead  h4 {
+        margin-bottom: 10px;
+    }
+    .res_leagcenter ul li {
+        width: 50%;
+        text-align: center;
+    }
+    .res_leagcenter ul li:last-child {
+        display: none;
+    }
+    .res_leaguecomp ul li {
+        width: 50%;
+    }
+    .res_leaguecomp ul li:last-child {
+        display: none;
+    }
+    #joinLeaguePopup {
+        text-align: center;
+    }
+    .lobby_res .btn.btn-submit {
+        position: absolute;
+        right: -4px;
+        top: 5px;
+        padding: 5px !important;
+        font-size: 12px;
+        min-width: 65px !important;
+    }
+    #fantasyScorePopup .modal-body.clearfix.comon_body.ammount_popup {
+        padding: 10px 0;
+    }
+    .applyBox {
+        display: flex;
+    }
+    .custom_popup .ammount_popup {
+        text-align: center;
+    }
+    .res_scoring .modal-content {
+        margin-top: 45%;
+        width: 340px;
+    }
+    .res_scoring .modal-body {
+        padding: 10px;
+        text-align: left;
+    }
+    .lobby_res .res_list_join ul {
+        height: 80px;
+    }
+    .res_howtorow .row {
+        flex-direction: column-reverse;
+    }
+    .res_howtorow .row .howToTxt {
+        margin-top: 20px;
+    }
+    .lobby_res .matchtypeBody ul {
+        height: 85px;
+    }
+    .matchcenterDetail .nav.nav-tabs li a sup, .nav.nav-tabs.matchTabs li a sup {
+        position: absolute;
+        top: -10px;
+    }
+    .leagueCenter .nav.nav-tabs li a sup, .nav.nav-tabs.matchTabs li a sup {
+        top: 0px;
+    }
+    .gradList .payoutParBox {
+        position: absolute;
+        min-width: 150px;
+    }
+    .leagueCenter .container-fluid .flex-child-3par li:nth-child(2) {
+        text-align: center;
+    }
+    .res_payoutbox .payoutPar ul li {
+        display: flex;
+        min-height: 0;
+    }
+    .res_payoutbox .payoutPar ul li:last-child {
+        margin-top: 10px !important;
+    }
+    .res_payoutbox .payoutPar ul {
+        max-height: 200px;
+        overflow-y: scroll;
+        display: inline-block !important;
+    }
+    .matchtypeBody ul li {
+        width: 16%;
+        text-align: center;
+    }  
+    .res_payoutbox .payoutPar ul li {
+        width: 100%;
+    } 
+    .res_upcoming ul li {
+        width: 50%;
+        text-align: left;
+    }
+    .res_upcoming li img {
+        margin-bottom: 5px;
+    }
+    .res_upcoming li:last-child {
+        margin-right: -75px;
+    }
+    .creatTeamTable .table_scroll table td {
+        padding: 10px 0px;
+        font-size: 11px;
+    }
+
+    #playersInfoModal .matchtypeBody ul li {
+        font-size: 10px;
+        background-color: #212529d6;
+        flex: none;
+        text-align: left;
+    }
+    #playersInfoModal .matchtypeBody ul {
+        flex-wrap: nowrap;
+    }
+    #playersInfoModal .tab-content {
+        min-height: 400px;
+        overflow: scroll;
+    }
+} 
+
+
+@media (min-width:320px) and (max-width:480px){
+    .gradList ul > li .payoutMsg .payoutParBox .payoutPar {
+        position: relative;
+        left: 54%;
+        top: 10px;
+    }
+    .gradList ul > li .payoutMsg .payoutParBox .payoutPar:after{
+        left: 37px;
+     right: auto; 
+    }
+    .bannerTxt h1 {
+        font-size: 24px;
+    }
+    .sidenav .closebtn {
+    top: -17px; z-index: 99;}
+   
+    .previewBg .captaine{
+        top: 4px;
+        margin-left: 8px;
+    }
+    .creatTeamTop .col-sm-4.offset-sm-4, .creatTeamTop .col-sm-4 {
+        margin-left: 0;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .matchcenterDetail .container-fluid ul li {
+        min-width: 100%;
+        /* font-size: 12px !important; */
+        /* padding: 5px !important; */
+    /*    display: table-cell;
+        min-width: 200px;
+        text-align: center;*/
+    }
+    .payoutParBox .payoutPar {
+        padding: 4px 5px;
+        width: 224px;
+    }
+    .previewBg ul li {
+        position: static;
+        width: 100% !important;
+        max-width: 56px;
+    }
+
+    .res_scoring .modal-content {
+        margin-top: 60%;
+        width: 290px;
+    }
+}
+
+@media (min-width:481px) and (max-width:766px){
+    .matchcenterDetail .nav.nav-tabs li a {
+        font-size: 10px;
+    }
+    .matchcenterDetail .nav.nav-tabs li {
+        min-width: 10%;
+    }
+
+}
+@media (min-width: 300px){
+ /*.matchcenterDetail .container-fluid ul li {
+        min-width:156px !important;}*/
+}

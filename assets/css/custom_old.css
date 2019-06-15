@@ -1,0 +1,4329 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900');
+@import url('https://fonts.googleapis.com/css?family=Orbitron:400,500,700,900');
+@import url('https://fonts.googleapis.com/css?family=Play:400,700');
+
+/*****************************************************************************
+***************************Global css start **********************************
+******************************************************************************/
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none !important;
+    text-decoration: none;
+}
+
+.btn:focus {
+    outline: none !important;
+    box-shadow: unset !important;
+}
+
+*:focus {
+    box-shadow: unset !important;
+    outline: none !important;
+}
+
+i,
+cite,
+em {
+    font-style: normal;
+}
+
+.btnTrans {
+    border: 0;
+    padding: 0;
+    background: transparent;
+}
+
+a {
+    -webkit-transition: all 0.4s ease-in-out 0.1s;
+    -moz-transition: all 0.4s ease-in-out 0.1s;
+    transition: all 0.4s ease-in-out 0.1s;
+}
+
+@font-face {
+    font-family: "Orena";
+    src: url("../fonts/Orena_solo_mayusculas.eot?") format("eot"), url("../fonts/Orena_solo_mayusculas.woff") format("woff"), url("../fonts/Orena_solo_mayusculas.ttf") format("truetype"), url("../fonts/Orena_solo_mayusculas.svg#Orena") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'arial';
+    src: url('../fonts/arial.eot');
+    src: url('../fonts/arial.eot') format('embedded-opentype'), url('../fonts/arial.woff2') format('woff2'), url('../fonts/arial.woff') format('woff'), url('../fonts/arial.ttf') format('truetype'), url('../fonts/arial.svg#arial') format('svg');
+}
+
+:root {
+    --primaryClr: #0fe3d9;
+    /* --primarySecClr:#f3181b; */
+    --primarySecClr: #009688;
+    --primaryFont: 'Poppins', sans-serif;
+    --primarySecFont: 'Orbitron', sans-serif;
+}
+
+html body {
+    /* font-family: var(--primaryFont); */
+    font-family: 'Play', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+body {
+    overflow-x: hidden !important;
+}
+
+img {
+    max-width: 100%;
+}
+
+
+/*****************************************************************************
+***************************Global css end ************************************
+******************************************************************************/
+
+
+/*****flaticon******/
+
+@font-face {
+    font-family: "Flaticon";
+    src: url("../fonts/Flaticon.eot");
+    src: url("../fonts/Flaticon.eot?#iefix") format("embedded-opentype"), url("../fonts/Flaticon.woff") format("woff"), url("../fonts/Flaticon.ttf") format("truetype"), url("../fonts/Flaticon.svg#Flaticon") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    @font-face {
+        font-family: "Flaticon";
+        src: url("../fonts/Flaticon.svg#Flaticon") format("svg");
+    }
+}
+
+[class^="flaticon-"]:before,
+[class*=" flaticon-"]:before,
+[class^="flaticon-"]:after,
+[class*=" flaticon-"]:after {
+    font-family: Flaticon;
+    font-style: normal;
+}
+
+.flaticon-idea:before {
+    content: "\f100";
+}
+
+.flaticon-rank:before {
+    content: "\f101";
+}
+
+.flaticon-instagram:before {
+    content: "\f102";
+}
+
+.flaticon-user:before {
+    content: "\f103";
+}
+
+.flaticon-cup:before {
+    content: "\f104";
+}
+
+.flaticon-soccer:before {
+    content: "\f105";
+}
+
+.flaticon-tv:before {
+    content: "\f106";
+}
+
+.flaticon-clock:before {
+    content: "\f107";
+}
+
+.flaticon-money:before {
+    content: "\f108";
+}
+
+
+/****flaticon2*****/
+
+@font-face {
+    font-family: "Flaticon1";
+    src: url("../fonts/Flaticon1.eot");
+    src: url("../fonts/Flaticon1.eot?#iefix") format("embedded-opentype"), url("../fonts/Flaticon1.woff") format("woff"), url("../fonts/Flaticon1.ttf") format("truetype"), url("../fonts/Flaticon1.svg#Flaticon1") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    @font-face {
+        font-family: "Flaticon1";
+        src: url("../fonts/Flaticon1.svg#Flaticon1") format("svg");
+    }
+}
+
+[class^="flaticon1-"]:before,
+[class*=" flaticon1-"]:before,
+[class^="flaticon1-"]:after,
+[class*=" flaticon1-"]:after {
+    font-family: Flaticon1;
+    font-style: normal;
+}
+
+.flaticon1-devices:before {
+    content: "\f100";
+}
+
+.flaticon1-responsive:before {
+    content: "\f101";
+}
+
+
+/*underlineMagical start*/
+
+.underlineMagical {
+    cursor: pointer;
+    background-image: linear-gradient(45deg, var(--primarySecClr) 0%, var(--primarySecClr) 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 2px;
+    background-position: 0 95%;
+    transition: background-size .25s linear, color .2s linear;
+    text-decoration: none;
+    padding: 2px;
+}
+
+.underlineMagical:hover {
+    color: #fff;
+    background-size: 100% 95%;
+}
+
+
+/*underlineMagical end*/
+
+
+/*****************************************************************************
+*************************** header sec start  ***************************
+******************************************************************************/
+
+.headerSec {
+    color: #fff;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    top: 0;
+    z-index: 9;
+}
+
+.headerSec ul li a {
+    color: #fff;
+}
+
+.headerTop {
+    background: #000;
+    font-size: 12px;
+}
+
+.headerTop ul li {
+    text-transform: uppercase;
+    padding: 7px;
+    display: inline-block;
+}
+
+.headerTop ul li {
+    position: relative;
+}
+
+.headerTop ul li:last-child {
+    padding-right: 0;
+}
+
+.headerTop ul li:first-child:after {
+    content: '';
+    background: #999aa3;
+    width: 1px;
+    height: 15px;
+    position: absolute;
+    right: -8px;
+    top: 10px;
+}
+
+.navbar-expand-lg .navbar-nav.mr-auto {
+    margin-left: 203px;
+}
+
+.withoutLogin .navbar-expand-lg .navbar-nav {
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link:after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    background-color: var(--primarySecClr);
+    left: 0;
+    opacity: 0;
+    -webkit-transition: height 0.3s, opacity 0.3s, -webkit-transform 0.3s;
+    -moz-transition: height 0.3s, opacity 0.3s, -moz-transform 0.3s;
+    transition: height 0.3s, opacity 0.3s, transform 0.3s;
+    -webkit-transform: translateY(15px);
+    -moz-transform: translateY(15px);
+    transform: translateY(15px);
+    bottom: 0;
+}
+
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link:hover:after,
+.headerBottom .navbar-expand-lg .navbar-nav .active .nav-link:after {
+    height: 2px;
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    -moz-transform: translateY(0px);
+    transform: translateY(0px);
+}
+
+.headerBottom {
+    background: #1b1b1b38;
+    border-bottom: 1px solid #40383b;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    top: 0px;
+    padding-top: 10px;
+}
+
+.headerSec.stickyHeader .headerBottom {
+    position: fixed;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: #000;
+}
+
+.navbar-brand img {
+    max-height: 60px;
+    max-width: 130px;
+}
+
+.navbar-brand {
+    padding-bottom: 0;
+    padding-top: 0;
+    position: absolute;
+    top: 2px;
+}
+
+.headerBottom .navbar-expand-lg {
+    padding: 0;
+}
+
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link {
+    padding: 10px 15px 11px;
+    position: relative;
+}
+
+.headerBottom .navbar-expand-lg .navbar-nav .active .nav-link,
+.headerBottom .navbar-expand-lg .navbar-nav .nav-link:hover {
+    color: var(--primarySecClr);
+}
+
+.rightNav li {
+    margin-right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rightNav li { margin-right: 10px; display: inline-flex;align-items: center; justify-content: center; }
+
+.rightNav li .btn {
+    margin-left: 10px;
+    font-size: 17px;
+    line-height: 18px;
+    background: var(--primarySecClr);
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.rightNav li cite {
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 50%;
+    margin-right: 5px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--primarySecClr);
+    color: #fff;
+}
+
+.rightNav li cite img {
+    height: 100%;
+    width: 100%;
+}
+
+.rightNav .dropdown-item {
+    color: #222;
+}
+
+.dropdown-menu {
+    border-radius: 0;
+}
+
+.rightNav li a .badge {
+    position: relative;
+    left: -9px;
+    top: -10px;
+    background: transparent;
+    color: #fff;
+    border-radius: 50%;
+    color: var(--primarySecClr);
+    border: 0;
+    font-size: 14px !important;
+}
+
+
+/*****************************************************************************
+***************************header end   ***************************
+******************************************************************************/
+
+
+/*****************************************************************************
+***************************home page start  ***************************
+******************************************************************************/
+
+
+/*bannerSec start*/
+
+.bannerSec {
+    background: url(../img/banner.jpg);
+    background-size: cover;
+    padding: 120px 0 60px;
+}
+
+.bannerSec .bannerForm {
+    background: rgba(49, 46, 70, 0.82);
+    padding: 20px 15px;
+    width: 300px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.bannerForm h5 {
+    color: #18f360;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 15px;
+    font-family: 'arial';
+}
+
+.bannerForm .appIconPar {
+    display: flex;
+    margin: 30px 0 0;
+}
+
+.appIconPar li {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.bannerForm .btnOfMdi {
+    display: flex;
+    margin: 20px 10px 15px;
+    flex-wrap: wrap;
+}
+
+.btnOfMdi li {
+    flex: 0 0 100%;
+    margin: 0 auto 10px;
+    max-width: 62%;
+}
+
+.btnOfMdi li a {
+    background: #3b5999;
+    color: #fff;
+    font-size: 14px;
+    display: block;
+    padding: 12px 10px;
+    border-radius: 30px;
+}
+
+.btnOfMdi li:last-child a {
+    background: #dc4437;
+}
+
+.btnOfMdi li a i {
+    padding-right: 10px;
+}
+
+.bannerForm .h3 {
+    color: #18f360;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.bannerForm .btn-danger {
+    background: var(--primarySecClr);
+    border-radius: 30px;
+    padding: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    width: 47%;
+    border-color: var(--primarySecClr);
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin: 0 1% 20px;
+}
+
+.bannerForm p {
+    font-size: 12px;
+    color: #fff;
+}
+
+.bannerForm p a {
+    color: #fff;
+}
+
+.bannerForm p span {
+    color: #18f360;
+}
+
+.bannerTxt {
+    padding-left: 40px;
+}
+
+.bannerTxt h1 {
+    font-size: 3rem;
+    line-height: 70px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.bannerTxt .btn.btn-danger {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    border-color: var(--primarySecClr);
+}
+
+.bannerTxt h2 {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+
+.bannerTxt .btn {
+    background: var(--primarySecClr);
+    border-radius: 30px;
+    padding: 12px;
+    font-size: 14px;
+    margin-bottom: 30px;
+    padding: 10px 60px;
+    font-weight: 600;
+}
+
+
+/*bannerSec end*/
+
+
+/*AppSec start*/
+
+.appSec {
+    background: url(../img/appBg.jpg);
+    background-size: cover;
+    padding: 120px 0 0px;
+}
+
+.primarHead h1 {
+    font-family: var(--primarySecFont);
+    font-size: 1.8rem;
+    line-height: 30px;
+    color: var(--primaryClr);
+}
+
+.pointSystem .primarHead h1 {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #c9d6d5;
+}
+
+.primarHead p {
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.appSec .appIconPar li:first-child {
+    margin-left: 0;
+}
+
+
+/*AppSec end*/
+
+
+/*featureSec start*/
+
+.featureSec {
+    background: #000;
+    color: #fff;
+    padding: 80px 0;
+}
+
+.featureSec ul {
+    text-align: center;
+}
+
+.featureSec ul li {
+    margin-top: 40px;
+}
+
+.featureSec ul li p {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 300;
+    margin-top: 20px;
+}
+
+.featureSec ul li i {
+    font-size: 60px;
+    line-height: 70px;
+    margin-bottom: 10px;
+}
+
+
+/*featureSec end*/
+
+
+/* howToPaySec start */
+
+.howToPaySec {
+    background-size: cover;
+    padding: 100px 0 0;
+}
+
+.howToPaySec .howToRow {
+    margin-top: 100px;
+}
+
+.howToTxt {
+    padding: 0 40px;
+}
+
+.howToTxt h4 {
+    font-size: 18px;
+    line-height: 30px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.howToTxt p {
+    margin-bottom: 20px;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.btnPrimary {
+    background: var(--primarySecClr);
+    padding: 7px 30px;
+    border: 1px solid #cccccc;
+    color: #fff;
+    font-size: 14px;
+}
+
+.btnPrimary:hover,
+.btn-danger:hover {
+    background: #000;
+}
+
+.btnPrimary:hover {
+    color: #fff;
+}
+
+.howToImg {
+    position: relative;
+    text-align: center;
+}
+
+.howToImg .vidBtn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 5%;
+    width: 100%;
+    z-index: 1;
+    cursor: pointer;
+    height: 100%;
+}
+
+
+/* howToPaySec end */
+
+.featureSec ul li i {
+    color: #00ccff;
+    transition: all 0.3s ease-out;
+}
+
+.featureSec ul li:hover i {
+    transform: scale(1.1);
+    font-size: 78px;
+}
+
+.featureSec li:hover i {
+    color: #0098e8;
+}
+
+.featureSec li:hover i {
+    animation-name: example;
+    animation-duration: 4s;
+}
+
+@keyframes hexample {
+    0% {
+        transform: translateY(-12px);
+        transform: translateY(-12px);
+    }
+    50% {
+        transform: translateY(-6px)
+    }
+    100% {
+        transform: translateY(-12px);
+    }
+}
+
+.featureSec ul li:nth-child(2) i {
+    color: #d6b61e;
+}
+
+.featureSec ul li:nth-child(3) i {
+    color: #ff00e4;
+}
+
+.featureSec ul li:nth-child(4) i {
+    color: #00ff1e;
+}
+
+.featureSec ul li:nth-child(5) i {
+    color: #ff0000;
+}
+
+.featureSec ul li:nth-child(6) i {
+    color: #00e1e9;
+}
+
+.featureSec ul li:nth-child(7) i {
+    color: #00ff9c;
+}
+
+.featureSec ul li:nth-child(8) i {
+    color: #ff0072;
+}
+
+
+/***testimonial****/
+
+.testimonialSec {
+    background: #2b2b2b;
+    padding: 200px 0 80px;
+    margin-top: -120px;
+}
+
+.testimonSliderPar .slick-list.draggable {
+    padding-top: 30px;
+    margin: 25px -15px 0;
+}
+
+.testimonSliderPar .slick-prev {
+    left: -50px;
+}
+
+.testimonSliderPar .slick-next {
+    right: -35px;
+}
+
+.testimonSliderPar .slick-prev:before,
+.testimonSliderPar .slick-next:before {
+    color: #fb5b88;
+    font-size: 37px;
+}
+
+.testimonItem {
+    background: #fff;
+    padding: 50px 30px 30px;
+    border-radius: 5px;
+    margin: 0 15px;
+    position: relative;
+}
+
+.testimonItem ul {
+    text-align: center;
+    color: #fb5b88;
+    margin: 10px 0;
+}
+
+.testimonItem a {
+    color: #fb5b88;
+    margin-top: 5px;
+}
+
+.testimonItem ul li {
+    display: inline-block;
+}
+
+.testimonItem p {
+    color: #665757;
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 300;
+}
+
+.testimonItem h4 {
+    color: #665757;
+    text-align: center;
+    font-weight: 400;
+    font-size: 22px;
+}
+
+.testimonialImg {
+    height: 60px;
+    width: 60px;
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
+    backface-visibility: hidden;
+    margin: 0 auto;
+    top: -30px;
+    left: 0;
+    right: 0;
+}
+
+
+/***testimonial****/
+
+
+/****loginSignup****/
+
+.loginModal .modal-content {
+    border-radius: 0;
+}
+
+.loginModal .modal-content .modal-body {
+    padding: 20px 40px;
+}
+
+.loginSignup .nav.nav-tabs {
+    border: 0;
+    margin-bottom: 20px;
+}
+
+.loginModal .form-control {
+    height: 50px;
+    color: #222;
+    border-color: rgba(0, 0, 0, 0.3);
+    background: transparent;
+}
+
+.loginSignup .nav.nav-tabs li {
+    width: 48%;
+    margin: 0 1%;
+}
+
+.loginSignup .nav.nav-tabs li a {
+    text-align: center;
+    border: 0;
+    background: transparent;
+    color: #666;
+    font-size: 18px;
+    border-bottom: 2px solid transparent;
+}
+
+.loginSignup .nav.nav-tabs li a.active,
+.loginSignup .nav.nav-tabs li a:hover {
+    border-bottom-color: var(--primarySecClr);
+}
+
+.loginBtn {
+    background: var(--primarySecClr);
+    border: 0;
+    color: #fff;
+    border-radius: 5px;
+    width: 100%;
+    padding: 9px;
+    font-size: 18px;
+}
+
+.loginBtn:hover {
+    background: #000;
+}
+
+.loginSignup .form-group p {
+    text-align: center;
+}
+
+.loginSignup .form-group a {
+    color: var(--primarySecClr);
+    text-decoration: underline;
+}
+
+.custom_popup .modal-header {
+    background: #009688;
+    border-radius: 0;
+    position: relative;
+}
+
+.custom_popup .modal-header .modal-title {
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+    width: 100%;
+}
+
+.custom_popup .modal-content {
+    border-radius: 0;
+    border: 0;
+}
+
+.custom_popup .close,
+.loginModal .close {
+    position: absolute;
+    background: #2f2f2f;
+    height: 30px;
+    width: 30px;
+    opacity: 1;
+    text-shadow: none;
+    color: #fff;
+    border: 1px solid #fff;
+    text-align: center;
+    padding: 0;
+    font-weight: 400;
+    display: inline-block;
+    border-radius: 50%;
+    line-height: 27px;
+    right: -13px;
+    top: -13px;
+    margin: 0;
+    padding-top: 2px;
+}
+
+.custom_popup .ammount_popup {
+    padding: 30px;
+}
+
+.add_money ul li {
+    display: inline-block;
+    /*background: #2c293e;*/
+    color: #fff;
+    /*padding: 7px 15px 5px;*/
+    border-radius: 3px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.add_money ul {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.add_money h4 {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3d3c3c;
+}
+
+.btn.btn-submit {
+    background: #009688;
+    color: #fff;
+    padding: 7px 20px;
+    font-size: 14px;
+}
+
+.btn.btn-submit:hover {
+    background: #000;
+}
+
+.centerPopup .modal-dialog {
+    transform: translate(0, -50%) !important;
+    top: 50%;
+}
+
+
+/****loginSignup****/
+
+
+/*****************************************************************************
+***************************home page end  ***************************
+******************************************************************************/
+
+
+/*******teamscorePage*****/
+
+.comonBg {
+    background-image: url(../img/bgNew.png);
+    padding-top: 80px;
+    background-color: #000;
+    background-size: cover;
+    /*min-height: calc(100vh - 76px);*/
+    background-attachment: fixed;
+    background-position: center center;
+    min-height: 100vh;
+}
+
+.teamscoreSec {
+    padding-bottom: 100px;
+}
+
+.scoreTable table {
+    width: 100%;
+    background: rgba(52, 49, 76, 0.8);
+    color: #fff;
+    border-left: 2px solid #18f360;
+}
+
+.scoreTable table th,
+.scoreTable table td {
+    font-size: 15px;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+.scoreTable table th,
+.scoreTable table td {
+    font-size: 12px;
+    padding: 10px 15px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(225, 225, 225, 0.2);
+    border-right: 1px solid rgba(225, 225, 225, 0.2);
+    height: 40px;
+}
+
+.scoreTable table tr:nth-child(2) th {
+    font-weight: 400;
+    background: #a41f2b;
+}
+
+.scoreTable table tr td {
+    padding: 0;
+    font-weight: 400;
+}
+
+.scoreTable table tr td table td {
+    padding: 5px 10px;
+}
+
+.scoreTable table tr th table,
+.scoreTable table tr td table {
+    border: 0;
+}
+
+.scoreTable table tr th table th:last-child,
+.scoreTable table tr td table td:last-child,
+.scoreTable table tr td table th:last-child {
+    border-right: 0;
+}
+
+.scoreTable table tr:nth-child(even) {
+    background: rgba(225, 225, 225, 0.1);
+}
+
+.scoreTable table tr:last-child table td {
+    border-bottom: 0;
+}
+
+.teamscoreSec h4 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+
+/*********teamscorecardEnd******/
+
+
+/****creatTeamstart****/
+
+.criteriaBox {
+    background: #34314c4a;
+    padding: 10px 50px;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.criteriaBox table {
+    width: 100%;
+}
+
+.criteriaBox table td,
+.criteriaBox table th {
+    font-weight: 400;
+    padding: 0;
+}
+
+.criteriaBox table th {
+    color: #18f360;
+}
+
+.criteriaBox h4 {
+    font-size: 12px;
+    line-height: 30px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #efb577;
+    font-weight: 400;
+}
+
+.criteriaBox table tr:last-child td {
+    color: #fff000;
+}
+
+.creatTeamTop {
+    width: 100%;
+    border-bottom: 2px solid rgba(225, 225, 225, 0.1);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+}
+
+.creatTeamTop .matchCenterHeader,
+.creatTeamTop .matchCenterBody {
+    background: transparent;
+}
+
+.creatTeamTable h4 {
+    font-family: var(--primarySecFont);
+    font-size: 14px;
+    color: var(--primaryClr);
+    display: inline-block;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.creatTeamHead {
+    width: 100%;
+    line-height: 38px;
+    margin-bottom: 25px;
+}
+
+.creatTeam {
+    padding-bottom: 50px;
+}
+
+.btn.btnClone {
+    display: inline-block;
+    background: #000;
+    color: var(--primaryClr);
+    border: 1px solid #fff;
+    padding: 6px 20px;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.gradList {
+    color: #fff;
+}
+
+.gradList ul {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.gradList ul>li {
+    font-size: 16px;
+    font-weight: 400;
+    position: relative;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.gradList .paoutRow {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0px 0;
+}
+
+.fixedFooterBar ul {
+    align-items: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 11;
+    bottom: 0;
+}
+
+
+/*.fixedFooterBar ul{ 
+    align-items: center;
+}*/
+
+.fixedFooterBar ul li:first-child {
+    background: #17ba07;
+    border: 0;
+}
+
+.fixedFooterBar ul li {
+    border-right: 1px solid #ddd;
+    padding: 7px 20px;
+    background: #191919;
+}
+
+
+/*.fixedFooterBar ul li:last-child {
+    border: 0;
+    background: #34314c;
+    padding: 7px 0;
+}*/
+
+.fixedFooterBar ul li marquee {
+    line-height: 10px;
+}
+
+.gradList ul>li:first-child {
+    padding-left: 0;
+}
+
+.gradList ul>li:not(:last-child) {
+    border-right: 1px solid #ddd;
+}
+
+.gradList ul>li ol {
+    display: flex;
+    justify-content: space-around;
+}
+
+.gradList ul>li ol li {
+    padding: 0 3px;
+}
+
+.gradList ul>li ol li img {
+    max-width: 15px;
+}
+
+.gradList ul li u {
+    text-decoration: none;
+    color: var(--primarySecClr);
+}
+
+.leagueStatusParent h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.leagueStatusParent span {
+    color: #def000;
+    display: block;
+    padding: 10px 0;
+}
+
+.matchFeedList ul li {
+    margin-bottom: 5px;
+}
+
+.gradList ul li cite {
+    /*color: #def000;*/
+    color: #f3181c;
+    display: block;
+    padding: 10px 0;
+}
+
+.gradList ul li cite a {
+    color: #f3181c;
+}
+
+.accountHead .btn.btnClone {
+    min-width: 120px;
+    font-size: 14px;
+    padding: 7px;
+    color: #2c9789;
+    background: #1b173a;
+    margin-right: 10px;
+}
+
+.accountHead .btn.btnClone:hover {
+    color: #1b173a;
+    background: #2c9789;
+}
+
+.creatTeamHead .btn.btnClone {
+    float: right;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.btn.btnClone:hover {
+    background: var(--primaryClr);
+    color: #fff;
+}
+
+.creatTeamTable .nav.nav-tabs {
+    border: 0;
+}
+
+.creatTeamTable .nav.nav-tabs .nav-item {
+    width: 25%;
+    padding: 0 3px;
+}
+
+.creatTeamTable .nav.nav-tabs .nav-item a {
+    background: transparent;
+    border: 0;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+}
+
+.creatTeamTable .nav.nav-tabs .nav-item a span {
+    position: relative;
+    font-size: 14px;
+    top: -9px;
+}
+
+.creatTeamTable .nav.nav-tabs .nav-item a.active,
+.creatTeamTable .nav.nav-tabs .nav-item a:hover {
+    border-bottom-color: var(--primarySecClr);
+}
+
+.container-fluid {
+    width: 100%;
+}
+
+.player_tab_table table {
+    width: 100%;
+}
+
+.leagueTeamTable {
+    width: 70%
+}
+
+.leagueTeamTable .table_scroll table td {
+    padding: 5px;
+}
+
+.leagueTeamTable .table_scroll table td a.btn.btn-submit {
+    padding: 7px 14px;
+}
+
+.player_tab_table table th {
+    background: #34314c;
+    color: #18f360;
+    font-weight: 400;
+    padding: 10px;
+    width: 1%;
+}
+
+.player_name {
+    position: relative;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.table_scroll table td {
+    color: #fff;
+    width: 1%;
+    padding: 10px;
+    background: rgba(52, 49, 76, 0.4);
+    box-shadow: 0px 1px 0px rgba(225, 225, 225, 0.3);
+    position: relative;
+}
+
+.table_scroll table td i.fa.fa-circle.ng-scope {
+    position: absolute;
+    left: -8px;
+    top: 15px;
+}
+
+.table_scroll table td:first-child {
+    max-width: 20px !important;
+}
+
+.table_scroll table td a {
+    background: #c4bfbf;
+    height: 25px;
+    width: 25px;
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 50%;
+    line-height: 25px;
+}
+
+.table_scroll table tr.active td a,
+.table_scroll table td a:hover {
+    background: #18f360;
+}
+
+.table_scroll {
+    max-height: 500px;
+}
+
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    background-color: var(--primarySecClr) !important;
+}
+
+.mCSB_scrollTools .mCSB_draggerRail {
+    background-color: #34314c !important;
+}
+
+.mCSB_inside>.mCSB_container {
+    margin-right: 15px;
+}
+
+.creatTeamFoot {
+    text-align: center;
+    padding: 0 0 20px;
+    background: transparent;
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.creatTeamFoot ul li {
+    display: inline-block;
+    widows: 49%;
+    font-family: 'Play', sans-serif;
+    padding: 0 10px;
+}
+
+.creatTeamFoot ul li span {
+    color: #18f360;
+}
+
+.playGround {
+    padding-top: 107px;
+    padding-bottom: 109px;
+}
+
+.groundBtn .btn.btnCmn {
+    background: #686666;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 7px 20px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.groundBtn .btn.btnCmn:nth-child(2) {
+    background: #17ba07;
+}
+
+.groundBtn .btn.btnCmn:nth-child(3) {
+    background: var(--primarySecClr);
+}
+
+
+/****creatTeamendt****/
+
+
+/*******matchcenterstart******/
+
+.notification {
+    position: relative;
+}
+
+.notification .dropdown-menu {
+    padding: 0;
+    margin: 0;
+    min-width: 300px;
+    top: 42px;
+    right: 0;
+    overflow: hidden;
+}
+
+.notification .dropdown-menu ul li::after {
+    content: "";
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background: #2b9688;
+    border-radius: 50%;
+    top: 15px;
+    left: 10px;
+}
+
+.notification .dropdown-toggle::after {
+    display: none;
+}
+
+.notification .dropdown-menu h4 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #2b9688;
+}
+
+.notification .dropdown-menu ul {
+    padding: 10px;
+    overflow: auto;
+    max-height: 400px;
+    margin-right: -12px;
+}
+
+.notification .dropdown-menu ul li {
+    display: block;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    padding: 7px 10px;
+    font-size: 14px;
+    font-weight: 400;
+    padding-left: 30px;
+    line-height: 22px;
+    margin-right: 0;
+}
+
+.notification .dropdown-menu ul li p {
+    font-size: 13px;
+    line-height: 18px;
+    margin-bottom: 5px;
+}
+
+.notification .dropdown-menu ul li span {
+    display: block;
+    color: #a1a1a1;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.matchSection .primarHead p {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.matchSection {
+    padding-bottom: 30px;
+}
+
+.matchSection .col-sm-4 {
+    margin-bottom: 20px;
+}
+
+.matchCenterbox {
+    text-align: center;
+    border-radius: 0px;
+    position: relative;
+}
+
+.matchSection .matchCenterbox {
+    background: #34314c40;
+    height: 100%;
+}
+
+.matchSection .matchCenterbox .matchCenterHeader,
+.matchSection .matchCenterbox .matchCenterBody,
+.matchSection .matchCenterbox .matchCenterFooter {
+    background: transparent;
+}
+
+.creatTeamTop .matchCenterbox {
+    height: auto;
+}
+
+.creatTeamTop .col-sm-5.offset-sm-3 .matchCenterbox {
+    background: transparent;
+}
+
+.custom_popup table th,
+.custom_popup table td {
+    padding: 5px;
+    font-size: 13px;
+}
+
+.matchCenterbox:hover {
+    box-shadow: 0px 0 8px rgba(225, 225, 225, 0.1);
+}
+
+.hoverBox {
+    position: absolute;
+    background: #f3181b;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 16px;
+    font-weight: 500;
+    left: 50%;
+    display: none;
+    bottom: -42px;
+    transform: translate(-50%, 0);
+}
+
+.matchCenterbox:hover .hoverBox {
+    display: block;
+}
+
+.hoverBox::after {
+    content: "";
+    border-left: 8px solid transparent;
+    position: absolute;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid #f3181b;
+    top: -9px;
+    left: 50%;
+    margin-left: -4px;
+}
+
+.matchCenterHeader {
+    background: #34314c40;
+    padding: 20px 10px 10px;
+    text-align: center;
+    font-family: var(--primarySecFont);
+}
+
+.matchCenterHeader ul li {
+    display: inline-block;
+    padding: 0 5px;
+    color: #18f360;
+    font-size: 18px;
+    letter-spacing: 0.03em;
+    vertical-align: middle;
+}
+
+.matchcenterDetail .matchCenterHeader ul li {
+    font-size: 20px;
+}
+
+.teamLogo {
+    position: relative;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.matchCenterHeader ul li span {
+    color: #fff;
+    display: inline-block;
+    padding: 0 5px;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: lowercase;
+}
+
+.matchCenterHeader ul li p {
+    display: inline-block;
+}
+
+.matchCenterBody {
+    background-color: #34314c40;
+    text-align: center;
+    color: #fff;
+    margin: 0px 0;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.matchCenterBody .location {
+    color: rgba(225, 225, 225, 0.6);
+}
+
+.matchCenterFooter {
+    text-align: center;
+    color: #fff;
+    background: #34314c40;
+    padding: 10px 0 20px;
+}
+
+.matchCenterFooter h4 {
+    font-size: 12px;
+    line-height: 30px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #efb577;
+    font-weight: 400;
+}
+
+.timer strong {
+    color: #fff000;
+    display: block;
+    font-weight: 400;
+    font-size: 10px;
+}
+
+.timer span {
+    display: inline-block;
+    font-size: 14px;
+    padding: 0 10px;
+    color: #fff;
+    position: relative;
+}
+
+.timer span::after {
+    content: ":";
+    position: absolute;
+    color: #fff;
+    font-size: 20px;
+    right: -2px;
+    top: -5px;
+}
+
+.timer span:last-child::after {
+    display: none;
+}
+
+
+/*******matchcenterend******/
+
+
+/******settingpage-start******/
+
+.comnnFour h4 {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.settingHead.comnnFour h4 {
+    padding-right: 15px
+}
+
+.veryfy_condition {
+    padding: 20px 0;
+    margin: 20px 0;
+    border-bottom: 2px solid rgba(250, 250, 250, 0.5);
+    border-top: 2px solid rgba(250, 250, 250, 0.5);
+    color: #fff;
+    line-height: 32px;
+}
+
+.veryfy_condition h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.veryfy_condition ul li {
+    font-size: 12px;
+    line-height: 24px;
+}
+
+.veryfy_icn li {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.veryfy_icn li.red i {
+    color: red;
+}
+
+.veryfy_icn li.green i {
+    color: green;
+}
+
+.veryfy_icn li.yellow i {
+    color: #FFA610;
+}
+
+.settingContent {
+    background: rgba(52, 49, 76, 0.4);
+    padding: 40px;
+    border-radius: 5px;
+    font-family: 'Play', sans-serif;
+}
+
+.settingContent .tab-content {
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+}
+
+.settingContent .nav.nav-tabs .nav-item .nav-link {
+    border: 0;
+    padding: 10px 25px;
+    color: #fff;
+}
+
+.settingContent .nav.nav-tabs .nav-item .nav-link.active,
+.settingContent .nav.nav-tabs .nav-item .nav-link:focus {
+    background: var(--primarySecClr);
+}
+
+.settingPoints .nav.nav-tabs {
+    border: 0;
+}
+
+.settingPoints .form-control {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(225, 225, 225, 0.4);
+    color: #fff;
+}
+
+.settingPoints .form-control[type="file"] {
+    height: auto !important;
+    padding: 10px;
+}
+
+.settingPoints .tab-content h4 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.settingPoints .tab-content label {
+    color: #fff;
+    font-size: 14px;
+}
+
+.btn.btnSetting {
+    width: 100%;
+    padding: 9px 20px;
+    font-weight: 500;
+    font-size: 14px;
+    border: 0;
+    background: var(--primarySecClr);
+    color: #fff;
+}
+
+.btn.btnSetting:hover {
+    background: #000;
+}
+
+.settingPoints .tab-content p {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.input-file-container .input-file {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.input-file-trigger {
+    padding: 9px 15px;
+    background: var(--primarySecClr);
+    color: #fff;
+    font-size: 14px;
+    transition: all .4s;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 3px;
+    min-width: 150px;
+    text-align: center;
+}
+
+.settingPoints .tab-content p i {
+    color: var(--primarySecClr);
+}
+
+.settingPoints .tab-content ul li {
+    color: #fff;
+    font-size: 13px;
+    line-height: 29px;
+}
+
+.accountDrop .dropdown-menu {
+    padding: 0;
+    top: 41px;
+    right: 0;
+    left: auto;
+}
+
+.accountDrop .dropdown-menu ul li {
+    display: block;
+    margin: 0;
+}
+
+.accountDrop .dropdown-menu ul li a {
+    display: block;
+    color: #000;
+    font-weight: 400;
+    padding: 5px 7px;
+    font-size: 13px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.accountDrop .dropdown-menu ul li a:hover {
+    color: var(--primarySecClr);
+}
+
+
+/******settingpage-end******/
+
+
+/******accountPage-start******/
+
+.accountContent {
+    padding: 40px;
+    background: rgba(52, 49, 76, 0.4);
+    border-radius: 5px;
+    font-family: 'Play', sans-serif;
+}
+
+.accountHead ul {
+    display: flex;
+    margin: 25px 0;
+}
+
+.accountHead ul li {
+    color: #fff;
+    flex: 0 0 25%;
+    text-align: center;
+    border-right: 2px solid rgba(225, 225, 225, 0.4);
+    padding: 5px;
+}
+
+.accountHead ul li span {
+    display: block;
+}
+
+.accountHead ul li:last-child {
+    border: 0;
+}
+
+.accountHolder {
+    font-size: 18px;
+    padding: 25px 0 25px 125px;
+    position: relative;
+    color: var(--primaryClr);
+    min-height: 115px;
+}
+
+.accountImg {
+    position: absolute;
+    /*border-radius: 50%;*/
+    overflow: hidden;
+    height: 100px;
+    width: 100px;
+    left: 0;
+    top: 0;
+}
+
+.accountHolder span {
+    display: block;
+    color: #fff;
+    font-size: 12px;
+}
+
+.transictionOption .nav.nav-tabs {
+    border: 0;
+    margin: 20px 0;
+}
+
+.transictionOption .nav.nav-tabs .nav-item {
+    flex: 0 0 33.33%;
+}
+
+.transictionOption .nav.nav-tabs li {
+    padding: 0 5px;
+}
+
+.transictionOption .nav.nav-tabs .nav-link {
+    text-align: center;
+    color: #fff;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    border-radius: 0;
+}
+
+.transictionOption .nav.nav-tabs li:last-child .nav-link {
+    border-right: 0;
+}
+
+.transictionOption .tab-content h4 {
+    font-size: 16px;
+    color: #fff;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.transictionOption .nav.nav-tabs .nav-link.active,
+.transictionOption .nav.nav-tabs .nav-link:hover {
+    border-bottom-color: #18f360;
+}
+
+.accountHead ul li a {
+    display: inline-block;
+    border: 0;
+    text-decoration: underline;
+    color: #18f360;
+}
+
+.transictionOption table {
+    width: 100%;
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.transictionOption table th {
+    font-size: 12px;
+    font-weight: 400;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+}
+
+.transictionOption table tr:nth-child(2n) {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.transictionOption table th {
+    font-size: 12px;
+    font-weight: 400;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+}
+
+.transictionOption table td {
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.tab_sarch ul {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab_sarch ul li {
+    color: #fff;
+    flex: 0 0 28%;
+    padding-right: 15px;
+}
+
+.tab_sarch ul li:last-child {
+    padding: 0;
+    flex-basis: 16%;
+    padding-top: 7px;
+}
+
+.tab_sarch ul li .form-control {
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    border-color: rgba(225, 225, 225, 0.5);
+    height: 40px;
+    font-size: 12px;
+}
+
+.tab_sarch ul li .btn.btn-submit {
+    padding: 9px 20px;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.ammount_popup label {
+    text-align: center;
+    display: block;
+}
+
+
+/******accountPage-end******/
+
+
+/******pointSystem-start******/
+
+.pointBody {
+    border-left: 1px solid #009688;
+}
+
+.pointHead ul,
+.pointBody ul {
+    display: flex;
+    margin-bottom: 7px;
+}
+
+.pointBody ul:last-child {
+    margin: 0;
+}
+
+.pointHead ul li {
+    color: #ffffffc9;
+    flex: 0 0 50%;
+    padding: 10px 15px;
+    background: var(--primarySecClr);
+}
+
+.pointBody ul li {
+    color: #fff;
+    flex: 0 0 50%;
+    padding: 10px 15px;
+    background: #34314c4a;
+    font-size: 12px;
+}
+
+.pointSystem h4 {
+    color: #fff;
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+.pointSystem {
+    padding-bottom: 70px;
+}
+
+
+/******pointSystem-end******/
+
+
+/******matchCenterDetail-start******/
+
+.matchcenterDetail {
+    padding-bottom: 210px;
+}
+
+.creatTeamTop {
+    color: #fff;
+}
+
+.matchcenterDetail .nav.nav-tabs,
+.nav.nav-tabs.matchTabs {
+    border: 0;
+}
+
+.matchcenterDetail .nav.nav-tabs li {
+    flex: 0 0 12.5%;
+}
+
+.matchcenterDetail .nav.nav-tabs li a,
+.nav.nav-tabs.matchTabs li a {
+    color: #fff;
+    text-align: center;
+    border: 0;
+    padding: 10px;
+    position: relative;
+}
+
+.matchcenterDetail .nav.nav-tabs li a.active,
+.matchcenterDetail .nav.nav-tabs li a:hover,
+.nav.nav-tabs.matchTabs li a.active,
+.nav.nav-tabs.matchTabs li a:hover {
+    background: transparent;
+    color: #fff;
+}
+
+.matchcenterDetail .nav.nav-tabs li a sup,
+.nav.nav-tabs.matchTabs li a sup {
+    color: var(--primarySecClr);
+    font-size: 14px;
+}
+
+.matchcenterDetail .nav.nav-tabs li a:after,
+.nav.nav-tabs.matchTabs li a:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    bottom: 0;
+    height: 2px;
+    background: #10494d;
+    opacity: 0;
+}
+
+.matchcenterDetail .nav.nav-tabs li a.active:after,
+.nav.nav-tabs.matchTabs li a.active:after {
+    opacity: 1;
+}
+
+.matchcenterDetail.leagueCenter .nav.nav-tabs {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fantasyHist .matchTabs {
+    margin-top: 20px;
+}
+
+.fantasyHist .matchTabs li {
+    flex: 1;
+    flex-basis: unset;
+}
+
+.matchTabs .matchtypeHead ul li,
+.matchTabs .matchtypeBody ul li {
+    flex: 1;
+    flex-basis: unset;
+}
+
+.fantasyHist .matchtypeHead {
+    margin-top: 20px;
+}
+
+.matchcenterDetail.leagueCenter .nav.nav-tabs li {
+    flex: 1;
+}
+
+.fantasyHist .listOfUser {
+    margin-top: 50px;
+}
+
+.fantasyHist .listOfUser ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 10%;
+}
+
+.fantasyHist .listOfUser ul span {
+    color: var(--primaryClr);
+    display: inline-block;
+    padding-right: 20px;
+}
+
+.fantasyHist .listOfUser ul li {
+    display: inline-block;
+    text-align: left;
+    padding-right: 40px;
+    margin-bottom: 20px;
+}
+
+.sortHead ul {
+    display: flex;
+    background: #34314c4a;
+}
+
+.sortHead ul li {
+    padding: 15px;
+    color: #18f360;
+    font-size: 15px;
+}
+
+.sortHead ul li:last-child {
+    flex-basis: 38%;
+}
+
+.customCheck {
+    position: relative;
+    padding-left: 25px;
+}
+
+.customCheck input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 21px;
+    z-index: 1;
+    opacity: 0;
+}
+
+.customCheck label {
+    margin: 0;
+    font-size: 14px;
+}
+
+.customCheck input+label::after,
+.customCheck input+label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1px;
+}
+
+.customCheck input+label::after {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #18f360;
+    border-radius: 3px;
+}
+
+.customCheck input:checked+label::before {
+    height: 10px;
+    width: 10px;
+    background: #18f360;
+    top: 5px;
+    border-radius: 1px;
+    left: 4px;
+}
+
+.matchSearch {
+    position: relative;
+    /* border-bottom: 1px solid #18f360; */
+    max-width: 312px;
+    text-align: left;
+    float: right;
+    width: 100%;
+    padding-right: 30px;
+}
+
+.matchSearch input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: #18f360;
+    padding: 0px 5px;
+}
+
+.matchSearch button {
+    background: transparent;
+    color: #fff;
+    border: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+    border-left: 1px solid #18f360;
+    cursor: pointer;
+}
+
+.matchtypeBody .alertBoxParents {
+    background: rgba(52, 49, 76, 0.8);
+    padding: 20px;
+}
+
+.matchtypeBody .alertBox {
+    /* background: #2e283f; */
+    color: rgba(255, 255, 255, .75);
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    margin: auto;
+    padding: 7px 13px;
+    border: 1px solid #ffffff36;
+    border-radius: 4px;
+}
+
+.matchtypeBody .alertBox p {
+    font-size: 14px;
+    /* margin-bottom: 10px; */
+    color: #2c9789;
+    font-weight: 400;
+}
+
+.alertBox .btnCreat {
+    padding: 5px 8px;
+    color: #2c9789;
+    text-transform: uppercase;
+    background: transparent;
+    border: 0;
+    margin: 6px 5px 0;
+    border: 1px solid #ffffff36;
+    font-size: 14px;
+}
+
+
+/* 
+.alertBox .btnCreat:hover{
+      background: #2c9789;
+    color: #1b173a;
+} */
+
+.matchtypeHead ul {
+    display: flex;
+    color: #fff;
+}
+
+.matchtypeHead ul li {
+    padding: 10px 15px;
+    flex: 0 0 14%;
+}
+
+.matchtypeBody ul {
+    display: flex;
+    color: #fff;
+    margin-bottom: 7px;
+    background: rgba(52, 49, 76, 0.8);
+    align-items: center;
+}
+
+.matchtypeBody ul li {
+    padding: 10px 15px;
+    flex: 0 0 14%;
+    line-height: 25px;
+}
+
+.matchtypeBody ul li .progress {
+    height: 3px;
+    background-color: #000000;
+}
+
+.matchtypeBody {
+    border-left: 1px solid #009688;
+}
+
+.matchtypeBody ul li .progress .progress-bar {
+    background: #009688;
+}
+
+.matchtypeBody ul li:last-child {
+    flex-basis: 16%;
+    text-align: center;
+}
+
+.matchtypeBody ul:last-child {
+    margin: 0;
+}
+
+.matchtypeBody ul.flex-child-3par li {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+}
+
+.matchtypeHead ul.flex-child-3par li {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+}
+
+.matchtypeBody ul li:last-child {
+    text-align: left;
+}
+
+.matchtypeBody ul li span,
+.sortHead ul li span {
+    background: #009688;
+    line-height: 22px;
+    padding: 0;
+    color: #fff;
+    font-weight: 400;
+    display: inline-block;
+    height: 21px;
+    width: 21px;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 12px;
+    margin: 0 3px;
+}
+
+.matchtypeBody ul li.cColor span,
+.matchtypeBody ul li span:nth-child(2) {
+    background: #0288D1;
+}
+
+.matchtypeBody ul li .btn.btn-submit {
+    border: 1px solid #ffffff36;
+    background: transparent;
+    padding: 7px 15px;
+    min-width: 85px;
+}
+
+.matchtypeBody ul li .btn.btn-submit:hover {
+    background: #18b8f3;
+}
+
+.matchtypeBody ul li i,
+.matchtypeBody ul li:nth-child(5) {
+    font-size: 15px;
+    color: #18f360;
+}
+
+.matchtypeBody ul li cite {
+    color: #38b8f3;
+    padding: 0 5px;
+}
+
+.matchCenterbox .btn.btnClone {
+    padding: 6px 10px;
+    color: #2c9789;
+    text-transform: uppercase;
+    background: #1b173a;
+    border: 0;
+    margin: 10px 5px 0;
+}
+
+.matchCenterbox .btn.btnClone:hover,
+.matchCenterbox .btn.btnClone.active {
+    background: #2c9789;
+    color: #1b173a;
+}
+
+.matchcenterDetail .creatTeamTop {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.form-control {
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    border-color: rgba(225, 225, 225, 0.5);
+    height: 40px;
+    font-size: 14px;
+}
+
+.custom_popup .form-control {
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+.payoutParBox {
+    position: relative;
+    display: inline-block;
+}
+
+.payoutParBox .payoutPar {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 400px;
+    display: none;
+    transform: translateX(-47%);
+    background: #212121;
+    color: #ccc;
+    border-radius: 4px;
+    padding: 7px 5px;
+    font-size: 12px;
+    z-index: 1;
+    transition: .6s ease-in-out;
+}
+
+.payoutParBox .payoutPar:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #212121;
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+.payoutParBox:hover .payoutPar {
+    display: block;
+}
+
+.payoutParBox .payoutPar b {
+    color: #18f360;
+    font-weight: 400;
+}
+
+.payoutPar h3 {
+    font-size: 16px;
+    padding: 3px 0;
+}
+
+.payoutPar ul {
+    display: block;
+    background: transparent;
+    max-height: 160px;
+    overflow: auto;
+}
+
+.payoutPar ul li {
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    padding: 2px;
+    margin: 0;
+    line-height: 19px;
+}
+
+.payoutPar ul li dd {
+    flex: 1;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.payoutPar p {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+
+/******matchCenterDetail-end******/
+
+
+/******profilepage-start******/
+
+.profilePage label {
+    color: #fff;
+    font-size: 15px;
+}
+
+.profilePage .form-control {
+    height: 43px !important;
+    font-size: 15px;
+}
+
+.profilePage .accountHead {
+    margin-bottom: 40px;
+}
+
+
+/******profilepage-end******/
+
+
+/***sitemap****/
+
+.sitemap_box {
+    background-color: #fff;
+    margin: 50px auto 0;
+    max-width: 607px;
+    text-align: center;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.comonBg.sitemapSec {
+    padding-bottom: 50px;
+}
+
+.sitemap_contain {
+    color: #666;
+    padding: 15px;
+    border-bottom: 1px solid;
+}
+
+.sitemap_contain h2 {
+    font-size: 22px;
+}
+
+.sitemap_contain {
+    color: #666;
+    padding-top: 15px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid;
+}
+
+.sitemap_box li {
+    display: block;
+}
+
+.sitemap_box ul li a {
+    display: block;
+    padding: 7px 20px;
+    color: #000;
+    border-bottom: 1px solid #ccc;
+}
+
+.sitemap_box ul li a:hover {
+    color: var(--primarySecClr);
+    border-bottom: 1px solid var(--primarySecClr);
+}
+
+
+/****sitemap-end****/
+
+
+/*****termand-condition-start******/
+
+.comnOpecity {
+    background: rgba(52, 49, 76, 0.4);
+    padding: 40px;
+    border-radius: 5px;
+}
+
+.comnOpecity p {
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    margin-top: 10px;
+    letter-spacing: 0.02em;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+.comnOpecity h4 {
+    color: #fff;
+    text-transform: uppercase;
+    border-left: 2px solid var(--primarySecClr);
+    padding-left: 5px;
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.comnOpecity blockquote {
+    color: #fff;
+    font-size: 12px;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.termContent {
+    max-height: 500px;
+}
+
+.privacypolicySec,
+.conditionSec,
+.legalitieSec {
+    padding-bottom: 50px;
+}
+
+
+/*****termand-condition-end******/
+
+
+/*****refer&earn-start******/
+
+.referRightBox {
+    background: rgba(52, 49, 76, 0.4);
+    padding: 40px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.referRightBox .nav.nav-tabs {
+    border: 0;
+}
+
+.referRightBox .tab-content {
+    padding: 25px 0 10px;
+}
+
+.listPar ul li {
+    display: inline-flex;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.listPar ul li a {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    font-size: 16px;
+    border: 2px solid #fff;
+    color: #fff;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.listPar ul li a:hover {
+    color: var(--primarySecClr);
+    border-radius: 10px;
+    transform: rotate(360deg);
+    border-color: var(--primarySecClr);
+}
+
+.referearnSec .primarHead p {
+    color: #fff;
+}
+
+.listPar p {
+    color: #fff;
+}
+
+.referRightBox .nav.nav-tabs .nav-item {
+    flex: 0 0 50%;
+}
+
+.referRightBox .nav.nav-tabs .nav-item .nav-link {
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    padding: 7px 10px;
+}
+
+.referRightBox .nav.nav-tabs .nav-item .nav-link.active,
+.referRightBox .nav.nav-tabs .nav-item .nav-link:hover {
+    color: #18f360;
+    border-bottom-color: #18f360;
+}
+
+.referRightBox .h1 {
+    color: var(--primaryClr);
+    font-size: 25px;
+}
+
+.referRightBox .h5 {
+    color: #fff;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.referRightBox .nav.nav-tabs {
+    border: 0;
+    margin-top: 25px;
+}
+
+.referearnSec {
+    padding-bottom: 60px;
+}
+
+
+/*****refer&earn-end******/
+
+
+/****payment-mode-start******/
+
+.paymentSec {
+    padding-bottom: 80px;
+}
+
+.paymentBox {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    margin: 0 auto;
+    color: #fff;
+}
+
+.paymentHead {
+    font-size: 18px;
+    padding: 15px 15px;
+    background: var(--primarySecClr);
+}
+
+.paymentBody {
+    background: #fff;
+    padding: 25px;
+}
+
+.paymentBody p {
+    color: #3d3c3c;
+    font-size: 14px;
+    margin: 15px 0;
+    line-height: 20px;
+}
+
+.customRadio {
+    position: relative;
+    width: 125px;
+    padding-left: 16px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.customRadio label {
+    margin: 0;
+}
+
+.customRadio label::after,
+.customRadio input:checked+label::before {
+    content: "";
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border: 1px solid var(--primarySecClr);
+    border-radius: 50%;
+    left: 0;
+    top: 16px;
+}
+
+.customRadio input:checked+label::before {
+    background: var(--primarySecClr);
+    height: 9px;
+    width: 9px;
+    left: 3px;
+    top: 19px;
+}
+
+.customRadio input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+}
+
+
+/****payment-mode-end******/
+
+
+/****about-us-start******/
+
+.aboutSec p {
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    margin-bottom: 15px;
+    letter-spacing: 0.02em;
+}
+
+.aboutSec blockquote {
+    color: #fff;
+    font-size: 14px;
+    padding-left: 15px;
+    border-left: 2px solid var(--primarySecClr);
+}
+
+.aboutSec h4 {
+    color: #fff;
+    padding-bottom: 15px;
+}
+
+.aboutImg {
+    margin-bottom: 15px;
+}
+
+.aboutSec .testimonialSec {
+    background: transparent;
+    padding: 70px 0 50px;
+    margin-top: 0;
+}
+
+.aboutSec .testimonItem p,
+.aboutSec .testimonItem h4 {
+    color: #665757;
+    padding: 0;
+}
+
+
+/****about-us-end******/
+
+
+/****faq-start*********/
+
+#accordion .card .fa-angle-down {
+    float: right;
+    position: relative;
+    top: 5px;
+}
+
+#accordion .card .card-header a:not(.collapsed) .rotate-icon {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.faqSec .card {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(225, 225, 225, 0.2);
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.faqSec .card a {
+    color: #fff;
+    font-size: 14px;
+    border-left: 2px solid var(--primarySecClr);
+    padding-left: 5px;
+    font-weight: normal;
+}
+
+.faqSec .card-header {
+    background-color: transparent;
+    border-bottom: 0;
+    position: relative;
+}
+
+.faqSec .card .card-body {
+    font-weight: 300;
+    font-size: 12px;
+}
+
+
+/****faq-end*********/
+
+
+/****contact-us-start*****/
+
+.contactBox {
+    max-width: 750px;
+    margin: 45px auto 0;
+    color: #fff;
+    position: relative;
+}
+
+.contactBox .col-sm-6 {
+    padding: 0 30px;
+}
+
+.contactBox::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: rgba(225, 225, 225, 0.4);
+    left: 50%;
+    top: 0;
+}
+
+.contactField .form-control {
+    color: #fff;
+    border: 0;
+    background: transparent;
+    border-bottom: 1px solid #fff;
+    padding-left: 0;
+    border-radius: 0;
+}
+
+.contectInformation {
+    padding-top: 40px;
+}
+
+.contectSec {
+    padding-bottom: 60px;
+}
+
+.contactField textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.contactField .form-control::-webkit-input-placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+.contactField .form-control:-moz-placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+.contactField .form-control::-moz-placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+.contactField .form-control:-ms-input-placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+.contectInformation li {
+    color: #fff;
+    line-height: 30px;
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 20px;
+}
+
+.contectInformation li i {
+    color: #0fb6ae;
+    position: absolute;
+    left: 0;
+    top: 8px;
+    font-size: 22px;
+}
+
+.contectSec p {
+    color: #fff;
+}
+
+.contectInformation li h4 {
+    margin-bottom: 5px;
+    font-size: 22px;
+}
+
+
+/****contact-us-end*****/
+
+
+/*****************************************************************************
+  ***************************footer start  ***************************
+******************************************************************************/
+
+.footerSec {
+    background: #000;
+    padding: 70px 0 0;
+    color: #c1c1c1;
+    font-size: 14px;
+}
+
+.footerSec p {
+    margin-top: 10px;
+    line-height: 20px;
+}
+
+.footRow {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footRow .footCol {
+    flex: 1;
+}
+
+.footerSec .quicLink ul li a {
+    color: #c1c1c1;
+    position: relative;
+    padding-left: 10px;
+}
+
+.footerSec .quicLink ul li a:after {
+    content: "__";
+    position: absolute;
+    left: -12px;
+    top: -5px;
+    z-index: 11;
+    letter-spacing: -2px;
+    opacity: 0;
+    color: var(--primarySecClr);
+    transition: all 0.4s ease-in-out 0.1s;
+}
+
+.footerSec .quicLink ul li a:hover:after {
+    opacity: 1;
+}
+
+.footerSec .quicLink ul li a:hover {
+    margin-left: 10px;
+    color: var(--primarySecClr);
+}
+
+.footerSec .quicLink ul li {
+    margin-bottom: 10px;
+}
+
+.footerSec .searchBox h3 {
+    font-size: 14px;
+    color: #fff;
+    line-height: 22px;
+    margin-bottom: 15px;
+}
+
+.footerSec .mediaIcon {
+    margin-top: 20px;
+}
+
+.footerSec .mediaIcon li {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.footerSec .mediaIcon li a {
+    display: inline-flex;
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    border: 2px solid #fff;
+}
+
+.footerSec .mediaIcon li a:hover {
+    color: var(--primarySecClr);
+    border-radius: 10px;
+    transform: rotate(360deg);
+    border-color: var(--primarySecClr);
+}
+
+.searchInner .input-group {
+    position: relative;
+}
+
+.searchInner .input-group input {
+    width: 100%;
+    height: 46px;
+    border-radius: 25px !important;
+    font-size: 14px;
+}
+
+.searchInner .input-group .btn {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    font-size: 13px;
+    z-index: 11;
+    border-radius: 20px;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 0;
+    background: var(--primarySecClr);
+}
+
+.footer_bottom {
+    font-size: 14px;
+    padding: 15px 0;
+    border-top: 1px solid rgba(203, 212, 221, 0.15);
+    margin-top: 40px;
+}
+
+
+/*****************************************************************************
+  ***************************footer end ***************************
+******************************************************************************/
+
+.footerSec.innerFooter {
+    padding: 0;
+}
+
+.footerSec.innerFooter .footer_bottom {
+    margin: 0;
+    line-height: 42px;
+}
+
+.footerSec.innerFooter .mediaIcon {
+    margin-top: 0;
+}
+
+.logoBx {
+    max-width: 200px;
+}
+
+.tbr_btn {
+    bottom: 5px;
+    display: none;
+    padding-top: 20px;
+    position: fixed;
+    right: 5px;
+    -webkit-transition: all 0.6s ease;
+    -moz-transition: all 0.6s ease;
+    transition: all 0.6s ease;
+    z-index: 99;
+}
+
+.tbr_btn>a {
+    background-color: var(--primaryClr);
+    border-radius: 50%;
+    box-shadow: 1px 6px 9px -5px #666;
+    color: rgb(255, 255, 255);
+    display: block;
+    font-size: 20px;
+    height: 50px;
+    line-height: 47px;
+    text-align: center;
+    width: 50px;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    /*background-color: rgba(0, 0, 0, 0.7);   */
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    text-align: center;
+}
+
+.small_popup .form-control {
+    height: 40px;
+    color: #222;
+    border-color: rgba(0, 0, 0, 0.3);
+    background: transparent;
+}
+
+.joinedUser_small_popup .form-control {
+    height: 40px;
+    color: #222;
+    border-color: rgba(0, 0, 0, 0.3);
+    background: transparent;
+}
+
+.teamLogo img {
+    width: 100%;
+    height: 100%;
+}
+
+.sortHead ul li {
+    padding: 15px 2px 15px 13px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.customCheck {
+    position: relative;
+    padding-left: 40px;
+}
+
+.customCheck input[type="radio"]+label::after {
+    border: 0;
+    background: #18f3605e;
+    height: 11px;
+    width: 28px;
+    top: 6px;
+    border-radius: 8px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.customCheck input[type="radio"]+label::before {
+    background: #18f3605e;
+    height: 19px !important;
+    width: 19px !important;
+    border-radius: 50% !important;
+    top: 2px;
+    left: -4px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.customCheck input[type="radio"]:checked+label::before {
+    left: 15px;
+    top: 2px;
+    background: #18f360;
+}
+
+.customCheck input[type="radio"]:checked+label::after {
+    background: #18f360;
+}
+
+.matchCenterbox .btn.btnClone {
+    padding: 6px 8px;
+    color: #2c9789;
+    text-transform: uppercase;
+    background: transparent;
+    border: 0;
+    margin: 10px 5px 0;
+    border: 1px solid #ffffff36;
+}
+
+.aboutSec .testimonialSec {
+    background: transparent;
+    padding: 70px 0 0px;
+    margin-top: 0;
+}
+
+.customReadOnlyField {
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: #fff !important;
+    border-color: rgba(225, 225, 225, 0.5) !important;
+}
+
+.loderBG {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 100%;
+    z-index: 9999999;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.loderBG img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 150px;
+}
+
+.withoutLogin .navbar-nav.rightNav {
+    /* width: 50%; */
+    width: 70%;
+    margin-top: -10px;
+}
+
+.withoutLogin .navbar-expand-lg .navbar-nav.mr-auto {
+    width: 100%;
+    justify-content: start;
+}
+
+.profile_upload_btn {
+    background: rgba(255, 0, 0, 0.6);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 5px 0;
+    /* transform: translate(-50%,-50%); */
+    width: 100%;
+    text-align: center;
+    /* border-radius: 3px; */
+}
+
+.profile_upload_btn input[type="file"] {
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+    left: 0;
+}
+
+#myProgress {
+    width: 100%;
+    background-color: grey;
+    height: 15px;
+    position: absolute;
+    top: 30px;
+    z-index: 9999999;
+    left: 0;
+    width: 100%;
+}
+
+#myBar {
+    width: 1%;
+    height: 15px;
+    background-color: green;
+}
+
+.accountImg .progress {
+    position: absolute;
+    z-index: 9999999;
+    top: 0;
+    width: 100%;
+    top: 33px;
+}
+
+.accountHolder a {
+    position: absolute;
+    top: -12px;
+    left: 94px;
+    left: 94px;
+    left: 94px;
+}
+
+.tab-content .mCustomScrollbar {
+    max-height: 500px;
+    /*min-height: 150px;*/
+}
+
+.tab-content .player_tab_table .mCustomScrollbar {
+    max-height: 370px;
+}
+
+.location.matchesAlert {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #fff;
+    padding: 10px;
+}
+
+#create_contest .modal-dialog {
+    /*max-width: 660px;*/
+    max-width: 1000px;
+}
+
+#scoringRulePopup .modal-dialog {
+    /*max-width: 660px;*/
+    max-width: 1000px;
+}
+
+#fantasyScorePopup .modal-dialog {
+    /*max-width: 660px;*/
+    max-width: 1000px;
+}
+
+.createTeamButton {
+    padding-bottom: 15px;
+}
+
+.createContestSetBtn {
+    position: absolute;
+    z-index: 999;
+    left: 69px;
+    top: 28px;
+}
+
+
+/*********ground**********/
+
+.playGround ul {
+    position: absolute;
+    top: 170px;
+    text-align: center;
+    left: 140px;
+    width: 33.33%;
+}
+
+.playGround ul.second_playerlist {
+    left: 33.33%;
+}
+
+.playGround ul.third_playerlist {
+    left: 66.66%;
+}
+
+.playGround ul p {
+    font-size: 13px;
+    color: #fff;
+}
+
+.playGround ul li div {
+    height: 60px;
+    width: 60px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    margin: 5px auto 5px;
+}
+
+.playGround ul li div img {
+    width: 100%;
+    height: 100%;
+}
+
+
+/*teamView start*/
+
+.previewBg .closeBtn {
+    position: relative;
+    left: -10px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    background: #2f2f2f;
+    border: 0;
+    z-index: 11;
+    float: right;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.previewBg .closeBtn span {
+    position: absolute;
+    right: 36px;
+    top: 9px;
+}
+
+.previewBg .closeBtn span:before,
+.previewBg .closeBtn span:after {
+    position: absolute;
+    left: 20px;
+    top: -3px;
+    content: ' ';
+    height: 20px;
+    width: 2px;
+    background-color: #fff;
+}
+
+.previewBg .closeBtn span:before {
+    transform: rotate(45deg);
+}
+
+.previewBg .closeBtn span:after {
+    transform: rotate(-45deg);
+}
+
+.previewBg {
+    /*background: url(../../assets/img/ground.png);*/
+    background: url(../../assets/img/newbg_img.png);
+    background-size: 100% 100%;
+    /*border: 4px solid #fff;*/
+    padding: 5px;
+    position: relative;
+    background-position: center;
+}
+
+.previewBg .teamName {
+    color: #fff;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.previewBg .teamPreviewRow {
+    /*border-bottom: 1px solid #b1b1b1;*/
+    /* padding: 10px 0; */
+    padding: 20px 0;
+}
+
+.previewBg .teamPreviewRow:last-child {
+    border-bottom: 0;
+}
+
+.previewBg .teamPreviewRow h2 {
+    font-size: 16px;
+    line-height: 25px;
+    color: #ffffff;
+    text-shadow: 0 0 5px #191919;
+    text-align: center;
+    margin: 0;
+}
+
+.previewBg ul {
+    display: block;
+    justify-content: space-evenly;
+    align-items: center;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.previewBg ul li {
+    display: inline-block;
+    text-align: center;
+    /* position: absolute; */
+    margin-top: 10px;
+    /* padding: 0 10px; */
+    padding: 0 4px;
+}
+
+.previewBg .playerName {
+    display: inline-block;
+    background: #ff7f00;
+    padding: 3px 10px 1px;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.previewBg ul li span {
+    display: block;
+    color: #fff;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.previewBg .captaine {
+    position: absolute;
+    /* right: 0; */
+    top: -6px;
+    background: #1c3f79;
+    height: 25px;
+    width: 25px;
+    line-height: 32px;
+    font-weight: 600;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    left: 50%;
+    align-items: center;
+    transform: translate(-50%, 0);
+    margin-left: 25px;
+}
+
+.previewBg .playerImg {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    backface-visibility: hidden;
+    margin: 0 auto 5px;
+}
+
+.previewBg .playerImg img {
+    width: 100%;
+}
+
+.previewBg .teamPar {
+    max-width: 85%;
+    margin: 0 auto;
+}
+
+.previewBg {
+    border: 0;
+    min-height: 450px;
+}
+
+.previewBg .teamPreviewRow {
+    position: relative;
+    /* display: inline-block; */
+    /* width: 32.8%; */
+    width: 100%;
+    text-align: center;
+}
+
+.groundSec .previewBg .teamPar {
+    /* max-width: 85%; */
+    max-width: 100%;
+}
+
+
+/*teaview end*/
+
+
+/*league center*/
+
+.profileHeader {
+    display: flex;
+    max-width: 600px;
+    margin: auto;
+    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileHeader .profileImg {
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.fantasyHist .matchtypeHead {
+    margin-top: 20px;
+}
+
+.matchtypeBody ul {
+    display: flex;
+    color: #fff;
+    margin-bottom: 7px;
+    background: #34314c4a;
+    align-items: center;
+}
+
+.fantasyHist .listOfUser {
+    margin-top: 50px;
+}
+
+.profileImg img {
+    height: 64px;
+    width: 64px;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: #fff;
+}
+
+.leagueCenterMatchImg {
+    width: 35px;
+    border-radius: 50%;
+    height: 35px;
+}
+
+.contestInviteIcons {
+    background: none !important;
+    position: relative;
+    left: -14px;
+    top: 15px;
+}
+
+.lineupTeams {
+    text-align: center;
+}
+
+.payoutPar ul {
+    display: block;
+    background: transparent;
+}
+
+.payoutPar ul li {
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    padding: 2px;
+    margin: 0;
+    line-height: 19px;
+    border-right: 0 !important;
+}
+
+#fantasyScorePopup .modal-body.clearfix.comon_body.ammount_popup {
+    max-height: 480px;
+    overflow: auto;
+    overflow-y: auto;
+}
+
+#fantasyScorePopup .modal-body.clearfix.custom_popup.ammount_popup {
+    padding: 0px;
+}
+
+.fixedFooterBar ul li .notOutBatsman {
+    margin-left: 20px;
+}
+
+.gradList ul li cite i {
+    padding: 0 4px;
+}
+
+
+/***********ground*****/
+
+.teamPreviewRow.teamThree ul li:nth-child(5) {
+    top: -320px;
+    left: 288px;
+}
+
+.teamPreviewRow.teamOne ul li.Batsman1 {
+    top: 98px;
+    right: 0;
+}
+
+.teamPreviewRow.teamOne ul li.Batsman2 {
+    top: 6px;
+    left: 68px;
+}
+
+.teamPreviewRow.teamOne ul li.Batsman3 {
+    top: 207px;
+    left: 92px;
+}
+
+.teamPreviewRow.teamOne ul li.Batsman4 {
+    top: 101px;
+    left: -10px;
+}
+
+.teamPreviewRow.teamOne ul li.Batsman5 {
+    top: 216px;
+    left: -13px;
+}
+
+.teamPreviewRow.teamTwo ul li:first-child {
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.teamPreviewRow.teamTwo ul li:nth-child(2) {
+    top: 41px;
+    right: -79px;
+}
+
+.teamPreviewRow.teamTwo ul li:nth-child(3) {
+    right: -47px;
+    top: 143px;
+}
+
+.teamPreviewRow.teamTwo ul li:nth-child(4) {
+    top: 124px;
+    right: -161px;
+}
+
+.teamPreviewRow.teamThree li:first-child {
+    top: 212px;
+    left: -161px;
+}
+
+.teamPreviewRow.teamThree li:nth-child(2) {
+    top: 262px;
+    left: -48px;
+}
+
+.teamPreviewRow.teamThree li:nth-child(3) {
+    top: 190px;
+    right: -33px;
+}
+
+.teamPreviewRow.teamThree ul li:nth-child(5) {
+    top: 214px;
+    left: 30px;
+}
+
+.teamPreviewRow.teamThree {
+    top: 15px;
+    text-align: center;
+}
+
+#selectCaptainViceCaptainModal .modal-dialog {
+    max-width: 290px;
+}
+
+#selectCaptainViceCaptainModal .custom_popup .ammount_popup {
+    padding: 15px;
+}
+
+.modal-dialog.custom_popup.small_popup {
+    max-width: 395px;
+}
+
+.modal-dialog.custom_popup.joinedUser_small_popup {
+    max-width: 245px;
+}
+
+.modal .close {
+    border: 0 !important;
+}
+
+.loader-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+    margin-left: -50px;
+    margin-top: -50px;
+}
+
+.loader-line-mask {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100px;
+    height: 100px;
+    margin-left: -50px;
+    margin-top: -50px;
+    overflow: hidden;
+    -webkit-transform-origin: 50px 50px;
+    -moz-transform-origin: 50px 50px;
+    -ms-transform-origin: 50px 50px;
+    -o-transform-origin: 50px 50px;
+    transform-origin: 50px 50px;
+    -webkit-mask-image: -webkit-linear-gradient(top, #000000, rgba(0, 0, 0, 0));
+    -webkit-animation: rotate 1.2s infinite linear;
+    -moz-animation: rotate 1.2s infinite linear;
+    -o-animation: rotate 1.2s infinite linear;
+    animation: rotate1 1.2s infinite linear;
+}
+
+.loader-line-mask .loader-line {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px #2b9688;
+}
+
+@keyframes rotate1 {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.svgbox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 999;
+    margin-top: -17px;
+    margin-left: -40px;
+    color: #2b9688;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.svgbox svg {
+    height: 20px;
+    width: 25px;
+}
+
+.loderBG svg path {
+    fill: #fff;
+}
+<<<<<<< HEAD
+.navbar-nav.rightNav li span{
+  font-family: 'arial';
+  font-size: 16px;
+=======
+
+.navbar-nav.rightNav li span {
+    font-family: 'arial';
+    font-size: 20px;
+>>>>>>> 92e24139844e3dcb453b54ad4195f7e42c074a2f
+}
+
+.transictionOption .tab-content .tab-pane {
+    /* overflow: hidden; */
+    height: auto;
+    min-height: 380px;
+}
+
+.mainContainer[ng-controller="pointSystemController"] .comonBg {
+    background-attachment: fixed;
+}
+
+.withoutLogin .navbar-nav.rightNav {
+    position: relative;
+}
+
+
+/* .withoutLogin .navbar-nav.rightNav li{
+  position: static;
+} */
+
+.paymentBody .btn.btn-submit {
+    min-width: 165px;
+    margin: 3px 0;
+}
+
+.customCheckbox label::after {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    border: 1px solid #229588;
+    border-radius: 3px;
+    left: 0;
+    top: 2px;
+}
+
+.customCheckbox {
+    position: relative;
+    display: inline-block;
+    padding-left: 25px;
+}
+
+.customCheckbox input[type=checkbox] {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+}
+
+.customCheckbox input[type=checkbox]:checked~label::before {
+    content: "";
+    position: absolute;
+    background: #229588;
+    height: 10px;
+    width: 10px;
+    left: 4px;
+    top: 6px;
+}
+
+.applyBox input {
+    width: 72%;
+    display: inline-block;
+    margin-right: 1%;
+    height: 38px !important;
+    vertical-align: top;
+}
+
+.promocodeList p {
+    font-weight: 400;
+    line-height: 18px;
+    font-size: 15px;
+}
+
+.promocodeList p a {
+    color: red;
+}
+
+.promocodeList {
+    margin-bottom: 12px;
+}
+
+.promocodeList p span {
+    width: 115px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.settingContent .nav.nav-tabs .nav-item {
+    margin-right: 5px;
+}
+
+.referRightBox .nav.nav-tabs .nav-item {
+    padding: 0 5px;
+}
+
+.comingMesage {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    background: silver;
+    padding: 10px 0 0;
+    z-index: 99;
+    font-size: 16px;
+    line-height: normal;
+}
+
+.container-fluid {
+    max-width: 1250px;
+}
+
+.creatTeamTop .matchCenterbox:hover {
+    box-shadow: none;
+}
+
+.creatTeamTop .matchCenterbox .btn.btnClone:hover {
+    background: #2c978926;
+    color: #fff;
+}
+
+.matchCenterBody p {
+    color: #8da5a3;
+}
+
+.matchCenterHeader ul li p,
+.matchCenterHeader li {
+    font-weight: 600;
+    color: #009688 !important;
+}
+
+.pointSystem select.form-control {
+    background: #000;
+    color: #fff;
+}
+
+.settingHead.comnnFour .btn.btnClone,
+.accountHead .btn.btnClone {
+    background: transparent;
+    border: 1px solid #ffffff36;
+    color: #fff;
+    font-size: 13px;
+}
+
+.settingHead.comnnFour .btn.btnClone:hover,
+.accountHead .btn.btnClone:hover {
+    background: #2b9688;
+    color: #fff;
+}
+
+.settingContent .primarHead h1 {
+    text-transform: uppercase;
+}
+
+.col-sm-12.createTeamButton>a {
+    color: #fff;
+}
+
+.creatTeamTop .matchCenterHeader {
+    padding-top: 0;
+}
+
+.matchtypeBody ul li i {
+    font-family: 'arial';
+}
+
+.mainContainer[ng-controller="createTeamController"] .comonBg {
+    padding-top: 90px;
+}
+
+.creatTeamTop .matchCenterBody p {
+    color: #fff;
+}
+
+.groundBtn .btn.btnCmn,
+.groundBtn .btn.btnCmn:nth-child(2) {
+    padding: 5px 10px;
+    color: #2c9789;
+    text-transform: uppercase;
+    background: transparent;
+    border: 0;
+    margin: 10px 5px 0;
+    border: 1px solid #ffffff36;
+    color: #fff;
+    font-size: 14px;
+}
+
+.groundBtn .btn.btnCmn:hover {
+    background: #2c978926;
+}
+
+.groundBtn {
+    text-align: center;
+    border-top: 3px solid #34304c;
+}
+
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+    display: none !important;
+}
+
+div#mySidenav {
+    max-width: 700px;
+}
+
+#mySidenav .previewBg {
+    margin-top: 8%;
+}
+
+div#playersInfoModal {
+    top: 54px !important;
+}
+
+table.table-fixed.userTeamPlayersTable p {
+    display: inline-block;
+    padding-right: 3px;
+}
+
+p.captaine {
+    height: 25px;
+    width: 25px;
+    background: #1c3f79;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 10px;
+    line-height: 25px;
+    padding: 0px;
+}
+
+.table_scroll table td a.btn.btn-submit {
+    width: auto;
+    height: auto;
+    padding: 7px 20px;
+    line-height: normal;
+    border-radius: 3px;
+}
+
+.matchCenterFooter.matchFeed .matchFeedList.text-left {
+    padding: 0 15px;
+}
+
+.matchcenterDetail {
+    min-height: 580px;
+}
+
+.headerFreeze {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.fixed_headers {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.transictionOption table th {
+    flex: 0 0 14%;
+    max-width: 14%;
+}
+
+.transictionOption tbody td {
+    flex: 0 0 14%;
+    max-width: 14%;
+    border-left: 0 !important;
+    border-top: 0 !important;
+    word-break: break-all;
+}
+
+.transictionOption tbody td:nth-child(5),
+.transictionOption tbody td:nth-child(6),
+.transictionOption table th:nth-child(5),
+.transictionOption table th:nth-child(6) {
+    max-width: 8%;
+    flex-basis: 8%;
+}
+
+.transictionOption tbody {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.transictionOption tr {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.input-file-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.onlyMobileMenu {
+    display: none;
+}
+
+.headerBottom .navbar-collapse {
+    flex-direction: row-reverse;
+}
+
+.payoutPar.text-center ul li:nth-child(5) {
+    color: #ccc;
+}
+
+.footer_bottom p {
+    font-family: 'Play', sans-serif;
+}
+
+.accountDrop span {
+    font-size: 14px !important;
+    max-width: 66px !important;
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: inherit;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.groundSec .previewBg {
+    margin-top: 40px;
+    /* width: 85%; */
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    min-height: 550px;
+}
+
+.transictionOption tbody td[colspan="8"] {
+    max-width: 100%;
+    flex-basis: 100%;
+    text-align: center;
+}
+
+.transictionOption .mCustomScrollBox {
+    min-width: 100%;
+}
+
+.transictionOption .mCSB_scrollTools.mCSB_2_scrollbar,
+.transictionOption .mCSB_scrollTools_vertical {
+    right: -6px;
+}
+
+.transictionOption .mCSB_inside>.mCSB_container {
+    margin-right: 2px;
+}
+
+.customCheckbox input[type="radio"]+label::after {
+    border-radius: 50%;
+}
+
+.customCheckbox input[type="radio"] {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+}
+
+.comon_body .customCheckbox {
+    margin-right: 15px;
+}
+
+.customCheckbox input[type="radio"]:checked+label::after {
+    background: #009688;
+}
+
+.sortHead .matchtypeHead {
+    border-bottom: 1px solid #777;
+    margin-bottom: 7px;
+}
+
+.teamPreviewRow.wicketkeeperPosition,
+.teamPreviewRow.batsmanPosition,
+.teamPreviewRow.bowlerPosition,
+.teamPreviewRow.allrounderPosition {
+    height: 120px !important;
+    /* position: fixed !important; */
+    left: 0;
+    right: 0;
+    top: 0;
+    min-width: 70%;
+    margin: 0 auto;
+}
+
+.teamPreviewRow.wicketkeeperPosition span,
+.teamPreviewRow.batsmanPosition span,
+.teamPreviewRow.bowlerPosition span,
+.teamPreviewRow.allrounderPosition span {
+    font-weight: 500;
+    color: #ffffff9c;
+    font-family: "Orena";
+    font-size: 11px;
+    letter-spacing: 2px;
+}
