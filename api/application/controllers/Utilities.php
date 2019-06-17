@@ -672,7 +672,7 @@ class Utilities extends API_Controller {
         if (!empty($Contests['Data']['Records'])) {
             foreach ($Contests['Data']['Records'] as $Rows) {
                 $Seconds = strtotime($Rows['MatchStartDateTimeUTC']) - strtotime($UtcDateTime);
-                $Hours = $Seconds / 60 / 60;
+                $hours = $Seconds / 60 / 60;
 
                 $dummyJoinedContest = 0;
                 $dummyJoinedContests = $this->Contest_model->getTotalDummyJoinedContest($Rows['ContestID']);
