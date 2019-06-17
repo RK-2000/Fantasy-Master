@@ -7,12 +7,8 @@ class Utilities extends API_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('Utility_model');
-        $this->load->model('Post_model');
         $this->load->model('Sports_model');
         $this->load->model('Contest_model');
-        $this->load->model('Users_model');
-        $this->load->model('AuctionDrafts_model');
-        $this->load->model('PreContest_model');
     }
 
     /*
@@ -90,7 +86,7 @@ class Utilities extends API_Controller {
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-
+        $this->load->model('Post_model');
         $Posts = $this->Post_model->getPosts('
             P.PostGUID,
             P.PostContent,
@@ -118,6 +114,7 @@ class Utilities extends API_Controller {
      */
 
     public function createPreContest_get() {
+        $this->load->model('PreContest_model');
         $this->PreContest_model->createPreContest();
     }
 
@@ -296,6 +293,7 @@ class Utilities extends API_Controller {
 
     public function auctionLiveAddMinuteInEveryHours_get() {
         $CronID = $this->Utility_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
+        $this->load->model('AuctionDrafts_model');
         $this->AuctionDrafts_model->auctionLiveAddMinuteInEveryHours($CronID);
         $this->Utility_model->updateCronLogs($CronID);
     }
