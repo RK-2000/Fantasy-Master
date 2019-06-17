@@ -191,8 +191,8 @@ switch (ENVIRONMENT)
 	case 'testing':
 	
 	/*Paths*/
-	define('SITE_HOST', 'http://192.168.1.251/');
-	define('ROOT_FOLDER', '527-fsl11/');
+	define('SITE_HOST', 'http://dev.fantasy96.com/');
+	define('ROOT_FOLDER', '');
 
 	/*SMTP Settings*/
 	define('SMTP_PROTOCOL', 'smtp');

@@ -101,14 +101,13 @@ switch (ENVIRONMENT)
 	/*Paths*/
 	define('SITE_HOST', 'http://localhost');
 	define('ROOT_FOLDER', '/527-fsl11/admin');
-	//define('API_URL', "http://192.168.1.211/BaseProject_old/api/");
 	 define('API_URL', "http://localhost/527-fsl11/api/");
 	break;
 	case 'testing':
 	/*Paths*/
-	define('SITE_HOST', 'http://192.168.1.251');
-	define('ROOT_FOLDER', '/527-fsl11/admin');
-	define('API_URL', SITE_HOST."/527-fsl11/api/");
+	define('SITE_HOST', 'http://dev.fantasy96.com');
+	define('ROOT_FOLDER', '/admin');
+	define('API_URL', SITE_HOST."/api/");
 	break;
 	case 'demo':
 	/*Paths*/

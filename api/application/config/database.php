@@ -79,7 +79,7 @@ $db['default'] = array(
     'hostname' => '',
     'username' => '',
     'password' => '',
-    'database' => '527-fsl11',
+    'database' => 'fantasy_master',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
@@ -97,19 +97,14 @@ $db['default'] = array(
 );
 switch (ENVIRONMENT) {
     case 'local':
-
-        /* $db['default']['hostname'] = 'localhost';
-          $db['default']['username'] = 'root';
-          $db['default']['password'] = 'root'; */
-
         $db['default']['hostname'] = '192.168.1.251';
         $db['default']['username'] = 'mwdemoserver';
         $db['default']['password'] = 'z3vG?adJM_nQ@$4DMFhvUY!eFg^@4u';
         break;
     case 'testing':
-        $db['default']['hostname'] = '192.168.1.251';
-        $db['default']['username'] = 'mwdemoserver';
-        $db['default']['password'] = 'z3vG?adJM_nQ@$4DMFhvUY!eFg^@4u';
+        $db['default']['hostname'] = 'localhost';
+        $db['default']['username'] = 'root';
+        $db['default']['password'] = 'rPMCJDJ+fsF3NyX!5peG?+?GF';
         break;
     case 'demo':
         $db['default']['hostname'] = '192.168.1.251';

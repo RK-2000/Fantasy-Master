@@ -32,13 +32,6 @@ const VERSION = 4.3;
         <link href="assets/css/draftcustom.css?version=<?= VERSION ?>" rel="stylesheet">
         <link rel="stylesheet" href="index_file/custom.css?version=<?= VERSION ?>">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'UA-138966359-1');
-        </script>
     </head>
     <body ng-controller="HomeController" ng-init="getMatches()" ng-cloak>
    

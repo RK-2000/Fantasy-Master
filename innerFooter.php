@@ -161,9 +161,10 @@
         $base_url = 'http://localhost/527-fsl11/';
         $api_url = 'http://localhost/527-fsl11/api/';
         break;
-        case '192.168.1.251':
-        $base_url = 'http://192.168.1.251/527-fsl11/';
-        $api_url = 'http://192.168.1.251/527-fsl11/api/';
+        case '178.128.60.157':
+        case 'dev.fantasy96.com':
+        $base_url = 'http://dev.fantasy96.com/';
+        $api_url = 'http://dev.fantasy96.com/api/';
         break;
         case 'fsl11.com':
         $base_url = 'https://fsl11.com/';
@@ -189,7 +190,7 @@
         brand_name: 'FSL11'
     });
     app.config(function(socialProvider){
-        socialProvider.setGoogleKey("911285713331-5epvisg4tpjoa41bopkfs1aip1gpjoaf.apps.googleusercontent.com");
+        socialProvider.setGoogleKey("597256090889-rmtpdn95747lqh1iufuc2n6210s7bf2j.apps.googleusercontent.com");
         socialProvider.setFbKey({appId: "2261225134126697", apiVersion: "v2.11"});
     });
 </script>
