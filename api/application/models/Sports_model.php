@@ -1912,17 +1912,16 @@ class Sports_model extends CI_Model {
         }
 
         /* Get Vice Captain Points */
-        $ViceCaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
+        $ViceCaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
 
         /* Get Captain Points */
-        $CaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
+        $CaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
 
         /* Match Types */
         $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
 
         foreach ($LiveMatcheContest->result_array() as $Value) {
-            $ContestID = $Value['ContestID'];
-            $Contests = $this->db->query('SELECT M.MatchTypeID,M.MatchID,JC.ContestID,JC.UserID,JC.UserTeamID FROM tbl_entity E, sports_matches M,sports_contest C WHERE E.EntityID = JC.ContestID AND JC.MatchID = M.MatchID AND E.StatusID = 2 AND JC.ContestID = '.$ContestID.' ORDER BY M.MatchStartDateTime ASC');
+            $Contests = $this->db->query('SELECT M.MatchTypeID,M.MatchID,JC.ContestID,JC.UserID,JC.UserTeamID FROM tbl_entity E, sports_matches M,sports_contest C WHERE E.EntityID = JC.ContestID AND JC.MatchID = M.MatchID AND E.StatusID = 2 AND JC.ContestID = '.$Value['ContestID'].' ORDER BY M.MatchStartDateTime ASC');
             if ($Contests->num_rows() == 0) {
                 continue;
             }
@@ -1957,7 +1956,7 @@ class Sports_model extends CI_Model {
                 $this->db->where('UserTeamID', $ContestValue['UserTeamID']);
                 $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
             }
-            $this->updateRankByContest($ContestID);
+            $this->updateRankByContest($Value['ContestID']);
         }
     }
 
@@ -1976,8 +1975,7 @@ class Sports_model extends CI_Model {
             $results = $query->result_array();
             if (!empty($results)) {
                 foreach ($results as $rows) {
-                    $this->db->where('ContestID', $rows['ContestID']);
-                    $this->db->where('UserTeamID', $rows['UserTeamID']);
+                    $this->db->where(array('ContestID' => $rows['ContestID'],'UserTeamID' => $rows['UserTeamID']));
                     $this->db->limit(1);
                     $this->db->update('sports_contest_join', array('UserRank' => $rows['UserRank']));
                 }
@@ -2079,110 +2077,110 @@ class Sports_model extends CI_Model {
       Description: To set contest winners
      */
 
-    // function setContestWinners($CronID) {
+    function setContestWinners_OLD($CronID) {
 
-    //     ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 300);
 
 
-    //     $Contests = $this->Contest_model->getContests('WinningAmount,NoOfWinners,ContestID,EntryFee,TotalJoined,ContestSize,IsConfirm,SeriesName,ContestName,MatchStartDateTime,MatchNo,TeamNameLocal,TeamNameVisitor,CustomizeWinning', array('StatusID' => 5, 'IsWinningDistributed' => 'No', "LeagueType" => "Dfs"), true, 0);
-    //     if (isset($Contests['Data']['Records'])) {
+        $Contests = $this->Contest_model->getContests('WinningAmount,NoOfWinners,ContestID,EntryFee,TotalJoined,ContestSize,IsConfirm,SeriesName,ContestName,MatchStartDateTime,MatchNo,TeamNameLocal,TeamNameVisitor,CustomizeWinning', array('StatusID' => 5, 'IsWinningDistributed' => 'No', "LeagueType" => "Dfs"), true, 0);
+        if (isset($Contests['Data']['Records'])) {
 
-    //         $this->db->where('CronID', $CronID);
-    //         $this->db->limit(1);
-    //         $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'Contests' => $Contests), JSON_UNESCAPED_UNICODE)));
+            $this->db->where('CronID', $CronID);
+            $this->db->limit(1);
+            $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'Contests' => $Contests), JSON_UNESCAPED_UNICODE)));
 
-    //         foreach ($Contests['Data']['Records'] as $Value) {
+            foreach ($Contests['Data']['Records'] as $Value) {
 
-    //             $JoinedContestsUsers = $this->Contest_model->getJoinedContestsUsers('UserRank,UserTeamID,TotalPoints,UserRank,UserID,FirstName,Email', array('ContestID' => $Value['ContestID'], 'OrderBy' => 'JC.UserRank', 'Sequence' => 'DESC', 'PointFilter' => 'TotalPoints'), true, 0);
-    //             if (!$JoinedContestsUsers)
-    //                 continue;
+                $JoinedContestsUsers = $this->Contest_model->getJoinedContestsUsers('UserRank,UserTeamID,TotalPoints,UserRank,UserID,FirstName,Email', array('ContestID' => $Value['ContestID'], 'OrderBy' => 'JC.UserRank', 'Sequence' => 'DESC', 'PointFilter' => 'TotalPoints'), true, 0);
+                if (!$JoinedContestsUsers)
+                    continue;
 
-    //             $AllUsersRank = array_column($JoinedContestsUsers['Data']['Records'], 'UserRank');
-    //             $AllRankWinners = array_count_values($AllUsersRank);
-    //             $userWinnersData = $OptionWinner = array();
-    //             $CustomizeWinning = $Value['CustomizeWinning'];
-    //             if (empty($CustomizeWinning)) {
-    //                 $CustomizeWinning[] = array(
-    //                     'From' => 1,
-    //                     'To' => $Value['NoOfWinners'],
-    //                     'Percent' => 100,
-    //                     'WinningAmount' => $Value['WinningAmount']
-    //                 );
-    //             }
-    //             /** calculate amount according to rank or contest winning configuration */
-    //             foreach ($AllRankWinners as $Rank => $WinnerValue) {
-    //                 $Flag = $TotalAmount = $AmountPerUser = 0;
-    //                 for ($J = 0; $J < count($CustomizeWinning); $J++) {
-    //                     $FromWinner = $CustomizeWinning[$J]['From'];
-    //                     $ToWinner = $CustomizeWinning[$J]['To'];
-    //                     if ($Rank >= $FromWinner && $Rank <= $ToWinner) {
-    //                         $TotalAmount = $CustomizeWinning[$J]['WinningAmount'];
-    //                         if ($WinnerValue > 1) {
-    //                             $L = 0;
-    //                             for ($k = 1; $k < $WinnerValue; $k++) {
-    //                                 if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
-    //                                     if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
-    //                                         $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
-    //                                         $Flag = 1;
-    //                                     } else {
-    //                                         $L = $L + 1;
-    //                                         if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
-    //                                             if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
-    //                                                 $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
-    //                                                 $Flag = 1;
-    //                                             }
-    //                                         }
-    //                                     }
-    //                                 }
-    //                                 if ($Flag == 0) {
-    //                                     if ($Rank + $k >= $CustomizeWinning[$J]['From'] && $Rank + $k <= $CustomizeWinning[$J]['To']) {
-    //                                         $TotalAmount += $CustomizeWinning[$J]['WinningAmount'];
-    //                                     }
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //                 $AmountPerUser = $TotalAmount / $WinnerValue;
-    //                 $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers['Data']['Records'], $Rank, $AmountPerUser);
-    //             }
-    //             foreach ($userWinnersData as $WinnerArray) {
-    //                 foreach ($WinnerArray as $WinnerRow) {
-    //                     $OptionWinner[] = $WinnerRow;
-    //                 }
-    //             }
+                $AllUsersRank = array_column($JoinedContestsUsers['Data']['Records'], 'UserRank');
+                $AllRankWinners = array_count_values($AllUsersRank);
+                $userWinnersData = $OptionWinner = array();
+                $CustomizeWinning = $Value['CustomizeWinning'];
+                if (empty($CustomizeWinning)) {
+                    $CustomizeWinning[] = array(
+                        'From' => 1,
+                        'To' => $Value['NoOfWinners'],
+                        'Percent' => 100,
+                        'WinningAmount' => $Value['WinningAmount']
+                    );
+                }
+                /** calculate amount according to rank or contest winning configuration */
+                foreach ($AllRankWinners as $Rank => $WinnerValue) {
+                    $Flag = $TotalAmount = $AmountPerUser = 0;
+                    for ($J = 0; $J < count($CustomizeWinning); $J++) {
+                        $FromWinner = $CustomizeWinning[$J]['From'];
+                        $ToWinner = $CustomizeWinning[$J]['To'];
+                        if ($Rank >= $FromWinner && $Rank <= $ToWinner) {
+                            $TotalAmount = $CustomizeWinning[$J]['WinningAmount'];
+                            if ($WinnerValue > 1) {
+                                $L = 0;
+                                for ($k = 1; $k < $WinnerValue; $k++) {
+                                    if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
+                                        if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
+                                            $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
+                                            $Flag = 1;
+                                        } else {
+                                            $L = $L + 1;
+                                            if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
+                                                if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
+                                                    $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
+                                                    $Flag = 1;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if ($Flag == 0) {
+                                        if ($Rank + $k >= $CustomizeWinning[$J]['From'] && $Rank + $k <= $CustomizeWinning[$J]['To']) {
+                                            $TotalAmount += $CustomizeWinning[$J]['WinningAmount'];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $AmountPerUser = $TotalAmount / $WinnerValue;
+                    $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers['Data']['Records'], $Rank, $AmountPerUser);
+                }
+                foreach ($userWinnersData as $WinnerArray) {
+                    foreach ($WinnerArray as $WinnerRow) {
+                        $OptionWinner[] = $WinnerRow;
+                    }
+                }
 
-    //             if (!empty($OptionWinner)) {
-    //                 foreach ($OptionWinner as $WinnerValue) {
+                if (!empty($OptionWinner)) {
+                    foreach ($OptionWinner as $WinnerValue) {
 
-    //                     $this->db->trans_start();
+                        $this->db->trans_start();
 
-    //                     /** join contest user winning amount update * */
-    //                     $this->db->where('UserID', $WinnerValue['UserID']);
-    //                     $this->db->where('ContestID', $Value['ContestID']);
-    //                     $this->db->where('UserTeamID', $WinnerValue['UserTeamID']);
-    //                     $this->db->limit(1);
-    //                     $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
+                        /** join contest user winning amount update * */
+                        $this->db->where('UserID', $WinnerValue['UserID']);
+                        $this->db->where('ContestID', $Value['ContestID']);
+                        $this->db->where('UserTeamID', $WinnerValue['UserTeamID']);
+                        $this->db->limit(1);
+                        $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
 
-    //                     $this->db->trans_complete();
-    //                     if ($this->db->trans_status() === false) {
-    //                         return false;
-    //                     }
-    //                 }
-    //             }
+                        $this->db->trans_complete();
+                        if ($this->db->trans_status() === false) {
+                            return false;
+                        }
+                    }
+                }
 
-    //             /* update contest winner amount distribute flag set YES */
-    //             $this->db->where('ContestID', $Value['ContestID']);
-    //             $this->db->limit(1);
-    //             $this->db->update('sports_contest', array('IsWinningDistributed' => 'Yes'));
-    //         }
-    //     } else {
-    //         $this->db->where('CronID', $CronID);
-    //         $this->db->limit(1);
-    //         $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
-    //         exit;
-    //     }
-    // }
+                /* update contest winner amount distribute flag set YES */
+                $this->db->where('ContestID', $Value['ContestID']);
+                $this->db->limit(1);
+                $this->db->update('sports_contest', array('IsWinningDistributed' => 'Yes'));
+            }
+        } else {
+            $this->db->where('CronID', $CronID);
+            $this->db->limit(1);
+            $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
+            exit;
+        }
+    }
 
     function setContestWinners($CronID) {
 
@@ -2246,9 +2244,7 @@ class Sports_model extends CI_Model {
                         $this->db->trans_start();
 
                         /* Update Winning Amount */
-                        $this->db->where('UserID', $WinnerValue['UserID']);
-                        $this->db->where('ContestID', $Value['ContestID']);
-                        $this->db->where('UserTeamID', $WinnerValue['UserTeamID']);
+                        $this->db->where(array('UserID'=> $WinnerValue['UserID'],'ContestID'=> $Value['ContestID'],'UserTeamID'=> $WinnerValue['UserTeamID']));
                         $this->db->limit(1);
                         $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
 
