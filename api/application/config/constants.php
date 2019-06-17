@@ -117,11 +117,16 @@ define('SPORTS_API_ACCESS_KEY_ENTITY', '***');
 define('SPORTS_API_SECRET_KEY_ENTITY', '***');
 
 /* Cricket API Sports API Details */
+// define('SPORTS_API_URL_CRICKETAPI', 'https://rest.cricketapi.com');
+// define('SPORTS_API_ACCESS_KEY_CRICKETAPI', '18524df84c1b4270fc4de839577c7361');
+// define('SPORTS_API_SECRET_KEY_CRICKETAPI', '724cb1cce4e8f1cde9c2b1c69c0e64b0');
+// define('SPORTS_API_APP_ID_CRICKETAPI', 'MWB');
+// define('SPORTS_API_DEVICE_ID_CRICKETAPI', 'FSL11');
 define('SPORTS_API_URL_CRICKETAPI', 'https://rest.cricketapi.com');
-define('SPORTS_API_ACCESS_KEY_CRICKETAPI', '18524df84c1b4270fc4de839577c7361');
-define('SPORTS_API_SECRET_KEY_CRICKETAPI', '724cb1cce4e8f1cde9c2b1c69c0e64b0');
-define('SPORTS_API_APP_ID_CRICKETAPI', 'MWB');
-define('SPORTS_API_DEVICE_ID_CRICKETAPI', 'FSL11');
+define('SPORTS_API_ACCESS_KEY_CRICKETAPI', '2e1ea489eb700576032477ba907373f5');
+define('SPORTS_API_SECRET_KEY_CRICKETAPI', 'f3c32e9d76cab75c10346b5598ca1426');
+define('SPORTS_API_APP_ID_CRICKETAPI', 'MWB.SPORTS');
+define('SPORTS_API_DEVICE_ID_CRICKETAPI', 'MWB');
 
 /* PayUMoney Details */
 define('PAYUMONEY_MERCHANT_KEY', '***');
@@ -140,7 +145,6 @@ define('SENDINBLUE_SMS_API_KEY', 'xkeysib-******-72qcrDmbQ0HpGExS');
 
 
 /* MSG91 SMS API Details */
-// define('MSG91_AUTH_KEY', '273511AR202sqgYF5cbdd3eb');
 define('MSG91_AUTH_KEY', '273511AObV1jwyud5cc067fd');
 define('MSG91_SENDER_ID', 'MFSL11');
 define('MSG91_FROM_EMAIL', 'info@fsl11.com');
