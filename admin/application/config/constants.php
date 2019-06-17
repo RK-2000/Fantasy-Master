@@ -100,8 +100,8 @@ switch (ENVIRONMENT)
 	case 'local':
 	/*Paths*/
 	define('SITE_HOST', 'http://localhost');
-	define('ROOT_FOLDER', '/527-fsl11/admin');
-	 define('API_URL', "http://localhost/527-fsl11/api/");
+	define('ROOT_FOLDER', '/fantasy-master/admin');
+	 define('API_URL', "http://localhost/fantasy-master/api/");
 	break;
 	case 'testing':
 	/*Paths*/

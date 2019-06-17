@@ -151,7 +151,7 @@ switch (ENVIRONMENT)
 	case 'local':
 	/*Paths*/
 	define('SITE_HOST', 'http://localhost/');
-	define('ROOT_FOLDER', '527-fsl11/');
+	define('ROOT_FOLDER', 'fantasy-master/');
 
 	/*SMTP Settings*/
 	define('SMTP_PROTOCOL', 'smtp');

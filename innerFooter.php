@@ -158,8 +158,8 @@
     <?php
         switch ($_SERVER['SERVER_NAME']) {
         case 'localhost':
-        $base_url = 'http://localhost/527-fsl11/';
-        $api_url = 'http://localhost/527-fsl11/api/';
+        $base_url = 'http://localhost/fantasy-master/';
+        $api_url = 'http://localhost/fantasy-master/api/';
         break;
         case '178.128.60.157':
         case 'dev.fantasy96.com':

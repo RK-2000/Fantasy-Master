@@ -211,17 +211,41 @@ class Sports_model extends CI_Model {
             }
         }
         $this->db->select('M.MatchGUID,TL.TeamName AS TeamNameLocal,TV.TeamName AS TeamNameVisitor,TL.TeamNameShort AS TeamNameShortLocal,TV.TeamNameShort AS TeamNameShortVisitor');
+        // if (!empty($Field))
+        //     $this->db->select($Field, FALSE);
+        // $this->db->from('tbl_entity E, sports_series S, sports_matches M, sports_teams TL, sports_teams TV, sports_set_match_types MT');
+        // $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
+        // $this->db->where("M.MatchID", "E.EntityID", FALSE);
+        // $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
+        // $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
+        // $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
+        // if (!empty($Where['Keyword'])) {
+        //     $this->db->group_start();
+        //     $this->db->like("S.SeriesName", $Where['Keyword']);
+        //     $this->db->or_like("M.MatchNo", $Where['Keyword']);
+        //     $this->db->or_like("M.MatchLocation", $Where['Keyword']);
+        //     $this->db->or_like("TL.TeamName", $Where['Keyword']);
+        //     $this->db->or_like("TV.TeamName", $Where['Keyword']);
+        //     $this->db->or_like("TL.TeamNameShort", $Where['Keyword']);
+        //     $this->db->or_like("TV.TeamNameShort", $Where['Keyword']);
+        //     $this->db->group_end();
+        // }
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_series S, sports_matches M, sports_teams TL, sports_teams TV, sports_set_match_types MT');
-        $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
+            $this->db->from('tbl_entity E, sports_matches M, sports_teams TL, sports_teams TV');
+        if (array_keys_exist($Params, array('SeriesID','SeriesGUID','SeriesIDLive','SeriesName','SeriesStartDate','SeriesEndDate'))) {
+            $this->db->from('sports_series S');
+            $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
+        }
+        if (array_keys_exist($Params, array('MatchType'))) {
+            $this->db->from('sports_set_match_types MT');
+            $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
+        }
         $this->db->where("M.MatchID", "E.EntityID", FALSE);
-        $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
         $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
         $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
         if (!empty($Where['Keyword'])) {
             $this->db->group_start();
-            $this->db->like("S.SeriesName", $Where['Keyword']);
             $this->db->or_like("M.MatchNo", $Where['Keyword']);
             $this->db->or_like("M.MatchLocation", $Where['Keyword']);
             $this->db->or_like("TL.TeamName", $Where['Keyword']);
@@ -284,11 +308,9 @@ class Sports_model extends CI_Model {
             $this->db->having("LastUpdateDiff", 0);
             $this->db->or_having("LastUpdateDiff >=", 86400); // 1 Day
         }
-        /* if (!empty($Where['existingContests'])) {
-          $StatusID = $Where['StatusID'];
-          print_r($StatusID);
-          $this->db->where('EXISTS (select MatchID from sports_contest where MatchID = M.MatchID AND E.StatusID IN(2,10)');
-          } */
+        if (!empty($Where['ExistingContests']) && !empty($Where['StatusID'])) {
+            $this->db->where('EXISTS (select MatchID from sports_contest where MatchID = M.MatchID AND E.StatusID IN (' . $Where['StatusID'] . '))');
+        }
 
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
@@ -315,14 +337,14 @@ class Sports_model extends CI_Model {
         }
         // $this->db->cache_on(); //Turn caching on
         $Query = $this->db->get();
-        // echo $this->db->last_query();exit;
-        // if ($Query->num_rows() > 0) {
         if ($multiRecords) {
             if ($Query->num_rows() > 0) {
                 $Records = array();
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
-                    $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                    if(in_array('MatchScoreDetails',$Params)){
+                        $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                    }
                 }
                 $Return['Data']['Records'] = $Records;
             }
@@ -337,16 +359,16 @@ class Sports_model extends CI_Model {
                     )as CompletedJoinedContest'
                         )->row();
             }
-            // echo $this->db->last_query(); die();
             return $Return;
         } else {
             if ($Query->num_rows() > 0) {
                 $Record = $Query->row_array();
-                $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                if(in_array('MatchScoreDetails',$Params)){
+                    $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                }
                 return $Record;
             }
         }
-        // }
         return FALSE;
     }
 
@@ -601,9 +623,7 @@ class Sports_model extends CI_Model {
             $this->db->limit(1);
         }
 
-        // $this->db->cache_on(); //Turn caching on
         $Query = $this->db->get();
-        // echo $this->db->last_query();exit;
         $MatchStatus = 0;
         if (!empty($Where['MatchID'])) {
             /* Get Match Status */
@@ -611,138 +631,98 @@ class Sports_model extends CI_Model {
             $MatchStatus = ($MatchQuery->num_rows() > 0) ? $MatchQuery->row()->StatusID : 0;
         }
         if ($Query->num_rows() > 0) {
+            if(in_array('TopPlayer',$Params)){
+                $BestPlayers = $this->getMatchBestPlayers(array('MatchID' => $Where['MatchID']));
+                if(!empty($BestPlayers)){
+                    $BestXIPlayers = array_column($BestPlayers['Data']['Records'], 'PlayerGUID');               
+                }
+            }
             if ($multiRecords) {
                 $Records = array();
                 foreach ($Query->result_array() as $key => $Record) {
-
                     $Records[] = $Record;
-                    $Records[$key]['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
-                    $Records[$key]['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
-                    $Records[$key]['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
-                    $Records[$key]['PlayerSalary'] = $Record['PlayerSalary'];
-                    $TotalPointsRound = ($MatchStatus == 2 || $MatchStatus == 5) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
-                    $Records[$key]['PointCredits'] = $TotalPointsRound;
-                    if (in_array('MyTeamPlayer', $Params)) {
+                    if(in_array('TopPlayer',$Params)){
+                        $Records[$key]['TopPlayer'] = (in_array($Record['PlayerGUID'],$BestXIPlayers)) ? 'Yes' : 'No';
+                    }
+                    if(in_array('PlayerBattingStats',$Params)){
+                        $Records[$key]['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
+                    }
+                    if(in_array('PlayerBowlingStats',$Params)){
+                        $Records[$key]['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
+                    }
+                    if(in_array('PointsData',$Params)){
+                        $Records[$key]['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
+                    }
+                    if(in_array('PointCredits',$Params)){
+                        $Records[$key]['PointCredits'] = (in_array($MatchStatus,array(2,5,10))) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
+                    }
+                    if(in_array('MyTeamPlayer',$Params)){
                         $this->db->select('DISTINCT(SUTP.PlayerID)');
                         $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
                         $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
-                        $this->db->where('SUT.MatchID', $Where['MatchID']);
-                        $this->db->where('SUT.UserID', $Where['UserID']);
+                        $this->db->where('SUT.MatchID',$Where['MatchID']);
+                        $this->db->where('SUT.UserID',$Where['UserID']);
                         $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
                         $MyPlayers = $this->db->get()->result_array();
-                        $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers, 'PlayerID') : array();
-                        $Records[$key]['MyPlayer'] = (in_array($Record['PlayerID'], $MyPlayersIds)) ? 'Yes' : 'No';
+                        $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers,'PlayerID') : array();
+                        $Records[$key]['MyPlayer'] = (in_array($Record['PlayerIDAsUse'],$MyPlayersIds)) ? 'Yes' : 'No';
                     }
-
                     if (in_array('PlayerSelectedPercent', $Params)) {
-                        $TotalTeams = $this->db->query('Select count(*) as TotalTeams from sports_users_teams WHERE MatchID="' . $Where['MatchID'] . '"')->row()->TotalTeams;
-
-                        $this->db->select('count(SUTP.PlayerID) as TotalPlayer');
+                        $TotalTeams = $this->db->query('Select count(UserTeamID) TotalTeams from sports_users_teams WHERE MatchID="' . $Where['MatchID'] . '"')->row()->TotalTeams;
+                        $this->db->select('count(SUTP.PlayerID) TotalPlayer');
                         $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
                         $this->db->where("SUTP.PlayerID", $Record['PlayerID']);
                         $this->db->where("SUTP.MatchID", $Where['MatchID']);
                         $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
                         $Players = $this->db->get()->row();
-                        $Records[$key]['PlayerSelectedPercent'] = ($TotalTeams > 0 ) ? round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) > 100 ? 100 : round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) : 0;
+                        $Records[$key]['PlayerSelectedPercent']  = ($TotalTeams > 0) ? strval(round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) > 100 ? 100 : round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2)) : "0";
                     }
+                    unset($Records[$key]['PlayerIDAsUse']);
+                }
 
-                    if (in_array('TopPlayer', $Params)) {
-                        $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
-                        $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
-                        $Bowler = $this->findKeyValuePlayers($Records, "Bowler");
-                        $Allrounder = $this->findKeyValuePlayers($Records, "AllRounder");
-                        usort($Batsman, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Bowler, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Wicketkipper, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Allrounder, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-
-                        $TopBatsman = array_slice($Batsman, 0, 4);
-                        $TopBowler = array_slice($Bowler, 0, 3);
-                        $TopWicketkipper = array_slice($Wicketkipper, 0, 1);
-                        $TopAllrounder = array_slice($Allrounder, 0, 3);
-
-                        $AllPlayers = array();
-                        $AllPlayers = array_merge($TopBatsman, $TopBowler);
-                        $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
-                        $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
-
-                        rsort($AllPlayers, function($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
+                /* Custom Sorting */
+                if (!empty($Where['CustomOrderBy']) && !empty($Where['Sequence'])) {
+                    $SortArr =array();
+                    foreach ($Records as $Value) {
+                      $SortArr[] = $Value[$Where['CustomOrderBy']]; // In Object
                     }
-
-                    if (in_array($Record['PlayerID'], array_column($AllPlayers, 'PlayerID'))) {
-                        $Records[$key]['TopPlayer'] = 'Yes';
-                    } else {
-                        $Records[$key]['TopPlayer'] = 'No';
+                    if($Where['Sequence'] == 'ASC'){
+                      array_multisort($SortArr,SORT_ASC,$Records);
+                    }else{
+                      array_multisort($SortArr,SORT_DESC,$Records);
                     }
                 }
                 $Return['Data']['Records'] = $Records;
                 return $Return;
             } else {
                 $Record = $Query->row_array();
-                $Record['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
-                $Record['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
-                $Record['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
-                $Record['PlayerSalary'] = $Record['PlayerSalary'];
-                $TotalPointsRound = ($MatchStatus == 2 || $MatchStatus == 5) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
-                $Record['PointCredits'] = $TotalPointsRound;
-                if (in_array('MyTeamPlayer', $Params)) {
+                if(in_array('TopPlayer',$Params)){
+                    $Record['TopPlayer'] = (in_array($Record['PlayerGUID'],$BestXIPlayers)) ? 'Yes' : 'No'; 
+                }
+                if(in_array('PlayerBattingStats',$Params)){
+                    $Record['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
+                }
+                if(in_array('PlayerBowlingStats',$Params)){
+                    $Record['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
+                }
+                if(in_array('PointsData',$Params)){
+                    $Record['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
+                }
+                if(in_array('PointCredits',$Params)){
+                    $Record['PointCredits'] = (in_array($MatchStatus,array(2,5,10))) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
+                }
+                if(in_array('MyTeamPlayer',$Params)){
                     $this->db->select('DISTINCT(SUTP.PlayerID)');
                     $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
                     $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
-                    $this->db->where('SUT.MatchID', $Where['MatchID']);
-                    $this->db->where('SUT.UserID', $Where['UserID']);
+                    $this->db->where('SUT.MatchID',$Where['MatchID']);
+                    $this->db->where('SUT.UserID',$Where['UserID']);
                     $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
                     $MyPlayers = $this->db->get()->result_array();
-                    $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers, 'PlayerID') : array();
-                    $Record['MyPlayer'] = (in_array($Record['PlayerID'], $MyPlayersIds)) ? 'Yes' : 'No';
+                    $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers,'PlayerID') : array();
+                    $Record['MyPlayer'] = (in_array($Record['PlayerIDAsUse'],$MyPlayersIds)) ? 'Yes' : 'No';
                 }
-
-                if (in_array('TopPlayer', $Params)) {
-                    $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
-                    $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
-                    $Bowler = $this->findKeyValuePlayers($Records, "Bowler");
-                    $Allrounder = $this->findKeyValuePlayers($Records, "AllRounder");
-                    usort($Batsman, function ($a, $b) {
-                        return $b['TotalPoints'] - $a['TotalPoints'];
-                    });
-                    usort($Bowler, function ($a, $b) {
-                        return $b['TotalPoints'] - $a['TotalPoints'];
-                    });
-                    usort($Wicketkipper, function ($a, $b) {
-                        return $b['TotalPoints'] - $a['TotalPoints'];
-                    });
-                    usort($Allrounder, function ($a, $b) {
-                        return $b['TotalPoints'] - $a['TotalPoints'];
-                    });
-                    $TopBatsman = array_slice($Batsman, 0, 4);
-                    $TopBowler = array_slice($Bowler, 0, 3);
-                    $TopWicketkipper = array_slice($Wicketkipper, 0, 1);
-                    $TopAllrounder = array_slice($Allrounder, 0, 3);
-                    $AllPlayers = array();
-                    $AllPlayers = array_merge($TopBatsman, $TopBowler);
-                    $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
-                    $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
-
-                    rsort($AllPlayers, function($a, $b) {
-                        return $b['TotalPoints'] - $a['TotalPoints'];
-                    });
-                }
-                if (in_array($Record['PlayerID'], array_column($AllPlayers, 'PlayerID'))) {
-                    $Records['TopPlayer'] = 'Yes';
-                } else {
-                    $Records['TopPlayer'] = 'No';
-                }
-
+                unset($Record['PlayerIDAsUse']);
                 return $Record;
             }
         }
@@ -801,7 +781,6 @@ class Sports_model extends CI_Model {
 
             /* Update points details to sports_setting_points table. */
             $this->db->update_batch('sports_setting_points', $updateArray, 'PointsTypeGUID');
-            // $this->db->cache_delete('sports', 'getPoints'); //Delete Cache
         }
     }
 
@@ -815,8 +794,6 @@ class Sports_model extends CI_Model {
             $this->db->where('MatchID', $MatchID);
             $this->db->limit(1);
             $this->db->update('sports_team_players', $Input);
-            // $this->db->cache_delete('sports', 'getPlayers'); //Delete Cache
-            // $this->db->cache_delete('admin', 'matches'); //Delete Cache
         }
     }
 
@@ -894,37 +871,31 @@ class Sports_model extends CI_Model {
       Description: To get access token
      */
 
-    function getAccessToken() {
+    function getAccessToken()
+    {
         $this->load->helper('file');
-        $AccessToken = "";
-        if (file_exists(SPORTS_FILE_PATH)) {
-            $AccessToken = read_file(SPORTS_FILE_PATH);
-        } else {
-            $AccessToken = $this->generateAccessToken();
-        }
-        return trim(preg_replace("/\r|\n/", "", $AccessToken));
+        return trim(preg_replace("/\r|\n/", "", (file_exists(SPORTS_FILE_PATH)) ? read_file(SPORTS_FILE_PATH) : $this->generateAccessToken()));
     }
 
     /*
       Description: To generate access token
      */
 
-    function generateAccessToken() {
+    function generateAccessToken()
+    {
         /* For Sports Entity Api */
         if (SPORTS_API_NAME == 'ENTITY') {
-            $Response = json_decode($this->ExecuteCurl(SPORTS_API_URL_ENTITY . '/v2/auth/', array('access_key' => SPORTS_API_ACCESS_KEY_ENTITY, 'secret_key' => SPORTS_API_SECRET_KEY_ENTITY, 'extend' => 1)), TRUE);
+            $Response = json_decode($this->ExecuteCurl(SPORTS_API_URL_ENTITY . '/v2/auth/', array('access_key' => SPORTS_API_ACCESS_KEY_ENTITY, 'secret_key' => SPORTS_API_SECRET_KEY_ENTITY, 'extend' => 1)), true);
             if ($Response['status'] == 'ok')
                 $AccessToken = $Response['response']['token'];
         }
 
         /* For Sports Cricket Api */
         if (SPORTS_API_NAME == 'CRICKETAPI') {
-            $Response = json_decode($this->ExecuteCurl(SPORTS_API_URL_CRICKETAPI . '/rest/v2/auth/', array('access_key' => SPORTS_API_ACCESS_KEY_CRICKETAPI, 'secret_key' => SPORTS_API_SECRET_KEY_CRICKETAPI, 'app_id' => SPORTS_API_APP_ID_CRICKETAPI, 'device_id' => SPORTS_API_DEVICE_ID_CRICKETAPI)), TRUE);
+            $Response = json_decode($this->ExecuteCurl(SPORTS_API_URL_CRICKETAPI . '/rest/v2/auth/', array('access_key' => SPORTS_API_ACCESS_KEY_CRICKETAPI, 'secret_key' => SPORTS_API_SECRET_KEY_CRICKETAPI, 'app_id' => SPORTS_API_APP_ID_CRICKETAPI, 'device_id' => SPORTS_API_DEVICE_ID_CRICKETAPI)), true);
             if ($Response['status'])
                 $AccessToken = $Response['auth']['access_token'];
         }
-        if (empty($AccessToken))
-            exit;
 
         /* Update Access Token */
         $this->load->helper('file');
@@ -936,12 +907,20 @@ class Sports_model extends CI_Model {
       Description: To fetch sports api data
      */
 
-    function callSportsAPI($ApiUrl) {
-        $AccessToken = $this->getAccessToken();
-        $Response = json_decode($this->ExecuteCurl($ApiUrl . $AccessToken), TRUE);
+    function callSportsAPI($ApiUrl)
+    {
+        $Response = json_decode($this->ExecuteCurl($ApiUrl . $this->getAccessToken()), true);
         if (@$Response['status'] == 'unauthorized' || @$Response['status_code'] == 403) {
-            $AccessToken = $this->generateAccessToken();
-            $Response = json_decode($this->ExecuteCurl($ApiUrl . $AccessToken), TRUE);
+            if(@$Response['status_msg'] == 'RequestLimitExceeds'){ // API Calling Limit Exceeds
+                
+                /* Request Limit Exceeds Respone */
+                log_message('ERROR',"Request Limit Exceeds");
+                return TRUE;
+            }else {
+
+                /* Re-generate token */
+                $Response = json_decode($this->ExecuteCurl($ApiUrl . $this->generateAccessToken()), true);
+            }
         }
         return $Response;
     }
@@ -1331,7 +1310,6 @@ class Sports_model extends CI_Model {
 
         /* Get Live Matches Data */
         $LiveMatches = $this->getMatches('MatchIDLive,MatchID,StatusID', array('Filter' => 'Yesterday', 'StatusID' => array(1, 2, 10)), true, 1, 20);
-        //$LiveMatches = $this->getMatches('MatchIDLive,MatchID,StatusID', array('MatchID' => '371671'), true, 1, 5);
         if (!$LiveMatches) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
@@ -1573,296 +1551,6 @@ class Sports_model extends CI_Model {
                 }
             }
         }
-    }
-
-    function getPlayersByType($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
-        $Params = array();
-        if (!empty($Field)) {
-            $Params = array_map('trim', explode(',', $Field));
-
-            $Field = '';
-            $FieldArray = array(
-                'TeamGUID' => 'T.TeamGUID',
-                'TeamName' => 'T.TeamName',
-                'TeamNameShort' => 'T.TeamNameShort',
-                'TeamFlag' => 'T.TeamFlag',
-                'PlayerID' => 'P.PlayerID',
-                'PlayerIDLive' => 'P.PlayerIDLive',
-                'PlayerRole' => 'TP.PlayerRole',
-                'IsPlaying' => 'TP.IsPlaying',
-                'TotalPoints' => 'TP.TotalPoints',
-                'PointsData' => 'TP.PointsData',
-                'SeriesID' => 'TP.SeriesID',
-                'MatchID' => 'TP.MatchID',
-                'TeamID' => 'TP.TeamID',
-                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
-                'PlayerCountry' => 'P.PlayerCountry',
-                'PlayerBattingStyle' => 'P.PlayerBattingStyle',
-                'PlayerBowlingStyle' => 'P.PlayerBowlingStyle',
-                'PlayerBattingStats' => 'P.PlayerBattingStats',
-                'PlayerBowlingStats' => 'P.PlayerBowlingStats',
-                'PlayerSalary' => 'P.PlayerSalary',
-                'LastUpdateDiff' => 'IF(P.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", P.LastUpdatedOn))) LastUpdateDiff',
-                'MatchTypeID' => 'SSM.MatchTypeID',
-                'MatchType' => 'SSM.MatchTypeName as MatchType',
-            );
-            if ($Params) {
-                foreach ($Params as $Param) {
-                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
-                }
-            }
-        }
-        $this->db->select('P.PlayerGUID,P.PlayerName');
-        if (!empty($Field))
-            $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_players P');
-        if (array_keys_exist($Params, array('TeamGUID', 'TeamName', 'TeamNameShort', 'TeamFlag', 'PlayerRole', 'IsPlaying', 'TotalPoints', 'PointsData', 'SeriesID', 'MatchID'))) {
-            $this->db->from('sports_teams T,sports_matches M, sports_team_players TP,sports_set_match_types SSM');
-            $this->db->where("P.PlayerID", "TP.PlayerID", FALSE);
-            $this->db->where("TP.TeamID", "T.TeamID", FALSE);
-            $this->db->where("TP.MatchID", "M.MatchID", FALSE);
-            $this->db->where("M.MatchTypeID", "SSM.MatchTypeID", FALSE);
-        }
-        $this->db->where("P.PlayerID", "E.EntityID", FALSE);
-        if (!empty($Where['Keyword'])) {
-            $Where['Keyword'] = trim($Where['Keyword']);
-            $this->db->group_start();
-            $this->db->like("P.PlayerName", $Where['Keyword']);
-            $this->db->or_like("P.PlayerRole", $Where['Keyword']);
-            $this->db->or_like("P.PlayerCountry", $Where['Keyword']);
-            $this->db->or_like("P.PlayerBattingStyle", $Where['Keyword']);
-            $this->db->or_like("P.PlayerBowlingStyle", $Where['Keyword']);
-            $this->db->group_end();
-        }
-        if (!empty($Where['MatchID'])) {
-            $this->db->where("TP.MatchID", $Where['MatchID']);
-        }
-        if (!empty($Where['TeamID'])) {
-            $this->db->where("TP.TeamID", $Where['TeamID']);
-        }
-        if (!empty($Where['IsPlaying'])) {
-            $this->db->where("TP.IsPlaying", $Where['IsPlaying']);
-        }
-        if (!empty($Where['PlayerID'])) {
-            $this->db->where("P.PlayerID", $Where['PlayerID']);
-        }
-        if (!empty($Where['IsAdminSalaryUpdated'])) {
-            $this->db->where("P.IsAdminSalaryUpdated", $Where['IsAdminSalaryUpdated']);
-        }
-        if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
-        }
-        if (!empty($Where['CronFilter']) && $Where['CronFilter'] == 'OneDayDiff') {
-            $this->db->having("LastUpdateDiff", 0);
-            $this->db->or_having("LastUpdateDiff >=", 86400); // 1 Day
-        }
-
-        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
-            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
-        }
-
-        if (!empty($Where['RandData'])) {
-            $this->db->order_by($Where['RandData']);
-        } else {
-            $this->db->order_by('P.PlayerName', 'ASC');
-        }
-
-
-        /* Total records count only if want to get multiple records */
-        if ($multiRecords) {
-            $TempOBJ = clone $this->db;
-            $TempQ = $TempOBJ->get();
-            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
-            if ($PageNo != 0) {
-                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
-            }
-        } else {
-            $this->db->limit(1);
-        }
-
-        // $this->db->cache_on(); //Turn caching on
-        $Query = $this->db->get();
-        if ($Query->num_rows() > 0) {
-            if ($multiRecords) {
-                $Records = array();
-                foreach ($Query->result_array() as $key => $Record) {
-
-                    $Records[] = $Record;
-                    $Records[$key]['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
-                    $Records[$key]['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
-                    $Records[$key]['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
-                    $Records[$key]['PlayerSalary'] = (!empty($Record['PlayerSalary'])) ? json_decode($Record['PlayerSalary']) : new stdClass();
-                    if ($Record['MatchType'] == 'T20') {
-                        $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20Credits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20Credits'] : 0;
-                    } else if ($Record['MatchType'] == 'Test') {
-                        $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20iCredits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20iCredits'] : 0;
-                    } else if ($Record['MatchType'] == 'T20I') {
-                        $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['ODICredits']) ? json_decode($Record['PlayerSalary'], TRUE)['ODICredits'] : 0;
-                    } else if ($Record['MatchType'] == 'ODI') {
-                        $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['TestCredits']) ? json_decode($Record['PlayerSalary'], TRUE)['TestCredits'] : 0;
-                    } else {
-                        $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20Credits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20Credits'] : 0;
-                    }
-
-                    if (in_array('MyTeamPlayer', $Params)) {
-                        $this->db->select('SUTP.PlayerID,SUTP.MatchID');
-                        $this->db->where('SUTP.MatchID', $Where['MatchID']);
-                        $this->db->where('SUT.UserID', $Where['UserID']);
-                        $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                        $MyPlayers = $this->db->get()->result_array();
-                        if (!empty($MyPlayers)) {
-                            foreach ($MyPlayers as $k => $value) {
-                                if ($value['PlayerID'] == $Record['PlayerID']) {
-                                    $Records[$key]['MyPlayer'] = 'Yes';
-                                } else {
-                                    $Records[$key]['MyPlayer'] = 'No';
-                                }
-                            }
-                        } else {
-                            $Records[$key]['MyPlayer'] = 'No';
-                        }
-                    }
-
-                    if (in_array('PlayerSelectedPercent', $Params)) {
-
-                        $TotalTeams = $this->db->query('Select count(*) as TotalTeams from sports_users_teams')->row();
-                        $this->db->select('count(SUTP.PlayerID) as TotalPlayer');
-                        $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
-                        $this->db->where("SUTP.PlayerID", $Record['PlayerID']);
-                        $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                        $Players = $this->db->get()->row();
-                        $Records[$key]['PlayerSelectedPercent'] = strval(round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2));
-                    }
-
-                    if (in_array('TopPlayer', $Params)) {
-                        $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
-                        $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
-                        $Bowler = $this->findKeyValuePlayers($Records, "Bowler");
-                        $Allrounder = $this->findKeyValuePlayers($Records, "AllRounder");
-                        usort($Batsman, function ($a, $b) {
-                            return $b->TotalPoints - $a->TotalPoints;
-                        });
-                        usort($Bowler, function ($a, $b) {
-                            return $b->TotalPoints - $a->TotalPoints;
-                        });
-                        usort($Wicketkipper, function ($a, $b) {
-                            return $b->TotalPoints - $a->TotalPoints;
-                        });
-                        usort($Allrounder, function ($a, $b) {
-                            return $b->TotalPoints - $a->TotalPoints;
-                        });
-
-                        $TopBatsman = array_slice($Batsman, 0, 4);
-                        $TopBowler = array_slice($Bowler, 0, 3);
-                        $TopWicketkipper = array_slice($Wicketkipper, 0, 1);
-                        $TopAllrounder = array_slice($Allrounder, 0, 3);
-
-                        $AllPlayers = array();
-                        $AllPlayers = array_merge($TopBatsman, $TopBowler);
-                        $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
-                        $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
-
-                        rsort($AllPlayers, function($a, $b) {
-                            return $b->TotalPoints - $a->TotalPoints;
-                        });
-                        $PlayersAll = array_column($AllPlayers, 'PlayerID');
-                        if (!empty($Record['PlayerID']) && !empty($PlayersAll)) {
-                            if (in_array($Record['PlayerID'], $PlayersAll)) {
-                                $Records[$key]['TopPlayer'] = 'Yes';
-                            } else {
-                                $Records[$key]['TopPlayer'] = 'No';
-                            }
-                        } else {
-                            $Records[$key]['TopPlayer'] = 'No';
-                        }
-                    } else {
-                        $Records[$key]['TopPlayer'] = 'No';
-                    }
-                }
-
-
-
-                $Return['Data']['Records'] = $Records;
-                return $Return;
-            } else {
-                $Record = $Query->row_array();
-                $Record['PlayerBattingStats'] = (!empty($Record['PlayerBattingStats'])) ? json_decode($Record['PlayerBattingStats']) : new stdClass();
-                $Record['PlayerBowlingStats'] = (!empty($Record['PlayerBowlingStats'])) ? json_decode($Record['PlayerBowlingStats']) : new stdClass();
-                $Record['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
-                $Record['PlayerSalary'] = (!empty($Record['PlayerSalary'])) ? json_decode($Record['PlayerSalary']) : new stdClass();
-                if ($Record['MatchType'] == 'T20') {
-                    $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20Credits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20Credits'] : 0;
-                } else if ($Record['MatchType'] == 'Test') {
-                    $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20iCredits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20iCredits'] : 0;
-                } else if ($Record['MatchType'] == 'T20I') {
-                    $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['ODICredits']) ? json_decode($Record['PlayerSalary'], TRUE)['ODICredits'] : 0;
-                } else if ($Record['MatchType'] == 'ODI') {
-                    $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['TestCredits']) ? json_decode($Record['PlayerSalary'], TRUE)['TestCredits'] : 0;
-                } else {
-                    $Records[$key]['PointCredits'] = (json_decode($Record['PlayerSalary'], TRUE)['T20Credits']) ? json_decode($Record['PlayerSalary'], TRUE)['T20Credits'] : 0;
-                }
-
-                if (in_array('MyTeamPlayer', $Params)) {
-
-                    $this->db->select('SUTP.PlayerID,SUTP.MatchID');
-                    $this->db->where('SUTP.MatchID', $Where['MatchID']);
-                    $this->db->where('SUT.UserID', $Where['UserID']);
-                    $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                    $MyPlayers = $this->db->get()->result_array();
-
-
-                    foreach ($MyPlayers as $key => $value) {
-                        if ($value['PlayerID'] == $Record['PlayerID']) {
-                            $Records['MyPlayer'] = 'Yes';
-                        } else {
-                            $Records['MyPlayer'] = 'No';
-                        }
-                    }
-                }
-
-                if (in_array('TopPlayer', $Params)) {
-                    $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
-                    $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
-                    $Bowler = $this->findKeyValuePlayers($Records, "Bowler");
-                    $Allrounder = $this->findKeyValuePlayers($Records, "AllRounder");
-                    usort($Batsman, function ($a, $b) {
-                        return $b->TotalPoints - $a->TotalPoints;
-                    });
-                    usort($Bowler, function ($a, $b) {
-                        return $b->TotalPoints - $a->TotalPoints;
-                    });
-                    usort($Wicketkipper, function ($a, $b) {
-                        return $b->TotalPoints - $a->TotalPoints;
-                    });
-                    usort($Allrounder, function ($a, $b) {
-                        return $b->TotalPoints - $a->TotalPoints;
-                    });
-
-                    $TopBatsman = array_slice($Batsman, 0, 4);
-                    $TopBowler = array_slice($Bowler, 0, 3);
-                    $TopWicketkipper = array_slice($Wicketkipper, 0, 1);
-                    $TopAllrounder = array_slice($Allrounder, 0, 3);
-
-                    $AllPlayers = array();
-                    $AllPlayers = array_merge($TopBatsman, $TopBowler);
-                    $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
-                    $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
-
-                    rsort($AllPlayers, function($a, $b) {
-                        return $b->TotalPoints - $a->TotalPoints;
-                    });
-                }
-
-                if (in_array($Record['PlayerID'], array_column($AllPlayers, 'PlayerID'))) {
-                    $Records['TopPlayer'] = 'Yes';
-                } else {
-                    $Records['TopPlayer'] = 'No';
-                }
-
-                return $Record;
-            }
-        }
-        return FALSE;
     }
 
     /*
@@ -2145,7 +1833,7 @@ class Sports_model extends CI_Model {
         }
     }
 
-    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
+    function getJoinedContestTeamPoints_OLD($CronID, $MatchID = "", $StatusArr = array(2)) {
 
         ini_set('max_execution_time', 300);
         /* Get Matches Live */
@@ -2206,85 +1894,70 @@ class Sports_model extends CI_Model {
         }
     }
 
-    function getJoinedContestTeamPointsOLD($CronID, $MatchID = "", $StatusArr = array(2)) {
+    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
 
         ini_set('max_execution_time', 300);
+
         /* Get Matches Live */
-        if (!empty($MatchID)) {
-            $LiveMatcheContest = $this->Contest_model->getContests('MatchID,ContestID,MatchIDLive', array('StatusID' => array(2, 5), 'MatchID' => $MatchID, "LeagueType" => "Dfs"), true, 0);
-        } else {
-            $LiveMatcheContest = $this->Contest_model->getContests('MatchID,ContestID,MatchIDLive', array('StatusID' => $StatusArr, 'Filter' => 'YesterdayToday', "LeagueType" => "Dfs"), true, 0);
+        if($MatchID){
+            $LiveMatcheContest = $this->db->query('SELECT C.MatchID,C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = '.$MatchID.' AND E.StatusID IN('.implode(",",$StatusArr).') AND C.LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "'.date('Y-m-d').'" ORDER BY M.MatchStartDateTime ASC');
+        }else{
+            $LiveMatcheContest = $this->db->query('SELECT C.MatchID,C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN('.implode(",",$StatusArr).') AND C.LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "'.date('Y-m-d').'" ORDER BY M.MatchStartDateTime ASC');
         }
-        if (!$LiveMatcheContest) {
+        if ($LiveMatcheContest->num_rows() == 0) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit'));
             exit;
         }
-        foreach ($LiveMatcheContest['Data']['Records'] as $Value) {
-            $MatchIDLive = $Value['MatchIDLive'];
-            $MatchID = $Value['MatchID'];
+
+        /* Get Vice Captain Points */
+        $ViceCaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
+
+        /* Get Captain Points */
+        $CaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
+
+        /* Match Types */
+        $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
+
+        foreach ($LiveMatcheContest->result_array() as $Value) {
             $ContestID = $Value['ContestID'];
-            $Contests = $this->Contest_model->getJoinedContests('MatchTypeID,ContestID,UserID,MatchID,UserTeamID', array('StatusID' => 2, 'ContestID' => $ContestID), true, 0);
-
-            if (!empty($Contests['Data']['Records'])) {
-
-                /* Get Vice Captain Points */
-                $ViceCaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
-
-                /* Get Captain Points */
-                $CaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
-
-                /* Match Types */
-                $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI');
-                $ContestIDArray = array();
-                foreach ($Contests['Data']['Records'] as $Value) {
-                    $ContestIDArray[] = $Value['ContestID'];
-                    /* Player Points Multiplier */
-                    if (IS_VICECAPTAIN) {
-                        $PositionPointsMultiplier = array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
-                    } else {
-                        $PositionPointsMultiplier = array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
-                    }
-
-                    $UserTotalPoints = 0;
-
-                    /* To Get Match Players */
-                    $MatchPlayers = $this->getPlayers('PlayerID,TotalPoints', array('MatchID' => $Value['MatchID']), true, 0);
-
-                    $PlayersPointsArr = array_column($MatchPlayers['Data']['Records'], 'TotalPoints', 'PlayerGUID');
-                    $PlayersIdsArr = array_column($MatchPlayers['Data']['Records'], 'PlayerID', 'PlayerGUID');
-                    /* To Get User Team Players */
-                    $UserTeamPlayers = $this->Contest_model->getUserTeams('PlayerID,PlayerPosition,UserTeamPlayers', array('UserTeamID' => $Value['UserTeamID']), 0);
-
-                    foreach ($UserTeamPlayers['UserTeamPlayers'] as $UserTeamValue) {
-                        if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
-                            continue;
-
-                        $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
-                        $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-
-                        /* Update Player Points */
-                        $this->db->where('UserTeamID', $Value['UserTeamID']);
-                        $this->db->where('PlayerID', $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
-                        $this->db->limit(1);
-                        $this->db->update('sports_users_team_players', array('Points' => $Points));
-                        //echo $this->db->last_query();exit;
-                    }
-                    /* Update Player Total Points */
-                    $this->db->where('UserTeamID', $Value['UserTeamID']);
-                    $this->db->where('ContestID', $Value['ContestID']);
-                    $this->db->limit(1);
-                    $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
-                }
-                $ContestIDArray = array_unique($ContestIDArray);
+            $Contests = $this->db->query('SELECT M.MatchTypeID,M.MatchID,JC.ContestID,JC.UserID,JC.UserTeamID FROM tbl_entity E, sports_matches M,sports_contest C WHERE E.EntityID = JC.ContestID AND JC.MatchID = M.MatchID AND E.StatusID = 2 AND JC.ContestID = '.$ContestID.' ORDER BY M.MatchStartDateTime ASC');
+            if ($Contests->num_rows() == 0) {
+                continue;
             }
-            /* else {
-              $this->db->where('CronID', $CronID);
-              $this->db->limit(1);
-              $this->db->update('log_cron', array('CronStatus' => 'Exit'));
-              exit;
-              } */
+
+             /* To Get Match Players */
+             $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
+             $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
+             $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
+
+            foreach ($Contests->result_array() as $ContestValue) {
+
+                /* Player Points Multiplier */
+                $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Player' => 1);
+                $UserTotalPoints = 0;
+
+                /* To Get User Team Players */
+                $UserTeamPlayers = $this->db->query('SELECT P.PlayerGUID,UTP.PlayerPosition FROM sports_players P,sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.UserTeamID = '.$ContestValue['UserTeamID'].' LIMIT 11');
+                foreach ($UserTeamPlayers->result_array() as $UserTeamValue) {
+                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
+                        continue;
+
+                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
+                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
+
+                    /* Update User Player Points */
+                    $this->db->where('UserTeamID', $ContestValue['UserTeamID']);
+                    $this->db->where('PlayerID', $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
+                    $this->db->limit(1);
+                    $this->db->update('sports_users_team_players', array('Points' => $Points));
+                }
+
+                /* Update Player Total Points */
+                $this->db->where('UserTeamID', $ContestValue['UserTeamID']);
+                $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
+            }
             $this->updateRankByContest($ContestID);
         }
     }
@@ -2303,14 +1976,12 @@ class Sports_model extends CI_Model {
                      ");
             $results = $query->result_array();
             if (!empty($results)) {
-                $this->db->trans_start();
                 foreach ($results as $rows) {
                     $this->db->where('ContestID', $rows['ContestID']);
                     $this->db->where('UserTeamID', $rows['UserTeamID']);
                     $this->db->limit(1);
                     $this->db->update('sports_contest_join', array('UserRank' => $rows['UserRank']));
                 }
-                $this->db->trans_complete();
             }
         }
     }
@@ -2409,43 +2080,131 @@ class Sports_model extends CI_Model {
       Description: To set contest winners
      */
 
+    // function setContestWinners($CronID) {
+
+    //     ini_set('max_execution_time', 300);
+
+
+    //     $Contests = $this->Contest_model->getContests('WinningAmount,NoOfWinners,ContestID,EntryFee,TotalJoined,ContestSize,IsConfirm,SeriesName,ContestName,MatchStartDateTime,MatchNo,TeamNameLocal,TeamNameVisitor,CustomizeWinning', array('StatusID' => 5, 'IsWinningDistributed' => 'No', "LeagueType" => "Dfs"), true, 0);
+    //     if (isset($Contests['Data']['Records'])) {
+
+    //         $this->db->where('CronID', $CronID);
+    //         $this->db->limit(1);
+    //         $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'Contests' => $Contests), JSON_UNESCAPED_UNICODE)));
+
+    //         foreach ($Contests['Data']['Records'] as $Value) {
+
+    //             $JoinedContestsUsers = $this->Contest_model->getJoinedContestsUsers('UserRank,UserTeamID,TotalPoints,UserRank,UserID,FirstName,Email', array('ContestID' => $Value['ContestID'], 'OrderBy' => 'JC.UserRank', 'Sequence' => 'DESC', 'PointFilter' => 'TotalPoints'), true, 0);
+    //             if (!$JoinedContestsUsers)
+    //                 continue;
+
+    //             $AllUsersRank = array_column($JoinedContestsUsers['Data']['Records'], 'UserRank');
+    //             $AllRankWinners = array_count_values($AllUsersRank);
+    //             $userWinnersData = $OptionWinner = array();
+    //             $CustomizeWinning = $Value['CustomizeWinning'];
+    //             if (empty($CustomizeWinning)) {
+    //                 $CustomizeWinning[] = array(
+    //                     'From' => 1,
+    //                     'To' => $Value['NoOfWinners'],
+    //                     'Percent' => 100,
+    //                     'WinningAmount' => $Value['WinningAmount']
+    //                 );
+    //             }
+    //             /** calculate amount according to rank or contest winning configuration */
+    //             foreach ($AllRankWinners as $Rank => $WinnerValue) {
+    //                 $Flag = $TotalAmount = $AmountPerUser = 0;
+    //                 for ($J = 0; $J < count($CustomizeWinning); $J++) {
+    //                     $FromWinner = $CustomizeWinning[$J]['From'];
+    //                     $ToWinner = $CustomizeWinning[$J]['To'];
+    //                     if ($Rank >= $FromWinner && $Rank <= $ToWinner) {
+    //                         $TotalAmount = $CustomizeWinning[$J]['WinningAmount'];
+    //                         if ($WinnerValue > 1) {
+    //                             $L = 0;
+    //                             for ($k = 1; $k < $WinnerValue; $k++) {
+    //                                 if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
+    //                                     if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
+    //                                         $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
+    //                                         $Flag = 1;
+    //                                     } else {
+    //                                         $L = $L + 1;
+    //                                         if (!empty($CustomizeWinning[$J + $L]['From']) && !empty($CustomizeWinning[$J + $L]['To'])) {
+    //                                             if ($Rank + $k >= $CustomizeWinning[$J + $L]['From'] && $Rank + $k <= $CustomizeWinning[$J + $L]['To']) {
+    //                                                 $TotalAmount += $CustomizeWinning[$J + $L]['WinningAmount'];
+    //                                                 $Flag = 1;
+    //                                             }
+    //                                         }
+    //                                     }
+    //                                 }
+    //                                 if ($Flag == 0) {
+    //                                     if ($Rank + $k >= $CustomizeWinning[$J]['From'] && $Rank + $k <= $CustomizeWinning[$J]['To']) {
+    //                                         $TotalAmount += $CustomizeWinning[$J]['WinningAmount'];
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //                 $AmountPerUser = $TotalAmount / $WinnerValue;
+    //                 $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers['Data']['Records'], $Rank, $AmountPerUser);
+    //             }
+    //             foreach ($userWinnersData as $WinnerArray) {
+    //                 foreach ($WinnerArray as $WinnerRow) {
+    //                     $OptionWinner[] = $WinnerRow;
+    //                 }
+    //             }
+
+    //             if (!empty($OptionWinner)) {
+    //                 foreach ($OptionWinner as $WinnerValue) {
+
+    //                     $this->db->trans_start();
+
+    //                     /** join contest user winning amount update * */
+    //                     $this->db->where('UserID', $WinnerValue['UserID']);
+    //                     $this->db->where('ContestID', $Value['ContestID']);
+    //                     $this->db->where('UserTeamID', $WinnerValue['UserTeamID']);
+    //                     $this->db->limit(1);
+    //                     $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
+
+    //                     $this->db->trans_complete();
+    //                     if ($this->db->trans_status() === false) {
+    //                         return false;
+    //                     }
+    //                 }
+    //             }
+
+    //             /* update contest winner amount distribute flag set YES */
+    //             $this->db->where('ContestID', $Value['ContestID']);
+    //             $this->db->limit(1);
+    //             $this->db->update('sports_contest', array('IsWinningDistributed' => 'Yes'));
+    //         }
+    //     } else {
+    //         $this->db->where('CronID', $CronID);
+    //         $this->db->limit(1);
+    //         $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
+    //         exit;
+    //     }
+    // }
+
     function setContestWinners($CronID) {
 
         ini_set('max_execution_time', 300);
 
-
-        $Contests = $this->Contest_model->getContests('WinningAmount,NoOfWinners,ContestID,EntryFee,TotalJoined,ContestSize,IsConfirm,SeriesName,ContestName,MatchStartDateTime,MatchNo,TeamNameLocal,TeamNameVisitor,CustomizeWinning', array('StatusID' => 5, 'IsWinningDistributed' => 'No', "LeagueType" => "Dfs"), true, 0);
-        if (isset($Contests['Data']['Records'])) {
-
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'Contests' => $Contests), JSON_UNESCAPED_UNICODE)));
-
-            foreach ($Contests['Data']['Records'] as $Value) {
-
-                $JoinedContestsUsers = $this->Contest_model->getJoinedContestsUsers('UserRank,UserTeamID,TotalPoints,UserRank,UserID,FirstName,Email', array('ContestID' => $Value['ContestID'], 'OrderBy' => 'JC.UserRank', 'Sequence' => 'DESC', 'PointFilter' => 'TotalPoints'), true, 0);
-                if (!$JoinedContestsUsers)
+        /* Get Completed Contests */
+        $Contests = $this->db->query('SELECT C.WinningAmount,C.NoOfWinners,C.ContestID,C.CustomizeWinning FROM tbl_entity E,sports_contest C WHERE E.EntityID = C.ContestID AND E.StatusID = 5 AND C.IsWinningDistributed = "No" AND C.LeagueType = "Dfs"');
+        if ($Contests->num_rows() > 0) {
+            foreach ($Contests->result_array() as $Value) {
+                $JoinedContestsUsers = $this->db->query('SELECT UserRank,UserTeamID,TotalPoints,UserID FROM sports_contest_join WHERE ContestID = '.$Value['ContestID'].' AND TotalPoints > 0 ORDER BY UserRank DESC');
+                if ($JoinedContestsUsers->num_rows() == 0){
                     continue;
-
-                $AllUsersRank = array_column($JoinedContestsUsers['Data']['Records'], 'UserRank');
-                $AllRankWinners = array_count_values($AllUsersRank);
-                $userWinnersData = $OptionWinner = array();
-                $CustomizeWinning = $Value['CustomizeWinning'];
-                if (empty($CustomizeWinning)) {
-                    $CustomizeWinning[] = array(
-                        'From' => 1,
-                        'To' => $Value['NoOfWinners'],
-                        'Percent' => 100,
-                        'WinningAmount' => $Value['WinningAmount']
-                    );
                 }
-                /** calculate amount according to rank or contest winning configuration */
+
+                $AllRankWinners   = array_count_values(array_column($JoinedContestsUsers->result_array(), 'UserRank'));
+                $userWinnersData  = $OptionWinner = array();
+                $CustomizeWinning = (!empty($Value['CustomizeWinning'])) ? json_decode($Value['CustomizeWinning'], true) : array();
                 foreach ($AllRankWinners as $Rank => $WinnerValue) {
                     $Flag = $TotalAmount = $AmountPerUser = 0;
                     for ($J = 0; $J < count($CustomizeWinning); $J++) {
-                        $FromWinner = $CustomizeWinning[$J]['From'];
-                        $ToWinner = $CustomizeWinning[$J]['To'];
-                        if ($Rank >= $FromWinner && $Rank <= $ToWinner) {
+                        if ($Rank >= $CustomizeWinning[$J]['From'] && $Rank <= $CustomizeWinning[$J]['To']) {
                             $TotalAmount = $CustomizeWinning[$J]['WinningAmount'];
                             if ($WinnerValue > 1) {
                                 $L = 0;
@@ -2474,7 +2233,7 @@ class Sports_model extends CI_Model {
                         }
                     }
                     $AmountPerUser = $TotalAmount / $WinnerValue;
-                    $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers['Data']['Records'], $Rank, $AmountPerUser);
+                    $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers->result_array(), $Rank, $AmountPerUser);
                 }
                 foreach ($userWinnersData as $WinnerArray) {
                     foreach ($WinnerArray as $WinnerRow) {
@@ -2487,13 +2246,24 @@ class Sports_model extends CI_Model {
 
                         $this->db->trans_start();
 
-                        /** join contest user winning amount update * */
+                        /* Update Winning Amount */
                         $this->db->where('UserID', $WinnerValue['UserID']);
                         $this->db->where('ContestID', $Value['ContestID']);
                         $this->db->where('UserTeamID', $WinnerValue['UserTeamID']);
                         $this->db->limit(1);
                         $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
 
+                        /* Add winning into user wallet */
+                        if ($WinnerValue['UserWinningAmount'] > 0) {
+                            $WalletData = array(
+                                "Amount" => $WinnerValue['UserWinningAmount'],
+                                "WinningAmount" => $WinnerValue['UserWinningAmount'],
+                                "TransactionType" => 'Cr',
+                                "Narration" => 'Join Contest Winning',
+                                "EntryDate" => date("Y-m-d H:i:s")
+                            );
+                            $this->Users_model->addToWallet($WalletData, $WinnerValue['UserID'], 5);
+                        }
                         $this->db->trans_complete();
                         if ($this->db->trans_status() === false) {
                             return false;
@@ -2506,11 +2276,6 @@ class Sports_model extends CI_Model {
                 $this->db->limit(1);
                 $this->db->update('sports_contest', array('IsWinningDistributed' => 'Yes'));
             }
-        } else {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
-            exit;
         }
     }
 
