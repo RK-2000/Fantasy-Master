@@ -305,4 +305,12 @@ class Utility_model extends CI_Model {
         return FALSE;
     }
 
+    function getDummyNames($Limit=10) {
+        $Query = $this->db->query("SELECT names FROM dummy_names LIMIT $Limit");
+        if ($Query->num_rows() > 0) {
+            return $Query->result_array();
+        }
+        return FALSE;
+    }
+
 }

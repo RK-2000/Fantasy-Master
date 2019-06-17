@@ -429,7 +429,7 @@ class Utilities extends API_Controller {
 
         $tlds = array("com");
         $char = "0123456789abcdefghijklmnopqrstuvwxyz";
-        $Limit = 5000;
+        $Limit = 23000;
         $Names = $this->Utility_model->getDummyNames($Limit);
         for ($j = 0; $j < $Limit; $j++) {
             $UserName = $Names[$j]['names'];
@@ -449,7 +449,7 @@ class Utilities extends API_Controller {
             $Input['Email'] = $username . "@gmail.com";
             $Input['Username'] = $username;
             $Input['FirstName'] = $UserName;
-            $Input['Password'] = 'A@123456';
+            $Input['Password'] = 'A123456';
             $Input['Source'] = "Direct";
             $Input['PanStatus'] = 2;
             $Input['BankStatus'] = 2;
@@ -459,7 +459,7 @@ class Utilities extends API_Controller {
                 $this->Utility_model->generateReferralCode($UserID);
                 $WalletData = array(
                     "Amount" => 10000,
-                    "CashBonus" => 0,
+                    "CashBonus" => 5000,
                     "TransactionType" => 'Cr',
                     "Narration" => 'Deposit Money',
                     "EntryDate" => date("Y-m-d H:i:s")
@@ -477,7 +477,7 @@ class Utilities extends API_Controller {
 
     public function createVirtualUserTeams_get() {
 
-        $AllUsers = $this->Users_model->getUsers('UserID', array('UserTypeID' => 3), true, 1, 1000);
+        $AllUsers = $this->Users_model->getUsers('UserID', array('UserTypeID' => 3), true, 1, 3000);
         if (!empty($AllUsers)) {
             $MatchContest = $this->Contest_model->getContests('MatchID', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes"), TRUE);
             if (!empty($MatchContest['Data']['Records'])) {
