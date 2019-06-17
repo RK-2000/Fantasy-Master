@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Settings_model extends CI_Model {
+class Settings_model extends CI_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -13,12 +15,12 @@ class Settings_model extends CI_Model {
       Description: 	Use to get settings key value.
      */
 
-    function getSiteSettings($ConfigTypeGUID) {
+    function getSiteSettings($ConfigTypeGUID)
+    {
 
         $this->db->select("ConfigTypeValue");
         $this->db->from('set_site_config');
-        $this->db->where("ConfigTypeGUID", $ConfigTypeGUID);
-        $this->db->where("StatusID", 2);
+        $this->db->where(array('ConfigTypeGUID' => $ConfigTypeGUID, 'StatusID' => 2));
         $this->db->limit(1);
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
@@ -32,7 +34,8 @@ class Settings_model extends CI_Model {
       Description: 	Use to get settings list.
      */
 
-    function getSettings($UserID) {
+    function getSettings($UserID)
+    {
         $this->db->select("*");
         $this->db->from('tbl_users_settings US');
         $this->db->where("US.UserID", $UserID);
@@ -50,7 +53,8 @@ class Settings_model extends CI_Model {
       Description: 	Use to update user setting.
      */
 
-    function updateSettings($UserID, $Input = array()) {
+    function updateSettings($UserID, $Input = array())
+    {
         /* add reward points history - starts */
         $UpdateData = array_filter(array(
             "PushNotification" => @$Input['PushNotification'],
@@ -75,5 +79,4 @@ class Settings_model extends CI_Model {
             $this->db->update('tbl_users_settings', $UpdateData);
         }
     }
-
 }
