@@ -164,6 +164,10 @@ class Utility_model extends CI_Model {
      */
 
     function sendMobileSMS($SMSArray) {
+
+        if(ENVIRONMENT == 'testing'){
+            return TRUE; 
+        }
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
