@@ -82,7 +82,7 @@ $db['default'] = array(
     'database' => 'fantasy_master',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
-    'pconnect' => FALSE,
+    'pconnect' => TRUE,
     'db_debug' => (ENVIRONMENT !== 'production'),
     'cache_on' => FALSE,
     'cachedir' => 'application/cache',
