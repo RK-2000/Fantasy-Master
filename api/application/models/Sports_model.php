@@ -1948,8 +1948,7 @@ class Sports_model extends CI_Model {
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
 
                     /* Update User Player Points */
-                    $this->db->where('UserTeamID', $ContestValue['UserTeamID']);
-                    $this->db->where('PlayerID', $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
+                    $this->db->where(array("UserTeamID"=>$ContestValue['UserTeamID'], "PlayerID"=>$PlayersIdsArr[$UserTeamValue['PlayerGUID']]));
                     $this->db->limit(1);
                     $this->db->update('sports_users_team_players', array('Points' => $Points));
                 }
