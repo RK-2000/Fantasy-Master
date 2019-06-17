@@ -147,7 +147,6 @@ class Sports_model extends CI_Model {
     /*
       Description: To get all matches
      */
-
     function getMatches($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
         $Params = array();
         if (!empty($Field)) {
@@ -211,41 +210,17 @@ class Sports_model extends CI_Model {
             }
         }
         $this->db->select('M.MatchGUID,TL.TeamName AS TeamNameLocal,TV.TeamName AS TeamNameVisitor,TL.TeamNameShort AS TeamNameShortLocal,TV.TeamNameShort AS TeamNameShortVisitor');
-        // if (!empty($Field))
-        //     $this->db->select($Field, FALSE);
-        // $this->db->from('tbl_entity E, sports_series S, sports_matches M, sports_teams TL, sports_teams TV, sports_set_match_types MT');
-        // $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
-        // $this->db->where("M.MatchID", "E.EntityID", FALSE);
-        // $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
-        // $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
-        // $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
-        // if (!empty($Where['Keyword'])) {
-        //     $this->db->group_start();
-        //     $this->db->like("S.SeriesName", $Where['Keyword']);
-        //     $this->db->or_like("M.MatchNo", $Where['Keyword']);
-        //     $this->db->or_like("M.MatchLocation", $Where['Keyword']);
-        //     $this->db->or_like("TL.TeamName", $Where['Keyword']);
-        //     $this->db->or_like("TV.TeamName", $Where['Keyword']);
-        //     $this->db->or_like("TL.TeamNameShort", $Where['Keyword']);
-        //     $this->db->or_like("TV.TeamNameShort", $Where['Keyword']);
-        //     $this->db->group_end();
-        // }
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-            $this->db->from('tbl_entity E, sports_matches M, sports_teams TL, sports_teams TV');
-        if (array_keys_exist($Params, array('SeriesID','SeriesGUID','SeriesIDLive','SeriesName','SeriesStartDate','SeriesEndDate'))) {
-            $this->db->from('sports_series S');
-            $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
-        }
-        if (array_keys_exist($Params, array('MatchType'))) {
-            $this->db->from('sports_set_match_types MT');
-            $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
-        }
+        $this->db->from('tbl_entity E, sports_series S, sports_matches M, sports_teams TL, sports_teams TV, sports_set_match_types MT');
+        $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
         $this->db->where("M.MatchID", "E.EntityID", FALSE);
+        $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
         $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
         $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
         if (!empty($Where['Keyword'])) {
             $this->db->group_start();
+            $this->db->like("S.SeriesName", $Where['Keyword']);
             $this->db->or_like("M.MatchNo", $Where['Keyword']);
             $this->db->or_like("M.MatchLocation", $Where['Keyword']);
             $this->db->or_like("TL.TeamName", $Where['Keyword']);
@@ -308,9 +283,11 @@ class Sports_model extends CI_Model {
             $this->db->having("LastUpdateDiff", 0);
             $this->db->or_having("LastUpdateDiff >=", 86400); // 1 Day
         }
-        if (!empty($Where['ExistingContests']) && !empty($Where['StatusID'])) {
-            $this->db->where('EXISTS (select MatchID from sports_contest where MatchID = M.MatchID AND E.StatusID IN (' . $Where['StatusID'] . '))');
-        }
+        /* if (!empty($Where['existingContests'])) {
+          $StatusID = $Where['StatusID'];
+          print_r($StatusID);
+          $this->db->where('EXISTS (select MatchID from sports_contest where MatchID = M.MatchID AND E.StatusID IN(2,10)');
+          } */
 
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
@@ -337,14 +314,14 @@ class Sports_model extends CI_Model {
         }
         // $this->db->cache_on(); //Turn caching on
         $Query = $this->db->get();
+        // echo $this->db->last_query();exit;
+        // if ($Query->num_rows() > 0) {
         if ($multiRecords) {
             if ($Query->num_rows() > 0) {
                 $Records = array();
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
-                    if(in_array('MatchScoreDetails',$Params)){
-                        $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
-                    }
+                    $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
                 }
                 $Return['Data']['Records'] = $Records;
             }
@@ -359,18 +336,20 @@ class Sports_model extends CI_Model {
                     )as CompletedJoinedContest'
                         )->row();
             }
+            // echo $this->db->last_query(); die();
             return $Return;
         } else {
             if ($Query->num_rows() > 0) {
                 $Record = $Query->row_array();
-                if(in_array('MatchScoreDetails',$Params)){
-                    $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
-                }
+                $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
                 return $Record;
             }
         }
+        // }
         return FALSE;
     }
+
+    
 
     /*
       Description: To get all teams
