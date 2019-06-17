@@ -266,6 +266,9 @@ class Contest_model extends CI_Model {
         if (!empty($Where['ContestID'])) {
             $this->db->where("C.ContestID", $Where['ContestID']);
         }
+        if (!empty($Where['IsVirtualUserJoined'])) {
+            $this->db->where("C.IsVirtualUserJoined", $Where['IsVirtualUserJoined']);
+        }
         if (!empty($Where['SeriesID'])) {
             $this->db->where("C.SeriesID", $Where['SeriesID']);
         }
