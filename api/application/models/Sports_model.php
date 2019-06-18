@@ -1939,7 +1939,7 @@ class Sports_model extends CI_Model {
 
     function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
 
-        ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 500);
 
         /* Get Live Contests */
         $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserTeamID, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
@@ -1970,8 +1970,6 @@ class Sports_model extends CI_Model {
                 if(empty($MatchPlayers)){
                     $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'])->result_array();
                     $this->cache->memcached->save('getJoinedContestPlayerPoints',$MatchPlayers,3600);
-                }else{
-                    log_message('ERROR',"getJoinedContestPlayerPoints memcache working.");
                 }
                 $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
                 $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');
