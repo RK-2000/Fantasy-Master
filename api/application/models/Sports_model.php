@@ -1966,9 +1966,15 @@ class Sports_model extends CI_Model {
             foreach ($Data->result_array() as $Value) {
 
                 /* To Get Match Players */
-                $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
-                $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
-                $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
+                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints');
+                if(empty($MatchPlayers)){
+                    $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'])->result_array();
+                    $this->cache->memcached->save('getJoinedContestPlayerPoints',$MatchPlayers,3600);
+                }else{
+                    log_message('ERROR',"getJoinedContestPlayerPoints memcache working.");
+                }
+                $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
+                $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');
 
                 /* Player Points Multiplier */
                 $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
