@@ -1,2 +1,4 @@
 S.no,"Transaction ID",Narration,"Transaction Type",OpeningBalance,Amount,ClosingBalance,AvailableBalance,"Entry Date",Status
-1,f77af6ff6a8360986290,"Signup Bonus",Cr,0.00,50.00,50.00,50,"2019-06-03 16:30:39",Completed
+1,04cb130083684ffe892a,"Deposit Money",Cr,50.00,100.00,50.00,100,"2019-06-17 15:14:40",Failed
+2,552198d39b980d1f8ad9,"Deposit Money",Cr,50.00,850.00,50.00,850,"2019-06-17 15:10:47",Failed
+3,33d4d31f1d8986adeccc,"Signup Bonus",Cr,0.00,50.00,50.00,50,"2019-06-17 15:01:27",Completed
