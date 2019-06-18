@@ -1979,6 +1979,7 @@ class Sports_model extends CI_Model {
                 $UserTotalPoints = 0;
 
                 /* To Get User Team Players */
+                $Quereis = array();
                 foreach (json_decode($Value['UserPlayersJSON'],TRUE) as $UserTeamValue) {
                     if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
                         continue;
@@ -1987,8 +1988,9 @@ class Sports_model extends CI_Model {
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
 
                     /* Update User Player Points */
-                    $this->db->query("UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
+                    $Quereis[] = "UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1";
                 }
+                $this->db->query(implode("; ",$Quereis));
 
                 /* Update Player Total Points */
                 $this->db->where('UserTeamID', $Value['UserTeamID']);
