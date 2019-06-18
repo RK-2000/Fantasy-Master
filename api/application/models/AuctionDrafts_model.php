@@ -8,7 +8,6 @@ class AuctionDrafts_model extends CI_Model {
     public function __construct() {
         parent::__construct();
         $this->load->model('Sports_model');
-        $this->load->model('Settings_model');
     }
 
     /*
@@ -67,6 +66,46 @@ class AuctionDrafts_model extends CI_Model {
             return FALSE;
         }
         return TRUE;
+    }
+
+    /*
+      Description: Update contest to system.
+     */
+
+    function updateContest($Input = array(), $SessionUserID, $ContestID, $StatusID = 1) {
+        $defaultCustomizeWinningObj = new stdClass();
+        $defaultCustomizeWinningObj->From = 1;
+        $defaultCustomizeWinningObj->To = 1;
+        $defaultCustomizeWinningObj->Percent = 100;
+        $defaultCustomizeWinningObj->WinningAmount = @$Input['WinningAmount'];
+        $LeagueJoinDateTime = strtotime(@$Input['LeagueJoinDateTime']) + strtotime('-330 minutes', 0);
+        /* Add contest to contest table . */
+        $UpdateData = array_filter(array(
+            "ContestName" => @$Input['ContestName'],
+            "ContestFormat" => @$Input['ContestFormat'],
+            "ContestType" => @$Input['ContestType'],
+            "LeagueJoinDateTime" => (@$Input['LeagueJoinDateTime']) ? date('Y-m-d H:i', $LeagueJoinDateTime) : null,
+            "AuctionUpdateTime" => (@$Input['LeagueJoinDateTime']) ? date('Y-m-d H:i', $LeagueJoinDateTime + 3600) : null,
+            "Privacy" => @$Input['Privacy'],
+            "IsPaid" => @$Input['IsPaid'],
+            "IsConfirm" => @$Input['IsConfirm'],
+            "GameType" => @$Input['GameType'],
+            "GameTimeLive" => @$Input['GameTimeLive'],
+            "AdminPercent" => @$Input['AdminPercent'],
+            "MinimumUserJoined" => @$Input['MinimumUserJoined'],
+            "ShowJoinedContest" => @$Input['ShowJoinedContest'],
+            "WinningAmount" => @$Input['WinningAmount'],
+            "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
+            "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
+            "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+            "EntryType" => @$Input['EntryType'],
+            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+            "CashBonusContribution" => @$Input['CashBonusContribution'],
+            "CustomizeWinning" => (@$Input['IsPaid'] == 'Yes') ? @$Input['CustomizeWinning'] : array($defaultCustomizeWinningObj),
+        ));
+        $this->db->where('ContestID', $ContestID);
+        $this->db->limit(1);
+        $this->db->update('sports_contest', $UpdateData);
     }
 
     /*
@@ -131,47 +170,6 @@ class AuctionDrafts_model extends CI_Model {
                 }
             }
         }
-    }
-
-    /*
-      Description: Update contest to system.
-     */
-
-    function updateContest($Input = array(), $SessionUserID, $ContestID, $StatusID = 1) {
-        $defaultCustomizeWinningObj = new stdClass();
-        $defaultCustomizeWinningObj->From = 1;
-        $defaultCustomizeWinningObj->To = 1;
-        $defaultCustomizeWinningObj->Percent = 100;
-        $defaultCustomizeWinningObj->WinningAmount = @$Input['WinningAmount'];
-        $LeagueJoinDateTime = strtotime(@$Input['LeagueJoinDateTime']) + strtotime('-330 minutes', 0);
-        /* Add contest to contest table . */
-        $UpdateData = array_filter(array(
-            "ContestName" => @$Input['ContestName'],
-            "ContestFormat" => @$Input['ContestFormat'],
-            "ContestType" => @$Input['ContestType'],
-            "LeagueJoinDateTime" => (@$Input['LeagueJoinDateTime']) ? date('Y-m-d H:i', $LeagueJoinDateTime) : null,
-            "AuctionUpdateTime" => (@$Input['LeagueJoinDateTime']) ? date('Y-m-d H:i', $LeagueJoinDateTime + 3600) : null,
-            "Privacy" => @$Input['Privacy'],
-            "IsPaid" => @$Input['IsPaid'],
-            "IsConfirm" => @$Input['IsConfirm'],
-            "GameType" => @$Input['GameType'],
-            "GameTimeLive" => @$Input['GameTimeLive'],
-            "AdminPercent" => @$Input['AdminPercent'],
-            "MinimumUserJoined" => @$Input['MinimumUserJoined'],
-            "ShowJoinedContest" => @$Input['ShowJoinedContest'],
-            "WinningAmount" => @$Input['WinningAmount'],
-            "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
-            "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-            "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
-            "EntryType" => @$Input['EntryType'],
-            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
-            "CashBonusContribution" => @$Input['CashBonusContribution'],
-            // "CustomizeWinning" => (@$Input['IsPaid'] == 'Yes') ? @$Input['CustomizeWinning'] : NULL,
-            "CustomizeWinning" => (@$Input['IsPaid'] == 'Yes') ? @$Input['CustomizeWinning'] : array($defaultCustomizeWinningObj),
-        ));
-        $this->db->where('ContestID', $ContestID);
-        $this->db->limit(1);
-        $this->db->update('sports_contest', $UpdateData);
     }
 
     /*

@@ -199,7 +199,6 @@ app.controller('PageController', function ($scope, $http,$timeout,$rootScope){
                 var customWinings   = JSON.stringify($scope.contestPrizeParser($scope.custom.choices));
             }
 
-        console.log(customWinings); return false;
         /*}
         else{
             var customWinings   = '';

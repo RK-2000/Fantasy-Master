@@ -1873,7 +1873,7 @@ class Sports_model extends CI_Model {
         }
     }
 
-    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
+    function getJoinedContestTeamPoints_OLD1($CronID, $MatchID = "", $StatusArr = array(2)) {
 
         ini_set('max_execution_time', 300);
 
@@ -1905,10 +1905,10 @@ class Sports_model extends CI_Model {
                 continue;
             }
 
-             /* To Get Match Players */
-             $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
-             $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
-             $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
+            /* To Get Match Players */
+            $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
+            $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
+            $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
 
             foreach ($Contests->result_array() as $ContestValue) {
 
@@ -1926,12 +1926,7 @@ class Sports_model extends CI_Model {
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
 
                     /* Update User Player Points */
-                    /*                   
-                    $this->db->where(array("UserTeamID"=>$ContestValue['UserTeamID'], "PlayerID"=>$PlayersIdsArr[$UserTeamValue['PlayerGUID']]));
-                    $this->db->limit(1);
-                    $this->db->update('sports_users_team_players', array('Points' => $Points));
-                    */
-                     $this->db->query("UPDATE sports_users_team_players SET Points=$Points WHERE UserTeamID=".$ContestValue['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
+                    $this->db->query("UPDATE sports_users_team_players SET Points=$Points WHERE UserTeamID=".$ContestValue['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
                 }
 
                 /* Update Player Total Points */
@@ -1939,6 +1934,70 @@ class Sports_model extends CI_Model {
                 $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
             }
             $this->updateRankByContest($Value['ContestID']);
+        }
+    }
+
+    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
+
+        ini_set('max_execution_time', 300);
+
+        /* Get Live Contests */
+        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserTeamID, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
+        if(!empty($MatchID)){
+            $Query .= " AND C.MatchID = ".$MatchID;
+        }
+        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID ) ORDER BY M.MatchStartDateTime ASC";
+        $Data = $this->db->query($Query);
+        if ($Data->num_rows() > 0) {
+
+            /* Contest Rank Array */
+            $ContestIdArr = array();
+            
+            /* Get Vice Captain Points */
+            $ViceCaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
+
+            /* Get Captain Points */
+            $CaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
+
+            /* Match Types */
+            $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
+
+            /* Joined Users Teams Data */
+            foreach ($Data->result_array() as $Value) {
+
+                /* To Get Match Players */
+                $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
+                $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
+                $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
+
+                /* Player Points Multiplier */
+                $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
+                $UserTotalPoints = 0;
+
+                /* To Get User Team Players */
+                foreach (json_decode($Value['UserPlayersJSON'],TRUE) as $UserTeamValue) {
+                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
+                        continue;
+
+                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
+                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
+
+                    /* Update User Player Points */
+                    $this->db->query("UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
+                }
+
+                /* Update Player Total Points */
+                $this->db->where('UserTeamID', $Value['UserTeamID']);
+                $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
+
+                /* Update User Rank */
+                if(!in_array($Value['ContestID'],$ContestIdArr)){
+                    $ContestIdArr[] = $Value['ContestID'];
+
+                    /* Get User Rank*/
+                    $this->updateRankByContest($Value['ContestID']);
+                }
+            }
         }
     }
 

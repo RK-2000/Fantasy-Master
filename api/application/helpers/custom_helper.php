@@ -3,8 +3,9 @@ if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 
-function send_mail($emailData = array()) {
-    require 'send/vendor/autoload.php';
+function send_mail($emailData = array())
+{
+    require FCPATH.'send/vendor/autoload.php';
     $request_body = json_decode('{
             "personalizations": [
             {
@@ -48,7 +49,7 @@ function send_mail($emailData = array()) {
                 },
 
                 "template_id"   : "' . $emailData['template_id'] . '",
-                "subject"       : "'.$emailData['Subject'].'",
+                "subject"       : "' . $emailData['Subject'] . '",
                 "content"       : [
                 {
                     "type": "text/html",
@@ -59,22 +60,21 @@ function send_mail($emailData = array()) {
     // sending email 
     $apiKey = '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';
     $sg = new \SendGrid($apiKey);
-
     $response = $sg->client->mail()->send()->post($request_body);
     $response->statusCode();
     $response->body();
     $response->headers();
-    // print_r($response);
     return $true;
 }
 
 /*------------------------------*/
 /*------------------------------*/
-function sendPushMessage($UserID, $Message, $Data = array()) {
+function sendPushMessage($UserID, $Message, $Data = array())
+{
     if (!isset($Data['content_available'])) {
         $Data['content_available'] = 1;
     }
-    $Obj = & get_instance();
+    $Obj = &get_instance();
     $Obj->db->select('U.UserTypeID, US.DeviceTypeID, US.DeviceToken');
     $Obj->db->from('tbl_users_session US');
     $Obj->db->from('tbl_users U');
@@ -82,11 +82,10 @@ function sendPushMessage($UserID, $Message, $Data = array()) {
     $Obj->db->where("US.UserID", "U.UserID", FALSE);
     $Obj->db->where("US.DeviceToken!=", '');
     $Obj->db->where('US.DeviceToken is NOT NULL', NULL, FALSE);
-    if(!MULTISESSION){ 
-        $this->db->limit(1);
+    if (!MULTISESSION) {
+        $Obj->db->limit(1);
     }
     $Query = $Obj->db->get();
-    //echo $Obj->db->last_query();
     if ($Query->num_rows() > 0) {
         foreach ($Query->result_array() as $Notifications) {
             if ($Notifications['DeviceTypeID'] == 2) { /*I phone */
@@ -99,7 +98,8 @@ function sendPushMessage($UserID, $Message, $Data = array()) {
 }
 /*------------------------------*/
 /*------------------------------*/
-function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = array()) {
+function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = array())
+{
     //API URL of FCM
     $URL = 'https://fcm.googleapis.com/fcm/send';
     /*ApiKey available in:  Firebase Console -> Project Settings -> CLOUD MESSAGING -> Server key*/
@@ -128,10 +128,12 @@ function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = arra
     curl_setopt($Ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($Ch, CURLOPT_POSTFIELDS, json_encode($Fields));
     $Result = curl_exec($Ch);
-    $obj = & get_instance();
+    $obj = &get_instance();
     /*Save Log*/
-    $PushData = array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s"),);
-    @$obj->db->insert('log_pushdata', $PushData);
+    if(API_SAVE_LOG){
+        $PushData = array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s"));
+        @$obj->db->insert('log_pushdata', $PushData);
+    }
     if ($Result === FALSE) {
         die('FCM Send Error: ' . curl_error($Ch));
     }
@@ -140,163 +142,126 @@ function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = arra
 }
 /*------------------------------*/
 /*------------------------------*/
-function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $Badge = 1, $Data = array()) {
+function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $Badge = 1, $Data = array())
+{
     $Badge = ($Badge == 0 ? 1 : 0);
     $Pass = '123456';
     $Body['aps'] = $Data;
     $Body['aps']['alert'] = $Message;
     $Body['aps']['badge'] = (int)$Badge;
-    // if ($sound)//$Body['aps']['sound'] = $sound;
     /* End of Configurable Items */
     $Ctx = @stream_context_create();
     // assume the private key passphase was removed.
     stream_context_set_option($Ctx, 'ssl', 'passphrase', $Pass);
-
     if (ENVIRONMENT == 'production') {
         $Certificate = 'app2-ck-live.pem';
         @stream_context_set_option($Ctx, 'ssl', 'local_cert', $Certificate);
-            $Fp = @stream_socket_client('ssl://gateway.push.apple.com:2195', $Err, $Errstr, 60, STREAM_CLIENT_CONNECT, $Ctx); //For Live
-        } else {
-            $Certificate = 'app2-ck-dev.pem';
-            @stream_context_set_option($Ctx, 'ssl', 'local_cert', $Certificate);
-            $Fp = @stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $Err, $Errstr, 60, STREAM_CLIENT_CONNECT, $Ctx); //For Testing
-        }
+        $Fp = @stream_socket_client('ssl://gateway.push.apple.com:2195', $Err, $Errstr, 60, STREAM_CLIENT_CONNECT, $Ctx); //For Live
+    } else {
+        $Certificate = 'app2-ck-dev.pem';
+        @stream_context_set_option($Ctx, 'ssl', 'local_cert', $Certificate);
+        $Fp = @stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $Err, $Errstr, 60, STREAM_CLIENT_CONNECT, $Ctx); //For Testing
+    }
 
-        if (!$Fp) {
-            return "Failed to connect $Err $Errstr";
-        } else {
-            try {
-                $obj = & get_instance();
-                /*Save Log*/
-                $PushData = array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s"),);
-                @$obj->db->insert('log_pushdata', $PushData);
-                $Payload = @json_encode($Body, JSON_NUMERIC_CHECK);
-                $Msg = @chr(0) . @pack("n", 32) . @pack('H*', @str_replace(' ', '', $DeviceToken)) . @pack("n", @strlen($Payload)) . $Payload;
-                @fwrite($Fp, $Msg);
-                @fclose($Fp);
-            }
-            catch(Exception $E) {
-                return 'Caught exception';
-            }
+    if (!$Fp) {
+        return "Failed to connect $Err $Errstr";
+    } else {
+        try {
+            $obj = &get_instance();
+            /*Save Log*/
+            $PushData = array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s"),);
+            @$obj->db->insert('log_pushdata', $PushData);
+            $Payload = @json_encode($Body, JSON_NUMERIC_CHECK);
+            $Msg = @chr(0) . @pack("n", 32) . @pack('H*', @str_replace(' ', '', $DeviceToken)) . @pack("n", @strlen($Payload)) . $Payload;
+            @fwrite($Fp, $Msg);
+            @fclose($Fp);
+        } catch (Exception $E) {
+            return 'Caught exception';
         }
     }
-    /*------------------------------*/
-    /*------------------------------*/
-    function sendSMS_old($input = array()) {
-    //Your authentication key
-        $authKey = "6a077d91f259674b21e60cffda125dae";
-    //Multiple mobiles numbers separated by comma
-        $mobileNumber = $input['PhoneNumber'];
-    //Sender ID,While using route4 sender id should be 6 characters long.
-        $senderId = "BLKSMS";
-    //Your message to send, Add URL encoding here.
-        $message = $input['Text'];
-    //Define route
-        $route = "4";
-    //Prepare you post parameters
-        $postData = array('authkey' => $authKey, 'mobiles' => $mobileNumber, 'message' => $message, 'sender' => $senderId, 'route' => $route);
-        if (ENVIRONMENT == 'production') {
-            $url = urlencode("http://smsgateway.ca/SendSMS.aspx?CellNumber=$mobileNumber&AccountKey=zP70k0f8S70AacoogxnU3Q7WVnh460yx&MessageBody=$message");
-        } else {
-            $url = "http://sms.bulksmsserviceproviders.com/api/send_http.php";
-        }
-        $url = "http://sms.bulksmsserviceproviders.com/api/send_http.php";
-    // init the resource
-        $ch = curl_init();
-        curl_setopt_array($ch, array(CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $postData
-    //,CURLOPT_FOLLOWLOCATION => true
-        ));
-    //Ignore SSL certificate verification
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    //get response
-        $output = curl_exec($ch);
-    //Print error if any
-        if (curl_errno($ch)) {
-            echo 'error:' . curl_error($ch);
-        }
-        curl_close($ch);
-    //echo $output;
-
+}
+/*------------------------------*/
+/*------------------------------*/
+function sendMail($Input = array())
+{
+    $CI = &get_instance();
+    $CI->load->library('email');
+    $config['protocol'] = SMTP_PROTOCOL;
+    $config['smtp_host'] = SMTP_HOST;
+    $config['smtp_port'] = SMTP_PORT;
+    $config['smtp_user'] = SMTP_USER;
+    $config['smtp_pass'] = SMTP_PASS;
+    $config['charset'] = "utf-8";
+    $config['mailtype'] = "html";
+    $config['wordwrap'] = TRUE;
+    $config['smtp_crypto'] = SMTP_CRYPTO;
+    $CI->email->initialize($config);
+    $CI->email->set_newline("\r\n");
+    $CI->email->clear();
+    $CI->email->from(FROM_EMAIL, FROM_EMAIL_NAME);
+    $CI->email->reply_to(NOREPLY_EMAIL, NOREPLY_NAME);
+    $CI->email->to($Input['emailTo']);
+    if (defined('TO_BCC') && !empty(TO_BCC)) {
+        $CI->email->bcc(TO_BCC);
     }
-    /*------------------------------*/
-    /*------------------------------*/
-    function sendMail($Input = array()) {
-        $CI = & get_instance();
-        $CI->load->library('email');
-        $config['protocol'] = SMTP_PROTOCOL;
-        $config['smtp_host'] = SMTP_HOST;
-        $config['smtp_port'] = SMTP_PORT;
-        $config['smtp_user'] = SMTP_USER;
-        $config['smtp_pass'] = SMTP_PASS;
-        $config['charset'] = "utf-8";
-        $config['mailtype'] = "html";
-        $config['wordwrap'] = TRUE;
-        $config['smtp_crypto'] = SMTP_CRYPTO;
-        $CI->email->initialize($config);
-        $CI->email->set_newline("\r\n");
-        $CI->email->clear();
-        $CI->email->from(FROM_EMAIL, FROM_EMAIL_NAME);
-        $CI->email->reply_to(NOREPLY_EMAIL, NOREPLY_NAME);
-        $CI->email->to($Input['emailTo']);
-
-        if (defined('TO_BCC') && !empty(TO_BCC)) {
-            $CI->email->bcc(TO_BCC);
-        }
-
-        if(!empty($Input['emailBcc'])){
-            $CI->email->bcc($Input['emailBcc']);
-        }
-
-        $CI->email->subject($Input['emailSubject']);
-        $CI->email->message($Input['emailMessage']);
-        if (@$CI->email->send()) {
-            return true;
-        } else {
+    if (!empty($Input['emailBcc'])) {
+        $CI->email->bcc($Input['emailBcc']);
+    }
+    $CI->email->subject($Input['emailSubject']);
+    $CI->email->message($Input['emailMessage']);
+    if (@$CI->email->send()) {
+        return true;
+    } else {
         //echo $CI->email->print_debugger();
-            return false;
-        }
+        return false;
     }
-    /*------------------------------*/
-    /*------------------------------*/
-    function emailTemplate($HTML) {
-        $CI = & get_instance();
-        return $CI->load->view("emailer/layout", array("HTML" => $HTML), TRUE);
+}
+/*------------------------------*/
+/*------------------------------*/
+function emailTemplate($HTML)
+{
+    $CI = &get_instance();
+    return $CI->load->view("emailer/layout", array("HTML" => $HTML), TRUE);
+}
+/*------------------------------*/
+/*------------------------------*/
+function checkDirExist($DirName)
+{
+    if (!is_dir($DirName)) mkdir($DirName, 0777, true);
+}
+/*------------------------------*/
+/*------------------------------*/
+function validateEmail($Str)
+{
+    return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $Str)) ? FALSE : TRUE;
+}
+/*------------------------------*/
+/*------------------------------*/
+function validateDate($Date)
+{
+    if (strtotime($Date)) {
+        return true;
+    } else {
+        return false;
     }
-    /*------------------------------*/
-    /*------------------------------*/
-    function checkDirExist($DirName) {
-        if (!is_dir($DirName)) mkdir($DirName, 0777, true);
+}
+/*------------------------------*/
+/*------------------------------*/
+function paginationOffset($PageNo, $PageSize)
+{
+    if (empty($PageNo)) {
+        $PageNo = 1;
     }
-    /*------------------------------*/
-    /*------------------------------*/
-    function validateEmail($Str) {
-        return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $Str)) ? FALSE : TRUE;
-    }
-    /*------------------------------*/
-    /*------------------------------*/
-    function validateDate($Date) {
-        if (strtotime($Date)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    /*------------------------------*/
-    /*------------------------------*/
-    function paginationOffset($PageNo, $PageSize) {
-        if (empty($PageNo)) {
-            $PageNo = 1;
-        }
-        $offset = ($PageNo - 1) * $PageSize;
-        return $offset;
-    }
-    /*------------------------------*/
-    /*------------------------------*/
-    function get_guid() {
-        if (function_exists('com_create_guid')) {
-            return strtolower(com_create_guid());
-        } else {
+    $Offset = ($PageNo - 1) * $PageSize;
+    return $Offset;
+}
+/*------------------------------*/
+/*------------------------------*/
+function get_guid()
+{
+    if (function_exists('com_create_guid')) {
+        return strtolower(com_create_guid());
+    } else {
         mt_srand((double)microtime() * 10000); //optional for php 4.2.0 and up.
         $charid = strtoupper(md5(uniqid(rand(), true)));
         $hyphen = chr(45); // "-"
@@ -306,7 +271,8 @@ function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $
 }
 /*------------------------------*/
 /*------------------------------*/
-function dateDiff($FromDateTime, $ToDateTime) {
+function dateDiff($FromDateTime, $ToDateTime)
+{
     $start = date_create($FromDateTime);
     $end = date_create($ToDateTime); // Current time and date
     return $diff = date_diff($start, $end);
@@ -320,21 +286,21 @@ function dateDiff($FromDateTime, $ToDateTime) {
     // Output: The difference is 28 years, 5 months, 19 days, 20 hours, 34 minutes, 36 seconds
     echo 'The difference in days : ' . $diff->days;
     // Output: The difference in days : 10398
-    
+
 }
 /*------------------------------*/
 /*------------------------------*/
-function diffInHours($startdate, $enddate) {
-    $starttimestamp = strtotime($startdate);
-    $endtimestamp = strtotime($enddate);
-    $difference = abs($endtimestamp - $starttimestamp) / 3600;
-    return $difference;
+function diffInHours($startdate, $enddate)
+{
+    return abs(strtotime($enddate) - strtotime($startdate)) / 3600;
 }
 /*------------------------------*/
 /*------------------------------*/
-function array_keys_exist(array $needles, array $StrArray) {
+function array_keys_exist(array $needles, array $StrArray)
+{
     foreach ($needles as $needle) {
         if (in_array($needle, $StrArray))
             return true;
-    } return false;
+    }
+    return false;
 }

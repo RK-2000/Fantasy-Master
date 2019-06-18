@@ -216,7 +216,7 @@ switch (ENVIRONMENT)
 
 	/*Site Related Settings*/
 	define('API_SAVE_LOG', false);
-        define('CRON_SAVE_LOG', true);
+    define('CRON_SAVE_LOG', true);
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'Pfytge92537984428170');
