@@ -12,7 +12,7 @@ class PreContest_model extends CI_Model {
     }
 
     /*
-      Description:    ADD contest to system.
+      Description: ADD contest to system.
      */
 
     function addContest($Input = array(), $SessionUserID, $StatusID = 1) {

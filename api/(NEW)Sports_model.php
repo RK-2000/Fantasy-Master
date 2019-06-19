@@ -2698,7 +2698,7 @@ class Sports_model extends CI_Model {
         ini_set('max_execution_time', 300);
 
         /* Get Completed Contests */
-        $Contests = $this->db->query('SELECT C.WinningAmount,C.NoOfWinners,C.ContestID,C.CustomizeWinning FROM tbl_entity E,sports_contest C WHERE E.EntityID = C.ContestID AND E.StatusID = 5 AND C.IsWinningDistributed = "No"');
+        $Contests = $this->db->query('SELECT C.WinningAmount,C.ContestID,C.CustomizeWinning FROM tbl_entity E,sports_contest C WHERE E.EntityID = C.ContestID AND E.StatusID = 5 AND C.IsWinningDistributed = "No"');
         if ($Contests->num_rows() > 0) {
             foreach ($Contests->result_array() as $Value) {
                 $JoinedContestsUsers = $this->db->query('SELECT UserRank,UserTeamID,TotalPoints,UserID FROM sports_contest_join WHERE ContestID = '.$Value['ContestID'].' AND TotalPoints > 0 ORDER BY UserRank DESC');

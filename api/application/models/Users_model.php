@@ -51,7 +51,7 @@ class Users_model extends CI_Model {
             "GoogleURL" => @strtolower($Input['GoogleURL']),
             "InstagramURL" => @strtolower($Input['InstagramURL']),
             "LinkedInURL" => @strtolower($Input['LinkedInURL']),
-            "WhatsApp" => @strtolower($Input['WhatsApp']),
+            "WhatsApp" => @strtolower($Input['WhatsApp'])
         ));
 
         if (isset($Input['LastName']) && $Input['LastName'] == '') {
@@ -84,7 +84,6 @@ class Users_model extends CI_Model {
         if (isset($Input['PhoneNumber']) && $Input['PhoneNumber'] == '') {
             $UpdateArray['PhoneNumber'] = null;
         }
-
 
         /* for change email address */
         if (!empty($UpdateArray['Email']) || !empty($UpdateArray['PhoneNumber'])) {
@@ -126,11 +125,9 @@ class Users_model extends CI_Model {
                 $Token = $this->Recovery_model->generateToken($UserID, 3);
 
                 /* Send change phonenumber SMS to User with Token. */
-
                 $this->Utility_model->sendMobileSMS(array(
                     'PhoneNumber' => $UpdateArray['PhoneNumberForChange'],
                     'Text' => $Token
-                        // 'Text' => SITE_NAME . ", OTP to verify Mobile no. is: $Token",
                 ));
                 unset($UpdateArray['PhoneNumber']);
             }
@@ -154,7 +151,6 @@ class Users_model extends CI_Model {
             $MediaGUID = $MediaData['MediaGUID'];
             $Caption = json_decode($MediaData['MediaCaption']);
             $Caption->RejectReason = $Input['Comments'];
-
             $UpdateCaption['MediaCaption'] = json_encode($Caption);
 
             $this->db->where('MediaGUID', $MediaGUID);
@@ -232,8 +228,6 @@ class Users_model extends CI_Model {
             }
             /* Assign categories - ends */
         }
-
-
 
         $this->Entity_model->updateEntityInfo($UserID, array('StatusID' => @$Input['StatusID']));
         return TRUE;
@@ -369,8 +363,6 @@ class Users_model extends CI_Model {
 
     function getUsers($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
         /* Additional fields to select */
-        //print_r($Where);
-        // exit;
         $Params = array();
         if (!empty($Field)) {
             $Params = array_map('trim', explode(',', $Field));
@@ -486,11 +478,6 @@ class Users_model extends CI_Model {
 
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
-            // if (validateEmail($Where['Keyword'])) {
-            //     $Where['Email'] = $Where['Keyword'];
-            // } elseif (is_numeric($Where['Keyword'])) {
-            //     $Where['PhoneNumber'] = $Where['Keyword'];
-            // } else {
             $this->db->group_start();
             $this->db->like("U.FirstName", $Where['Keyword']);
             $this->db->or_like("U.LastName", $Where['Keyword']);
@@ -501,21 +488,17 @@ class Users_model extends CI_Model {
             $this->db->or_like("U.PhoneNumberForChange", $Where['Keyword']);
             $this->db->or_like("CONCAT_WS('',U.FirstName,U.Middlename,U.LastName)", preg_replace('/\s+/', '', $Where['Keyword']), FALSE);
             $this->db->group_end();
-            // }
         }
 
         if (!empty($Where['SourceID'])) {
             $this->db->where("UL.SourceID", $Where['SourceID']);
         }
-
         if (!empty($Where['UserTypeID'])) {
             $this->db->where_in("U.UserTypeID", $Where['UserTypeID']);
         }
-
         if (!empty($Where['UserTypeIDNot']) && $Where['UserTypeIDNot'] == 'Yes') {
             $this->db->where("U.UserTypeID!=", $Where['UserTypeIDNot']);
         }
-
         if (!empty($Where['UserID'])) {
             $this->db->where("U.UserID", $Where['UserID']);
         }
@@ -528,7 +511,6 @@ class Users_model extends CI_Model {
         if (!empty($Where['ReferredByUserID'])) {
             $this->db->where("U.ReferredByUserID", $Where['ReferredByUserID']);
         }
-
         if (!empty($Where['Username'])) {
             $this->db->where("U.Username", $Where['Username']);
         }
@@ -538,7 +520,6 @@ class Users_model extends CI_Model {
         if (!empty($Where['PhoneNumber'])) {
             $this->db->where("U.PhoneNumber", $Where['PhoneNumber']);
         }
-
         if (!empty($Where['LoginKeyword'])) {
             $this->db->group_start();
             $this->db->where("U.Email", $Where['LoginKeyword']);
@@ -595,7 +576,6 @@ class Users_model extends CI_Model {
         }
 
         $Query = $this->db->get();
-        // echo $this->db->last_query();
         if ($Query->num_rows() > 0) {
             foreach ($Query->result_array() as $Record) {
 
@@ -662,10 +642,6 @@ class Users_model extends CI_Model {
         /* Multisession handling */
         if (!MULTISESSION) {
             $this->db->delete('tbl_users_session', array('UserID' => $UserID));
-        } else {
-            /* 			if(empty(@$Input['DeviceGUID'])){
-              $this->db->delete('tbl_users_session', array('DeviceGUID' => $Input['DeviceGUID']));
-              } */
         }
 
         /* Multisession handling - ends */
@@ -1535,10 +1511,7 @@ class Users_model extends CI_Model {
         if ($PageNo != 0) {
             $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
         }
-
         $DepositsData = $this->db->get();
-        // echo $this->db->last_query(); die();
-
         $Return['Data']['Records'] = $DepositsData->result_array();
 
         return $Return;
@@ -1595,7 +1568,6 @@ class Users_model extends CI_Model {
             $Return['Data']['WinningAmount'] = $WalletData->WinningAmount;
             $Return['Data']['TotalCash'] = $WalletData->TotalCash;
         }
-
         if (in_array('VerificationDetails', $Params)) {
             $UserVerificationData = $this->Users_model->getUsers('Status,PanStatus,BankStatus,PhoneStatus', array('UserID' => $Where['UserID']));
             $Return['Data']['Status'] = $UserVerificationData['Status'];
@@ -1603,7 +1575,6 @@ class Users_model extends CI_Model {
             $Return['Data']['BankStatus'] = $UserVerificationData['BankStatus'];
             $Return['Data']['PhoneStatus'] = $UserVerificationData['PhoneStatus'];
         }
-
         $this->db->select('W.WalletID');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
@@ -1650,7 +1621,6 @@ class Users_model extends CI_Model {
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
         }
-
         $this->db->order_by('W.WalletID', 'DESC');
 
         /* Total records count only if want to get multiple records */
@@ -1665,7 +1635,6 @@ class Users_model extends CI_Model {
             $this->db->limit(1);
         }
         $Query = $this->db->get();
-
         if ($Query->num_rows() > 0) {
             if ($multiRecords) {
                 $Records = array();
@@ -1811,18 +1780,12 @@ class Users_model extends CI_Model {
 
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
-            // if (validateEmail($Where['Keyword'])) {
-            //     $Where['Email'] = $Where['Keyword'];
-            // } elseif (is_numeric($Where['Keyword'])) {
-            //     $Where['PhoneNumber'] = $Where['Keyword'];
-            // } else {
             $this->db->group_start();
             $this->db->like("U.FirstName", $Where['Keyword']);
             $this->db->or_like("U.LastName", $Where['Keyword']);
             $this->db->or_like("U.Email", $Where['Keyword']);
             $this->db->or_like("CONCAT_WS('',U.FirstName,U.Middlename,U.LastName)", preg_replace('/\s+/', '', $Where['Keyword']), FALSE);
             $this->db->group_end();
-            // }
         }
         if (!empty($Where['WithdrawalID'])) {
             $this->db->where("W.WithdrawalID", $Where['WithdrawalID']);
