@@ -1946,7 +1946,7 @@ class Sports_model extends CI_Model {
         if(!empty($MatchID)){
             $Query .= " AND C.MatchID = ".$MatchID;
         }
-        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID ) ORDER BY M.MatchStartDateTime ASC";
+        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID LIMIT 1) ORDER BY M.MatchStartDateTime ASC";
         $Data = $this->db->query($Query);
         if ($Data->num_rows() > 0) {
 
@@ -1979,7 +1979,6 @@ class Sports_model extends CI_Model {
                 $UserTotalPoints = 0;
 
                 /* To Get User Team Players */
-                $Quereis = array();
                 foreach (json_decode($Value['UserPlayersJSON'],TRUE) as $UserTeamValue) {
                     if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
                         continue;
@@ -1988,9 +1987,8 @@ class Sports_model extends CI_Model {
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
 
                     /* Update User Player Points */
-                    $Quereis[] = "UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1";
+                    $this->db->query("UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
                 }
-                $this->db->query(implode("; ",$Quereis));
 
                 /* Update Player Total Points */
                 $this->db->where('UserTeamID', $Value['UserTeamID']);
