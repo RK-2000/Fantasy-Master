@@ -611,6 +611,7 @@ class Collection
 
         $server = $this->manager->selectServer($options['readPreference']);
 
+
         if ( ! isset($options['readConcern']) && \MongoDB\server_supports_feature($server, self::$wireVersionForReadConcern)) {
             $options['readConcern'] = $this->readConcern;
         }
@@ -618,7 +619,6 @@ class Collection
         if ( ! isset($options['typeMap'])) {
             $options['typeMap'] = $this->typeMap;
         }
-
         $operation = new Find($this->databaseName, $this->collectionName, $filter, $options);
 
         return $operation->execute($server);

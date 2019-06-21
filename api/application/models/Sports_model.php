@@ -1944,11 +1944,11 @@ class Sports_model extends CI_Model {
 
 
         /* Get Live Contests */
-        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
+        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID,UT.UserTeamName,U.Username,CONCAT_WS(' ',U.FirstName,U.LastName) FullName,IF(U.ProfilePic IS NULL,CONCAT('" . BASE_URL . "','uploads/profile/picture/','default.jpg'),CONCAT('" . BASE_URL . "','uploads/profile/picture/',U.ProfilePic)) ProfilePic, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E,tbl_users U,sports_users_teams UT WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND UT.UserTeamID = JC.UserTeamID AND U.UserID = JC.UserID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
         if(!empty($MatchID)){
             $Query .= " AND C.MatchID = ".$MatchID;
         }
-        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID LIMIT 1) ORDER BY JC.ContestID DESC";
+        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID LIMIT 1) ORDER BY JC.ContestID";
         $Data = $this->db->query($Query);
         if ($Data->num_rows() > 0) {
 
@@ -1967,9 +1967,7 @@ class Sports_model extends CI_Model {
             /* Joined Users Teams Data */
             foreach ($Data->result_array() as $Key => $Value) {
 
-                if($Key == 0){
-                    $ContestID = $Value['ContestID'];
-                }
+                $ContestIdArr[] = $Value['ContestID'];
 
                 /* To Get Match Players */
                 $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints');
@@ -1995,25 +1993,34 @@ class Sports_model extends CI_Model {
                     $UserPlayersArr[] = array('Points' => $Points,'PlayerID' => $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
                 }
 
-                // $ContestCollection = $this->fantasydb->{'Contest_'.$Value['ContestID']};
-                // $updateResult = $ContestCollection->updateOne(
-                //                 ['_id'    => $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
-                //                 ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'TotalPoints' => $UserTotalPoints,'UserPlayersArr' => $UserPlayersArr]],
-                //                 ['upsert' => true]
-                //             );
+                /* Add/Edit Joined Contest Data (MongoDB) */
+                $ContestCollection = $this->fantasydb->{'Contest_'.$Value['ContestID']};
+                $ContestCollection->updateOne(
+                                ['_id'    => $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
+                                ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'UserTeamName' => $Value['UserTeamName'],'Username' => $Value['Username'],'FullName' => $Value['FullName'],'ProfilePic' => $Value['ProfilePic'],'TotalPoints' => $UserTotalPoints,'UserPlayersArr' => $UserPlayersArr]],
+                                ['upsert' => true]
+                            );
+            }
 
-                /* Update Rank */ 
-                if($ContestID != $Value['ContestID']){
-                    $ContestCollection1 = $this->fantasydb->{'Contest_'.$Value['ContestID']};
-                    $cursor = $ContestCollection1->findOne([]);
-                    echo "<pre>";
-                    print_r($cursor);die;
-                    // $ContestsData = $ContestCollection->find();
-                    // foreach ($ContestsData as $document) {
-                    //     echo $document['_id'], "\n";
-                    //     echo $document['TotalPoints'], "\n";
-                    // }
-                    $ContestID = $Value['ContestID'];die;
+            /* Update User Rank (MongoDB) */
+            foreach(array_unique($ContestIdArr) as $ContestID){
+                $ContestCollection = $this->fantasydb->{'Contest_'.$ContestID};
+                $ContestData  = $ContestCollection->find([],['projection' => ['TotalPoints' => 1],'sort' => ['TotalPoints' => -1]]);
+                $PrevPoint    = $PrevRank = 0;
+                $SkippedCount = 1;
+                foreach($ContestData as $ContestValue) {
+                   if($PrevPoint != $ContestValue['TotalPoints']){
+                        $PrevRank  = $PrevRank + $SkippedCount;
+                        $PrevPoint = $ContestValue['TotalPoints'];
+                        $SkippedCount = 1;
+                   }else{
+                        $SkippedCount++;
+                   }
+                   $ContestCollection->updateOne(
+                            ['_id'    => $ContestValue['_id']],
+                            ['$set'   => ['UserRank' => $PrevRank]],
+                            ['upsert' => false]
+                        );
                 }
             }
         }
