@@ -1870,7 +1870,7 @@ class Sports_model extends CI_Model {
         }
     }
 
-    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
+    function getJoinedContestTeamPoints_OLD_MYSQL($CronID, $MatchID = "", $StatusArr = array(2)) {
 
         ini_set('max_execution_time', 500);
 
@@ -1933,6 +1933,87 @@ class Sports_model extends CI_Model {
 
                     /* Get User Rank*/
                     $this->updateRankByContest($Value['ContestID']);
+                }
+            }
+        }
+    }
+
+    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
+
+        ini_set('max_execution_time', 500);
+
+
+        /* Get Live Contests */
+        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
+        if(!empty($MatchID)){
+            $Query .= " AND C.MatchID = ".$MatchID;
+        }
+        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID LIMIT 1) ORDER BY JC.ContestID DESC";
+        $Data = $this->db->query($Query);
+        if ($Data->num_rows() > 0) {
+
+            /* Contest Rank Array */
+            $ContestIdArr = array();
+            
+            /* Get Vice Captain Points */
+            $ViceCaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
+
+            /* Get Captain Points */
+            $CaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
+
+            /* Match Types */
+            $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
+
+            /* Joined Users Teams Data */
+            foreach ($Data->result_array() as $Key => $Value) {
+
+                if($Key == 0){
+                    $ContestID = $Value['ContestID'];
+                }
+
+                /* To Get Match Players */
+                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints');
+                if(empty($MatchPlayers)){
+                    $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'])->result_array();
+                    $this->cache->memcached->save('getJoinedContestPlayerPoints',$MatchPlayers,3600);
+                }
+                $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
+                $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');
+
+                /* Player Points Multiplier */
+                $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
+                $UserTotalPoints = 0;
+                $UserPlayersArr  = array();
+
+                /* To Get User Team Players */
+                foreach (json_decode($Value['UserPlayersJSON'],TRUE) as $UserTeamValue) {
+                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
+                        continue;
+
+                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
+                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
+                    $UserPlayersArr[] = array('Points' => $Points,'PlayerID' => $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
+                }
+
+                // $ContestCollection = $this->fantasydb->{'Contest_'.$Value['ContestID']};
+                // $updateResult = $ContestCollection->updateOne(
+                //                 ['_id'    => $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
+                //                 ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'TotalPoints' => $UserTotalPoints,'UserPlayersArr' => $UserPlayersArr]],
+                //                 ['upsert' => true]
+                //             );
+
+                /* Update Rank */ 
+                if($ContestID != $Value['ContestID']){
+                    $ContestCollection1 = $this->fantasydb->{'Contest_'.$Value['ContestID']};
+                    $cursor = $ContestCollection1->findOne([]);
+                    echo "<pre>";
+                    print_r($cursor);die;
+                    // $ContestsData = $ContestCollection->find();
+                    // foreach ($ContestsData as $document) {
+                    //     echo $document['_id'], "\n";
+                    //     echo $document['TotalPoints'], "\n";
+                    // }
+                    $ContestID = $Value['ContestID'];die;
                 }
             }
         }

@@ -9,13 +9,11 @@ class Utilities extends API_Controller {
         $this->load->model('Utility_model');
         $this->load->model('Sports_model');
         $this->load->model('Contest_model');
-        // $this->load->library('mongo_db', array('activate'=>'default'),'mongodb');
-
-        // echo "<pre>";
-        // $result  = $this->mongodb->insert('movie', array('name' => time()));
-        // $loc_result = $this->mongodb->select(['_id', 'name'])->get('movie');
-        // print_r($result);
-        // print_r($loc_result);die;
+        
+        /* Require MongoDB Library & Connection */
+        require_once getcwd() . '/vendor/autoload.php';
+        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+        $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
