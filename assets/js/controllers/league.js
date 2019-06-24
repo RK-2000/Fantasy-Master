@@ -164,149 +164,98 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $scope.viewJoinButton = false;
             }
 
-            $scope.ViewTeamOnGround = function (UserTeamGUID, UserGUID) {
-                $scope.SelectedUserGUID = UserGUID;
-                $scope.SelectedUserTeamGUID = UserTeamGUID;
-                $scope.teamStructure = {};
-                var $data = {};
-                $data.UserGUID = UserGUID;
-                $scope.TeamPlayers = []; //user team list array
-                $data.SessionKey = $localStorage.user_details.SessionKey; //user session key
-                $data.UserTeamGUID = UserTeamGUID; //User Team GUID
-                $data.MatchGUID = getQueryStringValue('MatchGUID'); //Match GUID
-                $data.UserTeamType = 'Normal';
-                $data.Params = "PlayerGUID,PlayerName,PlayerCountry,PlayerPosition,PlayerRole,UserTeamPlayers,UserRank,UserGUID";
-                appDB
-                        .callPostForm('contest/getUserTeams', $data)
-                        .then(
-                                function successCallback(data) {
-                                    if (data.ResponseCode == 200) {
-                                        $scope.TeamPlayers = data.Data;
-                                        $scope.teamStructure = {
-                                            "WicketKeeper": {
-                                                "min": 1,
-                                                "max": 1,
-                                                "occupied": 0,
-                                                player: [],
-                                                "icon": "flaticon1-pair-of-gloves"
-                                            },
-                                            "Batsman": {
-                                                "min": 3,
-                                                "max": 5,
-                                                "occupied": 0,
-                                                player: [],
-                                                "icon": "flaticon1-ball"
-                                            },
-                                            "Bowler": {
-                                                "min": 3,
-                                                "max": 5,
-                                                "occupied": 0,
-                                                player: [],
-                                                "icon": "flaticon1-tennis-ball"
-                                            },
-                                            "AllRounder": {
-                                                "min": 1,
-                                                "max": 3,
-                                                "occupied": 0,
-                                                player: [],
-                                                "icon": "flaticon1-ball"
-                                            },
-                                            "Extra": {
-                                                "min": 3,
-                                                "max": 3,
-                                                occupied: 0,
-                                                player: []
-                                            },
-                                            "ready": false
-                                        };
-                                        angular.forEach($scope.TeamPlayers.UserTeamPlayers, function (value, key) {
-                                            if (value.PlayerRole == 'WicketKeeper') {
+            $scope.ViewTeamOnGround = function (data) { console.log(data);
+                $scope.TeamPlayers = data;
+                $scope.teamStructure = {
+                    "WicketKeeper": {
+                        "min": 1,
+                        "max": 1,
+                        "occupied": 0,
+                        player: [],
+                        "icon": "flaticon1-pair-of-gloves"
+                    },
+                    "Batsman": {
+                        "min": 3,
+                        "max": 5,
+                        "occupied": 0,
+                        player: [],
+                        "icon": "flaticon1-ball"
+                    },
+                    "Bowler": {
+                        "min": 3,
+                        "max": 5,
+                        "occupied": 0,
+                        player: [],
+                        "icon": "flaticon1-tennis-ball"
+                    },
+                    "AllRounder": {
+                        "min": 1,
+                        "max": 3,
+                        "occupied": 0,
+                        player: [],
+                        "icon": "flaticon1-ball"
+                    },
+                    "Extra": {
+                        "min": 3,
+                        "max": 3,
+                        occupied: 0,
+                        player: []
+                    },
+                    "ready": false
+                };
+                angular.forEach($scope.TeamPlayers, function (value, key) {
+                    if (value.PlayerRole == 'WicketKeeper') {
 
-                                                $scope.teamStructure['WicketKeeper'].player.push({
-                                                    'PlayerGUID': value.PlayerGUID,
-                                                    'PlayerPosition': value.PlayerPosition,
-                                                    'PlayerName': value.PlayerName,
-                                                    'Points': value.PointCredits,
+                        $scope.teamStructure['WicketKeeper'].player.push({
+                            'PlayerGUID': value.PlayerGUID,
+                            'PlayerPosition': value.PlayerPosition,
+                            'PlayerName': value.PlayerName,
+                            'Points': value.PointCredits,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
-                                                    'PlayerPic': value.PlayerPic,
-                                                    'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                                                });
-                                                $scope.teamStructure['WicketKeeper'].occupied++;
-                                            }
-                                            if (value.PlayerRole == 'Batsman') {
-                                                $scope.teamStructure['Batsman'].player.push({
-                                                    'PlayerGUID': value.PlayerGUID,
-                                                    'PlayerPosition': value.PlayerPosition,
-                                                    'PlayerName': value.PlayerName,
-                                                    'Points': value.PointCredits,
+                            'PlayerPic': value.PlayerPic,
+                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                        });
+                        $scope.teamStructure['WicketKeeper'].occupied++;
+                    }
+                    if (value.PlayerRole == 'Batsman') {
+                        $scope.teamStructure['Batsman'].player.push({
+                            'PlayerGUID': value.PlayerGUID,
+                            'PlayerPosition': value.PlayerPosition,
+                            'PlayerName': value.PlayerName,
+                            'Points': value.PointCredits,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
-                                                    'PlayerPic': value.PlayerPic,
-                                                    'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                                                });
-                                                $scope.teamStructure['Batsman'].occupied++;
-                                            }
-                                            if (value.PlayerRole == 'AllRounder') {
-                                                $scope.teamStructure['AllRounder'].player.push({
-                                                    'PlayerGUID': value.PlayerGUID,
-                                                    'PlayerPosition': value.PlayerPosition,
-                                                    'PlayerName': value.PlayerName,
-                                                    'Points': value.PointCredits,
+                            'PlayerPic': value.PlayerPic,
+                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                        });
+                        $scope.teamStructure['Batsman'].occupied++;
+                    }
+                    if (value.PlayerRole == 'AllRounder') {
+                        $scope.teamStructure['AllRounder'].player.push({
+                            'PlayerGUID': value.PlayerGUID,
+                            'PlayerPosition': value.PlayerPosition,
+                            'PlayerName': value.PlayerName,
+                            'Points': value.PointCredits,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
-                                                    'PlayerPic': value.PlayerPic,
-                                                    'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                                                });
-                                                $scope.teamStructure['AllRounder'].occupied++;
-                                            }
-                                            if (value.PlayerRole == 'Bowler') {
-                                                $scope.teamStructure['Bowler'].player.push({
-                                                    'PlayerGUID': value.PlayerGUID,
-                                                    'PlayerPosition': value.PlayerPosition,
-                                                    'PlayerName': value.PlayerName,
-                                                    'Points': value.PointCredits,
+                            'PlayerPic': value.PlayerPic,
+                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                        });
+                        $scope.teamStructure['AllRounder'].occupied++;
+                    }
+                    if (value.PlayerRole == 'Bowler') {
+                        $scope.teamStructure['Bowler'].player.push({
+                            'PlayerGUID': value.PlayerGUID,
+                            'PlayerPosition': value.PlayerPosition,
+                            'PlayerName': value.PlayerName,
+                            'Points': value.PointCredits,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
-                                                    'PlayerPic': value.PlayerPic,
-                                                    'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                                                });
-                                                $scope.teamStructure['Bowler'].occupied++;
-                                            }
-                                        });
-                                    } else {
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 500) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 501) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 502) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        setTimeout(function () {
-                                            localStorage.clear();
-                                            window.location.reload();
-                                        }, 1000);
-                                    }
-                                },
-                                function errorCallback(data) {
-                                    if (typeof data == 'object') {
-                                        var toast = toastr.error(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                });
+                            'PlayerPic': value.PlayerPic,
+                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                        });
+                        $scope.teamStructure['Bowler'].occupied++;
+                    }
+                });
+                console.log($scope.teamStructure);
+
             }
 
             /*Funcion to get joined user teams*/
@@ -333,10 +282,10 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $data.Params = 'UserTeamName,TotalPoints,UserWinningAmount,FirstName,Username,UserGUID,UserTeamPlayers,UserTeamID,UserRank';
                 $data.OrderBy = 'UserRank';
                 $data.Sequence = 'ASC';
-                $data.PageNo = $scope.TeamPageNo;
-                $data.PageSize = $scope.TeamPageSize;
+                $data.PageNo = parseInt($scope.TeamPageNo);
+                $data.PageSize = parseInt($scope.TeamPageSize);
                 appDB
-                        .callPostForm('contest/getJoinedContestsUsers', $data)
+                        .callPostJSON('contest/getJoinedContestsUsersMongoDB', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {
@@ -355,9 +304,11 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                                             if ($scope.TeamPageNo == 1) {
                                                 angular.forEach($scope.userTeams, function (value, key) {
                                                     if ($scope.Contest.Status == 'Completed' && value.UserRank == 1) {
-                                                        $scope.ViewTeamOnGround(value.UserTeamGUID, value.UserGUID);
+                                                        $scope.ViewTeamOnGround(value.UserTeamPlayers);
                                                     } else if (value.UserGUID == $localStorage.user_details.UserGUID && $scope.Contest.Status != 'Completed') {
-                                                        $scope.ViewTeamOnGround(value.UserTeamGUID, $localStorage.user_details.UserGUID);
+                                                        if (key == 0) {
+                                                            $scope.ViewTeamOnGround(value.UserTeamPlayers);
+                                                        }
                                                     }
                                                 });
                                             }
@@ -568,9 +519,9 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 var $data = {};
                 $data.MatchGUID = getQueryStringValue('MatchGUID');
                 $data.SessionKey = $localStorage.user_details.SessionKey;
-                if(PlayerGUID !== ''){
+                if (PlayerGUID !== '') {
                     $data.PlayerGUID = PlayerGUID
-                }else{
+                } else {
                     $data.IsPlaying = 'Yes';
                 }
                 $data.Params = 'PlayerID,PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,PlayerBattingStats,PlayerBowlingStats,IsPlaying,PointsData,TotalPoints';
@@ -616,9 +567,9 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                                 });
             }
 
-           
+
             setInterval(function () {
-                if ($rootScope.Contest.Status == 'Running1') {
+                if ($rootScope.Contest.Status == 'Running') {
                     window.location.reload();
                 }
             }, 120000);
@@ -732,12 +683,12 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $scope.CustomizeWinning = Winnings;
                 $scope.openPopup('PayoutBreakUp');
             }
-            
+
             /**
              * Show player fanstay point
              */
-            
-            $scope.showPlayerFanstayPoint = function(PlayerGUID){
+
+            $scope.showPlayerFanstayPoint = function (PlayerGUID) {
                 $scope.fantasyScoreCard(PlayerGUID);
                 $scope.pointSystem();
                 $scope.openPopup('fantasyScorePopup');

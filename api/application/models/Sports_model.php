@@ -2620,10 +2620,55 @@ class Sports_model extends CI_Model {
     }
 
     /*
+      Description: To transfer joined contest data (MongoDB To MySQL).
+     */
+    function tranferJoinedContestData() {
+
+        ini_set('max_execution_time', 1200);
+
+        /* Get Contests Data */
+        $Contests = $this->db->query('SELECT C.ContestID FROM sports_contest C WHERE C.IsWinningAssigned = "Yes" AND C.LeagueType = "Dfs" LIMIT 10');
+        if ($Contests->num_rows() > 0) {
+            foreach ($Contests->result_array() as $Value) {
+
+                /* Get Joined Contests */
+                $ContestCollection   = $this->fantasydb->{'Contest_'.$Value['ContestID']};
+                $JoinedContestsUsers = iterator_to_array($ContestCollection->find(["ContestID" => (string) $Value['ContestID'], "IsWinningAssigned" => "Yes"],['projection' => ['ContestID' => 1,'UserID' => 1,'UserTeamID' => 1,'TotalPoints' => 1,'UserRank' => 1,'UserWinningAmount' => 1]]));
+                if(count($JoinedContestsUsers) == 0){
+
+                    /* Update Contest Winning Assigned Status */
+                    $this->db->where('ContestID', $Value['ContestID']);
+                    $this->db->limit(1);
+                    $this->db->update('sports_contest', array('IsWinningAssigned' => "Moved"));
+                    continue;
+                }
+
+                foreach($JoinedContestsUsers as $JC){
+
+                    /* Update MySQL Row */
+                    $this->db->where('ContestID', $JC['ContestID']);
+                    $this->db->where('UserID', $JC['UserID']);
+                    $this->db->where('UserTeamID', $JC['UserTeamID']);
+                    $this->db->limit(1);
+                    $this->db->update('sports_contest_join', array('TotalPoints' => $JC['TotalPoints'],'UserRank' => $JC['UserRank'],'UserWinningAmount' => $JC['UserWinningAmount'], 'IsWinningAssigned' => 'Yes','ModifiedDate' => date('Y-m-d H:i:s')));
+
+                    /* Update MongoDB Row */
+                    $ContestCollection->updateOne(
+                                                ['_id'    => $JC['_id']],
+                                                ['$set'   => ['IsWinningAssigned' => 'Moved']],
+                                                ['upsert' => false]
+                                            );
+                }
+            }
+        }
+
+    }
+
+    /*
       Description: To set contest winners amount distribute
      */
 
-    function amountDistributeContestWinner($CronID) {
+    function amountDistributeContestWinner_OLD($CronID) {
         ini_set('max_execution_time', 300);
         /* Get Joined Contest Users */
         $this->db->select('C.ContestGUID,C.ContestID,C.EntryFee,E.StatusID');
@@ -2695,6 +2740,14 @@ class Sports_model extends CI_Model {
             $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
             exit;
         }
+    }
+
+    /*
+      Description: To set contest winners amount distribute
+     */
+
+    function amountDistributeContestWinner() {
+        
     }
 
     /*
