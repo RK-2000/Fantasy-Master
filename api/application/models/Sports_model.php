@@ -1542,6 +1542,9 @@ class Sports_model extends CI_Model {
         /* Get Live Matches Data */
         if (!empty($LiveMatches)) {
 
+            /* Delete Cache Key */
+            $this->cache->memcached->delete('getJoinedContestPlayerPoints');
+
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'LiveMatches' => $LiveMatches), JSON_UNESCAPED_UNICODE)));
@@ -1941,10 +1944,11 @@ class Sports_model extends CI_Model {
     function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
 
         ini_set('max_execution_time', 500);
+        ini_set('memory_limit','256M');
 
 
         /* Get Live Contests */
-        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID,UT.UserTeamName,U.Username,CONCAT_WS(' ',U.FirstName,U.LastName) FullName,IF(U.ProfilePic IS NULL,CONCAT('" . BASE_URL . "','uploads/profile/picture/','default.jpg'),CONCAT('" . BASE_URL . "','uploads/profile/picture/',U.ProfilePic)) ProfilePic, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E,tbl_users U,sports_users_teams UT WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND UT.UserTeamID = JC.UserTeamID AND U.UserID = JC.UserID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
+        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID,UT.UserTeamName,U.Username,CONCAT_WS(' ',U.FirstName,U.LastName) FullName,IF(U.ProfilePic IS NULL,CONCAT('" . BASE_URL . "','uploads/profile/picture/','default.jpg'),CONCAT('" . BASE_URL . "','uploads/profile/picture/',U.ProfilePic)) ProfilePic, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerName', P.PlayerName, 'PlayerPic',IF(P.PlayerPic IS NULL,CONCAT('" . BASE_URL . "','uploads/PlayerPic/','player.png'),CONCAT('" . BASE_URL . "','uploads/PlayerPic/',P.PlayerPic)),'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E,tbl_users U,sports_users_teams UT WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND UT.UserTeamID = JC.UserTeamID AND U.UserID = JC.UserID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
         if(!empty($MatchID)){
             $Query .= " AND C.MatchID = ".$MatchID;
         }
@@ -1990,14 +1994,14 @@ class Sports_model extends CI_Model {
 
                     $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-                    $UserPlayersArr[] = array('Points' => $Points,'PlayerID' => $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
+                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'],'PlayerName' => $UserTeamValue['PlayerName'],'PlayerPic' => $UserTeamValue['PlayerPic'],'PlayerPosition' => $UserTeamValue['PlayerPosition'],'Points' => $Points);
                 }
 
                 /* Add/Edit Joined Contest Data (MongoDB) */
                 $ContestCollection = $this->fantasydb->{'Contest_'.$Value['ContestID']};
                 $ContestCollection->updateOne(
                                 ['_id'    => $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
-                                ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'UserTeamName' => $Value['UserTeamName'],'Username' => $Value['Username'],'FullName' => $Value['FullName'],'ProfilePic' => $Value['ProfilePic'],'TotalPoints' => $UserTotalPoints,'UserPlayersArr' => $UserPlayersArr]],
+                                ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'UserTeamName' => $Value['UserTeamName'],'Username' => $Value['Username'],'FullName' => $Value['FullName'],'ProfilePic' => $Value['ProfilePic'],'TotalPoints' => $UserTotalPoints,'UserTeamPlayers' => $UserPlayersArr,'IsWinningAssigned' => 'No']],
                                 ['upsert' => true]
                             );
             }
@@ -2044,7 +2048,6 @@ class Sports_model extends CI_Model {
                     $this->db->where(array('ContestID' => $rows['ContestID'],'UserTeamID' => $rows['UserTeamID']));
                     $this->db->limit(1);
                     $this->db->update('sports_contest_join', array('UserRank' => $rows['UserRank']));
-                    // $this->db->update("UPDATE sports_contest_join SET UserRank=".$rows['UserRank']." WHERE ContestID=".$rows['ContestID']." AND UserTeamID=".$rows['UserTeamID']." LIMIT 1");
                 }
             }
         }
@@ -2544,15 +2547,22 @@ class Sports_model extends CI_Model {
         ini_set('max_execution_time', 300);
 
         /* Get Completed Contests */
-        $Contests = $this->db->query('SELECT C.WinningAmount,C.ContestID,C.CustomizeWinning FROM tbl_entity E,sports_contest C WHERE E.EntityID = C.ContestID AND E.StatusID = 5 AND C.IsWinningDistributed = "No" AND C.LeagueType = "Dfs"');
+        $Contests = $this->db->query('SELECT C.WinningAmount,C.ContestID,C.CustomizeWinning FROM tbl_entity E,sports_contest C WHERE E.EntityID = C.ContestID AND E.StatusID = 5 AND C.IsWinningAssigned = "No" AND C.LeagueType = "Dfs"');
         if ($Contests->num_rows() > 0) {
             foreach ($Contests->result_array() as $Value) {
-                $JoinedContestsUsers = $this->db->query('SELECT UserRank,UserTeamID,TotalPoints,UserID FROM sports_contest_join WHERE ContestID = '.$Value['ContestID'].' AND TotalPoints > 0 ORDER BY UserRank DESC');
-                if ($JoinedContestsUsers->num_rows() == 0){
+                
+                /* Get Joined Contests */
+                $ContestCollection   = $this->fantasydb->{'Contest_'.$Value['ContestID']};
+                $JoinedContestsUsers = iterator_to_array($ContestCollection->find(["ContestID" => (string) $Value['ContestID'], "IsWinningAssigned" => "No","TotalPoints" => ['$gt' => 0]],['projection' => ['UserRank' => 1,'UserTeamID' => 1,'TotalPoints' => 1,'UserID' => 1],'sort' => ['UserRank' => -1]]));
+                $AllRankWinners   = array_column($JoinedContestsUsers,'UserRank');
+                if(count($AllRankWinners) == 0){
+
+                    /* Update Contest Winning Assigned Status */
+                    $this->db->where('ContestID', $Value['ContestID']);
+                    $this->db->limit(1);
+                    $this->db->update('sports_contest', array('IsWinningAssigned' => "Yes"));
                     continue;
                 }
-
-                $AllRankWinners   = array_count_values(array_column($JoinedContestsUsers->result_array(), 'UserRank'));
                 $userWinnersData  = $OptionWinner = array();
                 $CustomizeWinning = (!empty($Value['CustomizeWinning'])) ? json_decode($Value['CustomizeWinning'], true) : array();
                 foreach ($AllRankWinners as $Rank => $WinnerValue) {
@@ -2587,46 +2597,24 @@ class Sports_model extends CI_Model {
                         }
                     }
                     $AmountPerUser = $TotalAmount / $WinnerValue;
-                    $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers->result_array(), $Rank, $AmountPerUser);
+                    $userWinnersData[] = $this->findKeyValueArray($JoinedContestsUsers, $Rank, $AmountPerUser);
                 }
                 foreach ($userWinnersData as $WinnerArray) {
                     foreach ($WinnerArray as $WinnerRow) {
                         $OptionWinner[] = $WinnerRow;
                     }
                 }
-
                 if (!empty($OptionWinner)) {
                     foreach ($OptionWinner as $WinnerValue) {
 
-                        $this->db->trans_start();
-
-                        /* Update Winning Amount */
-                        $this->db->where(array('UserID'=> $WinnerValue['UserID'],'ContestID'=> $Value['ContestID'],'UserTeamID'=> $WinnerValue['UserTeamID']));
-                        $this->db->limit(1);
-                        $this->db->update('sports_contest_join', array('UserWinningAmount' => $WinnerValue['UserWinningAmount'], 'ModifiedDate' => date('Y-m-d H:i:s')));
-
-                        /* Add winning into user wallet */
-                        if ($WinnerValue['UserWinningAmount'] > 0) {
-                            $WalletData = array(
-                                "Amount" => $WinnerValue['UserWinningAmount'],
-                                "WinningAmount" => $WinnerValue['UserWinningAmount'],
-                                "TransactionType" => 'Cr',
-                                "Narration" => 'Join Contest Winning',
-                                "EntryDate" => date("Y-m-d H:i:s")
-                            );
-                            $this->Users_model->addToWallet($WalletData, $WinnerValue['UserID'], 5);
-                        }
-                        $this->db->trans_complete();
-                        if ($this->db->trans_status() === false) {
-                            return false;
-                        }
+                        /* Update User Winning Amount (MongoDB) */
+                        $ContestCollection->updateOne(
+                                                ['_id'    => $Value['ContestID'].$WinnerValue['UserID'].$WinnerValue['UserTeamID']],
+                                                ['$set'   => ['UserWinningAmount' => round($WinnerValue['UserWinningAmount'],2),'IsWinningAssigned' => 'Yes']],
+                                                ['upsert' => false]
+                                            );
                     }
                 }
-
-                /* update contest winner amount distribute flag set YES */
-                $this->db->where('ContestID', $Value['ContestID']);
-                $this->db->limit(1);
-                $this->db->update('sports_contest', array('IsWinningDistributed' => 'Yes'));
             }
         }
     }

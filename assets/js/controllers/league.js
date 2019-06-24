@@ -618,7 +618,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
 
            
             setInterval(function () {
-                if ($rootScope.Contest.Status == 'Running') {
+                if ($rootScope.Contest.Status == 'Running1') {
                     window.location.reload();
                 }
             }, 120000);
