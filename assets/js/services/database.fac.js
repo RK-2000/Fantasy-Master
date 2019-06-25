@@ -77,8 +77,7 @@ function appDB($http,$q,$rootScope,environment){
                         data:data
 
                     }).then(function successCallback(response) {
-
-                        if(response.data.status){
+                        if(response.data.ResponseCode==200){
                             
                             resolve (response.data)
 
