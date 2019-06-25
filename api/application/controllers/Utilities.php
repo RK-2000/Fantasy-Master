@@ -235,7 +235,9 @@ class Utilities extends API_Controller {
       URL:          /api/utilities/amountDistributeContestWinner
      */
     public function amountDistributeContestWinner_get() {
-        $this->Sports_model->amountDistributeContestWinner();
+        $CronID = $this->Utility_model->insertCronLogs('amountDistributeContestWinner');
+        $this->Sports_model->amountDistributeContestWinner($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
     }
 
     /*
@@ -299,7 +301,9 @@ class Utilities extends API_Controller {
      */
 
     public function tranferJoinedContestData_get() {
-        $this->Sports_model->tranferJoinedContestData();
+        $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
+        $this->Sports_model->tranferJoinedContestData($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
     }
 
     /*

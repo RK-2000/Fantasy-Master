@@ -285,7 +285,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $data.PageNo = parseInt($scope.TeamPageNo);
                 $data.PageSize = parseInt($scope.TeamPageSize);
                 appDB
-                        .callPostJSON('contest/getJoinedContestsUsersMongoDB', $data)
+                        .callPostJSON('contest/getJoinedContestsUsers', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {
