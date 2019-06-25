@@ -8,4 +8,4 @@ admin/application/logs/*
 api/uploads/*
 .htaccess
 /nbproject/private/
-/auctionDraft/node_modules
+/auctionDraft/node_modules/*
