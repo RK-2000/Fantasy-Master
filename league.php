@@ -173,7 +173,7 @@
                                             <div class="table_scroll" scrolly>
                                                 <table class="table-fixed" >
                                                     <tbody>
-                                                        <tr ng-repeat="team in userTeams| orderBy:propertyName:reverse" ng-click="ViewTeamOnGround(team.UserTeamPlayers)" class="{{SelectedUserTeamGUID==team.UserTeamGUID ? 'active' : '' }}">
+                                                        <tr ng-repeat="team in userTeams| orderBy:propertyName:reverse" ng-click="ViewTeamOnGround(team.UserTeamPlayers)" class="">
                                                             <td class="text-center " style="text-transform: uppercase;">{{team.Username}}(T{{getTeamName(team.UserTeamName)}})</td>
                                                             <td class="text-center " ng-if="Contest.Status == 'Completed' && team.UserRank == '1'"><img  src="assets/img/winner-free.svg" width='20'><p>Champion</p></td>
                                                             <td class="text-center " ng-if="Contest.Status == 'Completed' && team.UserRank != '1'">#{{team.UserRank}}</td>

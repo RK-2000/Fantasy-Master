@@ -1279,6 +1279,7 @@ class Contest_model extends CI_Model {
                 'MiddleName' => 'U.MiddleName',
                 'LastName' => 'U.LastName',
                 'Username' => 'U.Username',
+                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
                 'Email' => 'U.Email',
                 'PhoneNumber' => 'U.PhoneNumber',
                 'UserID' => 'U.UserID',
@@ -1362,7 +1363,7 @@ class Contest_model extends CI_Model {
 
         /* Get Joined Contest Users */
         $ContestCollection   = $this->fantasydb->{'Contest_'.$Where['ContestID']};
-        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([],['projection' => ['UserTeamName' => 1,'Username' => 1,'FullName' => 1,'ProfilePic' => 1,'TotalPoints' => 1,'UserTeamPlayers' => 1,'UserRank' => 1,'UserWinningAmount' => 1],'skip' => paginationOffset($PageNo, $PageSize) ,'limit' => $PageSize,'sort' => ['UserRank' => 1]]));
+        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0, 'UserGUID' => 1,'UserTeamName' => 1,'Username' => 1,'FullName' => 1,'ProfilePic' => 1,'TotalPoints' => 1,'UserTeamPlayers' => 1,'UserRank' => 1,'UserWinningAmount' => 1],'skip' => paginationOffset($PageNo, $PageSize) ,'limit' => $PageSize,'sort' => ['UserRank' => 1]]));
         if(count($JoinedContestsUsers) > 0){
             $Return['Data']['TotalRecords'] = $ContestCollection->count();
             $Return['Data']['Records'] = $JoinedContestsUsers;

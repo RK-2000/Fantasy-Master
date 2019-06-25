@@ -164,7 +164,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $scope.viewJoinButton = false;
             }
 
-            $scope.ViewTeamOnGround = function (data) { console.log(data);
+            $scope.ViewTeamOnGround = function (data) {
                 $scope.TeamPlayers = data;
                 $scope.teamStructure = {
                     "WicketKeeper": {
@@ -210,7 +210,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.PointCredits,
+                            'Points': value.Points,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
@@ -222,7 +222,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.PointCredits,
+                            'Points': value.Points,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
@@ -234,7 +234,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.PointCredits,
+                            'Points': value.Points,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
@@ -246,7 +246,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.PointCredits,
+                            'Points': value.Points,
 //                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
@@ -254,15 +254,15 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                         $scope.teamStructure['Bowler'].occupied++;
                     }
                 });
-                console.log($scope.teamStructure);
 
             }
 
             /*Funcion to get joined user teams*/
             $scope.userTeams = [];
             $scope.TeamPageNo = 1;
-            $scope.TeamPageSize = 15;
+            $scope.TeamPageSize = 25;
             $rootScope.UserContestTeams = [];
+            $scope.Nextdata = true;
             $scope.getUserTeam = function (status) {
                 if (status) {
                     $scope.TeamPageNo = 1;
@@ -271,88 +271,94 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                     $scope.LoadMoreFlag = true;
                     $scope.data.noRecords = false;
                 }
-                if ($scope.LoadMoreFlag == false || $scope.data.noRecords == true) {
+                if ($scope.LoadMoreFlag == false || $scope.data.noRecords == true || $scope.Nextdata == false) {
                     return false
                 }
-                var $data = {};
-                $scope.TeamPlayers = []; //user team list array
-                $data.SessionKey = $localStorage.user_details.SessionKey; //user session key
-                $data.MatchGUID = getQueryStringValue('MatchGUID'); //Match GUID
-                $data.ContestGUID = getQueryStringValue('League'); //Contest GUID
-                $data.Params = 'UserTeamName,TotalPoints,UserWinningAmount,FirstName,Username,UserGUID,UserTeamPlayers,UserTeamID,UserRank';
-                $data.OrderBy = 'UserRank';
-                $data.Sequence = 'ASC';
-                $data.PageNo = parseInt($scope.TeamPageNo);
-                $data.PageSize = parseInt($scope.TeamPageSize);
-                appDB
-                        .callPostJSON('contest/getJoinedContestsUsers', $data)
-                        .then(
-                                function successCallback(data) {
-                                    if (data.ResponseCode == 200) {
-                                        // $scope.userTeams = data.Data.Records; 
-                                        $scope.data.totalRecords = data.Data.TotalRecords;
-                                        if (data.Data.hasOwnProperty('Records') && data.Data.Records != '') {
-                                            $scope.LoadMoreFlag = true;
-                                            for (var i in data.Data.Records) {
-                                                data.Data.Records[i].TotalPoints = parseFloat(data.Data.Records[i].TotalPoints);
-                                                data.Data.Records[i].UserWinningAmount = parseFloat(data.Data.Records[i].UserWinningAmount);
-                                                $scope.userTeams.push(data.Data.Records[i]);
-                                                if (data.Data.Records[i].UserGUID == $scope.user_details.UserGUID) {
-                                                    $rootScope.UserContestTeams.push(data.Data.Records[i].UserTeamGUID);
-                                                }
-                                            }
-                                            if ($scope.TeamPageNo == 1) {
-                                                angular.forEach($scope.userTeams, function (value, key) {
-                                                    if ($scope.Contest.Status == 'Completed' && value.UserRank == 1) {
-                                                        $scope.ViewTeamOnGround(value.UserTeamPlayers);
-                                                    } else if (value.UserGUID == $localStorage.user_details.UserGUID && $scope.Contest.Status != 'Completed') {
-                                                        if (key == 0) {
-                                                            $scope.ViewTeamOnGround(value.UserTeamPlayers);
-                                                        }
+                if ($scope.Nextdata) {
+                    $scope.Nextdata = false;
+
+                    var $data = {};
+                    $scope.TeamPlayers = []; //user team list array
+                    $data.SessionKey = $localStorage.user_details.SessionKey; //user session key
+                    $data.MatchGUID = getQueryStringValue('MatchGUID'); //Match GUID
+                    $data.ContestGUID = getQueryStringValue('League'); //Contest GUID
+                    $data.Params = 'UserTeamName,TotalPoints,UserWinningAmount,FirstName,Username,UserGUID,UserTeamPlayers,UserTeamID,UserRank';
+                    $data.OrderBy = 'UserRank';
+                    $data.Sequence = 'ASC';
+                    $data.PageNo = parseInt($scope.TeamPageNo);
+                    $data.PageSize = parseInt($scope.TeamPageSize);
+                    appDB
+                            .callPostJSON('contest/getJoinedContestsUsersMongoDB', $data)
+                            .then(
+                                    function successCallback(data) {
+                                        $scope.Nextdata = true;
+                                        if (data.ResponseCode == 200) {
+                                            // $scope.userTeams = data.Data.Records; 
+                                            $scope.data.totalRecords = data.Data.TotalRecords;
+                                            if (data.Data.hasOwnProperty('Records') && data.Data.Records != '') {
+                                                $scope.LoadMoreFlag = true;
+                                                for (var i in data.Data.Records) {
+                                                    data.Data.Records[i].TotalPoints = parseFloat(data.Data.Records[i].TotalPoints);
+                                                    data.Data.Records[i].UserWinningAmount = parseFloat(data.Data.Records[i].UserWinningAmount);
+                                                    $scope.userTeams.push(data.Data.Records[i]);
+                                                    if (data.Data.Records[i].UserGUID == $scope.user_details.UserGUID) {
+                                                        $rootScope.UserContestTeams.push(data.Data.Records[i].UserTeamGUID);
                                                     }
-                                                });
+                                                }
+                                                if ($scope.TeamPageNo == 1) {
+                                                    angular.forEach($scope.userTeams, function (value, key) {
+                                                        if ($scope.Contest.Status == 'Completed' && value.UserRank == 1) {
+                                                            $scope.ViewTeamOnGround(value.UserTeamPlayers);
+                                                        } else if ($scope.Contest.Status != 'Completed') {
+                                                            if (key == 0) {
+                                                                $scope.ViewTeamOnGround(value.UserTeamPlayers);
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                $scope.TeamPageNo++;
+                                            } else {
+                                                $scope.LoadMoreFlag = false;
                                             }
-                                            $scope.TeamPageNo++;
                                         } else {
-                                            $scope.LoadMoreFlag = false;
+                                            $scope.data.noRecords = true;
                                         }
-                                    } else {
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 500) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 501) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                    if (data.ResponseCode == 502) {
-                                        var toast = toastr.warning(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        setTimeout(function () {
-                                            localStorage.clear();
-                                            window.location.reload();
-                                        }, 1000);
-                                    }
-                                },
-                                function errorCallback(data) {
-                                    if (typeof data == 'object') {
-                                        var toast = toastr.error(data.Message, {
-                                            closeButton: true
-                                        });
-                                        toastr.refreshTimer(toast, 5000);
-                                        $scope.data.noRecords = true;
-                                    }
-                                });
+                                        if (data.ResponseCode == 500) {
+                                            var toast = toastr.warning(data.Message, {
+                                                closeButton: true
+                                            });
+                                            toastr.refreshTimer(toast, 5000);
+                                            $scope.data.noRecords = true;
+                                        }
+                                        if (data.ResponseCode == 501) {
+                                            var toast = toastr.warning(data.Message, {
+                                                closeButton: true
+                                            });
+                                            toastr.refreshTimer(toast, 5000);
+                                            $scope.data.noRecords = true;
+                                        }
+                                        if (data.ResponseCode == 502) {
+                                            var toast = toastr.warning(data.Message, {
+                                                closeButton: true
+                                            });
+                                            toastr.refreshTimer(toast, 5000);
+                                            setTimeout(function () {
+                                                localStorage.clear();
+                                                window.location.reload();
+                                            }, 1000);
+                                        }
+                                    },
+                                    function errorCallback(data) {
+                                        $scope.Nextdata = true;
+                                        if (typeof data == 'object') {
+                                            var toast = toastr.error(data.Message, {
+                                                closeButton: true
+                                            });
+                                            toastr.refreshTimer(toast, 5000);
+                                            $scope.data.noRecords = true;
+                                        }
+                                    });
+                }
             }
 
 
