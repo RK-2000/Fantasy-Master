@@ -1,4 +1,4 @@
-<?php const VERSION = 4.2; ?>
+<?php const VERSION = 4.3; ?>
 <?php if (strpos($_SERVER["REQUEST_URI"], 'authenticate') !== false) { ?>
     <title>Signup and Play Fantasy Cricket To Win Cash Prize Daily | FSL11</title>
     <meta name="description" content="Register on FSL11 and Play Fantasy Cricket League. Create your virtual team, compete with others and win cash prize.">
