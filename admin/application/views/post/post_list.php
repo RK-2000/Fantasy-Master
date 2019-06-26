@@ -26,7 +26,7 @@
 					<th style="width: 100px;">Type</th>
 					<th style="width: 300px;">Post Caption</th>
 					<th>Post Content</th>
-					<th style="width: 160px;" class="text-center">Reported on</th>
+					<th style="width: 160px;" class="text-center">Created on</th>
 					<th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>

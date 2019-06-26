@@ -7,7 +7,7 @@
 	<div class="clearfix mt-2 mb-2">
 		<div class="clearfix mt-2 mb-2" >
 			<span class="float-left records d-none d-sm-block">
-				<span class="h5"><b>{{userData.FullName}}</b></span><br>
+				<span class="h5"><b>{{userData.FullName}}</b></span><br> 
 			</span>
 		
 		</div>
@@ -18,7 +18,7 @@
 
 		<div class="float-right">
 			<div class="float-right">
-				<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/search.svg"></button>
+				<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>
 			</div>
 		</div>
 		<div class="float-right">
@@ -128,7 +128,7 @@
 		</div>
 	</div>
 		<!-- Filter Modal -->
-	<div class="modal fade" id="filter_model" >
+	<div class="modal fade" id="filter_model" ng-init="initDateRangePicker()" >
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -137,12 +137,12 @@
 				</div>
 
 				<!-- Filter form -->
-				<form id="filterForm" role="form" name="form" autocomplete="off" class="ng-pristine ng-valid">
+				<form id="filterForm"  role="form" name="form" autocomplete="off" class="ng-pristine ng-valid">
 					<div class="modal-body">
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Narration">Narration</label>
 										<select id="Narration" name="Narration" class="form-control chosen-select">
@@ -154,13 +154,45 @@
 										</select>   
 									</div>
 								</div>
+								<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
 							</div>
+							</div>
+
+									<div class="row">
+									<div class="col-md-6">
+									<div class="form-group">
+									<label class="filter-col" for="Status">Status</label>
+									<select id="Status" name="Status" class="form-control chosen-select">
+									<option value="">Please Select</option>
+									<option value="Completed">Completed</option>
+									<option value="Failed">Failed</option>
+									</select>
+									</div>
+									</div>
+									<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Date Between</label>
+									<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+										<i class="fa fa-calendar"></i>&nbsp;
+										<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
+									</div>
+								</div>
+							</div>
+									</div>
+
+								
+									
+								
 							
-						</div> <!-- form-area /-->
+						</div> <!-- form-area /--> 
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="$('#filterForm').trigger('reset'); $('.chosen-select').trigger('chosen:updated');">Reset</button>
+						<button type="button" class="btn btn-secondary btn-sm" ng-click="resetUserForm()">Reset</button>
 						<button type="submit" class="btn btn-success btn-sm" data-dismiss="modal" ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
 					</div>
 

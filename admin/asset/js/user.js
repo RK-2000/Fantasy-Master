@@ -1,9 +1,44 @@
 app.controller('PageController', function($scope, $http, $timeout) {
 
+    var FromDate = ToDate = '';
     /*list*/
     $scope.applyFilter = function() {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
+    }
+    /* Reset form */
+    $scope.resetUserForm = function(){
+        $('#filterForm1').trigger('reset'); 
+        $('.chosen-select').trigger('chosen:updated');
+        $('#dateRange span').html('Select Date Range');
+        FromDate = ToDate = '';
+    }
+    /* Add Date Range Picker */
+    $scope.initDateRangePicker = function (){
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+        $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+            FromDate = picker.startDate.format('YYYY-MM-DD');
+            ToDate   = picker.endDate.format('YYYY-MM-DD');
+            $('#dateRange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+        });
+        $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+            $('#dateRange span').html('Select Date Range');
+            FromDate = ToDate = '';
+        });
     }
 
     /*list append*/
@@ -18,7 +53,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
             $scope.data.Sequence = 'ASC';
         }
 
-        $scope.getList();
+        $scope.getList(); 
 
     }
 
@@ -32,7 +67,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         }
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status, ReferredCount,StatusID&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
+        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status,EmailStatus, ReferredCount,StatusID,WalletAmount,CashBonus,WinningAmount&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
 
         $http.post(API_URL + 'admin/users', data, contentType).then(function(response) {
             var response = response.data;
@@ -345,6 +380,92 @@ app.controller('PageController', function($scope, $http, $timeout) {
         });
 
     }
+
+    //export user list
+    $scope.exportUsers = function () { 
+        if ($scope.data.dataList.length > 0) {
+            var varArr = [];
+            for (var i = 0; i < $scope.data.dataList.length; i++) {
+                var row = {};
+                row.FullName = $scope.data.dataList[i]['FullName'];
+                row.Email = $scope.data.dataList[i]['Email'];
+                row.Username = $scope.data.dataList[i]['Username'];
+                row.Gender = $scope.data.dataList[i]['Gender'];
+                row.EmailStatus = $scope.data.dataList[i]['EmailStatus'];
+                row.RegisteredOn = $scope.data.dataList[i]['RegisteredOn'];
+                row.LastLoginDate = $scope.data.dataList[i]['LastLoginDate'];
+                varArr.push(row);
+            }
+            $scope.JSONToCSVConvertor(varArr, 'export-user-list', true);
+        }
+        else {
+            alertify.error('User Not Found');
+        }
+    }
+
+        /* To generate CSV File */
+        $scope.JSONToCSVConvertor = function (JSONData, ReportTitle, ShowLabel) {
+            //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+            var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+            var CSV = '';
+            if (ShowLabel) {
+                var row = "";
+    
+                //This loop will extract the label from 1st index of on array
+                for (var index in arrData[0]) {
+    
+                    //Now convert each value to string and comma-seprated
+                    let indexStr = index.replace(/([A-Z]+)*([A-Z][a-z])/g, "$1 $2");
+                    indexStr = (!!indexStr) ? indexStr.charAt(0).toUpperCase() + indexStr.substr(1).toLowerCase() : '';
+                    row += indexStr + ',';
+                }
+    
+                row = row.slice(0, -1);
+    
+                //append Label row with line break
+                CSV += row + '\r\n';
+            }
+    
+            //1st loop is to extract each row
+            for (var i = 0; i < arrData.length; i++) {
+                var row = "";
+    
+                //2nd loop will extract each column and convert it in string comma-seprated
+                for (var index in arrData[i]) {
+                    row += '"' + arrData[i][index] + '",';
+                }
+    
+                row.slice(0, row.length - 1);
+    
+                //add a line break after each row
+                CSV += row + '\r\n';
+            }
+    
+            if (CSV == '') {
+                alert("Invalid data");
+                return;
+            }
+    
+            //Generate a file name
+            //this will remove the blank-spaces from the title and replace it with an underscore
+            var fileName = ReportTitle.replace(/ /g, "-");
+    
+            //Initialize file format you want csv or xls
+            var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+    
+            //this trick will generate a temp <a /> tag
+            var link = document.createElement("a");
+            link.href = uri;
+    
+            //set the visibility hidden so it will not effect on your web-layout
+            link.style = "visibility:hidden";
+            link.download = fileName.toLowerCase() + ".csv";
+    
+            //this part will append the anchor tag and remove it after automatic click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
 
 

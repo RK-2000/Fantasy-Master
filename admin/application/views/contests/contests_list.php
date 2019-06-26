@@ -9,20 +9,16 @@
 		<span class="float-left records hidden-sm-down">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
-		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control ml-1" name="Keyword" placeholder="Search">
-			</form>
+		<div class="float-right mr-2">		
+			<button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportContests();">Export</button>
 		</div>
 		<div class="float-right">
 			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Contest</button>
 		</div>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
-		</div>
+		
 	</div>
 	<!-- Top container/ -->
 
@@ -144,7 +140,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="CategoryTypeName">Series</label>
 										<select id="SeriesGUID" name="SeriesGUID" ng-model="SeriesGUID" ng-change="getMatches(SeriesGUID,'')" class="form-control chosen-select">
@@ -153,10 +149,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-              
-							<div class="row">							
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="ParentCategory">Match</label>
 										<select id="MatchGUID" name="MatchGUID" class="form-control chosen-select">
@@ -167,33 +160,24 @@
 									</div>
 								</div>
 							</div>
-
+            
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col">From Date</label>
 										<input type="date" name="FromDate" class="form-control"> 
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
 										<label class="filter-col">To Date</label>
 										<input type="date" name="ToDate" class="form-control"> 
 									</div>
 								</div>
 							</div>
-
-							<!-- <div class="row">
-								<div class="col-md-8">
-									<div class="form-group">
-										<label class="filter-col" for="Status">Game type</label>
-										<select id="GameType" name="GameType" class="form-control chosen-select">
-											<option value="">Please Select</option>
-											<option value="Advance">Advance</option>
-											<option value="Safe">Safe</option>
-										</select>   
-									</div>
-								</div>
-							</div>
- -->
+						
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Entry type</label>
 										<select id="EntryType" name="EntryType" class="form-control chosen-select">
@@ -203,10 +187,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Status</label>
 										<select id="Status" name="Status" class="form-control chosen-select">
@@ -221,7 +202,7 @@
 							</div>
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Contest Type</label>
 										<select id="ContestType" name="ContestType" class="form-control chosen-select">
@@ -237,10 +218,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Entry Range</label>
 										<select id="EntryFee" name="" class="form-control chosen-select">
@@ -255,7 +233,7 @@
 							</div>
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Contest Size</label>
 										<select id="ContestSize" name="" class="form-control chosen-select">

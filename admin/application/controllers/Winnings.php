@@ -16,7 +16,7 @@ class Winnings extends Admin_Controller_Secure {
 			'asset/js/'.$this->ModuleData['ModuleName'].'.js',
 		);	
 
-		$this->load->view('includes/header',$load);
+		$this->load->view('includes/header',$load); 
 		$this->load->view('includes/menu');
 		$this->load->view('winnings/winnings_list');
 		$this->load->view('includes/footer');

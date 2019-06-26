@@ -55,10 +55,10 @@
 
 
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12"> 
                     <div class="form-group">
                         <label class="control-label">Title</label>
-                        <input name="Title" type="text" class="form-control" value="" maxlength="40">
+                        <input name="Title" type="text" class="form-control" value="" maxlength="40" placeholder="TITLE">
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label">Message</label>
-                        <textarea name="Message" class="form-control" style="height:80px"></textarea>
+                        <textarea name="Message" class="form-control" style="height:80px" placeholder="MESSAGE"></textarea>
                     </div>
                 </div>
             </div>

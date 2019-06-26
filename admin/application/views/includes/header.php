@@ -51,6 +51,8 @@
 	<script src="asset/plugins/ng-infinite-scroll.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.3.0/angular-moment.js"></script>
+	<link href="<?php echo base_url(); ?>asset/css/select2.css" rel="stylesheet"/>
+	<script src="<?php echo base_url(); ?>asset/js/select2.js"></script>
 </head>
 <body ng-app="myApp" ng-cloak ng-controller="MainController">
 

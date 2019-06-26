@@ -391,3 +391,8 @@ app.filter('myDateFormat', function myDateFormat($filter){
         return $filter('date')(tempdate, "medium");
       }
 });
+
+$(".modal").modal({
+    show: false,
+    backdrop: 'static'
+    });

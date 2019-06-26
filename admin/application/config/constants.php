@@ -91,7 +91,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*------------------------------*/	
 
 /*Site Related Settings*/
-define('SITE_NAME', 'AdminCP');
+define('SITE_NAME', 'FSL11-Admin');
 define('PATH_TEMPLATE',"./asset/template/");
 
 

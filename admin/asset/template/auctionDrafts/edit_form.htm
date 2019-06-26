@@ -28,14 +28,14 @@
                                 <div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">League Join Date Time </label>
-                                                <input name="LeagueJoinDateTime" id="LeagueJoinDateTime" readonly="" ng-model="formData.LeagueJoinDateTime" type="text" class="form-control" value="{{formData.LeagueJoinDateTime}}">
+                                                <input name="LeagueJoinDateTime" placeholder="LEAGUE JOIN DATE TIME" id="LeagueJoinDateTime" readonly="" ng-model="formData.LeagueJoinDateTime" type="text" class="form-control" value="{{formData.LeagueJoinDateTime}}">
 						<small>Set league join date time on which time user can create a team.</small>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Contest Name</label>
-						<input name="ContestName" ng-model="formData.ContestName" type="text" class="form-control" placeholder="Contest Name" value="{{formData.ContestName}}"  maxlength="40">
+						<input name="ContestName" ng-model="formData.ContestName" type="text" class="form-control" placeholder="CONTEST NAME" value="{{formData.ContestName}}"  maxlength="40">
 					</div>
 				</div>
 
@@ -58,19 +58,19 @@
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">Winning Amount</label>
-						<input name="WinningAmount" ng-model="custom.WinningAmount" placeholder="Winning Amount" type="text" class="form-control numeric" value="{{formData.WinningAmount}}" >
+						<input name="WinningAmount" ng-model="custom.WinningAmount" placeholder="WINNING AMOUNT" type="text" class="form-control numeric" value="{{formData.WinningAmount}}" >
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">Admin Charges (%)</label>
-						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="Admin Charges in Percentage" type="text" class="form-control numeric" maxlength="3" value="{{formData.AdminPercent}}">
+						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="ADMIN CHARGES IN PERCENTAGE" type="text" class="form-control numeric" maxlength="3" value="{{formData.AdminPercent}}">
 					</div>
 				</div>
 				<div class="col-md-3" ng-if="formData.IsPaid=='Yes'" ng-init="CashBonusContribution=0" >
 					<div class="form-group">
 						<label class="control-label">Cash Bonus Contribution (%)</label>
-						<input name="CashBonusContribution" ng-model="formData.CashBonusContribution" placeholder="Cash Bonus Contribution in Percentage" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="formData.IsPaid=='Yes'">
+						<input name="CashBonusContribution" ng-model="formData.CashBonusContribution" placeholder="CASH BONUS CONTRIBUTION IN PERCENTAGE" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="formData.IsPaid=='Yes'">
 					</div>
 				</div>
 
@@ -85,14 +85,14 @@
 				<div class="col-md-3" ng-if="formData.EntryType=='Multiple'">
 					<div class="form-group">
 						<label class="control-label">No. of users to join contest</label>
-						<input name="UserJoinLimit" ng-model="formData.UserJoinLimit" placeholder="League Join Limit" type="text" class="form-control numeric" value="0" maxlength="5">
+						<input name="UserJoinLimit" ng-model="formData.UserJoinLimit" placeholder="LEAGUE JOIN LIMIT" type="text" class="form-control numeric" value="0" maxlength="5">
 					</div>
 				</div>
 
 				<div class="col-md-3" ng-if="formData.ContestFormat!='Head to Head'">
 					<div class="form-group">
 						<label class="control-label">Contest Size</label>
-						<input name="ContestSize" ng-model="custom.ContestSize" type="text" class="form-control integer"  >
+						<input name="ContestSize" ng-model="custom.ContestSize" placeholder="CONTEST SIZE" type="text" class="form-control integer"  >
 					</div>
 				</div>
 				

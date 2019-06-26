@@ -12,15 +12,7 @@
 		</span>
 
 		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control" name="Keyword" placeholder="Search">
-			</form>
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -54,7 +46,7 @@
 					<tr scope="row" ng-repeat="(key, row) in data.dataList"  >
 
 						<td class="listed sm clearfix">
-							<img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}">
+						<a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
 							<div class="content float-left"><strong>{{row.FullName}}</strong>
 							<div ng-if="row.Email"><a href="javascript:void(0)" target="_top">{{row.Email}}</a></div><div ng-if="!row.Email">-</div>
 							</div>
@@ -188,6 +180,13 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									</div>
+								</div>
+								
 							</div>
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
