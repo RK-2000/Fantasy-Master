@@ -4,7 +4,7 @@
 </div> <!-- mainFrame/ -->
 
 <div class="modal fade" id="changePassword_modal" >
-	<div class="modal-dialog modal-md" role="document">
+	<div class="modal-dialog modal-sm" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title h5">Change Password</h3>     	
@@ -17,12 +17,12 @@
 					<div class="form-area">
 
 						<div class="row">
-							<div class="col-md-8">
+							<div class="col-md-12">
 								<div class="form-group">
 									<input type="password" name="CurrentPassword" class="form-control"  placeholder="Current Password">
 								</div>
 							</div>
-							<div class="col-md-8">
+							<div class="col-md-12">
 								<div class="form-group">
 									<input type="password" name="Password" class="form-control" placeholder="New Password">
 								</div>
@@ -33,11 +33,12 @@
 				</div> <!-- modal-body /-->
 
 				<div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
 					<button type="submit" class="btn btn-success btn-sm"  ng-disabled="changeCP" ng-click="changePassword()">Submit</button>
 				</div>
 
 			</form>
-			<!-- Filter form/ -->
+			<!-- Filter form/ --> 
 		</div>
 	</div>
 </div>

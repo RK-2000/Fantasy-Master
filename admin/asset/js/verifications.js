@@ -24,6 +24,14 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.getList();
     }
 
+     /* Reset form */
+     $scope.resetUserForm = function(){
+        $('#filterForm1').trigger('reset'); 
+        $('.chosen-select').trigger('chosen:updated');
+        $('#dateRange span').html('Select Date Range');
+        FromDate = ToDate = '';
+    }
+
     /* Add Date Range Picker */
     $scope.initDateRangePicker = function (){
         $('#dateRange').daterangepicker({

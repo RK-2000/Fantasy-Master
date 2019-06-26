@@ -1,5 +1,5 @@
 <header class="panel-heading">
-  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1>
+  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1> 
 </header>
 
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
@@ -11,18 +11,13 @@
 	<div class="clearfix mt-2 mb-2" >
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
-		</span>
-		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control ml-1" name="Keyword" placeholder="Search">
-			</form>
+		</span>	
+		<div class="float-right mr-2">		
+			<button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportPrivateContests();">Export</button>
 		</div>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
-		</div>
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
+		</div>		
 	</div>
 	<!-- Top container/ -->
 

@@ -10,15 +10,7 @@
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control ml-1" name="Keyword" placeholder="Search">
-			</form>
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -113,7 +105,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="CategoryTypeName">Series</label>
 										<select id="SeriesGUID" name="SeriesGUID" class="form-control chosen-select" ng-model="SeriesGUID" ng-change="getTeamData(SeriesGUID)">
@@ -122,10 +114,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col">Local Team</label>
 										<select name="LocalTeamGUID" class="form-control chosen-select" ng-model="LocalTeamGUID" ng-change="getTeamData(SeriesGUID,LocalTeamGUID)">
@@ -136,7 +125,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col">Visitor Team</label>
 										<select name="VisitorTeamGUID" class="form-control chosen-select">
@@ -145,10 +134,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Status</label>
 										<select id="StatusID" name="StatusID" class="form-control chosen-select">
@@ -161,8 +147,7 @@
 									</div>
 								</div>
 							</div>
-
-						</div> <!-- form-area /-->
+                    </div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">

@@ -6,20 +6,13 @@
 
 	<!-- Top container -->
 	<div class="clearfix mt-2 mb-2" ng-if="data.dataList.length"> 
-		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control ml-1" name="Keyword" placeholder="Search">
-			</form>
-		</div>
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>
 		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
-		</div>
+	
 	</div>
 	<!-- Top container/ -->
 
@@ -97,7 +90,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Status</label>
 										<select id="StatusID" name="StatusID" class="form-control chosen-select">
@@ -107,6 +100,12 @@
 										</select>   
 									</div>
 								</div>
+								<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+							</div>
 							</div>
 							
 						</div> <!-- form-area /-->

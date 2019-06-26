@@ -19,14 +19,14 @@
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">League Join Date Time </label>
-                        <input name="LeagueJoinDateTime" id="LeagueJoinDateTime" readonly="" ng-model="LeagueJoinDateTime" type="text" class="form-control" value="">
+                        <input name="LeagueJoinDateTime" placeholder="LEAGUE JOIN DATE TIME" id="LeagueJoinDateTime" readonly="" ng-model="LeagueJoinDateTime" type="text" class="form-control" value="">
 						<small>Set league join date time on which time user can create a team.</small>
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">Contest Name</label>
-						<input name="ContestName" type="text" class="form-control" placeholder="Contest Name" value="" maxlength="40">
+						<input name="ContestName" type="text" class="form-control" placeholder="CONTEST NAME" value="" maxlength="40">
 					</div>
 				</div>
 
@@ -57,20 +57,20 @@
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">Winning Amount</label>
-						<input name="WinningAmount" ng-model="custom.WinningAmount" placeholder="Winning Amount" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='Yes'">
-						<input name="WinningAmount" ng-model="custom.WinningAmount" ng-init="custom.WinningAmount='0'" placeholder="Winning Amount" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='No'" >
+						<input name="WinningAmount" ng-model="custom.WinningAmount" placeholder="WINNING AMOUNT" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='Yes'">
+						<input name="WinningAmount" ng-model="custom.WinningAmount" ng-init="custom.WinningAmount='0'" placeholder="WINNING AMOUNT" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='No'" >
 					</div>
 				</div>
 				<div class="col-md-3" ng-if="IsPaid=='Yes'">
 					<div class="form-group">
 						<label class="control-label">Admin Charges (%)</label>
-						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="Admin Charges in Percentage"  ng-init="custom.AdminPercent='10'" type="text" class="form-control numeric" maxlength="3" ng-if="IsPaid=='Yes'">
+						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="ADMIN CHARGES IN PERCENTAGE"  ng-init="custom.AdminPercent='10'" type="text" class="form-control numeric" maxlength="3" ng-if="IsPaid=='Yes'">
 					</div>
 				</div>
 				<div class="col-md-3" ng-if="IsPaid=='Yes'">
 					<div class="form-group">
 						<label class="control-label">Cash Bonus Contribution (%)</label>
-						<input name="CashBonusContribution" ng-model="CashBonusContribution" placeholder="Cash Bonus Controbution in Percentage" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="IsPaid=='Yes'">
+						<input name="CashBonusContribution" ng-model="CashBonusContribution" placeholder="CASH BONUS CONTRIBUTION IN PERCENTAGE" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="IsPaid=='Yes'">
 					</div>
 				</div>
 
@@ -93,7 +93,7 @@
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="control-label">Contest Size</label>
-						<input name="ContestSize" ng-model="custom.ContestSize" type="numeric" class="form-control integer" min="4" max="8">
+						<input name="ContestSize" placeholder="CONTEST SIZE" ng-model="custom.ContestSize" type="numeric" class="form-control integer" min="4" max="8">
 					</div>
 				</div>
 	

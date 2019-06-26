@@ -9,7 +9,7 @@
     <br>
     <form method="post" id="login_form" name="login_form"  autocomplete='off'>
       <div class="form-group">
-        <input type="text" name="Username" class="form-control form-control-lg" placeholder="Username"  autofocus="">
+        <input type="text" name="Username" class="form-control form-control-lg" placeholder="Username/Email"  autofocus="">
       </div>
 
       <div class="form-group">

@@ -8,17 +8,11 @@
 		<span class="float-left records hidden-sm-down">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
-
-		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control" name="Keyword" placeholder="Search">
-			</form>
+		<div class="float-right mr-2">		
+			<button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUsers();">Export</button>
 		</div>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -40,9 +34,11 @@
 						<th style="width: 300px;min-width:200px;">User</th>
 						<th>Contact No.</th>
 						<th style="width: 120px;">Gender</th>
-						<th style="width: 120px;">Date of Birth</th>
 						<th style="width: 120px;">Referred</th>
 						<!-- <th style="width: 200px;">Role</th> -->
+						<th style="width: 160px;">Deposit Amount</th>
+						<th style="width: 160px;">Winning Amount</th>
+						<th style="width: 160px;">Cash Bonus</th>
 						<th style="width: 160px;" class="text-center sort" ng-click="applyOrderedList('E.EntryDate', 'ASC')">Registered On <span class="sort_deactive">&nbsp;</span></th>
 						<th style="width: 160px;" class="text-center">Last Login</th>
 						<th style="width: 100px;" class="text-center">Status</th>
@@ -55,18 +51,21 @@
 					<tr scope="row" ng-repeat="(key, row) in data.dataList">
 
 						<td class="listed sm clearfix">
-							<img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}">
+						<a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
 							<div class="content float-left"><strong><a target="_blank" href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
-							<div ng-if="row.Email"><a href="mailto:{{row.Email}}" target="_top">{{row.Email}}</a></div><div ng-if="!row.Email">-</div>
+							<div ng-if="row.Email || row.EmailForChange"><a href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}" target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div><div ng-if="!row.Email && !row.EmailForChange">-</div>
+							<span ng-if="row.Email || row.EmailForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.EmailStatus]">({{row.EmailStatus}})</span><br>
 							</div>
 
 						</td> 
 
 						<td><span ng-if="row.PhoneNumber">{{row.PhoneNumber}}</span><span ng-if="!row.PhoneNumber">-</span></td> 
 						<td><span ng-if="row.Gender">{{row.Gender}}</span><span ng-if="!row.Gender">-</span></td> 
-						<td><span ng-if="row.BirthDate">{{row.BirthDate}}</span><span ng-if="!row.BirthDate">-</span></td> 
 						<td><span ng-if="row.ReferredCount"><a href="javascript:void(0)" ng-click="loadFormReferredUsersList(key, row.UserGUID)" >{{row.ReferredCount}}</span><span ng-if="!row.ReferredCount">-</span></td> 
 						<!-- <td ng-bind="row.UserTypeName"></td>  -->
+						<td><i class="fa fa-rupee"></i>{{row.WalletAmount}}</td> 
+						<td><i class="fa fa-rupee"></i>{{row.WinningAmount}}</td> 
+						<td><i class="fa fa-rupee"></i>{{row.CashBonus}}</td> 
 						<td ng-bind="row.RegisteredOn"></td>  
 						<td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 
 						<td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span><br><button class="btn btn-secondary btn-sm action" type="button" ng-if="row.EmailForChange !='' || row.Status == 'Pending'" ng-click="ResendVerificationMail(row.UserGUID)">Resend Verify</button></td> 
@@ -100,7 +99,7 @@
 	<!-- Data table/ -->
 
 
-	<div class="modal fade" id="filter_model"  ng-init="getFilterData()">
+	<div class="modal fade" id="filter_model"   ng-init="initDateRangePicker()">
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -109,31 +108,79 @@
 				</div>
 
 				<!-- Filter form -->
+			
+				<!-- Filter form -->
 				<form id="filterForm1" role="form" autocomplete="off" class="ng-pristine ng-valid">
 					<div class="modal-body">
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
-									<div class="form-group">
-										<label class="filter-col" for="Status">Status</label>
-										<select id="Status" name="Status" class="form-control chosen-select">
-											<option value="">Please Select</option>
-											<option value="Verified">Verified</option>
-											<option value="Pending">Pending</option>
-											<option value="Deleted">Deleted</option>
-											<option value="Blocked">Blocked</option>
-											<option value="Hidden">Hidden</option>
-										</select>   
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="EmailStatus">Email Status</label>
+									<select id="EmailStatus" name="EmailStatus" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Verified">Verified</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="PhoneStatus">Phone Status</label>
+									<select id="PhoneStatus" name="PhoneStatus" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Verified">Verified</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="PanStatus">Pan Status</label>
+									<select id="PanStatus" name="PanStatus" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="1">Pending</option>
+										<option value="2">Verified</option>
+										<option value="3">Rejected</option>
+										<option value="9">Not Submitted</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="BankStatus">Bank Status</label>
+									<select id="BankStatus" name="BankStatus" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="1">Pending</option>
+										<option value="2">Verified</option>
+										<option value="3">Rejected</option>
+										<option value="9">Not Submitted</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Registered Between</label>
+									<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+										<i class="fa fa-calendar"></i>&nbsp;
+										<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
 									</div>
 								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+							</div>
 							</div>
 
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="$('#filterForm1').trigger('reset'); $('.chosen-select').trigger('chosen:updated');">Reset</button>
+						<button type="button" class="btn btn-secondary btn-sm" ng-click="resetUserForm()">Reset</button>
 						<button type="submit" class="btn btn-success btn-sm" data-dismiss="modal" ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
 					</div>
 

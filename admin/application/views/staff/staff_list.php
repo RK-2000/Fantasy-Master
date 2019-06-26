@@ -49,8 +49,6 @@
 						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1"></th>	 -->
 						<th style="width: 300px;">User</th>
 						<th>Contact No.</th>
-						<th style="width: 120px;">Gender</th>
-						<th style="width: 120px;">Date of Birth</th>
 						<th style="width: 200px;">Role</th>
 						<th style="width: 160px;" class="text-center">Registered On</th>
 						<th style="width: 160px;" class="text-center">Last Login</th>
@@ -74,8 +72,6 @@
 						</td> 
 						
 						<td><span ng-if="row.PhoneNumber">{{row.PhoneNumber}}</span><span ng-if="!row.PhoneNumber">-</span></td> 
-						<td><span ng-if="row.Gender">{{row.Gender}}</span><span ng-if="!row.Gender">-</span></td> 
-						<td><span ng-if="row.BirthDate">{{row.BirthDate}}</span><span ng-if="!row.BirthDate">-</span></td> 
 						<td ng-bind="row.UserTypeName"></td> 
 						<td ng-bind="row.RegisteredOn"></td>  
 						<td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 

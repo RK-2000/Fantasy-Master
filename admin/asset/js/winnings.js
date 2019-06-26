@@ -15,7 +15,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
              $timeout(function(){
                 $("select.chosen-select").chosen({ width: '100%',"disable_search_threshold": 8}).trigger("chosen:updated");
             }, 300);          
-         }
+         } 
      });
     }
 
@@ -76,6 +76,21 @@ app.controller('PageController', function ($scope, $http,$timeout){
            
            $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
        }, 200);
+    }
+
+     /*To get matches according to Series*/
+     $scope.getMatches = function (SeriesGUID,Status = '') {
+        $scope.MatchData = {};
+        var data = 'SeriesGUID=' + SeriesGUID + '&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status='+Status;
+        $http.post(API_URL + 'sports/getMatches', data, contentType).then(function (response) {
+            var response = response.data;
+            if (response.ResponseCode == 200 && response.Data) { /* success case */
+                $scope.MatchData = response.Data.Records;
+                $timeout(function () {
+                    $("select.chosen-select").chosen({width: '100%', "disable_search_threshold": 8}).trigger("chosen:updated");
+                }, 300);
+            }
+        });
     }
 
 }); 
