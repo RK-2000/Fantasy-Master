@@ -288,7 +288,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                     $data.PageNo = parseInt($scope.TeamPageNo);
                     $data.PageSize = parseInt($scope.TeamPageSize);
                     appDB
-                            .callPostJSON('contest/getJoinedContestsUsersMongoDB', $data)
+                            .callPostJSON('contest/getJoinedContestsUsers', $data)
                             .then(
                                     function successCallback(data) {
                                         $scope.Nextdata = true;
@@ -574,11 +574,11 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
             }
 
 
-            setInterval(function () {
-                if ($rootScope.Contest.Status == 'Running') {
-                    window.location.reload();
-                }
-            }, 120000);
+            // setInterval(function () {
+            //     if ($rootScope.Contest.Status == 'Running') {
+            //         window.location.reload();
+            //     }
+            // }, 120000);
 
             $scope.switchTeamPopup = function () {
                 $scope.UsersTeamList();

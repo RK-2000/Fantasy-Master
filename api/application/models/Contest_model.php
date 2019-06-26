@@ -411,7 +411,7 @@ class Contest_model extends CI_Model {
                     $Records[$key]['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
                     if (in_array('IsJoined', $Params)) {
                         if ($Record['IsJoined'] == 'Yes') {
-                            $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestID']), true, 0);
+                            $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
                             $Records[$key]['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
                         } else {
                             $Records[$key]['UserTeamDetails'] = array();
@@ -442,7 +442,7 @@ class Contest_model extends CI_Model {
                 $Record['TotalWinningAmount'] = ($TotalWinningAmount) ? $TotalWinningAmount : 0;
                 if (in_array('IsJoined', $Params)) {
                     if ($Record['IsJoined'] == 'Yes') {
-                        $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestID']), true, 0);
+                        $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
                         $Record['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
                     } else {
                         $Record['UserTeamDetails'] = array();
@@ -964,6 +964,9 @@ class Contest_model extends CI_Model {
         }
         if (!empty($Where['MatchID'])) {
             $this->db->where("UT.MatchID", $Where['MatchID']);
+        }
+        if (!empty($Where['ContestID'])) {
+            $this->db->where("JC.ContestID", $Where['ContestID']);
         }
         if (!empty($Where['UserTeamType']) && $Where['UserTeamType'] != 'All') {
             $this->db->where("UT.UserTeamType", $Where['UserTeamType']);
