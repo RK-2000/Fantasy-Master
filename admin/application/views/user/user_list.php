@@ -45,7 +45,7 @@
 						<th style="width: 100px;" class="text-center">Action</th>
 
 					</tr>
-				</thead>
+				</thead> 
 				<!-- table body -->
 				<tbody>
 					<tr scope="row" ng-repeat="(key, row) in data.dataList">

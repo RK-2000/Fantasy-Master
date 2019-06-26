@@ -46,7 +46,7 @@
 					<tr scope="row" ng-repeat="(key, row) in data.dataList"  >
 
 						<td class="listed sm clearfix">
-							<img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}">
+						<a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
 							<div class="content float-left"><strong>{{row.FullName}}</strong>
 							<div ng-if="row.Email"><a href="javascript:void(0)" target="_top">{{row.Email}}</a></div><div ng-if="!row.Email">-</div>
 							</div>

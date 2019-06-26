@@ -78,20 +78,19 @@ app.controller('PageController', function ($scope, $http,$timeout){
     /*load delete form*/
     $scope.loadFormDelete = function (Position, MediaGUID)
     {
-        $scope.data.Position = Position;
-        $scope.templateURLDelete = PATH_TEMPLATE+module+'/delete_form.htm?'+Math.random();
-        $scope.data.pageLoading = true;
-        $http.post(API_URL+'upload/delete', 'SessionKey='+SessionKey+'&MediaGUID='+MediaGUID, contentType).then(function(response) {
-            var response = response.data;
-            if(response.ResponseCode==200){ /* success case */
-                $scope.data.pageLoading = false;
-                $scope.formData = response.Data
-                $('#delete_model').modal({show:true});
-                $timeout(function(){            
-                   $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
-               }, 200);
-            }
-        });
+        if(confirm('Are you sure, want to delete this banner ?')){
+            $scope.addDataLoading = true;
+            $http.post(API_URL+'upload/delete', 'SessionKey='+SessionKey+'&MediaGUID='+MediaGUID, contentType).then(function(response) {
+                var response = response.data;
+                if(response.ResponseCode==200){ /* success case */
+                    $scope.getList();        
+                    alertify.success(response.Message);
+                }else{
+                    alertify.error(response.Message);
+                }
+                $scope.addDataLoading = false; 
+            });
+        }
     }
 
 }); 
