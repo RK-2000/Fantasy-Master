@@ -230,6 +230,10 @@ class Utilities extends API_Controller {
         $this->Utility_model->updateCronLogs($CronID);
     }
 
+    /*
+      Description:  Cron jobs to amount distribuit contest amount.
+      URL:          /api/utilities/amountDistributeContestWinner
+     */
     public function amountDistributeContestWinner_get() {
         $CronID = $this->Utility_model->insertCronLogs('amountDistributeContestWinner');
         $this->Sports_model->amountDistributeContestWinner($CronID);
@@ -288,6 +292,17 @@ class Utilities extends API_Controller {
     public function setContestWinners_get() {
         $CronID = $this->Utility_model->insertCronLogs('setContestWinners');
         $this->Sports_model->setContestWinners($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
+    }
+
+    /*
+      Description:  Cron jobs to transfer joined contest data (MongoDB To MySQL).
+      URL:          /api/utilities/tranferJoinedContestData
+     */
+
+    public function tranferJoinedContestData_get() {
+        $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
+        $this->Sports_model->tranferJoinedContestData($CronID);
         $this->Utility_model->updateCronLogs($CronID);
     }
 

@@ -9,6 +9,11 @@ class Contest extends API_Controller_Secure {
         $this->load->model('Contest_model');
         $this->load->model('Sports_model');
         $this->load->model('Settings_model');
+
+        /* Require MongoDB Library & Connection */
+        require_once getcwd() . '/vendor/autoload.php';
+        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+        $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
@@ -1113,11 +1118,40 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required');
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->validation($this);  /* Run validation */
 
+        /* Get Contest Status */ 
+        $Contest = $this->Contest_model->getContests('Status',array('ContestID' => $this->Post['ContestID']));
+        if($Contest['Status'] == 'Pending' || $Contest['Status'] == 'Cancelled'){
+            
+            /* Get Joined Contest Users Data (MySQL) */
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        }else{
+            
+            /* Get Joined Contest Users Data (MongoDB) */
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post,array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
+        }
+        if (!empty($JoinedContestData)) {
+            $this->Return['Data'] = $JoinedContestData['Data'];
+        }
+    }
+
+    /*
+      Description: To get joined contest users data (MongoDB)
+     */
+
+    public function getJoinedContestsUsersMongoDB_post() {
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required');
+        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
+        $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal]');
+        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
+        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Joined Contest Users Data */
-        $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post,array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($JoinedContestData)) {
             $this->Return['Data'] = $JoinedContestData['Data'];
         }
