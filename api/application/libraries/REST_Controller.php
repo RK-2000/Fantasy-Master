@@ -842,6 +842,9 @@ abstract class REST_Controller extends CI_Controller {
             	// If the format method exists, call and return the output in that format
             	if (method_exists($this->format, 'to_' . $this->response->format))
             	{
+                    // $data=json_decode(json_encode($data),true);
+                    // array_walk_recursive($data,function(&$item){$item=strval($item);});
+                    
                 	// Set the format header
                 	$this->output->set_content_type($this->_supported_formats[$this->response->format], strtolower($this->config->item('charset')));
                 	$output = $this->format->factory($data)->{'to_' . $this->response->format}();

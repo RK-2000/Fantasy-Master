@@ -1943,8 +1943,8 @@ class Sports_model extends CI_Model {
 
     function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
 
-        ini_set('max_execution_time', 500);
-        ini_set('memory_limit','256M');
+        // ini_set('max_execution_time', 1200);
+        ini_set('memory_limit','512M');
 
 
         /* Get Live Contests */
@@ -1994,14 +1994,14 @@ class Sports_model extends CI_Model {
 
                     $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'],'PlayerName' => $UserTeamValue['PlayerName'],'PlayerPic' => $UserTeamValue['PlayerPic'],'PlayerPosition' => $UserTeamValue['PlayerPosition'],'PlayerRole' => $UserTeamValue['PlayerRole'],'TeamGUID' => $UserTeamValue['TeamGUID'],'Points' => $Points);
+                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'],'PlayerID' => $PlayersIdsArr[$UserTeamValue['PlayerGUID']],'PlayerName' => $UserTeamValue['PlayerName'],'PlayerPic' => $UserTeamValue['PlayerPic'],'PlayerPosition' => $UserTeamValue['PlayerPosition'],'PlayerRole' => $UserTeamValue['PlayerRole'],'TeamGUID' => $UserTeamValue['TeamGUID'],'Points' => (float) $Points);
                 }
 
                 /* Add/Edit Joined Contest Data (MongoDB) */
                 $ContestCollection = $this->fantasydb->{'Contest_'.$Value['ContestID']};
                 $ContestCollection->updateOne(
-                                ['_id'    => $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
-                                ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' => $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'UserGUID' => $Value['UserGUID'],'UserTeamName' => $Value['UserTeamName'],'Username' => $Value['Username'],'FullName' => $Value['FullName'],'ProfilePic' => $Value['ProfilePic'],'TotalPoints' => $UserTotalPoints,'UserTeamPlayers' => $UserPlayersArr,'IsWinningAssigned' => 'No']],
+                                ['_id'    => (int) $Value['ContestID'].$Value['UserID'].$Value['UserTeamID']],
+                                ['$set'   => ['ContestID' => $Value['ContestID'],'UserID' =>  $Value['UserID'],'UserTeamID' => $Value['UserTeamID'],'UserGUID' => $Value['UserGUID'],'UserTeamName' => $Value['UserTeamName'],'Username' => $Value['Username'],'FullName' => $Value['FullName'],'ProfilePic' => $Value['ProfilePic'],'TotalPoints' => $UserTotalPoints,'UserTeamPlayers' => $UserPlayersArr,'IsWinningAssigned' => 'No']],
                                 ['upsert' => true]
                             );
             }
@@ -2553,8 +2553,9 @@ class Sports_model extends CI_Model {
                 
                 /* Get Joined Contests */
                 $ContestCollection   = $this->fantasydb->{'Contest_'.$Value['ContestID']};
-                $JoinedContestsUsers = iterator_to_array($ContestCollection->find(["ContestID" => (string) $Value['ContestID'], "IsWinningAssigned" => "No","TotalPoints" => ['$gt' => 0]],['projection' => ['UserRank' => 1,'UserTeamID' => 1,'TotalPoints' => 1,'UserID' => 1],'sort' => ['UserRank' => -1]]));
-                $AllRankWinners   = array_column($JoinedContestsUsers,'UserRank');
+                $JoinedContestsUsers = iterator_to_array($ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "No","TotalPoints" => ['$gt' => 0]],['projection' => ['UserRank' => 1,'UserTeamID' => 1,'TotalPoints' => 1,'UserID' => 1],'sort' => ['UserRank' => -1]]));
+                $AllUsersRank   = array_column($JoinedContestsUsers,'UserRank');
+                $AllRankWinners = array_count_values($AllUsersRank);
                 if(count($AllRankWinners) == 0){
 
                     /* Update Contest Winning Assigned Status */
@@ -2633,8 +2634,8 @@ class Sports_model extends CI_Model {
 
                 /* Get Joined Contests */
                 $ContestCollection   = $this->fantasydb->{'Contest_'.$Value['ContestID']};
-                $JoinedContestsUsers = iterator_to_array($ContestCollection->find(["ContestID" => (string) $Value['ContestID'], "IsWinningAssigned" => "Yes"],['projection' => ['ContestID' => 1,'UserID' => 1,'UserTeamID' => 1,'TotalPoints' => 1,'UserRank' => 1,'UserWinningAmount' => 1]]));
-                if(count($JoinedContestsUsers) == 0){
+                $JoinedContestsUsers = $ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"],['projection' => ['ContestID' => 1,'UserID' => 1,'UserTeamID' => 1,'UserTeamPlayers' => 1,'TotalPoints' => 1,'UserRank' => 1,'UserWinningAmount' => 1]]);
+                if($ContestCollection->count(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"]) == 0){
 
                     /* Update Contest Winning Assigned Status */
                     $this->db->where('ContestID', $Value['ContestID']);
@@ -2644,6 +2645,14 @@ class Sports_model extends CI_Model {
                 }
 
                 foreach($JoinedContestsUsers as $JC){
+
+                    /* Update User Team Player Points */
+                    $Query = 'UPDATE sports_users_team_players SET Points = CASE';
+                    foreach($JC['UserTeamPlayers'] as $Player){
+                        $Query .= ' WHEN UserTeamID = '.$JC['UserTeamID'].' AND PlayerID = '.$Player['PlayerID'].' THEN '.$Player['Points'];
+                    }
+                    $Query .= ' ELSE Points END;';
+                    $this->db->query($Query);
 
                     /* Update MySQL Row */
                     $this->db->where(array('UserID' => $JC['UserID'],'ContestID' => $JC['ContestID'],'UserTeamID' => $JC['UserTeamID']));

@@ -13,7 +13,7 @@ class Utilities extends API_Controller {
         /* Require MongoDB Library & Connection */
         require_once getcwd() . '/vendor/autoload.php';
         $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-       $this->fantasydb = $this->ClientObj->fantasy;
+        $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
@@ -689,7 +689,7 @@ class Utilities extends API_Controller {
         $MatchDateTime = date('Y-m-d H:i', $NextDateTime);
 
         // $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes", "ContestFull" => "No"), TRUE);
-        $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('ContestID' => 75159), TRUE);
+        $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('ContestID' => 96164), TRUE);
         // echo "<pre>";
         // print_r($Contests);die;
         if (!empty($Contests['Data']['Records'])) {
@@ -740,7 +740,7 @@ class Utilities extends API_Controller {
                     $dummyUserPercentage = $contestSize - $totalJoined - 5;
                 }
 
-                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], 10000);
+                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
                 if (!empty($VitruelTeamPlayer)) {
                     foreach ($VitruelTeamPlayer as $usersTeam) {
                         $userTeamPlayers = json_decode($usersTeam['Players']);
