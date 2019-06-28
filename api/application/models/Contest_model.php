@@ -1473,7 +1473,7 @@ class Contest_model extends CI_Model {
     }
 
     /*
-      Description: To Download Contest Teams (TCPDF)
+      Description: To Download Contest Teams (MPDF)
      */
 
     function downloadTeams($Input = array()) {
@@ -1483,9 +1483,7 @@ class Contest_model extends CI_Model {
         if (file_exists(getcwd() . '/uploads/Contests/' . $FileName)) {
             return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
         } else {
-
-            /* Create PDF file using TCPDF Library */
-            require APPPATH.'/libraries/pdf/tcpdf/PDF.php';
+            $this->load->helper('file');
 
             /* Get Matches Details */
             $ContestsData = $this->getContests('TeamNameLocal,TeamNameVisitor,EntryFee,ContestSize,UserInvitationCode', array('ContestID' => $Input['ContestID']));
@@ -1544,9 +1542,13 @@ class Contest_model extends CI_Model {
             $PDFHtml .= '</table>';
             $PDFHtml .= '</div></body></html>';
 
-            /* PDF Object */
-            $PDFObj = new PDF();
-            $PDFObj->downloadPDF($PDFHtml,getcwd() . '/uploads/Contests/' . $FileName,'Contest User Teams',1);
+            /* Create HTML File */
+            $HTMLFilePath = getcwd() . '/uploads/Contests/contest-teams-' .$Input['ContestGUID'] . '.html';
+            write_file($HTMLFilePath, $PDFHtml, 'w');
+            shell_exec('xvfb-run wkhtmltopdf '.BASE_URL . 'uploads/Contests/contest-teams-' .$Input['ContestGUID'] . '.html '.getcwd() . '/uploads/Contests/' . $FileName); 
+
+            /* Delete Created HTML File */
+            unlink($HTMLFilePath);
             return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
         }
     }

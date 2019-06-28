@@ -2647,12 +2647,12 @@ class Sports_model extends CI_Model {
                 foreach($JoinedContestsUsers as $JC){
 
                     /* Update User Team Player Points */
-                    $Query = 'UPDATE sports_users_team_players SET Points = CASE';
-                    foreach($JC['UserTeamPlayers'] as $Player){
-                        $Query .= ' WHEN UserTeamID = '.$JC['UserTeamID'].' AND PlayerID = '.$Player['PlayerID'].' THEN '.$Player['Points'];
-                    }
-                    $Query .= ' ELSE Points END;';
-                    $this->db->query($Query);
+                    // $Query = 'UPDATE sports_users_team_players SET Points = CASE';
+                    // foreach($JC['UserTeamPlayers'] as $Player){
+                    //     $Query .= ' WHEN UserTeamID = '.$JC['UserTeamID'].' AND PlayerID = '.$Player['PlayerID'].' THEN '.$Player['Points'];
+                    // }
+                    // $Query .= ' ELSE Points END;';
+                    // $this->db->query($Query);
 
                     /* Update MySQL Row */
                     $this->db->where(array('UserID' => $JC['UserID'],'ContestID' => $JC['ContestID'],'UserTeamID' => $JC['UserTeamID']));
