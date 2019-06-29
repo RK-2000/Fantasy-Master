@@ -11,9 +11,9 @@ class Utilities extends API_Controller {
         $this->load->model('Contest_model');
         
         /* Require MongoDB Library & Connection */
-        // require_once getcwd() . '/vendor/autoload.php';
-        // $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-        // $this->fantasydb = $this->ClientObj->fantasy;
+        require_once getcwd() . '/vendor/autoload.php';
+        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+        $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
@@ -495,7 +495,7 @@ class Utilities extends API_Controller {
 
     public function createVirtualUserTeams_get() {
 
-        $AllUsers = $this->Users_model->getUsers('UserID', array('UserTypeID' => 3), true, 1, 3000);
+        $AllUsers = $this->Users_model->getUsers('UserID', array('UserTypeID' => 3), true, 1, 6000);
         if (!empty($AllUsers)) {
             $MatchContest = $this->Contest_model->getContests('MatchID', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes"), TRUE);
             if (!empty($MatchContest['Data']['Records'])) {
@@ -688,7 +688,10 @@ class Utilities extends API_Controller {
         $NextDateTime = strtotime($UtcDateTime) + 3600 * 20;
         $MatchDateTime = date('Y-m-d H:i', $NextDateTime);
 
-        $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes", "ContestFull" => "No"), TRUE);
+        // $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes", "ContestFull" => "No"), TRUE);
+        $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('ContestID' => 96164), TRUE);
+        // echo "<pre>";
+        // print_r($Contests);die;
         if (!empty($Contests['Data']['Records'])) {
             foreach ($Contests['Data']['Records'] as $Rows) {
                 $Seconds = strtotime($Rows['MatchStartDateTimeUTC']) - strtotime($UtcDateTime);
@@ -708,35 +711,36 @@ class Utilities extends API_Controller {
 
                 if ($dummyJoinedContest >= $dummyUserPercentage) {
                     $this->Contest_model->UpdateVirtualJoinContest($Rows['ContestID']);
-                    continue;
+                    // continue;
                 }
 
                 if ($hours > 7 || $Rows['IsDummyJoined'] == 0) {
                     if ($Rows['IsDummyJoined'] == 0) {
                         $dummyUserPercentage = round(($dummyUserPercentage * 40 / 100));
                     } else {
-                        continue;
+                        // continue;
                     }
                 } else if ($hours > 4 || ($Rows['IsDummyJoined'] == 1 && $hours < 4)) {
                     if ($Rows['IsDummyJoined'] == 1) {
                         $dummyUserPercentage = round(($dummyUserPercentage * 40 / 100));
                     } else {
-                        continue;
+                        // continue;
                     }
                 } else {
                     if ($Rows['IsDummyJoined'] >= 2 && $hours < 3) {
                         $dummyUserPercentage = round(($dummyUserPercentage * 100 / 100)) - $dummyJoinedContest;
                     } else {
-                        continue;
+                        // continue;
                     }
                 }
+
 
                 $isEliglibleJoin = $totalJoined + $dummyUserPercentage;
                 if (!($isEliglibleJoin <= $contestSize)) {
                     $dummyUserPercentage = $contestSize - $totalJoined - 5;
                 }
 
-                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], $dummyUserPercentage);
+                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
                 if (!empty($VitruelTeamPlayer)) {
                     foreach ($VitruelTeamPlayer as $usersTeam) {
                         $userTeamPlayers = json_decode($usersTeam['Players']);

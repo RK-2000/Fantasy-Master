@@ -411,7 +411,7 @@ class Contest_model extends CI_Model {
                     $Records[$key]['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
                     if (in_array('IsJoined', $Params)) {
                         if ($Record['IsJoined'] == 'Yes') {
-                            $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestID']), true, 0);
+                            $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
                             $Records[$key]['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
                         } else {
                             $Records[$key]['UserTeamDetails'] = array();
@@ -442,7 +442,7 @@ class Contest_model extends CI_Model {
                 $Record['TotalWinningAmount'] = ($TotalWinningAmount) ? $TotalWinningAmount : 0;
                 if (in_array('IsJoined', $Params)) {
                     if ($Record['IsJoined'] == 'Yes') {
-                        $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestID']), true, 0);
+                        $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
                         $Record['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
                     } else {
                         $Record['UserTeamDetails'] = array();
@@ -965,6 +965,9 @@ class Contest_model extends CI_Model {
         if (!empty($Where['MatchID'])) {
             $this->db->where("UT.MatchID", $Where['MatchID']);
         }
+        if (!empty($Where['ContestID'])) {
+            $this->db->where("JC.ContestID", $Where['ContestID']);
+        }
         if (!empty($Where['UserTeamType']) && $Where['UserTeamType'] != 'All') {
             $this->db->where("UT.UserTeamType", $Where['UserTeamType']);
         }
@@ -1385,10 +1388,10 @@ class Contest_model extends CI_Model {
     }
 
     /*
-      Description: To Download Contest Teams
+      Description: To Download Contest Teams (MPDF)
      */
 
-    function downloadTeams($Input = array()) {
+    function downloadTeams_MPDF($Input = array()) {
 
         error_reporting(1);
         /* Teams File Name */
@@ -1399,15 +1402,17 @@ class Contest_model extends CI_Model {
 
             /* Create PDF file using MPDF Library */
             ob_start();
-            ini_set('memory_limit', '-1');
-            ini_set('max_execution_time', 300);
             require_once getcwd() . '/vendor/autoload.php';
 
             /* Get Matches Details */
             $ContestsData = $this->getContests('TeamNameLocal,TeamNameVisitor,EntryFee,ContestSize,UserInvitationCode', array('ContestID' => $Input['ContestID']));
 
             /* Get Contest User Teams */
-            $UserTeams = $this->getUserTeams('TotalPoints,UserTeamPlayers', array('ContestID' => $Input['ContestID']), TRUE, 0);
+            $ContestCollection = $this->fantasydb->{'Contest_'.$Input['ContestID']};
+            $UserTeams = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0,'UserTeamName' => 1,'UserTeamPlayers' => 1],'sort' => ['UserTeamID' => 1]]));
+            if($ContestCollection->count() == 0){
+                $UserTeams = $this->getUserTeams('TotalPoints,UserTeamPlayers', array('ContestID' => $Input['ContestID']), TRUE, 0)['Data']['Records'];
+            }
 
             /* Player Positions */
             $PlayerPositions = array('Captain' => '(C)', 'ViceCaptain' => '(VC)', 'Player' => '');
@@ -1444,7 +1449,7 @@ class Contest_model extends CI_Model {
             $PDFHtml .= '</tr>';
             $PDFHtml .= '</thead>';
             $PDFHtml .= '<tbody>';
-            foreach ($UserTeams['Data']['Records'] as $TeamValue) {
+            foreach ($UserTeams as $TeamValue) {
                 $PDFHtml .= '<tr>';
                 $PDFHtml .= '<td style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">' . $TeamValue['UserTeamName'] . '</td>';
                 foreach ($TeamValue['UserTeamPlayers'] as $PlayerValue) {
@@ -1457,13 +1462,93 @@ class Contest_model extends CI_Model {
             $PDFHtml .= '</div></body></html>';
 
             /* MPDF Object */
-            // $MPDF = new mPDF();
             $MPDF = new \Mpdf\Mpdf();
             ini_set("pcre.backtrack_limit", "500000000");
             $PDFFilePath = getcwd() . '/uploads/Contests/' . $FileName;
             $MPDF->WriteHTML($PDFHtml);
             $output = $MPDF->output($PDFFilePath, \Mpdf\Output\Destination::FILE);
-            // $output = $MPDF->output($PDFFilePath, 'F');
+            ob_clean();
+            return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
+        }
+    }
+
+    /*
+      Description: To Download Contest Teams (MPDF)
+     */
+
+    function downloadTeams($Input = array()) {
+
+        /* Teams File Name */
+        $FileName = 'contest-teams-' . $Input['ContestGUID'] . '.pdf';
+        if (file_exists(getcwd() . '/uploads/Contests/' . $FileName)) {
+            return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
+        } else {
+            $this->load->helper('file');
+
+            /* Get Matches Details */
+            $ContestsData = $this->getContests('TeamNameLocal,TeamNameVisitor,EntryFee,ContestSize,UserInvitationCode', array('ContestID' => $Input['ContestID']));
+
+            /* Get Contest User Teams */
+            $ContestCollection = $this->fantasydb->{'Contest_'.$Input['ContestID']};
+            $UserTeams = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0,'UserTeamName' => 1,'UserTeamPlayers' => 1],'sort' => ['UserTeamID' => 1]]));
+            if($ContestCollection->count() == 0){
+                $UserTeams = $this->getUserTeams('TotalPoints,UserTeamPlayers', array('ContestID' => $Input['ContestID']), TRUE, 0)['Data']['Records'];
+            }
+
+            /* Player Positions */
+            $PlayerPositions = array('Captain' => '(C)', 'ViceCaptain' => '(VC)', 'Player' => '');
+
+            /* Create PDF HTML */
+            $PDFHtml = '<html lang="en" data-ng-app="fxi"><body style ="font-family: Montserrat, sans-serif;">';
+            $PDFHtml .= '<div style="width:100%; max-width:1500px;">';
+            $PDFHtml .= '<table style="background:#ffa100; width:100%;" width="100%" cellpadding="0"  cellspacing="0">';
+            $PDFHtml .= '<tr>';
+            $PDFHtml .= '<td style="padding:10px 0;">';
+            $PDFHtml .= '<span>' . SITE_NAME . '</span>';
+            $PDFHtml .= '</td>';
+            $PDFHtml .= '<td style="padding:10px 0;font-size:15px; color:#fff;">';
+            $PDFHtml .= $ContestsData['TeamNameLocal'] . ' V/S ' . $ContestsData['TeamNameVisitor'];
+            $PDFHtml .= '</td>';
+            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
+            $PDFHtml .= 'Entry Fee: ' . DEFAULT_CURRENCY . $ContestsData['EntryFee'];
+            $PDFHtml .= '</td>';
+            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
+            $PDFHtml .= 'Contest Size: ' . $ContestsData['ContestSize'];
+            $PDFHtml .= '</td>';
+            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
+            $PDFHtml .= 'Invite Code: ' . $ContestsData['UserInvitationCode'];
+            $PDFHtml .= '</td>';
+            $PDFHtml .= '</tr>';
+            $PDFHtml .= '</table>';
+            $PDFHtml .= '<table style="width:100%; border:1px solid #000" cellpadding="0"  cellspacing="0">';
+            $PDFHtml .= '<thead>';
+            $PDFHtml .= '<tr>';
+            $PDFHtml .= '<th style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">User Team Name</th>';
+            for ($I = 1; $I <= 11; $I++) {
+                $PDFHtml .= '<th style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">Player' . ' ' . $I . '</th>';
+            }
+            $PDFHtml .= '</tr>';
+            $PDFHtml .= '</thead>';
+            $PDFHtml .= '<tbody>';
+            foreach ($UserTeams as $TeamValue) {
+                $PDFHtml .= '<tr>';
+                $PDFHtml .= '<td style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">' . $TeamValue['UserTeamName'] . '</td>';
+                foreach ($TeamValue['UserTeamPlayers'] as $PlayerValue) {
+                    $PDFHtml .= '<td style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">' . $PlayerValue['PlayerName'] . ' ' . $PlayerPositions[$PlayerValue['PlayerPosition']] . '</td>';
+                }
+                $PDFHtml .= '</tr>';
+            }
+            $PDFHtml .= '</tbody>';
+            $PDFHtml .= '</table>';
+            $PDFHtml .= '</div></body></html>';
+
+            /* Create HTML File */
+            $HTMLFilePath = getcwd() . '/uploads/Contests/contest-teams-' .$Input['ContestGUID'] . '.html';
+            write_file($HTMLFilePath, $PDFHtml, 'w');
+            shell_exec('xvfb-run wkhtmltopdf '.BASE_URL . 'uploads/Contests/contest-teams-' .$Input['ContestGUID'] . '.html '.getcwd() . '/uploads/Contests/' . $FileName); 
+
+            /* Delete Created HTML File */
+            unlink($HTMLFilePath);
             return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
         }
     }

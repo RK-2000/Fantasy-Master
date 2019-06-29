@@ -140,7 +140,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="CategoryTypeName">Series</label>
 										<select id="SeriesGUID" name="SeriesGUID" ng-model="SeriesGUID" ng-change="getMatches(SeriesGUID,'')" class="form-control chosen-select">
@@ -149,10 +149,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-              
-							<div class="row">							
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="ParentCategory">Match</label>
 										<select id="MatchGUID" name="MatchGUID" class="form-control chosen-select">
@@ -163,33 +160,24 @@
 									</div>
 								</div>
 							</div>
-
+            
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col">From Date</label>
 										<input type="date" name="FromDate" class="form-control"> 
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
 										<label class="filter-col">To Date</label>
 										<input type="date" name="ToDate" class="form-control"> 
 									</div>
 								</div>
 							</div>
-
-							<!-- <div class="row">
-								<div class="col-md-8">
-									<div class="form-group">
-										<label class="filter-col" for="Status">Game type</label>
-										<select id="GameType" name="GameType" class="form-control chosen-select">
-											<option value="">Please Select</option>
-											<option value="Advance">Advance</option>
-											<option value="Safe">Safe</option>
-										</select>   
-									</div>
-								</div>
-							</div>
- -->
+						
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Entry type</label>
 										<select id="EntryType" name="EntryType" class="form-control chosen-select">
@@ -199,10 +187,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Status</label>
 										<select id="Status" name="Status" class="form-control chosen-select">
@@ -217,7 +202,7 @@
 							</div>
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Contest Type</label>
 										<select id="ContestType" name="ContestType" class="form-control chosen-select">
@@ -233,10 +218,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Entry Range</label>
 										<select id="EntryFee" name="" class="form-control chosen-select">
@@ -251,7 +233,7 @@
 							</div>
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Contest Size</label>
 										<select id="ContestSize" name="" class="form-control chosen-select">

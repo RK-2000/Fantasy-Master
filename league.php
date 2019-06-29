@@ -170,7 +170,7 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            <div class="table_scroll" scrolly>
+                                            <div class="table_scroll" scrolly style="max-height: 800px;overflow-y: scroll;">
                                                 <table class="table-fixed" >
                                                     <tbody>
                                                         <tr ng-repeat="team in userTeams| orderBy:propertyName:reverse" ng-click="ViewTeamOnGround(team.UserTeamPlayers)" class="">

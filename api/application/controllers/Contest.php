@@ -11,9 +11,9 @@ class Contest extends API_Controller_Secure {
         $this->load->model('Settings_model');
 
         /* Require MongoDB Library & Connection */
-        // require_once getcwd() . '/vendor/autoload.php';
-        // $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-        // $this->fantasydb = $this->ClientObj->fantasy;
+        require_once getcwd() . '/vendor/autoload.php';
+        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+        $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
@@ -1130,6 +1130,9 @@ class Contest extends API_Controller_Secure {
             
             /* Get Joined Contest Users Data (MongoDB) */
             $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post,array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
+            if(!$JoinedContestData){
+                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+            }
         }
         if (!empty($JoinedContestData)) {
             $this->Return['Data'] = $JoinedContestData['Data'];
