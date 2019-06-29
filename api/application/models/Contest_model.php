@@ -1406,7 +1406,6 @@ class Contest_model extends CI_Model {
             /* Get Matches Details */
             $ContestsData = $this->getContests('TeamNameLocal,TeamNameVisitor,EntryFee,ContestSize,UserInvitationCode', array('ContestID' => $Input['ContestID']));
 
-
             /* Get Contest User Teams */
             $UserTeams = $this->getUserTeams('TotalPoints,UserTeamPlayers', array('ContestID' => $Input['ContestID']), TRUE, 0);
 

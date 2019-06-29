@@ -11,9 +11,9 @@ class Utilities extends API_Controller {
         $this->load->model('Contest_model');
         
         /* Require MongoDB Library & Connection */
-        require_once getcwd() . '/vendor/autoload.php';
-        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-       $this->fantasydb = $this->ClientObj->fantasy;
+        // require_once getcwd() . '/vendor/autoload.php';
+        // $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+        // $this->fantasydb = $this->ClientObj->fantasy;
     }
 
     /*
