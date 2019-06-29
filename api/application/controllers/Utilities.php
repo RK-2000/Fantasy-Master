@@ -75,7 +75,6 @@ class Utilities extends API_Controller {
       Description:    Use to get list of random posts.
       URL:            /api/utilities/getPosts
      */
-
     public function getPosts_post() {
         /* Validation section */
         $this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
@@ -93,6 +92,22 @@ class Utilities extends API_Controller {
         }
     }
 
+    /*
+      Description:  Use to get referel amount details.
+      URL:      /api/utilities/getReferralDetails
+     */
+
+    public function getReferralDetails_post() {
+        $ReferByQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" AND StatusID = 2 LIMIT 1');
+        $ReferToQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" AND StatusID = 2 LIMIT 1');
+        $this->Return['Data']['ReferByBonus'] = ($ReferByQuery->num_rows() > 0) ? $ReferByQuery->row()->ConfigTypeValue : 0;
+        $this->Return['Data']['ReferToBonus'] = ($ReferToQuery->num_rows() > 0) ? $ReferToQuery->row()->ConfigTypeValue : 0;
+    }
+
+    /*
+      Description:    Use to send new app link
+      URL:            /api/utilities/sendAppLink
+     */
     public function sendAppLink_post() {
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
@@ -105,10 +120,27 @@ class Utilities extends API_Controller {
     }
 
     /*
+      Description:  Use to get app version details
+      URL:      /api/utilities/getAppVersionDetails
+     */
+
+    public function getAppVersionDetails_post() {
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+        $this->form_validation->set_rules('UserAppVersion', 'UserAppVersion', 'trim|required');
+        $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
+        $this->form_validation->validation($this); /* Run validation */
+        /* Validation - ends */
+
+        $VersionData = $this->Utility_model->getAppVersionDetails();
+        if (!empty($VersionData)) {
+            $this->Return['Data'] = $VersionData;
+        }
+    }
+
+    /*
       Description:  Use to create pre draft contest
       URL:      /api/utilities/createPreContest
      */
-
     public function createPreContest_get() {
         $this->load->model('PreContest_model');
         $this->PreContest_model->createPreContest();
@@ -123,8 +155,6 @@ class Utilities extends API_Controller {
         $CronID = $this->Utility_model->insertCronLogs('getSeriesLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $SeriesData = $this->Sports_model->getSeriesLiveEntity($CronID);
-        } else {
-            $SeriesData = $this->Sports_model->getSeriesLiveEntity($CronID);
         }
         if (!empty($SeriesData)) {
             $this->Return['Data'] = $SeriesData;
@@ -136,7 +166,6 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to get matches data.
       URL: 			/api/utilities/getMatchesLive
      */
-
     public function getMatchesLive_get() {
         $CronID = $this->Utility_model->insertCronLogs('getMatchesLive');
         if (SPORTS_API_NAME == 'ENTITY') {
@@ -159,8 +188,7 @@ class Utilities extends API_Controller {
     public function getPlayersLive_get() {
         $CronID = $this->Utility_model->insertCronLogs('getPlayersLive');
         if (SPORTS_API_NAME == 'ENTITY') {
-            //$PlayersData = $this->Sports_model->getPlayersLiveEntity($CronID);
-            $PlayersData = $this->Sports_model->getMatchWisePlayersLiveEntity($CronID);
+            $PlayersData = $this->Sports_model->getPlayersLiveEntity($CronID);
         }
         if (SPORTS_API_NAME == 'CRICKETAPI') {
             $PlayersData = $this->Sports_model->getPlayersLiveCricketApi($CronID);
@@ -211,13 +239,42 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description: 	Cron jobs to auto cancel contest.
-      URL: 			/api/utilities/autoCancelContest
+      Description: 	Cron jobs to get player points.
+      URL: 			/api/utilities/getPlayerPoints
      */
+    public function getPlayerPoints_get() {
+        $CronID = $this->Utility_model->insertCronLogs('getPlayerPoints');
+        $this->Sports_model->getPlayerPoints($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
+    }
 
-    public function autoCancelContest_get() {
-        $CronID = $this->Utility_model->insertCronLogs('autoCancelContest');
-        $this->Sports_model->autoCancelContest($CronID);
+    /*
+      Description: 	Cron jobs to get joined player points.
+      URL: 			/api/utilities/getJoinedContestPlayerPoints
+     */
+    public function getJoinedContestPlayerPoints_get() {
+        $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
+        $this->Sports_model->getJoinedContestPlayerPoints($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
+    }
+
+    /*
+      Description: 	Cron jobs to auto set winner.
+      URL: 			/api/utilities/setContestWinners
+     */
+    public function setContestWinners_get() {
+        $CronID = $this->Utility_model->insertCronLogs('setContestWinners');
+        $this->Sports_model->setContestWinners($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
+    }
+
+    /*
+      Description:  Cron jobs to transfer joined contest data (MongoDB To MySQL).
+      URL:          /api/utilities/tranferJoinedContestData
+     */
+    public function tranferJoinedContestData_get() {
+        $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
+        $this->Sports_model->tranferJoinedContestData($CronID);
         $this->Utility_model->updateCronLogs($CronID);
     }
 
@@ -232,10 +289,19 @@ class Utilities extends API_Controller {
     }
 
     /*
+      Description: 	Cron jobs to auto cancel contest.
+      URL: 			/api/utilities/autoCancelContest
+     */
+    public function autoCancelContest_get() {
+        $CronID = $this->Utility_model->insertCronLogs('autoCancelContest');
+        $this->Sports_model->autoCancelContest($CronID);
+        $this->Utility_model->updateCronLogs($CronID);
+    }
+
+    /*
       Description:  Cron jobs to auto cancel contest refund amount.
       URL:          /api/utilities/refundAmountCancelContest
      */
-
     public function refundAmountCancelContest_get() {
         $CronID = $this->Utility_model->insertCronLogs('refundAmountCancelContest');
         $this->Sports_model->refundAmountCancelContest($CronID);
@@ -243,32 +309,9 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description: 	Cron jobs to get player points.
-      URL: 			/api/utilities/getPlayerPoints
-     */
-
-    public function getPlayerPoints_get() {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayerPoints');
-        $this->Sports_model->getPlayerPoints($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
-    }
-
-    /*
-      Description: 	Cron jobs to get joined player points.
-      URL: 			/api/utilities/getJoinedContestPlayerPoints
-     */
-
-    public function getJoinedContestPlayerPoints_get() {
-        $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-        $this->Sports_model->getJoinedContestPlayerPoints($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
-    }
-
-    /*
       Description: 	Cron jobs to get auction joined player points.
       URL: 			/api/utilities/getAuctionJoinedUserTeamsPlayerPoints
      */
-
     public function getAuctionJoinedUserTeamsPlayerPoints_get() {
         $CronID = $this->Utility_model->insertCronLogs('getAuctionJoinedUserTeamsPlayerPoints');
         $this->Sports_model->getAuctionJoinedUserTeamsPlayerPoints($CronID);
@@ -276,32 +319,9 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description: 	Cron jobs to auto set winner.
-      URL: 			/api/utilities/setContestWinners
-     */
-
-    public function setContestWinners_get() {
-        $CronID = $this->Utility_model->insertCronLogs('setContestWinners');
-        $this->Sports_model->setContestWinners($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
-    }
-
-    /*
-      Description:  Cron jobs to transfer joined contest data (MongoDB To MySQL).
-      URL:          /api/utilities/tranferJoinedContestData
-     */
-
-    public function tranferJoinedContestData_get() {
-        $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
-        $this->Sports_model->tranferJoinedContestData($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
-    }
-
-    /*
       Description: 	Cron jobs to auto add minute in every hours.
       URL: 			/api/utilities/liveAuctionAddMinuteInEveryHours
      */
-
     public function auctionLiveAddMinuteInEveryHours_get() {
         $CronID = $this->Utility_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
         $this->load->model('AuctionDrafts_model');
@@ -312,7 +332,6 @@ class Utilities extends API_Controller {
     /*
       Description: To get statics
      */
-
     public function dashboardStatics_post() {
         $SiteStatics = new stdClass();
         $SiteStatics = $this->db->query('SELECT
@@ -401,7 +420,6 @@ class Utilities extends API_Controller {
       Description:    To get Total Deposits data
       URL:            /Utilites/getTotalDeposits/
      */
-
     public function getTotalDeposits_post() {
         /* Get Total Deposit Data */
         $WalletDetails = $this->Utility_model->getTotalDeposit(@$this->Post['Params'], $this->Post, TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
@@ -411,25 +429,7 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description:  Use to get app version details
-      URL:      /api/utilities/getAppVersionDetails
-     */
-
-    public function getAppVersionDetails_post() {
-        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
-        $this->form_validation->set_rules('UserAppVersion', 'UserAppVersion', 'trim|required');
-        $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
-        $this->form_validation->validation($this); /* Run validation */
-        /* Validation - ends */
-
-        $VersionData = $this->Utility_model->getAppVersionDetails();
-        if (!empty($VersionData)) {
-            $this->Return['Data'] = $VersionData;
-        }
-    }
-
-    /*
-      Name: 			createVirtualUsers
+      Name: 		createVirtualUsers
       Description: 	create virtual user users
       URL: 			/utilities/createVirtualUsers/
      */
@@ -479,7 +479,7 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Name: 			createVirtualUserTeams
+      Name: 		createVirtualUserTeams
       Description: 	create virtual user team
       URL: 			/utilities/createVirtualUserTeams/
      */
@@ -518,7 +518,7 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Name: 			createTeamProcessByMatch
+      Name: 		createTeamProcessByMatch
       Description: 	virtual usercommon create team
       URL: 			/testApp/createTeamProcessByMatch/
      */
@@ -667,7 +667,7 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Name: 			autoJoinContestVirtualUser
+      Name: 		autoJoinContestVirtualUser
       Description: 	join virtual user contest
       URL: 			/testApp/autoJoinContestVirtualUser/
      */
@@ -678,11 +678,7 @@ class Utilities extends API_Controller {
         $UtcDateTime = date('Y-m-d H:i', strtotime($UtcDateTime));
         $NextDateTime = strtotime($UtcDateTime) + 3600 * 20;
         $MatchDateTime = date('Y-m-d H:i', $NextDateTime);
-
-        // $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('StatusID' => array(1), 'IsVirtualUserJoined' => "Yes", "ContestFull" => "No"), TRUE);
         $Contests = $this->Contest_model->getContests('IsPaid,EntryFee,CashBonusContribution,WinningAmount,MatchID,IsDummyJoined,ContestID,ContestSize,TotalJoined,MatchStartDateTimeUTC,VirtualUserJoinedPercentage', array('ContestID' => 96164), TRUE);
-        // echo "<pre>";
-        // print_r($Contests);die;
         if (!empty($Contests['Data']['Records'])) {
             foreach ($Contests['Data']['Records'] as $Rows) {
                 $Seconds = strtotime($Rows['MatchStartDateTimeUTC']) - strtotime($UtcDateTime);
@@ -767,22 +763,9 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description:  Use to get referel amount details.
-      URL:      /api/utilities/getReferralDetails
+      Description:  Use to manage Razor Pay Webhook
+      URL:      /api/utilities/razorpayWebResponse
      */
-
-    public function getReferralDetails_post() {
-        $ReferByQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" AND StatusID = 2 LIMIT 1');
-        $ReferToQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" AND StatusID = 2 LIMIT 1');
-        $this->Return['Data']['ReferByBonus'] = ($ReferByQuery->num_rows() > 0) ? $ReferByQuery->row()->ConfigTypeValue : 0;
-        $this->Return['Data']['ReferToBonus'] = ($ReferToQuery->num_rows() > 0) ? $ReferToQuery->row()->ConfigTypeValue : 0;
-    }
-
-    /*
-      Description:  Use to get referel amount details.
-      URL:      /api/utilities/getReferralDetails
-     */
-
     public function razorpayWebResponse_post() {
 
         $Input = file_get_contents("php://input");
@@ -910,78 +893,6 @@ class Utilities extends API_Controller {
               if ($this->db->affected_rows() <= 0)
               return FALSE;
               } */
-        }
-    }
-
-    /*
-      Description:  Use to update wallet opening balance
-      URL:      /api/utilities/updateOpeningBalance
-     */
-
-    public function updateOpeningBalance_get() {
-
-        /* Reset Entries */
-        $this->db->query('UPDATE `tbl_users_wallet` SET `OpeningWalletAmount` = 0,`OpeningWinningAmount`=0,`OpeningCashBonus`=0,`ClosingWalletAmount`=0,`ClosingWinningAmount`=0,`ClosingCashBonus` =0');
-        $Query = $this->db->query('SELECT `UserID` FROM `tbl_users_wallet` GROUP BY UserID');
-        if ($Query->num_rows() > 0) {
-            foreach ($Query->result_array() as $key => $Record) {
-                $Query1 = $this->db->query('SELECT * FROM `tbl_users_wallet` WHERE `UserID` = ' . $Record['UserID'] . ' ORDER BY `WalletID` ASC');
-                foreach ($Query1->result_array() as $key1 => $Record1) {
-                    $Query2 = $this->db->query('SELECT * FROM `tbl_users_wallet` WHERE `UserID` = ' . $Record['UserID'] . ' AND WalletID < ' . $Record1['WalletID'] . ' ORDER BY `WalletID` DESC LIMIT 1');
-                    if ($Query2->num_rows() > 0) {
-                        $OpeningWalletAmount = $Query2->row()->ClosingWalletAmount;
-                        $OpeningWinningAmount = $Query2->row()->ClosingWinningAmount;
-                        $OpeningCashBonus = $Query2->row()->ClosingCashBonus;
-                        $ClosingWalletAmount = ($Record1['StatusID'] == 5) ? (($OpeningWalletAmount != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningWalletAmount + $Record1['WalletAmount'] : $OpeningWalletAmount - $Record1['WalletAmount'] ) : $Record1['WalletAmount']) : $OpeningWalletAmount;
-                        $ClosingWinningAmount = ($Record1['StatusID'] == 5) ? (($OpeningWinningAmount != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningWinningAmount + $Record1['WinningAmount'] : $OpeningWinningAmount - $Record1['WinningAmount'] ) : $Record1['WinningAmount']) : $OpeningWinningAmount;
-                        $ClosingCashBonus = ($Record1['StatusID'] == 5) ? (($OpeningCashBonus != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningCashBonus + $Record1['CashBonus'] : $OpeningCashBonus - $Record1['CashBonus'] ) : $Record1['CashBonus']) : $OpeningCashBonus;
-                    } else {
-                        $OpeningWalletAmount = $OpeningWinningAmount = $OpeningCashBonus = 0;
-                        $ClosingWalletAmount = ($Record1['StatusID'] == 5) ? (($OpeningWalletAmount != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningWalletAmount + $Record1['WalletAmount'] : $OpeningWalletAmount - $Record1['WalletAmount'] ) : $Record1['WalletAmount']) : 0;
-                        $ClosingWinningAmount = ($Record1['StatusID'] == 5) ? (($OpeningWinningAmount != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningWinningAmount + $Record1['WinningAmount'] : $OpeningWinningAmount - $Record1['WinningAmount'] ) : $Record1['WinningAmount']) : 0;
-                        $ClosingCashBonus = ($Record1['StatusID'] == 5) ? (($OpeningCashBonus != 0) ? (($Record1['TransactionType'] == 'Cr') ? $OpeningCashBonus + $Record1['CashBonus'] : $OpeningCashBonus - $Record1['CashBonus'] ) : $Record1['CashBonus']) : 0;
-                    }
-                    $UpdateArr = array(
-                        'OpeningWalletAmount' => $OpeningWalletAmount,
-                        'OpeningWinningAmount' => $OpeningWinningAmount,
-                        'OpeningCashBonus' => $OpeningCashBonus,
-                        'ClosingWalletAmount' => $ClosingWalletAmount,
-                        'ClosingWinningAmount' => $ClosingWinningAmount,
-                        'ClosingCashBonus' => $ClosingCashBonus
-                    );
-                    $this->db->where('WalletID', $Record1['WalletID']);
-                    $this->db->limit(1);
-                    $this->db->update('tbl_users_wallet', $UpdateArr);
-                }
-            }
-        }
-    }
-
-    public function wrongWinningDistribution_get() {
-        exit;
-        /* Reset Entries */
-        $Query = $this->db->query("SELECT * FROM `tbl_users_wallet` WHERE `Narration` = 'Join Contest Winning' AND `EntryDate` LIKE '%2019-06-10%' ORDER BY `WalletID` DESC");
-        if ($Query->num_rows() > 0) {
-            foreach ($Query->result_array() as $key => $Record) {
-                $Query1 = $this->db->query('SELECT WinningAmount,UserID FROM `tbl_users` WHERE `UserID` = ' . $Record['UserID'] . '');
-                $UserWallet = $Query1->row_array();
-                if (!empty($UserWallet)) {
-                    $ContestWinningAmount = $Record['WinningAmount'];
-                    $UserWinningAmount = $UserWallet['WinningAmount'];
-                    if ($UserWinningAmount >= $ContestWinningAmount) {
-                        $WalletData = array(
-                            "Amount" => $ContestWinningAmount,
-                            "WinningAmount" => $ContestWinningAmount,
-                            "TransactionType" => 'Dr',
-                            "Narration" => 'Wrong Winning Distribution',
-                            "EntityID" => $Record['EntityID'],
-                            "UserTeamID" => $Record['UserTeamID'],
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->Users_model->addToWallet($WalletData, $Record['UserID'], 5);
-                    }
-                }
-            }
         }
     }
 

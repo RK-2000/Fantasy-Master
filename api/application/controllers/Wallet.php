@@ -10,7 +10,7 @@ class Wallet extends API_Controller_Secure {
     }
 
     /*
-      Name: 			add
+      Name: 		add
       Description: 	Use to add wallet cash
       URL: 			/wallet/add/
      */
@@ -24,7 +24,6 @@ class Wallet extends API_Controller_Secure {
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim');
         $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|numeric');
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -105,7 +104,7 @@ class Wallet extends API_Controller_Secure {
     }
 
     /*
-      Name: 			withdrawal
+      Name: 		withdrawal
       Description: 	Use to withdrawal winning amount
       URL: 			/wallet/withdrawal/
      */

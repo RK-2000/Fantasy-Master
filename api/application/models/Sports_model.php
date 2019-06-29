@@ -1092,7 +1092,7 @@ class Sports_model extends CI_Model {
                     );
                     if ($PreSquad == "true") {
                         $MatchesAPIData["IsPreSquad"] = "Yes";
-                        $this->getMatchWisePlayersLiveEntity(null, $MatchID);
+                        $this->getPlayersLiveEntity(null, $MatchID);
                     }
                     $this->db->where('MatchID', $MatchID);
                     $this->db->limit(1);
@@ -1111,7 +1111,7 @@ class Sports_model extends CI_Model {
       Description: To set players data match wise (Entity API)
      */
 
-    function getMatchWisePlayersLiveEntity($CronID, $MatchID = "") {
+    function getPlayersLiveEntity($CronID, $MatchID = "") {
         ini_set('max_execution_time', 300);
 
         /* Get series data */
@@ -2916,121 +2916,6 @@ class Sports_model extends CI_Model {
                 $this->db->trans_complete();
                 if ($this->db->trans_status() === false) {
                     return false;
-                }
-            }
-        }
-    }
-
-    /*
-      Description: To set players data (Entity API)
-     */
-
-    function getPlayersLiveEntity($CronID) {
-        ini_set('max_execution_time', 300);
-
-        /* Get series data */
-        $SeriesData = $this->getSeries('SeriesIDLive,SeriesID', array('StatusID' => 2, 'SeriesEndDate' => date('Y-m-d')), true, 0);
-        if (!$SeriesData) {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit'));
-            exit;
-        }
-
-        /* Player Roles */
-        $PlayerRolesArr = array('bowl' => 'Bowler', 'bat' => 'Batsman', 'wkbat' => 'WicketKeeper', 'wk' => 'WicketKeeper', 'all' => 'AllRounder');
-        foreach ($SeriesData['Data']['Records'] as $Value) {
-            $Response = $this->callSportsAPI(SPORTS_API_URL_ENTITY . '/v2/competitions/' . $Value['SeriesIDLive'] . '/squads/?token=');
-
-            if (empty($Response['response']['squads']))
-                continue;
-            foreach ($Response['response']['squads'] as $SquadsValue) {
-
-                $this->db->trans_start();
-
-                /* To check if visitor team is already exist */
-                $IsNewTeam = false;
-                $Query = $this->db->query('SELECT TeamID FROM sports_teams WHERE TeamIDLive = ' . $SquadsValue['team_id'] . ' LIMIT 1');
-                $TeamID = ($Query->num_rows() > 0) ? $Query->row()->TeamID : false;
-                if (!$TeamID) {
-
-                    /* Add team to entity table and get EntityID. */
-                    $TeamGUID = get_guid();
-                    $TeamID = $this->Entity_model->addEntity($TeamGUID, array("EntityTypeID" => 9, "StatusID" => 2));
-                    $TeamData = array_filter(array(
-                        'TeamID' => $TeamID,
-                        'TeamGUID' => $TeamGUID,
-                        'TeamIDLive' => $SquadsValue['team']['tid'],
-                        'TeamName' => $SquadsValue['team']['title'],
-                        'TeamNameShort' => $SquadsValue['team']['abbr'],
-                        'TeamFlag' => $SquadsValue['team']['thumb_url'],
-                    ));
-                    $IsNewTeam = true;
-                    $this->db->insert('sports_teams', $TeamData);
-                }
-                if (!$IsNewTeam) {
-
-                    /* To get all match ids */
-                    $Query = $this->db->query('SELECT MatchID FROM `sports_matches` WHERE `SeriesID` = ' . $Value['SeriesID'] . ' AND (`TeamIDLocal` = ' . $TeamID . ' OR `TeamIDVisitor` = ' . $TeamID . ')');
-                    $MatchIds = ($Query->num_rows() > 0) ? array_column($Query->result_array(), 'MatchID') : array();
-                }
-
-                $this->db->trans_complete();
-                if ($this->db->trans_status() === false) {
-                    return false;
-                }
-
-                foreach ($SquadsValue['players'] as $PlayerValue) {
-
-                    $this->db->trans_start();
-
-                    /* To check if player is already exist */
-                    $Query = $this->db->query('SELECT PlayerID FROM sports_players WHERE PlayerIDLive = ' . $PlayerValue['pid'] . ' LIMIT 1');
-                    $PlayerID = ($Query->num_rows() > 0) ? $Query->row()->PlayerID : false;
-                    if (!$PlayerID) {
-
-                        /* Add players to entity table and get EntityID. */
-                        $PlayerGUID = get_guid();
-                        $PlayerID = $this->Entity_model->addEntity($PlayerGUID, array("EntityTypeID" => 10, "StatusID" => 2));
-                        $PlayersAPIData = array(
-                            'PlayerID' => $PlayerID,
-                            'PlayerGUID' => $PlayerGUID,
-                            'PlayerIDLive' => $PlayerValue['pid'],
-                            'PlayerName' => $PlayerValue['title'],
-                            'PlayerCountry' => ($PlayerValue['country']) ? strtoupper($PlayerValue['country']) : null,
-                            'PlayerBattingStyle' => ($PlayerValue['batting_style']) ? $PlayerValue['batting_style'] : null,
-                            'PlayerBowlingStyle' => ($PlayerValue['bowling_style']) ? $PlayerValue['bowling_style'] : null
-                        );
-                        $this->db->insert('sports_players', $PlayersAPIData);
-                    }
-
-                    /* To check If match player is already exist */
-                    if (!$IsNewTeam && !empty($MatchIds)) {
-                        $TeamPlayersData = array();
-                        foreach ($MatchIds as $MatchID) {
-                            $Query = $this->db->query('SELECT MatchID FROM sports_team_players WHERE PlayerID = ' . $PlayerID . ' AND SeriesID = ' . $Value['SeriesID'] . ' AND TeamID = ' . $TeamID . ' AND MatchID =' . $MatchID . ' LIMIT 1');
-                            $IsMatchID = ($Query->num_rows() > 0) ? $Query->row()->MatchID : false;
-                            if (!$IsMatchID) {
-                                $TeamPlayersData[] = array(
-                                    'SeriesID' => $Value['SeriesID'],
-                                    'MatchID' => $MatchID,
-                                    'TeamID' => $TeamID,
-                                    'PlayerID' => $PlayerID,
-                                    'PlayerRole' => $PlayerRolesArr[strtolower($PlayerValue['playing_role'])]
-                                );
-                            }
-                        }
-                        if (!empty($TeamPlayersData)) {
-                            $this->db->insert_batch('sports_team_players', $TeamPlayersData);
-                            // $this->db->cache_delete('sports', 'getPlayers'); //Delete Cache
-                            // $this->db->cache_delete('admin', 'matches'); //Delete Cache
-                        }
-                    }
-
-                    $this->db->trans_complete();
-                    if ($this->db->trans_status() === false) {
-                        return false;
-                    }
                 }
             }
         }
