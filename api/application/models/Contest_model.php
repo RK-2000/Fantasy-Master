@@ -816,47 +816,42 @@ class Contest_model extends CI_Model {
         /* Add user team to entity table and get EntityID. */
         $EntityID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 12, "UserID" => $SessionUserID, "StatusID" => $StatusID));
 
-        $UserTeamCount = $this->db->query('SELECT count(T.UserTeamID) as UserTeamsCount,U.Username from `sports_users_teams` T join tbl_users U on U.UserID = T.UserID WHERE T.MatchID = "' . $MatchID . '" AND T.UserID = "' . $SessionUserID . '" ')->row();
+        /* Get Teams Count */
+        $UserTeamCount = $this->db->query('SELECT COUNT(UserTeamName) UserTeamsCount FROM `sports_users_teams` WHERE MatchID = ' . $MatchID . ' AND UserID = ' . $SessionUserID )->row()->UserTeamsCount;
+
         /* Add user team to user team table . */
-        $teamName = " Team " . ($UserTeamCount->UserTeamsCount + 1);
-        $InsertData = array(
-            "UserTeamID" => $EntityID,
-            "UserTeamGUID" => $EntityGUID,
-            "UserID" => $SessionUserID,
-            // "UserTeamName"  =>   @$Input['UserTeamName'],
-            "UserTeamName" => $teamName,
-            "UserTeamType" => @$Input['UserTeamType'],
-            "MatchID" => $MatchID
-        );
+        $InsertData = array_filter(array(
+                            "UserTeamID"   => $EntityID,
+                            "UserTeamGUID" => $EntityGUID,
+                            "UserID"       => $SessionUserID,
+                            "UserTeamName" => "Team " .($UserTeamCount + 1),
+                            "UserTeamType" => @$Input['UserTeamType'],
+                            "MatchID"      => $MatchID
+                        ));
         $this->db->insert('sports_users_teams', $InsertData);
 
-        /* Add User Team Players */
-        if (!empty($Input['UserTeamPlayers'])) {
-
-            /* Get Players */
-            $PlayersIdsData = array();
-            $PlayersData = $this->Sports_model->getPlayers('PlayerID,MatchID', array('MatchID' => $MatchID), TRUE, 0);
-            if ($PlayersData) {
-                foreach ($PlayersData['Data']['Records'] as $PlayerValue) {
-                    $PlayersIdsData[$PlayerValue['PlayerGUID']] = $PlayerValue['PlayerID'];
-                }
+        /* Get Players */
+        $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_'.$MatchID);
+        if(empty($PlayersIdsData)){
+            $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$MatchID.' LIMIT 50'); // Max 50 Players
+            if($PlayersData->num_rows() > 0){
+                $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
+                $this->cache->memcached->save('UserTeamPlayers_'.$MatchID,$PlayersIdsData,3600*6); // Expire in every 6 hours
             }
+        }
 
-            /* Manage User Team Players */
-            $Input['UserTeamPlayers'] = (!is_array($Input['UserTeamPlayers'])) ? json_decode($Input['UserTeamPlayers'], TRUE) : $Input['UserTeamPlayers'];
-            $UserTeamPlayers = array();
-            foreach ($Input['UserTeamPlayers'] as $Value) {
-                if (isset($PlayersIdsData[$Value['PlayerGUID']])) {
-                    $UserTeamPlayers[] = array(
-                        'UserTeamID' => $EntityID,
-                        'MatchID' => $MatchID,
-                        'PlayerID' => $PlayersIdsData[$Value['PlayerGUID']],
-                        'PlayerPosition' => $Value['PlayerPosition']
-                    );
-                }
-            }
-            if ($UserTeamPlayers)
-                $this->db->insert_batch('sports_users_team_players', $UserTeamPlayers);
+        /* Manage User Team Players */
+        $UserTeamPlayers = array();
+        foreach ($Input['UserTeamPlayers'] as $Value) {
+            $UserTeamPlayers[] = array(
+                                    'UserTeamID'     => $EntityID,
+                                    'MatchID'        => $MatchID,
+                                    'PlayerID'       => $PlayersIdsData[$Value['PlayerGUID']],
+                                    'PlayerPosition' => $Value['PlayerPosition']
+                                );
+        }
+        if ($UserTeamPlayers){
+            $this->db->insert_batch('sports_users_team_players', $UserTeamPlayers);
         }
 
         $this->db->trans_complete();
@@ -871,47 +866,41 @@ class Contest_model extends CI_Model {
       Description: EDIT user team
      */
 
-    function editUserTeam($Input = array(), $UserTeamID) {
+    function editUserTeam($Input = array(), $UserTeamID, $MatchID) {
 
         $this->db->trans_start();
 
-        /* Delete Team Players */
-        $this->db->delete('sports_users_team_players', array('UserTeamID' => $UserTeamID));
-
-        /* Edit user team to user team table . */
+        /* Delete User Team Players */
         $this->db->where('UserTeamID', $UserTeamID);
-        $this->db->limit(1);
-        $this->db->update('sports_users_teams', array('UserTeamName' => $Input['UserTeamName'], 'UserTeamType' => $Input['UserTeamType']));
+        $this->db->limit(11);
+        $this->db->delete('sports_users_team_players');
 
         /* Add User Team Players */
         if (!empty($Input['UserTeamPlayers'])) {
 
-            /* Get Match ID */
-            $MatchID = $this->db->query('SELECT MatchID FROM sports_users_teams WHERE UserTeamID = ' . $UserTeamID . ' LIMIT 1')->row()->MatchID;
             /* Get Players */
-            $PlayersIdsData = array();
-            $PlayersData = $this->Sports_model->getPlayers('PlayerID,MatchID', array('MatchID' => $MatchID), TRUE, 0);
-            if ($PlayersData) {
-                foreach ($PlayersData['Data']['Records'] as $PlayerValue) {
-                    $PlayersIdsData[$PlayerValue['PlayerGUID']] = $PlayerValue['PlayerID'];
+            $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_'.$MatchID);
+            if(empty($PlayersIdsData)){
+                $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$MatchID.' LIMIT 50'); // Max 50 Players
+                if($PlayersData->num_rows() > 0){
+                    $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
+                    $this->cache->memcached->save('UserTeamPlayers_'.$MatchID,$PlayersIdsData,3600*6); // Expire in every 6 hours
                 }
             }
 
             /* Manage User Team Players */
-            $Input['UserTeamPlayers'] = (!is_array($Input['UserTeamPlayers'])) ? json_decode($Input['UserTeamPlayers'], TRUE) : $Input['UserTeamPlayers'];
             $UserTeamPlayers = array();
             foreach ($Input['UserTeamPlayers'] as $Value) {
-                if (isset($PlayersIdsData[$Value['PlayerGUID']])) {
-                    $UserTeamPlayers[] = array(
-                        'UserTeamID' => $UserTeamID,
-                        'MatchID' => $MatchID,
-                        'PlayerID' => $PlayersIdsData[$Value['PlayerGUID']],
-                        'PlayerPosition' => $Value['PlayerPosition']
-                    );
-                }
+                $UserTeamPlayers[] = array(
+                                    'UserTeamID'     => $UserTeamID,
+                                    'MatchID'        => $MatchID,
+                                    'PlayerID'       => $PlayersIdsData[$Value['PlayerGUID']],
+                                    'PlayerPosition' => $Value['PlayerPosition']
+                                );
             }
-            if ($UserTeamPlayers)
+            if ($UserTeamPlayers){
                 $this->db->insert_batch('sports_users_team_players', $UserTeamPlayers);
+            }
         }
 
         $this->db->trans_complete();
@@ -1062,7 +1051,8 @@ class Contest_model extends CI_Model {
                 'Points' => 'UTP.Points',
                 'PlayerID' => 'UTP.PlayerID',
                 'PlayerName' => 'P.PlayerName',
-                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
+                // 'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
+                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png")) AS PlayerPic',
                 'PlayerCountry' => 'P.PlayerCountry',
                 'PlayerSalary' => 'TP.PlayerSalary',
                 'PlayerBattingStyle' => 'P.PlayerBattingStyle',
@@ -2477,10 +2467,9 @@ class Contest_model extends CI_Model {
      */
 
     function switchUserTeam($UserID, $ContestID, $UserTeamID, $OldUserTeamGUID) {
-        /* Update Joined Contest Team Status */
-        $this->db->where('UserID', $UserID);
-        $this->db->where('ContestID', $ContestID);
-        $this->db->where('UserTeamID', $OldUserTeamGUID);
+
+        /* Switch Team */
+        $this->db->where(array('UserID' => $UserID,'ContestID' => $ContestID,'UserTeamID' => $OldUserTeamGUID));
         $this->db->limit(1);
         $this->db->update('sports_contest_join', array('UserTeamID' => $UserTeamID));
     }
@@ -2526,6 +2515,7 @@ class Contest_model extends CI_Model {
     }
 
     function UpdateVirtualJoinContest($ContestID) {
+        
         /* Edit user team to user team table . */
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);

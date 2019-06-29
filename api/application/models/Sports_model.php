@@ -9,6 +9,9 @@ class Sports_model extends CI_Model {
         parent::__construct();
         $this->load->model('Settings_model');
         $this->load->model('AuctionDrafts_model');
+
+        $this->IsStrikeRate = $this->IsEconomyRate = $this->IsBattingState = $this->IsBowlingState = "0";
+        $this->defaultStrikeRatePoints = $this->defaultEconomyRatePoints = $this->defaultBattingPoints = $this->defaultBowlingPoints = array();
     }
 
     /*
@@ -499,7 +502,8 @@ class Sports_model extends CI_Model {
                 'SeriesID' => 'TP.SeriesID',
                 'MatchID' => 'TP.MatchID',
                 'TeamID' => 'TP.TeamID',
-                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
+                // 'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
+                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png")) AS PlayerPic',
                 'PlayerCountry' => 'P.PlayerCountry',
                 'PlayerBattingStyle' => 'P.PlayerBattingStyle',
                 'PlayerBowlingStyle' => 'P.PlayerBowlingStyle',
@@ -522,7 +526,7 @@ class Sports_model extends CI_Model {
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         $this->db->from('tbl_entity E, sports_players P');
-        if (array_keys_exist($Params, array('TeamGUID', 'TeamName', 'TeamNameShort', 'TeamFlag', 'PlayerRole', 'IsPlaying', 'TotalPoints', 'PointsData', 'SeriesID', 'MatchID'))) {
+        if (array_keys_exist($Params, array('TeamGUID', 'TeamName', 'TeamNameShort', 'TeamFlag', 'PlayerRole', 'IsPlaying', 'TotalPoints', 'PointsData', 'SeriesID', 'MatchID','PlayerSalary'))) {
             $this->db->from('sports_teams T,sports_matches M, sports_team_players TP,sports_set_match_types SSM');
             $this->db->where("P.PlayerID", "TP.PlayerID", FALSE);
             $this->db->where("TP.TeamID", "T.TeamID", FALSE);
@@ -733,7 +737,6 @@ class Sports_model extends CI_Model {
         $TempOBJ = clone $this->db;
         $TempQ = $TempOBJ->get();
         $Return['Data']['TotalRecords'] = $TempQ->num_rows();
-        // $this->db->cache_on();
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             $Return['Data']['Records'] = $Query->result_array();
@@ -1475,7 +1478,7 @@ class Sports_model extends CI_Model {
 
                                 $this->getPlayerPoints(0, $Value['MatchID']);
 
-                                $this->getJoinedContestTeamPoints($CronID, $Value['MatchID']);
+                                $this->getJoinedContestPlayerPoints($CronID, array(2),$Value['MatchID']);
 
                                 /* Update Match Status */
                                 $this->db->where('EntityID', $Value['MatchID']);
@@ -1534,48 +1537,47 @@ class Sports_model extends CI_Model {
       Description: To get player points
      */
 
-    function getPlayerPoints($CronID) {
+    function getPlayerPoints($CronID,$MatchID = "") {
 
-        ini_set('max_execution_time', 300);
-
-        $LiveMatches = $this->getMatches('MatchID,MatchType,MatchScoreDetails,StatusID,IsPlayerPointsUpdated', array('Filter' => 'Yesterday', 'StatusID' => array(2, 5, 10), 'IsPlayerPointsUpdated' => 'No', 'OrderBy' => 'M.MatchStartDateTime', 'Sequence' => 'DESC'), true, 1, 10);
         /* Get Live Matches Data */
+        $LiveMatches = $this->getMatches('MatchID,MatchType,MatchScoreDetails,StatusID,IsPlayerPointsUpdated', array('Filter' => 'Yesterday', 'StatusID' => array(2, 5, 10), 'IsPlayerPointsUpdated' => 'No', 'OrderBy' => 'M.MatchStartDateTime', 'Sequence' => 'DESC','MatchID' => $MatchID), true, 1, 10);
         if (!empty($LiveMatches)) {
 
-            /* Delete Cache Key */
-            $this->cache->memcached->delete('getJoinedContestPlayerPoints');
-
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'LiveMatches' => $LiveMatches), JSON_UNESCAPED_UNICODE)));
-
-            /* Get Points Data */
-            $PointsDataArr = $this->getPoints(array("StatusID" => 1));
-            $StatringXIArr = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'StatringXI');
-            $CaptainPointMPArr = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'CaptainPointMP');
-            $ViceCaptainPointMPArr = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'ViceCaptainPointMP');
-            $BattingMinimumRunsArr = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'BattingMinimumRuns');
+                /* Get Points Data */
+            $PointsDataArr             = $this->getPoints(array("StatusID" => 1));
+            $StatringXIArr             = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'StatringXI');
+            $CaptainPointMPArr         = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'CaptainPointMP');
+            $ViceCaptainPointMPArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'ViceCaptainPointMP');
+            $BattingMinimumRunsArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'BattingMinimumRuns');
             $MinimumRunScoreStrikeRate = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumRunScoreStrikeRate');
-            $MinimumOverEconomyRate = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumOverEconomyRate');
+            $MinimumOverEconomyRate    = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumOverEconomyRate');
             $MatchTypes = array('ODI' => 'PointsODI', 'List A' => 'PointsODI', 'T20' => 'PointsT20', 'T20I' => 'PointsT20', 'Test' => 'PointsTEST', 'Woman ODI' => 'PointsODI', 'Woman T20' => 'PointsT20');
 
             /* Sorting Keys */
             $PointsSortingKeys = array('SB', 'RUNS', '4s', '6s', 'STB', 'BTB', 'DUCK', 'WK', 'MD', 'EB', 'BWB', 'RO', 'ST', 'CT');
             foreach ($LiveMatches['Data']['Records'] as $Value) {
-                if (empty((array) $Value['MatchScoreDetails']))
+                if (empty((array) $Value['MatchScoreDetails'])){
                     continue;
+                }
 
-                $StatringXIPoints = (isset($StatringXIArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($StatringXIArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
-                $CaptainPointMPPoints = (isset($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
-                $ViceCaptainPointMPPoints = (isset($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "1.5";
-                $BattingMinimumRunsPoints = (isset($BattingMinimumRunsArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($BattingMinimumRunsArr[0][$MatchTypes[$Value['MatchType']]]) : "15";
+                /* Delete Cache Key */
+                $this->cache->memcached->delete('getJoinedContestPlayerPoints_'.$Value['MatchID']);
+                $StatringXIPoints          = (isset($StatringXIArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($StatringXIArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
+                $CaptainPointMPPoints      = (isset($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
+                $ViceCaptainPointMPPoints  = (isset($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "1.5";
+                $BattingMinimumRunsPoints  = (isset($BattingMinimumRunsArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($BattingMinimumRunsArr[0][$MatchTypes[$Value['MatchType']]]) : "15";
                 $MinimumRunScoreStrikeRate = (isset($MinimumRunScoreStrikeRate[0][$MatchTypes[$Value['MatchType']]])) ? strval($MinimumRunScoreStrikeRate[0][$MatchTypes[$Value['MatchType']]]) : "10";
-                $MinimumOverEconomyRate = (isset($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]])) ? strval($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]]) : "1";
+                $MinimumOverEconomyRate    = (isset($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]])) ? strval($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]]) : "1";
 
                 /* Get Match Players */
-                $MatchPlayers = $this->getPlayers('PlayerIDLive,PlayerID,MatchID,PlayerRole', array('MatchID' => $Value['MatchID'], 'IsPlaying' => 'Yes'), true, 0);
-                if (!$MatchPlayers) {
-                    continue;
+                $MatchPlayers = $this->cache->memcached->get('PlayerPoints_'.$Value['MatchID']);
+                if(empty($MatchPlayers)){
+                    $MatchPlayers = $this->db->query('SELECT P.`PlayerID`,P.`PlayerIDLive`,TP.`PlayerRole` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'].' AND TP.IsPlaying = "Yes" LIMIT 50'); 
+                    if ($MatchPlayers->num_rows() == 0) {
+                        continue;
+                    }else{
+                        $this->cache->memcached->save('PlayerPoints_'.$Value['MatchID'],$MatchPlayers->result_array(),3600*10); // Expire in every 10 hours
+                    }
                 }
 
                 /* Get Match Live Score Data */
@@ -1621,7 +1623,7 @@ class Sports_model extends CI_Model {
                 }
 
                 $AllPlayersLiveIds = array_keys($AllPalyers);
-                foreach ($MatchPlayers['Data']['Records'] as $PlayerValue) {
+                foreach ($MatchPlayers as $PlayerValue) {
 
                     $this->IsStrikeRate = $this->IsEconomyRate = $this->IsBattingState = $this->IsBowlingState = $PlayerTotalPoints = "0";
                     $this->defaultStrikeRatePoints = $this->defaultEconomyRatePoints = $this->defaultBattingPoints = $this->defaultBowlingPoints = $PointsData = array();
@@ -1638,16 +1640,16 @@ class Sports_model extends CI_Model {
                                 if (in_array($PointValue['PointsTypeGUID'], array('BattingMinimumRuns', 'CaptainPointMP', 'StatringXI')))
                                     continue;
                             }
-                            $allKeys = array_keys($ScoreData);
-                            if (($DeleteKey = array_search('Name', $allKeys)) !== false) {
-                                unset($allKeys[$DeleteKey]);
+                            $PlayersKeys = array_keys($ScoreData);
+                            if (($DeleteKey = array_search('Name', $PlayersKeys)) !== false) {
+                                unset($PlayersKeys[$DeleteKey]);
                             }
-                            if (($DeleteKey = array_search('PlayerIDLive', $allKeys)) !== false) {
-                                unset($allKeys[$DeleteKey]);
+                            if (($DeleteKey = array_search('PlayerIDLive', $PlayersKeys)) !== false) {
+                                unset($PlayersKeys[$DeleteKey]);
                             }
 
                             /** calculate points * */
-                            foreach ($allKeys as $ScoreValue) {
+                            foreach ($PlayersKeys as $ScoreValue) {
                                 $calculatePoints = $this->calculatePoints($PointValue, $Value['MatchType'], $MinimumRunScoreStrikeRate, @$ScoreData[$PointValue['PointsScoringField']], @$ScoreData['BallsFaced'], @$ScoreData['Overs'], @$ScoreData['Runs'], $MinimumOverEconomyRate, $PlayerValue['PlayerRole'], $ScoreData['HowOut']);
                                 if (is_array($calculatePoints)) {
                                     $PointsData[$calculatePoints['PointsTypeShortDescription']] = array('PointsTypeGUID' => $calculatePoints['PointsTypeGUID'], 'PointsTypeShortDescription' => $calculatePoints['PointsTypeShortDescription'], 'DefinedPoints' => strval($calculatePoints['DefinedPoints']), 'ScoreValue' => strval($calculatePoints['ScoreValue']), 'CalculatedPoints' => strval($calculatePoints['CalculatedPoints']));
@@ -1704,18 +1706,15 @@ class Sports_model extends CI_Model {
                     }
 
                     /* Update Player Points Data */
-                    $UpdateData = array(
-                        'TotalPoints' => $PlayerTotalPoints,
-                        'PointsData' => (!empty($PointsData)) ? json_encode($PointsData) : null
-                    );
-
-                    $this->db->where('MatchID', $Value['MatchID']);
-                    $this->db->where('PlayerID', $PlayerValue['PlayerID']);
+                    $this->db->where(array('MatchID' => $Value['MatchID'],'PlayerID' => $PlayerValue['PlayerID']));
                     $this->db->limit(1);
-                    $this->db->update('sports_team_players', $UpdateData);
+                    $this->db->update('sports_team_players', array('TotalPoints' => $PlayerTotalPoints,'PointsData' => (!empty($PointsData)) ? json_encode($PointsData) : null));
                 }
-                // $this->db->cache_delete('sports', 'getPlayers'); //Delete Cache
-                // $this->db->cache_delete('admin', 'matches'); //Delete Cache
+
+                /* Update Final player points before complete match */
+                $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
+                $this->getJoinedContestPlayerPoints($CronID,array(2),$Value['MatchID']);
+                $this->Utility_model->updateCronLogs($CronID);
 
                 /* Update Match Player Points Status */
                 if ($Value['StatusID'] == 5) {
@@ -1725,15 +1724,10 @@ class Sports_model extends CI_Model {
 
                     /* Update Final player points before complete match */
                     $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-                    //$this->getJoinedContestTeamPoints($CronID, $Value['MatchID']);
+                    $this->getJoinedContestPlayerPoints($CronID,array(2,5));
                     $this->Utility_model->updateCronLogs($CronID);
                 }
             }
-        } else {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
-            exit;
         }
     }
 
@@ -1741,211 +1735,9 @@ class Sports_model extends CI_Model {
       Description: To get joined contest player points
      */
 
-    function getJoinedContestPlayerPoints($CronID, $StatusArr = array(2)) {
+    function getJoinedContestPlayerPoints($CronID, $StatusArr = array(2),$MatchID = "") {
 
-        ini_set('max_execution_time', 300);
-
-        /* To Get Joined Running Contest */
-        $Contests = $this->Contest_model->getJoinedContests('MatchTypeID,ContestID,UserID,MatchID,UserTeamID', array('StatusID' => $StatusArr, 'Filter' => 'YesterdayToday', "LeagueType" => "Dfs"), true, 0);
-        if (!empty($Contests['Data']['Records'])) {
-
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronResponse' => @json_encode(array('Query' => $this->db->last_query(), 'Contests' => $Contests), JSON_UNESCAPED_UNICODE)));
-
-            /* Get Vice Captain Points */
-            $ViceCaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
-
-            /* Get Captain Points */
-            $CaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
-
-            /* Match Types */
-            $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI');
-            $ContestIDArray = array();
-            foreach ($Contests['Data']['Records'] as $Value) {
-                $ContestIDArray[] = $Value['ContestID'];
-                /* Player Points Multiplier */
-                if (IS_VICECAPTAIN) {
-                    $PositionPointsMultiplier = array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
-                } else {
-                    $PositionPointsMultiplier = array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
-                }
-
-                $UserTotalPoints = 0;
-
-                /* To Get Match Players */
-                $MatchPlayers = $this->getPlayers('PlayerID,TotalPoints', array('MatchID' => $Value['MatchID']), true, 0);
-
-                $PlayersPointsArr = array_column($MatchPlayers['Data']['Records'], 'TotalPoints', 'PlayerGUID');
-                $PlayersIdsArr = array_column($MatchPlayers['Data']['Records'], 'PlayerID', 'PlayerGUID');
-                /* To Get User Team Players */
-                $UserTeamPlayers = $this->Contest_model->getUserTeams('PlayerID,PlayerPosition,UserTeamPlayers', array('UserTeamID' => $Value['UserTeamID']), 0);
-                foreach ($UserTeamPlayers['UserTeamPlayers'] as $UserTeamValue) {
-                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
-                        continue;
-
-                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
-                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-
-                    /* Update Player Points */
-                    $this->db->where('UserTeamID', $Value['UserTeamID']);
-                    $this->db->where('PlayerID', $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
-                    $this->db->limit(1);
-                    $this->db->update('sports_users_team_players', array('Points' => $Points));
-                }
-                /* Update Player Total Points */
-                $this->db->where('UserTeamID', $Value['UserTeamID']);
-                $this->db->where('ContestID', $Value['ContestID']);
-                $this->db->limit(1);
-                $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
-            }
-            $ContestIDArray = array_unique($ContestIDArray);
-            $this->updateRankByContest($ContestIDArray);
-        } else {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
-            exit;
-        }
-    }
-
-    function getJoinedContestTeamPoints_OLD1($CronID, $MatchID = "", $StatusArr = array(2)) {
-
-        ini_set('max_execution_time', 300);
-
-        /* Get Matches Live */
-        if($MatchID){
-            $LiveMatcheContest = $this->db->query('SELECT C.MatchID,C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = '.$MatchID.' AND E.StatusID IN('.implode(",",$StatusArr).') AND C.LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "'.date('Y-m-d').'" ORDER BY M.MatchStartDateTime ASC');
-        }else{
-            $LiveMatcheContest = $this->db->query('SELECT C.MatchID,C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN('.implode(",",$StatusArr).') AND C.LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "'.date('Y-m-d').'" ORDER BY M.MatchStartDateTime ASC');
-        }
-        if ($LiveMatcheContest->num_rows() == 0) {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit'));
-            exit;
-        }
-
-        /* Get Vice Captain Points */
-        $ViceCaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
-
-        /* Get Captain Points */
-        $CaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
-
-        /* Match Types */
-        $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
-
-        foreach ($LiveMatcheContest->result_array() as $Value) {
-            $Contests = $this->db->query('SELECT M.MatchTypeID,M.MatchID,JC.ContestID,JC.UserID,JC.UserTeamID FROM tbl_entity E, sports_matches M,sports_contest_join JC WHERE E.EntityID = JC.ContestID AND JC.MatchID = M.MatchID AND E.StatusID = 2 AND JC.ContestID = '.$Value['ContestID'].' ORDER BY M.MatchStartDateTime ASC');
-            if ($Contests->num_rows() == 0) {
-                continue;
-            }
-
-            /* To Get Match Players */
-            $MatchPlayers     = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID']);
-            $PlayersPointsArr = array_column($MatchPlayers->result_array(), 'TotalPoints', 'PlayerGUID');
-            $PlayersIdsArr    = array_column($MatchPlayers->result_array(), 'PlayerID', 'PlayerGUID');
-
-            foreach ($Contests->result_array() as $ContestValue) {
-
-                /* Player Points Multiplier */
-                $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$ContestValue['MatchTypeID']]], 'Player' => 1);
-                $UserTotalPoints = 0;
-
-                /* To Get User Team Players */
-                $UserTeamPlayers = $this->db->query('SELECT P.PlayerGUID,UTP.PlayerPosition FROM sports_players P,sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.UserTeamID = '.$ContestValue['UserTeamID'].' LIMIT 11');
-                foreach ($UserTeamPlayers->result_array() as $UserTeamValue) {
-                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
-                        continue;
-
-                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
-                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-
-                    /* Update User Player Points */
-                    $this->db->query("UPDATE sports_users_team_players SET Points=$Points WHERE UserTeamID=".$ContestValue['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
-                }
-
-                /* Update Player Total Points */
-                $this->db->where('UserTeamID', $ContestValue['UserTeamID']);
-                $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
-            }
-            $this->updateRankByContest($Value['ContestID']);
-        }
-    }
-
-    function getJoinedContestTeamPoints_OLD_MYSQL($CronID, $MatchID = "", $StatusArr = array(2)) {
-
-        ini_set('max_execution_time', 500);
-
-        /* Get Live Contests */
-        $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserTeamID, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
-        if(!empty($MatchID)){
-            $Query .= " AND C.MatchID = ".$MatchID;
-        }
-        $Query .= " AND C.LeagueType = 'Dfs' AND DATE(M.MatchStartDateTime) <= '".date('Y-m-d')."' AND C.ContestID = JC.ContestID LIMIT 1) ORDER BY M.MatchStartDateTime ASC";
-        $Data = $this->db->query($Query);
-        if ($Data->num_rows() > 0) {
-
-            /* Contest Rank Array */
-            $ContestIdArr = array();
-            
-            /* Get Vice Captain Points */
-            $ViceCaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
-
-            /* Get Captain Points */
-            $CaptainPointsData = $this->db->query('SELECT PointsODI,PointsT20,PointsTEST FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
-
-            /* Match Types */
-            $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI', '8' => 'PointsODI');
-
-            /* Joined Users Teams Data */
-            foreach ($Data->result_array() as $Value) {
-
-                /* To Get Match Players */
-                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints');
-                if(empty($MatchPlayers)){
-                    $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'])->result_array();
-                    $this->cache->memcached->save('getJoinedContestPlayerPoints',$MatchPlayers,3600);
-                }
-                $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
-                $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');
-
-                /* Player Points Multiplier */
-                $PositionPointsMultiplier = (IS_VICECAPTAIN) ? array('ViceCaptain' => $ViceCaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1) : array('Captain' => $CaptainPointsData[$MatchTypesArr[$Value['MatchTypeID']]], 'Player' => 1);
-                $UserTotalPoints = 0;
-
-                /* To Get User Team Players */
-                foreach (json_decode($Value['UserPlayersJSON'],TRUE) as $UserTeamValue) {
-                    if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
-                        continue;
-
-                    $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
-                    $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-
-                    /* Update User Player Points */
-                    $this->db->query("UPDATE sports_users_team_players SET Points = $Points WHERE UserTeamID=".$Value['UserTeamID']." AND PlayerID=".$PlayersIdsArr[$UserTeamValue['PlayerGUID']]." LIMIT 1");
-                }
-
-                /* Update Player Total Points */
-                $this->db->where('UserTeamID', $Value['UserTeamID']);
-                $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
-
-                /* Update User Rank */
-                if(!in_array($Value['ContestID'],$ContestIdArr)){
-                    $ContestIdArr[] = $Value['ContestID'];
-
-                    /* Get User Rank*/
-                    $this->updateRankByContest($Value['ContestID']);
-                }
-            }
-        }
-    }
-
-    function getJoinedContestTeamPoints($CronID, $MatchID = "", $StatusArr = array(2)) {
-
-        // ini_set('max_execution_time', 1200);
         ini_set('memory_limit','512M');
-
 
         /* Get Live Contests */
         $Query = "SELECT M.MatchTypeID, M.MatchID, JC.ContestID, JC.UserID, JC.UserTeamID,U.UserGUID,UT.UserTeamName,U.Username,CONCAT_WS(' ',U.FirstName,U.LastName) FullName,IF(U.ProfilePic IS NULL,CONCAT('" . BASE_URL . "','uploads/profile/picture/','default.jpg'),CONCAT('" . BASE_URL . "','uploads/profile/picture/',U.ProfilePic)) ProfilePic, ( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PlayerGUID', P.PlayerGUID, 'PlayerName', P.PlayerName,'PlayerRole',TP.PlayerRole,'TeamGUID', T.TeamGUID,'PlayerPic',IF(P.PlayerPic IS NULL,CONCAT('" . BASE_URL . "','uploads/PlayerPic/','player.png'),CONCAT('" . BASE_URL . "','uploads/PlayerPic/',P.PlayerPic)),'PlayerPosition', UTP.PlayerPosition ) ), ']' ) FROM sports_players P,sports_team_players TP,sports_teams T, sports_users_team_players UTP WHERE P.PlayerID = UTP.PlayerID AND UTP.MatchID = M.MatchID AND UTP.UserTeamID = JC.UserTeamID AND P.PlayerID = TP.PlayerID AND TP.MatchID = M.MatchID AND TP.TeamID = T.TeamID ) AS UserPlayersJSON FROM `sports_contest_join` JC, sports_matches M, tbl_entity E,tbl_users U,sports_users_teams UT WHERE JC.MatchID = M.MatchID AND E.EntityID = JC.ContestID AND UT.UserTeamID = JC.UserTeamID AND U.UserID = JC.UserID AND E.StatusID = 2 AND EXISTS( SELECT C.ContestID FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(".implode(',',$StatusArr).")";
@@ -1974,10 +1766,10 @@ class Sports_model extends CI_Model {
                 $ContestIdArr[] = $Value['ContestID'];
 
                 /* To Get Match Players */
-                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints');
+                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints_'.$Value['MatchID']);
                 if(empty($MatchPlayers)){
                     $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = '.$Value['MatchID'])->result_array();
-                    $this->cache->memcached->save('getJoinedContestPlayerPoints',$MatchPlayers,3600);
+                    $this->cache->memcached->save('getJoinedContestPlayerPoints_'.$Value['MatchID'],$MatchPlayers,3600);
                 }
                 $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
                 $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');
@@ -3792,7 +3584,7 @@ class Sports_model extends CI_Model {
 
                     /* Update Final player points before complete match */
                     $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-                    $this->getJoinedContestTeamPoints($CronID, $Value['MatchID']);
+                    $this->getJoinedContestPlayerPoints($CronID, array(2),$Value['MatchID']);
                     $this->Utility_model->updateCronLogs($CronID);
 
                     /* Update Contest Status */

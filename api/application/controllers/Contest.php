@@ -729,7 +729,7 @@ class Contest extends API_Controller_Secure {
                 $Flag = true;
             }
             if ($Flag) {
-                if (!$this->Contest_model->editUserTeam($this->Post, $this->UserTeamID)) {
+                if (!$this->Contest_model->editUserTeam($this->Post, $this->UserTeamID, $this->MatchID)) {
                     $this->Return['ResponseCode'] = 500;
                     $this->Return['Message'] = "An error occurred, please try again later.";
                 } else {

@@ -31,18 +31,6 @@ class Utilities extends API_Controller {
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
 
-
-        // sendMail(array(
-        //     'emailTo' => SITE_CONTACT_EMAIL,
-        //     'emailSubject' => $this->Post['Name'] . " filled out the contact form on the " . SITE_NAME,
-        //     'emailMessage' => emailTemplate($this->load->view('emailer/contact', array(
-        //                 "Name" => $this->Post['Name'],
-        //                 'Email' => $this->Post['Email'],
-        //                 'PhoneNumber' => $this->Post['PhoneNumber'],
-        //                 'Title' => $this->Post['Title'],
-        //                 'Message' => $this->Post['Message'],
-        //                     ), TRUE))
-        // ));
         send_mail(array(
             'emailTo' => SITE_CONTACT_EMAIL,
             'template_id' => 'd-30d87722d7fa42f8b0b671f6482a83f9',
@@ -56,7 +44,7 @@ class Utilities extends API_Controller {
     }
 
     /*
-      Description:  Use execute cron jobs.
+      Description:  Use to get countries.
       URL:      /api/utilities/getCountries
      */
 
@@ -67,6 +55,10 @@ class Utilities extends API_Controller {
         }
     }
 
+    /*
+      Description:  Use to get country states.
+      URL:      /api/utilities/getStates
+     */
     public function getStates_post() {
         /* Validation section */
         $this->form_validation->set_rules('CountryCode', 'Country Code', 'trim|required');
@@ -74,7 +66,6 @@ class Utilities extends API_Controller {
         /* Validation - ends */
 
         $StateData = $this->Utility_model->getStates(array('CountryCode' => $this->Post['CountryCode']));
-
         if (!empty($StateData)) {
             $this->Return['Data'] = $StateData['Data'];
         }
@@ -269,7 +260,7 @@ class Utilities extends API_Controller {
 
     public function getJoinedContestPlayerPoints_get() {
         $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-        $this->Sports_model->getJoinedContestTeamPoints($CronID);
+        $this->Sports_model->getJoinedContestPlayerPoints($CronID);
         $this->Utility_model->updateCronLogs($CronID);
     }
 

@@ -173,6 +173,7 @@ class Sports extends API_Controller {
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|callback_validateSession');
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('PlayerGUID', 'PlayerGUID', 'trim|required|callback_validateEntityGUID[Players,PlayerID]');
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->validation($this);  /* Run validation */
 
         $PendingMatchStatsArr = $CompletedMatchesStatsArr = array();
@@ -193,6 +194,8 @@ class Sports extends API_Controller {
         }
         $this->Return['Data']['TotalRecords'] = $TotalRecords;
         $this->Return['Data']['Records']      = array_merge_recursive($PendingMatchStatsArr,$CompletedMatchesStatsArr);
+        $this->Return['Data']['PlayerDetails']= $this->Sports_model->getPlayers('PlayerPic,PlayerCountry,PlayerBattingStyle,PlayerBowlingStyle,PlayerSalary,PointsData',array('PlayerID' => $this->PlayerID,'MatchID' => $this->MatchID));
+        $this->Return['Data']['PlayerDetails']['TotalPoints'] = ($TotalRecords > 0) ? (string) array_sum(array_column($this->Return['Data']['Records'], 'TotalPoints')) : '0';
     }
 
 
