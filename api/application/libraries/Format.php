@@ -413,7 +413,8 @@ class Format {
         elseif (preg_match('/^[a-z_\$][a-z0-9\$_]*(\.[a-z_\$][a-z0-9\$_]*)*$/i', $callback))
         {
             // Return the data as encoded json with a callback
-            return $callback.'('.json_encode($data, JSON_UNESCAPED_UNICODE).');';
+            array_walk_recursive($data,function(&$item){$item=strval($item);}); /*Added by Gautam*/
+            return $callback.'('.json_encode($data, JSON_UNESCAPED_UNICODE, JSON_FORCE_OBJECT).');';
         }
 
         // An invalid jsonp callback function provided.
