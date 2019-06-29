@@ -5,7 +5,7 @@ if (!defined('BASEPATH')) {
 
 function send_mail($emailData = array())
 {
-    require FCPATH.'send/vendor/autoload.php';
+    require FCPATH . 'send/vendor/autoload.php';
     $request_body = json_decode('{
             "personalizations": [
             {
@@ -130,7 +130,7 @@ function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = arra
     $Result = curl_exec($Ch);
     $obj = &get_instance();
     /*Save Log*/
-    if(API_SAVE_LOG){
+    if (API_SAVE_LOG) {
         $PushData = array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s"));
         @$obj->db->insert('log_pushdata', $PushData);
     }
@@ -303,4 +303,14 @@ function array_keys_exist(array $needles, array $StrArray)
             return true;
     }
     return false;
+}
+/*------------------------------*/
+/*------------------------------*/
+function mongoDBConnection()
+{
+    /* Require MongoDB Library & Connection */
+    $Obj = &get_instance();
+    require_once getcwd() . '/vendor/autoload.php';
+    $Obj->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+    $Obj->fantasydb = $Obj->ClientObj->fantasy;
 }

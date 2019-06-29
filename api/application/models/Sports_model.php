@@ -191,7 +191,7 @@ class Sports_model extends CI_Model {
                 'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
                 'MyTotalJoinedContest' => '(SELECT COUNT(DISTINCT sports_contest_join.ContestID)
                                                 FROM sports_contest_join
-                                                WHERE sports_contest_join.MatchID =  M.MatchID AND UserID= ' . @$Where['UserID'] . ') AS MyTotalJoinedContest',
+                                                WHERE sports_contest_join.MatchID =  M.MatchID AND UserID= ' . @$Where['SessionUserID'] . ') AS MyTotalJoinedContest',
                 'Status' => 'CASE E.StatusID
                 when "1" then "Pending"
                 when "2" then "Running"
@@ -203,8 +203,8 @@ class Sports_model extends CI_Model {
                 END as Status',
                 'MatchType' => 'MT.MatchTypeName AS MatchType',
                 'LastUpdateDiff' => 'IF(M.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", M.LastUpdatedOn))) LastUpdateDiff',
-                'TotalUserWinning' => '(select SUM(UserWinningAmount) from sports_contest_join where MatchID = M.MatchID AND UserID=' . @$Where['UserID'] . ') as TotalUserWinning',
-                'isJoinedContest' => '(select count(*) from sports_contest_join where MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . $Where['StatusID'] . ') as JoinedContests'
+                'TotalUserWinning' => '(select SUM(UserWinningAmount) from sports_contest_join where MatchID = M.MatchID AND UserID=' . @$Where['SessionUserID'] . ') as TotalUserWinning',
+                'isJoinedContest' => '(select count(*) from sports_contest_join where MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . @$Where['StatusID'] . ') as JoinedContests'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -644,7 +644,7 @@ class Sports_model extends CI_Model {
                         $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
                         $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
                         $this->db->where('SUT.MatchID',$Where['MatchID']);
-                        $this->db->where('SUT.UserID',$Where['UserID']);
+                        $this->db->where('SUT.UserID',$Where['SessionUserID']);
                         $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
                         $MyPlayers = $this->db->get()->result_array();
                         $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers,'PlayerID') : array();
@@ -699,7 +699,7 @@ class Sports_model extends CI_Model {
                     $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
                     $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
                     $this->db->where('SUT.MatchID',$Where['MatchID']);
-                    $this->db->where('SUT.UserID',$Where['UserID']);
+                    $this->db->where('SUT.UserID',$Where['SessionUserID']);
                     $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
                     $MyPlayers = $this->db->get()->result_array();
                     $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers,'PlayerID') : array();
@@ -4348,22 +4348,22 @@ class Sports_model extends CI_Model {
     function getMatchBestPlayers($Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
 
         /* Get Match Players */
-        $playersData = $this->Sports_model->getPlayers('PlayerID,PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent,TopPlayer', array('MatchID' => $Where['MatchID'], 'UserID' => $Where['UserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
-        if (!$playersData) {
+        $PlayersData = $this->Sports_model->getPlayers('PlayerID,PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent,TopPlayer', array('MatchID' => $Where['MatchID'], 'UserID' => $Where['SessionUserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
+        if (!$PlayersData) {
             return false;
         }
-        $finalXIPlayers = array();
-        foreach ($playersData['Data']['Records'] as $Key => $Value) {
+        $FinalXIPlayers = array();
+        foreach ($PlayersData['Data']['Records'] as $Key => $Value) {
             $Row = $Value;
             $Row['PlayerPosition'] = ($Key == 0) ? 'Captain' : (($Key == 1) ? 'ViceCaptain' : 'Player');
             $Row['TotalPoints'] = strval(($Key == 0) ? 2 * $Row['TotalPoints'] : (($Key == 1) ? 1.5 * $Row['TotalPoints'] : $Row['TotalPoints']));
-            array_push($finalXIPlayers, $Row);
+            array_push($FinalXIPlayers, $Row);
         }
 
-        $Batsman = $this->findKeyValuePlayers($finalXIPlayers, "Batsman");
-        $Bowler = $this->findKeyValuePlayers($finalXIPlayers, "Bowler");
-        $Wicketkipper = $this->findKeyValuePlayers($finalXIPlayers, "WicketKeeper");
-        $Allrounder = $this->findKeyValuePlayers($finalXIPlayers, "AllRounder");
+        $Batsman = $this->findKeyValuePlayers($FinalXIPlayers, "Batsman");
+        $Bowler = $this->findKeyValuePlayers($FinalXIPlayers, "Bowler");
+        $Wicketkipper = $this->findKeyValuePlayers($FinalXIPlayers, "WicketKeeper");
+        $Allrounder = $this->findKeyValuePlayers($FinalXIPlayers, "AllRounder");
 
         $TopBatsman = array_slice($Batsman, 0, 4);
         $TopBowler = array_slice($Bowler, 0, 3);
@@ -4396,13 +4396,8 @@ class Sports_model extends CI_Model {
         $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
         $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
 
-        $TotalCalculatedPoints = 0;
-        foreach ($AllPlayers as $Value) {
-            $TotalCalculatedPoints += $Value['TotalPoints'];
-        }
-
         $Records['Data']['Records'] = $AllPlayers;
-        $Records['Data']['TotalPoints'] = strval($TotalCalculatedPoints);
+        $Records['Data']['TotalPoints'] = strval(array_sum(array_column($AllPlayers, 'TotalPoints')));
         $Records['Data']['TotalRecords'] = count($AllPlayers);
         if ($AllPlayers) {
             return $Records;

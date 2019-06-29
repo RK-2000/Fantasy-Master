@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Wallet extends API_Controller_Secure {
+class Wallet extends API_Controller_Secure
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('Users_model');
     }
@@ -15,7 +17,8 @@ class Wallet extends API_Controller_Secure {
       URL: 			/wallet/add/
      */
 
-    public function add_post() {
+    public function add_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('RequestSource', 'RequestSource', 'trim|required|in_list[Web,Mobile]');
         $this->form_validation->set_rules('CouponGUID', 'CouponGUID', 'trim|callback_validateEntityGUID[Coupon,CouponID]');
@@ -43,7 +46,8 @@ class Wallet extends API_Controller_Secure {
       URL: 			/wallet/confirm/
      */
 
-    public function confirmWeb_post() {
+    public function confirmWeb_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
         $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
@@ -62,8 +66,9 @@ class Wallet extends API_Controller_Secure {
             $this->Return['Message'] = "Success.";
         }
     }
-    
-    public function confirmApp_post() {
+
+    public function confirmApp_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
         $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
@@ -89,7 +94,8 @@ class Wallet extends API_Controller_Secure {
       URL: 			/wallet/getWallet/
      */
 
-    public function getWallet_post() {
+    public function getWallet_post()
+    {
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -109,13 +115,13 @@ class Wallet extends API_Controller_Secure {
       URL: 			/wallet/withdrawal/
      */
 
-    public function withdrawal_post() {
+    public function withdrawal_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateAccountStatus');
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[Paytm,Bank]');
         $this->form_validation->set_rules('PaytmPhoneNumber', 'PaytmPhoneNumber', 'trim' . (!empty($this->Post['PaymentGateway']) && $this->Post['PaymentGateway'] == 'Paytm' ? '|required' : ''));
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|callback_validateWithdrawalAmount');
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -130,12 +136,13 @@ class Wallet extends API_Controller_Secure {
     }
 
     /*
-      Name: 			getWithdrawals
+      Name: 		getWithdrawals
       Description: 	To get Withdrawal data
       URL: 			/wallet/getWithdrawals/
      */
 
-    public function getWithdrawals_post() {
+    public function getWithdrawals_post()
+    {
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
@@ -148,11 +155,15 @@ class Wallet extends API_Controller_Secure {
         }
     }
 
+    /* -----Validation Functions----- */
+    /* ------------------------------ */
+
     /**
      * Function Name: validateMinimumDepositAmount
      * Description:   To validate minimum deposit amount
      */
-    public function validateMinimumDepositAmount($Amount) {
+    public function validateMinimumDepositAmount($Amount)
+    {
         /* Get Minimum Deposit Limit */
         $MinimumDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MinimumDepositLimit" LIMIT 1')->row()->ConfigTypeValue;
         if ($Amount < $MinimumDepositLimit) {
@@ -167,7 +178,8 @@ class Wallet extends API_Controller_Secure {
      * Function Name: validateWalletID
      * Description:   To validate wallet ID
      */
-    public function validateWalletID($WalletID) {
+    public function validateWalletID($WalletID)
+    {
         $WalletData = $this->Users_model->getWallet('Amount,TransactionID,CouponDetails', array('UserID' => $this->SessionUserID, 'WalletID' => $WalletID));
         if (!$WalletData) {
             $this->form_validation->set_message('validateWalletID', 'Invalid {field}.');
@@ -184,15 +196,17 @@ class Wallet extends API_Controller_Secure {
      * Function Name: validateWithdrawalAmount
      * Description:   To validate withdrawal amount
      */
-    public function validateWithdrawalAmount($Amount) {
-        if ($Amount < 200) {
-            $this->form_validation->set_message('validateWithdrawalAmount', 'Minimum withdrawal amount limit is ' . DEFAULT_CURRENCY . '200');
+    public function validateWithdrawalAmount($Amount)
+    {
+        $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => ($this->Post['PaymentGateway'] == 'Bank') ? 'MinimumWithdrawalLimitBank' : 'MinimumWithdrawalLimitPaytm'));
+        if ($Amount < $ConfigData['Data']['Records'][0]['ConfigTypeValue']) {
+            $this->form_validation->set_message('validateWithdrawalAmount', 'Minimum withdrawal amount limit is ' . DEFAULT_CURRENCY . $ConfigData['Data']['Records'][0]['ConfigTypeValue']);
             return FALSE;
         }
 
         /* Validate Winning Amount */
-        $UserData = $this->Users_model->getUsers('WinningAmount', array('UserID' => $this->SessionUserID));
-        if ($Amount > $UserData['WinningAmount']) {
+        $WinningAmount = $this->db->query('SELECT WinningAmount FROM tbl_users WHERE UserID = '.$this->SessionUserID.' LIMIT 1')->row()->WinningAmount;
+        if ($Amount > $WinningAmount) {
             $this->form_validation->set_message('validateWithdrawalAmount', 'Withdrawal amount can not greater than to winning amount.');
             return FALSE;
         }
@@ -203,24 +217,24 @@ class Wallet extends API_Controller_Secure {
      * Function Name: validateAccountStatus
      * Description:   To validate user account status
      */
-    public function validateAccountStatus($UserGUID) {
+    public function validateAccountStatus($UserGUID)
+    {
         /* Validate account status */
         $userData = $this->Users_model->getUsers('PanStatus,BankStatus', array('UserID' => $this->SessionUserID));
         if ($userData['BankStatus'] != 'Verified') {
-            $this->form_validation->set_message('validateAccountStatus', 'Bank Account details not verified.');
+            $this->form_validation->set_message('validateAccountStatus', 'Bank account details not verified.');
             return FALSE;
         }
         if ($userData['PanStatus'] != 'Verified') {
-            $this->form_validation->set_message('validateAccountStatus', 'Pan Card details not verified.');
+            $this->form_validation->set_message('validateAccountStatus', 'Pan card details not verified.');
             return FALSE;
         }
 
         /* Validate Pending Withdrawal Request */
-        if ($this->db->query('SELECT COUNT(*) AS TotalRecords FROM `tbl_users_withdrawal` WHERE `UserID` = ' . $this->SessionUserID . ' AND `StatusID` = 1')->row()->TotalRecords > 0) {
+        if ($this->db->query('SELECT COUNT(EntryDate) TotalRecords FROM `tbl_users_withdrawal` WHERE `UserID` = ' . $this->SessionUserID . ' AND `StatusID` = 1 LIMIT 1')->row()->TotalRecords > 0) {
             $this->form_validation->set_message('validateAccountStatus', 'Your withdrawal request already in pending mode.');
             return FALSE;
         }
         return TRUE;
     }
-
 }

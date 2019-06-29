@@ -1,17 +1,14 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Payment extends CI_Controller {
+class Payment extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
-        $this->load->model('Utility_model');
-        $this->load->model('Post_model');
-        $this->load->model('Sports_model');
-        $this->load->model('Contest_model');
         $this->load->model('Users_model');
-        $this->load->model('AuctionDrafts_model');
     }
 
     /*
@@ -19,7 +16,8 @@ class Payment extends CI_Controller {
       URL:      /api/utilities/getReferralDetails
      */
 
-    public function razorpayWebResponse() {
+    public function razorpayWebResponse()
+    {
 
         $Input = file_get_contents("php://input");
         $PayResponse = json_decode($Input, 1);
@@ -42,12 +40,13 @@ class Payment extends CI_Controller {
             $Amount = $payResponse['amount'] / 100;
             /* update profile table */
             $UpdataData = array_filter(
-                    array(
-                        'PaymentGatewayResponse' => @$Input,
-                        'ModifiedDate' => date("Y-m-d H:i:s"),
-                        'StatusID' => 5,
-                        //'ClosingWalletAmount' => 'ClosingWalletAmount+' . $Amount
-            ));
+                array(
+                    'PaymentGatewayResponse' => @$Input,
+                    'ModifiedDate' => date("Y-m-d H:i:s"),
+                    'StatusID' => 5,
+                    //'ClosingWalletAmount' => 'ClosingWalletAmount+' . $Amount
+                )
+            );
             $this->db->set('ClosingWalletAmount', 'ClosingWalletAmount+' . $Amount, FALSE);
             $this->db->where('WalletID', $payResponse['notes']['OrderID']);
             $this->db->where('UserID', $payResponse['notes']['UserID']);
@@ -57,7 +56,7 @@ class Payment extends CI_Controller {
             if ($this->db->affected_rows() <= 0)
                 return FALSE;
 
-            
+
             $this->db->set('WalletAmount', 'WalletAmount+' . $Amount, FALSE);
             $this->db->where('UserID', $payResponse['notes']['UserID']);
             $this->db->limit(1);
@@ -147,8 +146,6 @@ class Payment extends CI_Controller {
               $this->db->update('tbl_users_wallet', $UpdataData);
               if ($this->db->affected_rows() <= 0)
               return FALSE;
-              } */
-        }
+              } */ }
     }
-
 }

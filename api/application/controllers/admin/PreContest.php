@@ -356,4 +356,3 @@ class PreContest extends API_Controller_Secure
 		$this->Return['Message'] =	"Contest deleted successfully."; 
 	}
 }
-?>

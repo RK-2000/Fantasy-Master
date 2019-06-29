@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Points extends API_Controller_Secure
 {
@@ -19,9 +19,8 @@ class Points extends API_Controller_Secure
 		/* Validation section */
 		$this->form_validation->set_rules('PointsCategory', 'PointsCategory', 'trim|required|in_list[Normal,InPlay,Reverse]');
 		/* Validation - ends */
-		
+
 		$this->Sports_model->updatePoints($this->Post);
 		$this->Return['Data'] = array();
 	}
-
 }

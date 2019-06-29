@@ -39,14 +39,13 @@ class Recovery_model extends CI_Model
 					'Text' 			=> @$Token
 				));
 			} else {
-				$EmailText = "One time password reset code is given below:";
 				send_mail(array(
 					'emailTo'       =>  $UserData['Email'],
 					'template_id'   =>  'd-e27a7baab3274e30b30a023038997b5e',
 					'Subject'       =>	SITE_NAME . " Password Assistance",
 					"Name" 			=> 	$UserData['FullName'],
 					'Token' 		=> 	@$Token,
-					'EmailText'		=> 	$EmailText
+					'EmailText'		=> 	"One time password reset code is given below:"
 				));
 			}
 			return $Message;

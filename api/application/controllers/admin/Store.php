@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Store extends API_Controller
 {
@@ -8,10 +8,6 @@ class Store extends API_Controller
 		parent::__construct();
 		$this->load->model('Store_model');
 	}
-
-
-
-
 
 	/*
 	Description: 	Use to add coupon.
@@ -27,34 +23,26 @@ class Store extends API_Controller
 		$this->form_validation->set_rules('CouponTitle', 'CouponTitle', 'trim|required');
 		$this->form_validation->set_rules('CouponDescription', 'CouponDescription', 'trim');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-
-		$CouponData = $this->Store_model->addCoupon($this->SessionUserID, array_merge($this->Post),$this->StatusID);
-		if($CouponData){
+		$CouponData = $this->Store_model->addCoupon($this->SessionUserID, array_merge($this->Post), $this->StatusID);
+		if ($CouponData) {
 
 			/* check for media present - associate media with this Post */
-			if(!empty($this->Post['MediaGUIDs'])){
+			if (!empty($this->Post['MediaGUIDs'])) {
 				$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
-				foreach($MediaGUIDsArray as $MediaGUID){
-					$EntityData=$this->Entity_model->getEntity('E.EntityID MediaID',array('EntityGUID'=>$MediaGUID, 'EntityTypeID'=>13));
-					if ($EntityData){
+				foreach ($MediaGUIDsArray as $MediaGUID) {
+					$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 13));
+					if ($EntityData) {
 						$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $CouponData['CouponID']);
 					}
 				}
 			}
 			/* check for media present - associate media with this Post - ends */
-
-			$this->Return['Message']      	=	"Coupon added successfully."; 
+			$this->Return['Message']      	=	"Coupon added successfully.";
 		}
 	}
-
-
-
-
-
-
 
 	/*
 	Description: 	Use to update coupon.
@@ -67,23 +55,25 @@ class Store extends API_Controller
 		$this->form_validation->set_rules('CouponGUID', 'CouponGUID', 'trim|required|callback_validateEntityGUID[Coupon,CouponID]');
 		$this->form_validation->set_rules('CouponValidTillDate', 'CouponValidTillDate', 'trim|callback_validateDate');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-		$this->Store_model->updateCoupon($this->CouponID, array_merge($this->Post,array("StatusID"=>$this->StatusID)));
+
+		$this->Store_model->updateCoupon($this->CouponID, array_merge($this->Post, array("StatusID" => $this->StatusID)));
 
 		/* check for media present - associate media with this Post */
-		if(!empty($this->Post['MediaGUIDs'])){
+		if (!empty($this->Post['MediaGUIDs'])) {
 			$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
-			foreach($MediaGUIDsArray as $MediaGUID){
-				$EntityData=$this->Entity_model->getEntity('E.EntityID MediaID',array('EntityGUID'=>$MediaGUID, 'EntityTypeID'=>4));
-				if ($EntityData){
+			foreach ($MediaGUIDsArray as $MediaGUID) {
+				$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 4));
+				if ($EntityData) {
 					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->CouponID);
 				}
 			}
 		}
 		/* check for media present - associate media with this Post - ends */
 
-		$CouponData = $this->Store_model->getCoupons('
+		$CouponData = $this->Store_model->getCoupons(
+			'
 			E.EntityGUID AS CouponGUID,
 			E.EntryDate,
 			E.StatusID,
@@ -96,18 +86,9 @@ class Store extends API_Controller
 			C.CouponValidTillDate,
 			C.Broadcast
 			',
-			array("CouponID"=>@$this->CouponID));
-
+			array("CouponID" => @$this->CouponID)
+		);
 		$this->Return['Data'] = $CouponData;
 		$this->Return['Message']      	=	"Status has been changed.";
 	}
-
-
-
-
-
-
-
-
-
 }

@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Signin extends API_Controller {
+class Signin extends API_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('Recovery_model');
     }
@@ -15,15 +17,13 @@ class Signin extends API_Controller {
       URL: 			/api/signin/
      */
 
-    public function index_post() {
+    public function index_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('Keyword', 'Keyword', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
-
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Otp' ? '|required' : ''));
-
         $this->form_validation->set_rules('OTP', 'OTP', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Otp' ? '|required' : ''));
-
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
         $this->form_validation->set_rules('DeviceGUID', 'DeviceGUID', 'trim');
@@ -39,7 +39,7 @@ class Signin extends API_Controller {
             $UserID = $this->Recovery_model->verifyToken($this->Post['OTP'], 3);
             if ($UserID) {
                 $UserData = $this->Users_model->getUsers('UserTypeID,UserID,FirstName,MiddleName,LastName,Email,StatusID,ProfilePic,PhoneNumber,WalletAmount,ReferralCode,TotalCash', array('UserID' => $UserID));
-            }else{
+            } else {
                 $this->Return['ResponseCode'] = 500;
                 $this->Return['Message'] = "Invalid OTP";
                 return false;
@@ -88,7 +88,8 @@ class Signin extends API_Controller {
       URL: 			/api/signin/OtpSignIn/
      */
 
-    public function OtpSignIn_post() {
+    public function OtpSignIn_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Otp' ? '|required' : ''));
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
@@ -110,12 +111,13 @@ class Signin extends API_Controller {
     }
 
     /*
-      Name: 			Logout
+      Name: 		Logout
       Description: 	Delete session
       URL: 			/api/signin/signout/
      */
 
-    public function signout_post() {
+    public function signout_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
@@ -123,5 +125,4 @@ class Signin extends API_Controller {
 
         $this->Users_model->deleteSession($this->Post['SessionKey']); /* Delete session */
     }
-
 }

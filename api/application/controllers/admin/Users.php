@@ -1,20 +1,23 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Users extends API_Controller_Secure {
+class Users extends API_Controller_Secure
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('Recovery_model');
     }
 
     /*
       Description: 	Use to broadcast message.
-      URL: 			/api_admin/users/broadcast/
+      URL: 			/admin/users/broadcast/
      */
 
-    public function broadcast_post() {
+    public function broadcast_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('Title', 'Title', 'trim|required');
@@ -37,13 +40,10 @@ class Users extends API_Controller_Secure {
             $InsertData = array();
             if (!empty($this->Post['Email']) && $this->Post['Email'] == 1) {
                 $this->Return['Message'] = 'Email broadcasted.';
-            }elseif(!empty($this->Post['SMS']) && $this->Post['SMS'] == 1) {
+            } elseif (!empty($this->Post['SMS']) && $this->Post['SMS'] == 1) {
                 $this->Return['Message'] = 'SMS broadcasted.';
-            }elseif(!empty($this->Post['Notification']) && $this->Post['Notification'] == 1) {
+            } elseif (!empty($this->Post['Notification']) && $this->Post['Notification'] == 1) {
                 foreach ($UsersData['Data']['Records'] as $Value) {
-                    /* send notification - starts */
-                    /* $this->Notification_model->addNotificationBroadcast('broadcast', $NotificationText, $this->SessionUserID, $Value['UserID'], '' , $NotificationMessage); */
-                    /* send notification - ends */
                     $InsertData[] = array_filter(array(
                         "NotificationPatternID" => 2,
                         "UserID" => $this->SessionUserID,
@@ -55,23 +55,24 @@ class Users extends API_Controller_Secure {
                         "EntryDate" => date("Y-m-d H:i:s")
                     ));
                 }
-                if(!empty($InsertData)){
-                  $this->db->insert_batch('tbl_notifications', $InsertData);   
+                if (!empty($InsertData)) {
+                    $this->db->insert_batch('tbl_notifications', $InsertData);
                 }
                 $this->Return['Message'] = 'Notification broadcasted.';
-            }else{
+            } else {
                 $this->Return['Message'] = 'Please Select broadcast Type.';
             }
         }
     }
 
     /*
-      Name: 			getUsers
+      Name: 		getUsers
       Description: 	Use to get users list.
-      URL: 			/api_admin/users/getProfile
+      URL: 			/admin/users/getProfile
      */
 
-    public function index_post() {
+    public function index_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('StoreGUID', 'StoreGUID', 'trim' . ($this->UserTypeID == 4 ? '|required' : '') . '|callback_validateEntityGUID[Store,StoreID]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
@@ -82,8 +83,6 @@ class Users extends API_Controller_Secure {
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        /* $UsersData=$this->Users_model->getUsers('RegisteredOn,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status, StatusID',$this->Post, TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']); */
-
         $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if ($UsersData) {
             $this->Return['Data'] = $UsersData['Data'];
@@ -92,28 +91,29 @@ class Users extends API_Controller_Secure {
 
     /*
       Description: 	Use to update user profile info.
-      URL: 			/api_admin/entity/changeStatus/
+      URL: 			/admin/entity/changeStatus/
      */
 
-    public function changeStatus_post() {
+    public function changeStatus_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
         $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => $this->Post['IsPrivacyNameDisplay']));
         $this->Entity_model->updateEntityInfo($this->UserID, array("StatusID" => $this->StatusID));
-
         $this->Return['Data'] = $this->Users_model->getUsers('FirstName,LastName,Email,ProfilePic,Status', array("UserID" => $this->UserID));
         $this->Return['Message'] = "Status has been changed.";
     }
 
     /*
       Description: 	Use to update user details as pan and bank details.
-      URL: 			/api_admin/entity/changeVerificationStatus/
+      URL: 			/admin/entity/changeVerificationStatus/
      */
-
-    public function changeVerificationStatus_post() {
+    public function changeVerificationStatus_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('VetificationType', 'VetificationType', 'trim|required');
@@ -137,7 +137,6 @@ class Users extends API_Controller_Secure {
         }
 
         $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-
         $this->Users_model->updateUserInfo($this->UserID, $UpdateData);
 
         /* Get User Data */
@@ -164,12 +163,12 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			updateUserInfo
+      Name: 		updateUserInfo
       Description: 	Use to update user profile info.
-      URL: 			/api_admin/updateUserInfo/
+      URL: 			/admin/updateUserInfo/
      */
-
-    public function updateUserInfo_post() {
+    public function updateUserInfo_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
@@ -183,12 +182,13 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			add
+      Name: 		add
       Description: 	Use to register user to system.
-      URL: 			/api_admin/users/add/
+      URL: 			/admin/users/add/
      */
 
-    public function add_post() {
+    public function add_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('Email', 'Email', 'trim|required|valid_email|callback_validateEmail');
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
@@ -198,9 +198,7 @@ class Users extends API_Controller_Secure {
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber');
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-
         $this->form_validation->set_rules('StoreGUID', 'StoreGUID', 'trim|callback_validateEntityGUID[Store,StoreID]');
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -228,12 +226,13 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			getWallet
+      Name: 		getWallet
       Description: 	To get wallet data
-      URL: 			/users/getWallet/
+      URL: 			/admin/users/getWallet/
      */
 
-    public function getWallet_post() {
+    public function getWallet_post()
+    {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
@@ -249,12 +248,12 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			getWithdrawals
+      Name: 		getWithdrawals
       Description: 	To get all Withdrawal requests
-      URL: 			/users/getWithdrawals/
+      URL: 			/admin/users/getWithdrawals/
      */
-
-    public function getWithdrawals_post() {
+    public function getWithdrawals_post()
+    {
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
@@ -269,12 +268,13 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			getWithdrawal
+      Name: 		getWithdrawal
       Description: 	To get Withdrawal data
-      URL: 			/users/getWithdrawals/
+      URL: 			/admin/users/getWithdrawals/
      */
 
-    public function getWithdrawal_post() {
+    public function getWithdrawal_post()
+    {
         $this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -288,7 +288,8 @@ class Users extends API_Controller_Secure {
         }
     }
 
-    public function export_Withdrawal_list_post() {
+    public function export_Withdrawal_list_post()
+    {
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -316,7 +317,8 @@ class Users extends API_Controller_Secure {
                     'Bank' => $value['MediaBANK']['MediaCaption']->Bank,
                     'IFSCCode' => $value['MediaBANK']['MediaCaption']->IFSCCode,
                     'EntryDate' => $value['EntryDate'],
-                    'Status' => $value['Status']);
+                    'Status' => $value['Status']
+                );
                 $i++;
             }
 
@@ -338,8 +340,9 @@ class Users extends API_Controller_Secure {
         }
     }
 
-    public function export_Transactions_list_post() {
-       $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
+    public function export_Transactions_list_post()
+    {
+        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -369,7 +372,8 @@ class Users extends API_Controller_Secure {
                     'ClosingBalance' => $value['ClosingBalance'],
                     'AvailableBalance' => ($value['WalletAmount'] + $value['CashBonus']) + $value['WinningAmount'],
                     'EntryDate' => $value['EntryDate'],
-                    'Status' => $value['Status']);
+                    'Status' => $value['Status']
+                );
                 $i++;
             }
 
@@ -393,15 +397,17 @@ class Users extends API_Controller_Secure {
 
     /*
       Description: 	Use to update user profile info.
-      URL: 			/api_admin/entity/changeStatus/
+      URL: 			/admin/users/changeStatus/
      */
 
-    public function changeWithdrawalStatus_post() {
+    public function changeWithdrawalStatus_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
         $this->Users_model->updateWithdrawal(@$this->Post['WithdrawalID'], array("StatusID" => $this->StatusID, "Comments" => $this->Post['Comments']));
         $this->Return['Data'] = $this->Users_model->getWithdrawals(@$this->Post['Params'], array("WithdrawalID" => @$this->Post['WithdrawalID']));
         $this->Return['Message'] = "Status has been changed.";
@@ -411,8 +417,8 @@ class Users extends API_Controller_Secure {
       Description : To add cash bonus to user
 
      */
-
-    public function addCashBonus_post() {
+    public function addCashBonus_post()
+    {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
@@ -426,8 +432,8 @@ class Users extends API_Controller_Secure {
       Description : To add cash deposit to user
 
      */
-
-    public function addCashDeposit_post() {
+    public function addCashDeposit_post()
+    {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
@@ -438,12 +444,12 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			getReferredUsers
+      Name: 		getReferredUsers
       Description: 	To get all referred users
-      URL: 			/users/getReferredUsers/
+      URL: 			/admin/users/getReferredUsers/
      */
-
-    public function getReferredUsers_post() {
+    public function getReferredUsers_post()
+    {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
@@ -455,5 +461,4 @@ class Users extends API_Controller_Secure {
             $this->Return['Data'] = $ReferredUsersData['Data'];
         }
     }
-
 }

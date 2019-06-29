@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 class Wallet extends API_Controller
 {
 	function __construct()
@@ -7,11 +7,10 @@ class Wallet extends API_Controller
 		parent::__construct();
 	}
 
-
 	/*
 	Name: 			getWallet
 	Description: 	To get wallet data
-	URL: 			/users/getWallet/	
+	URL: 			/admin/users/getWallet/	
 	*/
 	public function getWallet_post()
 	{
@@ -20,19 +19,19 @@ class Wallet extends API_Controller
 		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
 		$this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
 		$this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
-		$this->form_validation->validation($this);  /* Run validation */	
+		$this->form_validation->validation($this);  /* Run validation */
 
 		/* Get Wallet Data */
-		$WalletDetails = $this->Users_model->getWallet(@$this->Post['Params'],array_merge($this->Post, array('UserID' => $this->UserID)),TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-		if(!empty($WalletDetails)){
+		$WalletDetails = $this->Users_model->getWallet(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+		if (!empty($WalletDetails)) {
 			$this->Return['Data'] = $WalletDetails['Data'];
 		}
 	}
 
 	public function getTotalDeposits_post()
 	{
-		$DepositDetails = $this->Users_model->getDeposits($this->Post,@$this->Post['PageNo'], @$this->Post['PageSize']);
-		if(!empty($DepositDetails)){
+		$DepositDetails = $this->Users_model->getDeposits($this->Post, @$this->Post['PageNo'], @$this->Post['PageSize']);
+		if (!empty($DepositDetails)) {
 			$this->Return['Data'] = $DepositDetails['Data'];
 		}
 	}
@@ -48,13 +47,12 @@ class Wallet extends API_Controller
 		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
 		$this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
 		$this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
-		$this->form_validation->validation($this);  /* Run validation */	
+		$this->form_validation->validation($this);  /* Run validation */
 
 		/* Get Withdrawal Data */
-		$WithdrawalsData = $this->Users_model->getWithdrawals(@$this->Post['Params'],array_merge($this->Post, array('UserID' => $this->UserID)),TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-		if(!empty($WithdrawalsData)){
+		$WithdrawalsData = $this->Users_model->getWithdrawals(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+		if (!empty($WithdrawalsData)) {
 			$this->Return['Data'] = $WithdrawalsData['Data'];
 		}
 	}
-
 }

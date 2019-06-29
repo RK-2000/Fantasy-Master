@@ -13,13 +13,19 @@ class Series extends API_Controller_Secure
 	Description: To get series data
 	*/
 	public function getSeries_post()
-	{
-		$SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'],array_merge($this->Post, (!empty($this->Post['SeriesGUID'])) ? array('SeriesID' => $this->SeriesID) : array()),TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-		
-		if(!empty($SeriesData)){
-			$this->Return['Data'] = $SeriesData['Data'];
-		}
-	}
+    {
+        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
+        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
+        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
+        $this->form_validation->validation($this);  /* Run validation */
+
+        /* Get Matches Data */
+        $SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID, 'StatusID' => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        if (!empty($SeriesData)) {
+            $this->Return['Data'] = $SeriesData['Data'];
+        }
+    }
 
 	/*
 	Description: 	use to get list of filters
@@ -32,15 +38,12 @@ class Series extends API_Controller_Secure
 		$this->form_validation->validation($this);  /* Run validation */		
 		/* Validation - ends */
 
-
 		$CategoryTypes = $this->Category_model->getCategoryTypes('',array("ParentCategoryID"=>@$this->ParentCategoryID),true,1,250);
 		if($CategoryTypes){
 			$Return['CategoryTypes'] = $CategoryTypes['Data']['Records'];			
 		}
 		$this->Return['Data'] = $Return;
-
 		$SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'],array());
-		
 		if(!empty($SeriesData)){
 			$Return['SeiresData'] = $SeriesData['Data']['Records']; 
 		}
@@ -89,5 +92,3 @@ class Series extends API_Controller_Secure
 		}
 	}
 }
-
-?>

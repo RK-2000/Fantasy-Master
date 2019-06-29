@@ -1,27 +1,25 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Utilities extends API_Controller {
+class Utilities extends API_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('Utility_model');
         $this->load->model('Sports_model');
         $this->load->model('Contest_model');
-        
-        /* Require MongoDB Library & Connection */
-        require_once getcwd() . '/vendor/autoload.php';
-        $this->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-        $this->fantasydb = $this->ClientObj->fantasy;
+        mongoDBConnection();
     }
 
     /*
       Description: 	Use to send email to webadmin.
       URL: 			/api/utilities/contact/
      */
-
-    public function contact_post() {
+    public function contact_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('Name', 'Name', 'trim');
         $this->form_validation->set_rules('Email', 'Email', 'trim|required|valid_email');
@@ -48,7 +46,8 @@ class Utilities extends API_Controller {
       URL:      /api/utilities/getCountries
      */
 
-    public function getCountries_post() {
+    public function getCountries_post()
+    {
         $CountryData = $this->Utility_model->getCountries();
         if (!empty($CountryData)) {
             $this->Return['Data'] = $CountryData['Data'];
@@ -59,7 +58,8 @@ class Utilities extends API_Controller {
       Description:  Use to get country states.
       URL:      /api/utilities/getStates
      */
-    public function getStates_post() {
+    public function getStates_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('CountryCode', 'Country Code', 'trim|required');
         $this->form_validation->validation($this); /* Run validation */
@@ -75,7 +75,8 @@ class Utilities extends API_Controller {
       Description:    Use to get list of random posts.
       URL:            /api/utilities/getPosts
      */
-    public function getPosts_post() {
+    public function getPosts_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
@@ -97,7 +98,8 @@ class Utilities extends API_Controller {
       URL:      /api/utilities/getReferralDetails
      */
 
-    public function getReferralDetails_post() {
+    public function getReferralDetails_post()
+    {
         $ReferByQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" AND StatusID = 2 LIMIT 1');
         $ReferToQuery = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" AND StatusID = 2 LIMIT 1');
         $this->Return['Data']['ReferByBonus'] = ($ReferByQuery->num_rows() > 0) ? $ReferByQuery->row()->ConfigTypeValue : 0;
@@ -108,7 +110,8 @@ class Utilities extends API_Controller {
       Description:    Use to send new app link
       URL:            /api/utilities/sendAppLink
      */
-    public function sendAppLink_post() {
+    public function sendAppLink_post()
+    {
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -124,7 +127,8 @@ class Utilities extends API_Controller {
       URL:      /api/utilities/getAppVersionDetails
      */
 
-    public function getAppVersionDetails_post() {
+    public function getAppVersionDetails_post()
+    {
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('UserAppVersion', 'UserAppVersion', 'trim|required');
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
@@ -141,7 +145,8 @@ class Utilities extends API_Controller {
       Description:  Use to create pre draft contest
       URL:      /api/utilities/createPreContest
      */
-    public function createPreContest_get() {
+    public function createPreContest_get()
+    {
         $this->load->model('PreContest_model');
         $this->PreContest_model->createPreContest();
     }
@@ -151,7 +156,8 @@ class Utilities extends API_Controller {
       URL: 			/api/utilities/getSeriesLive
      */
 
-    public function getSeriesLive_get() {
+    public function getSeriesLive_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getSeriesLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $SeriesData = $this->Sports_model->getSeriesLiveEntity($CronID);
@@ -166,7 +172,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to get matches data.
       URL: 			/api/utilities/getMatchesLive
      */
-    public function getMatchesLive_get() {
+    public function getMatchesLive_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getMatchesLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $MatchesData = $this->Sports_model->getMatchesLiveEntity($CronID);
@@ -185,7 +192,8 @@ class Utilities extends API_Controller {
       URL: 			/api/utilities/getPlayersLive
      */
 
-    public function getPlayersLive_get() {
+    public function getPlayersLive_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getPlayersLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $PlayersData = $this->Sports_model->getPlayersLiveEntity($CronID);
@@ -204,7 +212,8 @@ class Utilities extends API_Controller {
       URL: 			/api/utilities/getPlayerStatsLive
      */
 
-    public function getPlayerStatsLive_get() {
+    public function getPlayerStatsLive_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getPlayerStatsLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $PlayersStatsData = $this->Sports_model->getPlayerStatsLiveEntity($CronID);
@@ -223,7 +232,8 @@ class Utilities extends API_Controller {
       URL: 			/api/utilities/getMatchScoreLive
      */
 
-    public function getMatchScoreLive_get() {
+    public function getMatchScoreLive_get()
+    {
 
         $CronID = $this->Utility_model->insertCronLogs('getMatchScoreLive');
         if (SPORTS_API_NAME == 'ENTITY') {
@@ -242,7 +252,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to get player points.
       URL: 			/api/utilities/getPlayerPoints
      */
-    public function getPlayerPoints_get() {
+    public function getPlayerPoints_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getPlayerPoints');
         $this->Sports_model->getPlayerPoints($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -252,7 +263,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to get joined player points.
       URL: 			/api/utilities/getJoinedContestPlayerPoints
      */
-    public function getJoinedContestPlayerPoints_get() {
+    public function getJoinedContestPlayerPoints_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
         $this->Sports_model->getJoinedContestPlayerPoints($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -262,7 +274,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to auto set winner.
       URL: 			/api/utilities/setContestWinners
      */
-    public function setContestWinners_get() {
+    public function setContestWinners_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('setContestWinners');
         $this->Sports_model->setContestWinners($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -272,7 +285,8 @@ class Utilities extends API_Controller {
       Description:  Cron jobs to transfer joined contest data (MongoDB To MySQL).
       URL:          /api/utilities/tranferJoinedContestData
      */
-    public function tranferJoinedContestData_get() {
+    public function tranferJoinedContestData_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
         $this->Sports_model->tranferJoinedContestData($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -282,7 +296,8 @@ class Utilities extends API_Controller {
       Description:  Cron jobs to amount distribuit contest amount.
       URL:          /api/utilities/amountDistributeContestWinner
      */
-    public function amountDistributeContestWinner_get() {
+    public function amountDistributeContestWinner_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('amountDistributeContestWinner');
         $this->Sports_model->amountDistributeContestWinner($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -292,7 +307,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to auto cancel contest.
       URL: 			/api/utilities/autoCancelContest
      */
-    public function autoCancelContest_get() {
+    public function autoCancelContest_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('autoCancelContest');
         $this->Sports_model->autoCancelContest($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -302,7 +318,8 @@ class Utilities extends API_Controller {
       Description:  Cron jobs to auto cancel contest refund amount.
       URL:          /api/utilities/refundAmountCancelContest
      */
-    public function refundAmountCancelContest_get() {
+    public function refundAmountCancelContest_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('refundAmountCancelContest');
         $this->Sports_model->refundAmountCancelContest($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -312,7 +329,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to get auction joined player points.
       URL: 			/api/utilities/getAuctionJoinedUserTeamsPlayerPoints
      */
-    public function getAuctionJoinedUserTeamsPlayerPoints_get() {
+    public function getAuctionJoinedUserTeamsPlayerPoints_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('getAuctionJoinedUserTeamsPlayerPoints');
         $this->Sports_model->getAuctionJoinedUserTeamsPlayerPoints($CronID);
         $this->Utility_model->updateCronLogs($CronID);
@@ -322,7 +340,8 @@ class Utilities extends API_Controller {
       Description: 	Cron jobs to auto add minute in every hours.
       URL: 			/api/utilities/liveAuctionAddMinuteInEveryHours
      */
-    public function auctionLiveAddMinuteInEveryHours_get() {
+    public function auctionLiveAddMinuteInEveryHours_get()
+    {
         $CronID = $this->Utility_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
         $this->load->model('AuctionDrafts_model');
         $this->AuctionDrafts_model->auctionLiveAddMinuteInEveryHours($CronID);
@@ -332,9 +351,11 @@ class Utilities extends API_Controller {
     /*
       Description: To get statics
      */
-    public function dashboardStatics_post() {
+    public function dashboardStatics_post()
+    {
         $SiteStatics = new stdClass();
-        $SiteStatics = $this->db->query('SELECT
+        $SiteStatics = $this->db->query(
+            'SELECT
                                             TotalUsers,
                                             TotalContest,
                                             TodayContests,
@@ -411,7 +432,7 @@ class Utilities extends API_Controller {
                                                         `StatusID` = 1
                                                 ) AS PendingWithdraw
                                             ) Total'
-                )->row();
+        )->row();
         $this->Return['Data'] = $SiteStatics;
     }
 
@@ -420,7 +441,8 @@ class Utilities extends API_Controller {
       Description:    To get Total Deposits data
       URL:            /Utilites/getTotalDeposits/
      */
-    public function getTotalDeposits_post() {
+    public function getTotalDeposits_post()
+    {
         /* Get Total Deposit Data */
         $WalletDetails = $this->Utility_model->getTotalDeposit(@$this->Post['Params'], $this->Post, TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($WalletDetails)) {
@@ -434,7 +456,8 @@ class Utilities extends API_Controller {
       URL: 			/utilities/createVirtualUsers/
      */
 
-    public function createVirtualUsers_get() {
+    public function createVirtualUsers_get()
+    {
 
         $tlds = array("com");
         $char = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -484,7 +507,8 @@ class Utilities extends API_Controller {
       URL: 			/utilities/createVirtualUserTeams/
      */
 
-    public function createVirtualUserTeams_get() {
+    public function createVirtualUserTeams_get()
+    {
 
         $AllUsers = $this->Users_model->getUsers('UserID', array('UserTypeID' => 3), true, 1, 6000);
         if (!empty($AllUsers)) {
@@ -523,7 +547,8 @@ class Utilities extends API_Controller {
       URL: 			/testApp/createTeamProcessByMatch/
      */
 
-    public function createTeamProcessByMatch($matchPlayer, $localteam_id, $visitorteam_id, $series_id, $user_id, $match_id) {
+    public function createTeamProcessByMatch($matchPlayer, $localteam_id, $visitorteam_id, $series_id, $user_id, $match_id)
+    {
         $returnArray = array();
         $playerCount = 1;
         $secondPlayerCount = 1;
@@ -564,7 +589,8 @@ class Utilities extends API_Controller {
                             $Arr1[] = $temp;
                             $wicketkeeper++;
                         }
-                    } if ($batsman < 3) {
+                    }
+                    if ($batsman < 3) {
                         if ($playerRole == 'BATSMAN') {
                             $temp['play_role'] = strtoupper($player['PlayerRole']);
                             $temp['play_id'] = $player['PlayerID'];
@@ -575,7 +601,8 @@ class Utilities extends API_Controller {
                             $Arr2[] = $temp;
                             $batsman++;
                         }
-                    }if ($bowler < 2) {
+                    }
+                    if ($bowler < 2) {
                         if ($playerRole == 'BOWLER') {
                             $temp['play_role'] = strtoupper($player['PlayerRole']);
                             $temp['play_id'] = $player['PlayerID'];
@@ -586,7 +613,8 @@ class Utilities extends API_Controller {
                             $Arr3[] = $temp;
                             $bowler++;
                         }
-                    }if ($allrounder < 1) {
+                    }
+                    if ($allrounder < 1) {
                         if ($playerRole == 'ALLROUNDER') {
                             $temp['play_role'] = strtoupper($player['PlayerRole']);
                             $temp['play_id'] = $player['PlayerID'];
@@ -620,7 +648,8 @@ class Utilities extends API_Controller {
                             $Arr5[] = $temp1;
                             $wicketkeeper++;
                         }
-                    } if ($batsman < 4) {
+                    }
+                    if ($batsman < 4) {
                         if ($playerRole == 'BATSMAN') {
                             $temp1['play_role'] = strtoupper($player['PlayerRole']);
                             $temp1['play_id'] = $player['PlayerID'];
@@ -631,7 +660,8 @@ class Utilities extends API_Controller {
                             $Arr6[] = $temp1;
                             $batsman++;
                         }
-                    }if ($bowler < 4) {
+                    }
+                    if ($bowler < 4) {
                         if ($playerRole == 'BOWLER') {
                             $temp1['play_role'] = strtoupper($player['PlayerRole']);
                             $temp1['play_id'] = $player['PlayerID'];
@@ -642,7 +672,8 @@ class Utilities extends API_Controller {
                             $Arr7[] = $temp1;
                             $bowler++;
                         }
-                    }if ($allrounder < 2) {
+                    }
+                    if ($allrounder < 2) {
                         if ($playerRole == 'ALLROUNDER') {
                             $temp1['play_role'] = strtoupper($player['PlayerRole']);
                             $temp1['play_id'] = $player['PlayerID'];
@@ -672,7 +703,8 @@ class Utilities extends API_Controller {
       URL: 			/testApp/autoJoinContestVirtualUser/
      */
 
-    public function autoJoinContestVirtualUser_get() {
+    public function autoJoinContestVirtualUser_get()
+    {
 
         $UtcDateTime = date('Y-m-d H:i');
         $UtcDateTime = date('Y-m-d H:i', strtotime($UtcDateTime));
@@ -766,7 +798,8 @@ class Utilities extends API_Controller {
       Description:  Use to manage Razor Pay Webhook
       URL:      /api/utilities/razorpayWebResponse
      */
-    public function razorpayWebResponse_post() {
+    public function razorpayWebResponse_post()
+    {
 
         $Input = file_get_contents("php://input");
         $PayResponse = json_decode($Input, 1);
@@ -789,11 +822,12 @@ class Utilities extends API_Controller {
             $payment_id = $payResponse['id'];
             /* update profile table */
             $UpdataData = array_filter(
-                    array(
-                        'PaymentGatewayResponse' => @$Input,
-                        'ModifiedDate' => date("Y-m-d H:i:s"),
-                        'StatusID' => 5
-            ));
+                array(
+                    'PaymentGatewayResponse' => @$Input,
+                    'ModifiedDate' => date("Y-m-d H:i:s"),
+                    'StatusID' => 5
+                )
+            );
             $this->db->where('WalletID', $payResponse['notes']['OrderID']);
             $this->db->where('UserID', $payResponse['notes']['UserID']);
             $this->db->where('StatusID', 1);
@@ -892,8 +926,6 @@ class Utilities extends API_Controller {
               $this->db->update('tbl_users_wallet', $UpdataData);
               if ($this->db->affected_rows() <= 0)
               return FALSE;
-              } */
-        }
+              } */ }
     }
-
 }

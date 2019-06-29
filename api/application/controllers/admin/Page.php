@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Page extends API_Controller
 {
@@ -19,19 +19,18 @@ class Page extends API_Controller
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('PageGUID', 'PageGUID', 'trim|required');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-		$PageData = $this->Page_model->getPage('*',
+		$PageData = $this->Page_model->getPage(
+			'*',
 			array("PageGUID" => $this->Post['PageGUID'])
 		);
-		if($PageData){
+		if ($PageData) {
 			$PageData['Content'] = htmlentities($PageData['Content']);
 			$this->Return['Data'] = $PageData;
-		}	
+		}
 	}
-
-
 
 	/*
 	Name: 			savePage
@@ -43,14 +42,10 @@ class Page extends API_Controller
 		$this->form_validation->set_rules('PageGUID', 'PageGUID', 'trim|required');
 		$this->form_validation->set_rules('Title', 'Page Title', 'trim');
 		$this->form_validation->set_rules('Content', 'Content', 'trim');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-		
-		$this->Page_model->editPage($this->Post['PageGUID'], array('Title'=>$this->Post['Title'], 'Content'=>$this->Post['Content']));
 
-		$this->Return['Message']      	=	"Updated successfully."; 
+		$this->Page_model->editPage($this->Post['PageGUID'], array('Title' => $this->Post['Title'], 'Content' => $this->Post['Content']));
+		$this->Return['Message'] =	"Updated successfully.";
 	}
-
-
-
 }

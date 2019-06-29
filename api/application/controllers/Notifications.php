@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Notifications extends API_Controller_Secure
 {
@@ -19,12 +19,11 @@ class Notifications extends API_Controller_Secure
 		$this->form_validation->set_rules('NotificationPatternGUID', 'NotificationPatternGUID', 'trim|callback_validateNotificationPatternGUID');
 		$this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
 		$this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-		// $this->Notification_model->markAllRead($this->SessionUserID); /*mark all notifiction to read.*/
-		$NotificationData = $this->Notification_model->getNotifications($this->SessionUserID, array_merge(array("NotificationPatternID"=>@$this->NotificationPatternID), $this->Post),@$this->Post['PageNo'], @$this->Post['PageSize']);
-		if($NotificationData){
+		$NotificationData = $this->Notification_model->getNotifications($this->SessionUserID, array_merge(array("NotificationPatternID" => @$this->NotificationPatternID), $this->Post), @$this->Post['PageNo'], @$this->Post['PageSize']);
+		if ($NotificationData) {
 			$this->Return['Data'] = $NotificationData['Data'];
 		}
 	}
@@ -36,9 +35,11 @@ class Notifications extends API_Controller_Secure
 	*/
 	public function getNotificationCount_post()
 	{
-		$NotificationData = $this->Notification_model->getNotificationCount('COUNT(NotificationID) TotalUnread',
-			array("UserID"=>$this->SessionUserID, "StatusID"=>1));
-		$this->Return['Data'] = array("TotalUnread"=>$NotificationData['TotalUnread']);
+		$NotificationData = $this->Notification_model->getNotificationCount(
+			'COUNT(NotificationID) TotalUnread',
+			array("UserID" => $this->SessionUserID, "StatusID" => 1)
+		);
+		$this->Return['Data'] = array("TotalUnread" => $NotificationData['TotalUnread']);
 	}
 
 	/*
@@ -59,9 +60,10 @@ class Notifications extends API_Controller_Secure
 	public function markRead_post()
 	{
 		$this->form_validation->set_rules('NotificationID', 'NotificationID', 'trim|required');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
+		/* Validation - ends */
 		
-		$this->Notification_model->markRead($this->SessionUserID,$this->input->post('NotificationID'));
+		$this->Notification_model->markRead($this->SessionUserID, $this->input->post('NotificationID'));
 	}
 
 	/*
@@ -76,22 +78,19 @@ class Notifications extends API_Controller_Secure
 
 	/*Common Validations*/
 	/*------------------------------*/
-	/*------------------------------*/	
+	/*------------------------------*/
 	function validateNotificationPatternGUID($NotificationPatternGUID)
-	{		
-		if(empty($NotificationPatternGUID)){
+	{
+		if (empty($NotificationPatternGUID)) {
 			return TRUE;
 		}
 
 		$NotificationPattern = $this->Notification_model->getNotificationPattern($NotificationPatternGUID);
-		if($NotificationPattern){
+		if ($NotificationPattern) {
 			$this->NotificationPatternID = $NotificationPattern['NotificationPatternID'];
 			return TRUE;
 		}
-		$this->form_validation->set_message('validateNotificationPatternGUID', 'Invalid {field}.');  
+		$this->form_validation->set_message('validateNotificationPatternGUID', 'Invalid {field}.');
 		return FALSE;
 	}
-
-
-
 }

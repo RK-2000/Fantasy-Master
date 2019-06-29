@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Category extends API_Controller_Secure
 {
@@ -8,8 +8,6 @@ class Category extends API_Controller_Secure
 		parent::__construct();
 		$this->load->model('Category_model');
 	}
-
-
 
 	/*
 	Description: 	Use to add new category
@@ -23,27 +21,26 @@ class Category extends API_Controller_Secure
 		$this->form_validation->set_rules('CategoryName', 'Category Name', 'trim|required');
 		$this->form_validation->set_rules('ParentCategoryGUID', 'Parent Category', 'trim|callback_validateEntityGUID[Category,ParentCategoryID]');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-
 		$this->form_validation->set_rules('MediaGUIDs', 'MediaGUIDs', 'trim'); /* Media GUIDs */
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
 		$CategoryData = $this->Category_model->addCategory(@$this->ParentCategoryID, $this->SessionUserID, $this->CategoryTypeID, $this->Post['CategoryName'], $this->StatusID);
-		if($CategoryData){
+		if ($CategoryData) {
 			$this->Return['Data']['CategoryGUID'] = $CategoryData['CategoryGUID'];
 
 			/* check for media present - associate media with this Post */
-			if(!empty($this->Post['MediaGUIDs'])){
+			if (!empty($this->Post['MediaGUIDs'])) {
 				$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
-				foreach($MediaGUIDsArray as $MediaGUID){
-					$EntityData=$this->Entity_model->getEntity('E.EntityID MediaID',array('EntityGUID'=>$MediaGUID, 'EntityTypeID'=>4));
-					if ($EntityData){
+				foreach ($MediaGUIDsArray as $MediaGUID) {
+					$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 4));
+					if ($EntityData) {
 						$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $CategoryData['CategoryID']);
 					}
 				}
 			}
 			/* check for media present - associate media with this Post - ends */
-			$this->Return['Message']      	=	"New category added successfully."; 
+			$this->Return['Message'] =	"New category added successfully.";
 		}
 	}
 
@@ -65,17 +62,17 @@ class Category extends API_Controller_Secure
 		$this->form_validation->set_rules('CategoryName', 'Category Name', 'trim|required');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
 
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-		
-		$this->Category_model->editCategory($this->CategoryID, array('CategoryName'=>$this->Post['CategoryName'], 'StatusID'=>$this->StatusID));
+
+		$this->Category_model->editCategory($this->CategoryID, array('CategoryName' => $this->Post['CategoryName'], 'StatusID' => $this->StatusID));
 
 		/* check for media present - associate media with this Post */
-		if(!empty($this->Post['MediaGUIDs'])){
+		if (!empty($this->Post['MediaGUIDs'])) {
 			$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
-			foreach($MediaGUIDsArray as $MediaGUID){
-				$EntityData=$this->Entity_model->getEntity('E.EntityID MediaID',array('EntityGUID'=>$MediaGUID, 'EntityTypeID'=>4));
-				if ($EntityData){
+			foreach ($MediaGUIDsArray as $MediaGUID) {
+				$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 4));
+				if ($EntityData) {
 					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->CategoryID);
 				}
 			}
@@ -83,10 +80,12 @@ class Category extends API_Controller_Secure
 		/* check for media present - associate media with this Post - ends */
 
 
-		$CategoryData = $this->Category_model->getCategories('',
-			array("CategoryID"=>$this->CategoryID));
+		$CategoryData = $this->Category_model->getCategories(
+			'',
+			array("CategoryID" => $this->CategoryID)
+		);
 		$this->Return['Data'] = $CategoryData;
-		$this->Return['Message']      	=	"Category updated successfully."; 
+		$this->Return['Message']      	=	"Category updated successfully.";
 	}
 
 
@@ -98,13 +97,13 @@ class Category extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('ParentCategoryGUID', 'Parent Category', 'trim|callback_validateEntityGUID[Category,ParentCategoryID]');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
 
-		$CategoryTypes = $this->Category_model->getCategoryTypes('',array("ParentCategoryID"=>@$this->ParentCategoryID),true,1,250);
-		if($CategoryTypes){
-			$Return['CategoryTypes'] = $CategoryTypes['Data']['Records'];			
+		$CategoryTypes = $this->Category_model->getCategoryTypes('', array("ParentCategoryID" => @$this->ParentCategoryID), true, 1, 250);
+		if ($CategoryTypes) {
+			$Return['CategoryTypes'] = $CategoryTypes['Data']['Records'];
 		}
 		$this->Return['Data'] = $Return;
 	}

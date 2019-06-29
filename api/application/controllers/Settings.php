@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Settings extends API_Controller_Secure
 {
@@ -16,9 +16,9 @@ class Settings extends API_Controller_Secure
 	public function getSettings_post()
 	{
 		$SettingData = $this->Settings_model->getSettings($this->SessionUserID);
-		if($SettingData){
+		if ($SettingData) {
 			$this->Return['Data'] = $SettingData;
-		}	
+		}
 	}
 
 
@@ -30,12 +30,8 @@ class Settings extends API_Controller_Secure
 	{
 		$this->Settings_model->updateSettings($this->SessionUserID, $this->Post);
 		$SettingData = $this->Settings_model->getSettings($this->SessionUserID);
-		if($SettingData){
+		if ($SettingData) {
 			$this->Return['Data'] = $SettingData;
-		}	
+		}
 	}
-
-
-
-
 }

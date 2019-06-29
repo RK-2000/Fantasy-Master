@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Users extends API_Controller_Secure {
+class Users extends API_Controller_Secure
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
@@ -14,19 +16,21 @@ class Users extends API_Controller_Secure {
       URL: 			/user/accountDeactivate/
      */
 
-    public function accountDeactivate_post() {
+    public function accountDeactivate_post()
+    {
         $this->Entity_model->updateEntityInfo($this->SessionUserID, array("StatusID" => 6));
         $this->Users_model->deleteSessions($this->SessionUserID);
         $this->Return['Message'] = "Your account has been deactivated.";
     }
 
     /*
-      Name: 			toggleAccountDisplay
+      Name: 		toggleAccountDisplay
       Description: 	Use to hide account to others.
       URL: 			/user/toggleAccountDisplay/
      */
 
-    public function toggleAccountDisplay_post() {
+    public function toggleAccountDisplay_post()
+    {
         $UserData = $this->Users_model->getUsers('StatusID', array('UserID' => $this->SessionUserID));
         if ($UserData['StatusID'] == 2) {
             $this->Entity_model->updateEntityInfo($this->SessionUserID, array("StatusID" => 8));
@@ -36,12 +40,13 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			search
+      Name: 		search
       Description: 	Use to search users
       URL: 			/api/users/search
      */
 
-    public function search_post() {
+    public function search_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Friend,Follow,Followers,Blocked]');
@@ -60,19 +65,20 @@ class Users extends API_Controller_Secure {
             'SpecialtyGUIDs' => @$this->Post['SpecialtyGUIDs'],
             'UserTypeID' => @$this->Post['UserTypeID'],
             'StatusID' => 2
-                ), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        ), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if ($UserData) {
             $this->Return['Data'] = $UserData['Data'];
         }
     }
 
     /*
-      Name: 			getProfile
+      Name: 		getProfile
       Description: 	Use to get user profile info.
       URL: 			/api/user/getProfile
      */
 
-    public function getProfile_post() {
+    public function getProfile_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->validation($this);  /* Run validation */
@@ -87,21 +93,20 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			updateUserInfo
+      Name: 		updateUserInfo
       Description: 	Use to update user profile info.
       URL: 			/user/updateProfile/
      */
 
-    public function updateUserInfo_post() {
+    public function updateUserInfo_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email|callback_validateEmail[' . $this->Post['SessionKey'] . ']');
         $this->form_validation->set_rules('Username', 'Username', 'trim|alpha_dash|callback_validateUsername[' . $this->Post['SessionKey'] . ']');
-
         $this->form_validation->set_rules('Gender', 'Gender', 'trim|in_list[Male,Female,Other]');
         $this->form_validation->set_rules('BirthDate', 'BirthDate', 'trim|callback_validateDate');
-        
-        if(@$this->Post['PhoneNumber']){
-          $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|is_unique[tbl_users.PhoneNumber]|callback_validatePhoneNumber[' . $this->Post['SessionKey'] . ']');
+        if (@$this->Post['PhoneNumber']) {
+            $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|is_unique[tbl_users.PhoneNumber]|callback_validatePhoneNumber[' . $this->Post['SessionKey'] . ']');
         }
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
@@ -111,27 +116,14 @@ class Users extends API_Controller_Secure {
         $this->Return['Message'] = "Profile successfully updated.";
     }
 
-    /**
-     * Function Name: validatePhoneVerification
-     * Description:   To validate same phone already verified
-     */
-    public function validatePhoneVerification($PhoneNumber) {
-        
-        $User = $this->Users_model->getUsers('PhoneNumber',array('PhoneNumber' => $PhoneNumber),FALSE,1,1);
-        if(!empty($User)){
-             $this->form_validation->set_message('validatePhoneVerification', 'Current phone number already verified.');
-           return FALSE; 
-        }
-        return TRUE;
-    }
-
     /*
-      Name: 			changePassword
+      Name: 		changePassword
       Description: 	Use to change account login password by user.
       URL: 			/api/users/changePassword
      */
 
-    public function changePassword_post() {
+    public function changePassword_post()
+    {
         /* Validation section */
         if (!$this->input->post('UserGUID')) {
             $this->form_validation->set_rules('CurrentPassword', 'Current Password', 'trim|callback_validatePassword');
@@ -142,7 +134,7 @@ class Users extends API_Controller_Secure {
         /* Validation - ends */
         if (!empty($this->input->post('UserGUID'))) {
             $Request = $this->Users_model->updateUserLoginInfo($this->UserID, array("Password" => $this->Post['Password']), DEFAULT_SOURCE_ID);
-        }else{
+        } else {
             $Request = $this->Users_model->updateUserLoginInfo($this->SessionUserID, array("Password" => $this->Post['Password']), DEFAULT_SOURCE_ID);
         }
         if ($Request) {
@@ -151,17 +143,16 @@ class Users extends API_Controller_Secure {
     }
 
     /*
-      Name: 			referEarn
+      Name: 		referEarn
       Description: 	Use to refer & earn user
       URL: 			/api/users/referEarn
      */
-
-    public function referEarn_post() {
+    public function referEarn_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('ReferType', 'Refer Type', 'trim|required|in_list[Phone,Email]');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required|callback_validateAlreadyRegistered[Phone]' : ''));
         $this->form_validation->set_rules('Email', 'Email', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Email' ? '|required|valid_email|callback_validateAlreadyRegistered[Email]' : ''));
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -169,14 +160,18 @@ class Users extends API_Controller_Secure {
         $this->Return['Message'] = "User successfully invited.";
     }
 
-
-    public function InviteContest_post() {
+    /*
+      Name: 		inviteContest
+      Description: 	Use to invite contest
+      URL: 			/api/users/inviteContest
+     */
+    public function inviteContest_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('ReferType', 'Refer Type', 'trim|required|in_list[Phone,Email]');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required' : ''));
         $this->form_validation->set_rules('Email', 'Email', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Email' ? '|required|valid_email' : ''));
         $this->form_validation->set_rules('InviteCode', 'InviteCode', 'trim|required');
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -184,11 +179,10 @@ class Users extends API_Controller_Secure {
         $this->Return['Message'] = "Successfully invited.";
     }
 
-
     /* -----Validation Functions----- */
     /* ------------------------------ */
-
-    function validatePassword($Password) {
+    function validatePassword($Password)
+    {
         if (empty($Password)) {
             $this->form_validation->set_message('validatePassword', '{field} is required.');
             return FALSE;
@@ -202,12 +196,28 @@ class Users extends API_Controller_Secure {
         }
     }
 
+
+    /**
+     * Function Name: validatePhoneVerification
+     * Description:   To validate same phone already verified
+     */
+    public function validatePhoneVerification($PhoneNumber)
+    {
+        $Query = $this->db->query('SELECT PhoneNumber FROM tbl_users WHERE PhoneNumber = "'.$PhoneNumber.'" LIMIT 1');
+        if ($Query->num_rows() > 0) {
+            $this->form_validation->set_message('validatePhoneVerification', 'Current phone number already verified.');
+            return FALSE;
+        }
+        return TRUE;
+    }
+
     /**
      * Function Name: validateAlreadyRegistered
      * Description:   To validate already registered number or email
      */
-    function validateAlreadyRegistered($Value, $FieldValue) {
-        $Query = ($FieldValue == 'Email') ? 'SELECT * FROM `tbl_users` WHERE `Email` = "' . $Value . '" OR `EmailForChange` = "' . $Value . '" LIMIT 1' : 'SELECT * FROM `tbl_users` WHERE `PhoneNumber` = "' . $Value . '" OR `PhoneNumberForChange` = "' . $Value . '" LIMIT 1';
+    function validateAlreadyRegistered($Value, $FieldValue)
+    {
+        $Query = ($FieldValue == 'Email') ? 'SELECT Username FROM `tbl_users` WHERE `Email` = "' . $Value . '" OR `EmailForChange` = "' . $Value . '" LIMIT 1' : 'SELECT Username FROM `tbl_users` WHERE `PhoneNumber` = "' . $Value . '" OR `PhoneNumberForChange` = "' . $Value . '" LIMIT 1';
         if ($this->db->query($Query)->num_rows() > 0) {
             $this->form_validation->set_message('validateAlreadyRegistered', ($FieldValue == 'Email') ? 'Email is already registered' : 'Phone Number is already registered');
             return FALSE;
@@ -215,46 +225,46 @@ class Users extends API_Controller_Secure {
             return TRUE;
         }
     }
+
     /* To get Avatars */
-    public function getAvtars_post(){
-        
+    public function getAvtars_post()
+    {
         $Avatars = array();
         $avatarObj1 = new StdClass();
         $avatarObj1->AvatarId = '1';
         $avatarObj1->AvatarImg = '1.png';
-        $avatarObj1->AvatarURL = base_url().'uploads/profile/picture/1.png';
-        array_push($Avatars,$avatarObj1);
+        $avatarObj1->AvatarURL = base_url() . 'uploads/profile/picture/1.png';
+        array_push($Avatars, $avatarObj1);
         $avatarObj2 = new StdClass();
         $avatarObj2->AvatarId = '2';
         $avatarObj2->AvatarImg = '2.png';
-        $avatarObj2->AvatarURL = base_url().'uploads/profile/picture/2.png';
-        array_push($Avatars,$avatarObj2);
+        $avatarObj2->AvatarURL = base_url() . 'uploads/profile/picture/2.png';
+        array_push($Avatars, $avatarObj2);
         $avatarObj3 = new StdClass();
         $avatarObj3->AvatarId = '3';
         $avatarObj3->AvatarImg = '3.png';
-        $avatarObj3->AvatarURL = base_url().'uploads/profile/picture/3.png';
-        array_push($Avatars,$avatarObj3);
+        $avatarObj3->AvatarURL = base_url() . 'uploads/profile/picture/3.png';
+        array_push($Avatars, $avatarObj3);
         $avatarObj4 = new StdClass();
         $avatarObj4->AvatarId = '4';
         $avatarObj4->AvatarImg = '4.png';
-        $avatarObj4->AvatarURL = base_url().'uploads/profile/picture/4.png';
-        array_push($Avatars,$avatarObj4);
+        $avatarObj4->AvatarURL = base_url() . 'uploads/profile/picture/4.png';
+        array_push($Avatars, $avatarObj4);
         $avatarObj5 = new StdClass();
         $avatarObj5->AvatarId = '5';
         $avatarObj5->AvatarImg = '5.png';
-        $avatarObj5->AvatarURL = base_url().'uploads/profile/picture/5.png';
-        array_push($Avatars,$avatarObj5);
+        $avatarObj5->AvatarURL = base_url() . 'uploads/profile/picture/5.png';
+        array_push($Avatars, $avatarObj5);
         $avatarObj6 = new StdClass();
         $avatarObj6->AvatarId = '6';
         $avatarObj6->AvatarImg = '6.png';
-        $avatarObj6->AvatarURL = base_url().'uploads/profile/picture/6.png';
-        array_push($Avatars,$avatarObj6);
+        $avatarObj6->AvatarURL = base_url() . 'uploads/profile/picture/6.png';
+        array_push($Avatars, $avatarObj6);
         $avatarObj7 = new StdClass();
         $avatarObj7->AvatarId = '7';
         $avatarObj7->AvatarImg = '7.png';
-        $avatarObj7->AvatarURL = base_url().'uploads/profile/picture/7.png';
-        array_push($Avatars,$avatarObj7);
-        
-        $this->Return['Data']['Records'] = $Avatars;        
+        $avatarObj7->AvatarURL = base_url() . 'uploads/profile/picture/7.png';
+        array_push($Avatars, $avatarObj7);
+        $this->Return['Data']['Records'] = $Avatars;
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Category extends API_Controller {
+class Category extends API_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('Category_model');
     }
@@ -15,7 +17,8 @@ class Category extends API_Controller {
       Input (Sample JSON):
      */
 
-    public function getAttributes_post() {
+    public function getAttributes_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('CategoryGUID', 'CategoryGUID', 'trim|required|callback_validateEntityGUID[Category,CategoryID]');
         $this->form_validation->validation($this);  /* Run validation */
@@ -37,13 +40,12 @@ class Category extends API_Controller {
       Input (Sample JSON):
      */
 
-    public function getCategories_post() {
+    public function getCategories_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('CategoryTypeName', 'CategoryTypeName', 'trim|callback_validateCategoryTypeName');
         $this->form_validation->set_rules('StoreGUID', 'StoreGUID', 'trim|callback_validateEntityGUID[Store,StoreID]');
-
         $this->form_validation->set_rules('ParentCategoryGUID', 'ParentCategoryGUID', 'trim|callback_validateEntityGUID[Category,ParentCategoryID]');
-
         $this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
         $this->form_validation->validation($this);  /* Run validation */
@@ -61,7 +63,8 @@ class Category extends API_Controller {
       Input (Sample JSON):
      */
 
-    public function getCategory_post() {
+    public function getCategory_post()
+    {
         /* Validation section */
         $this->form_validation->set_rules('CategoryGUID', 'CategoryGUID', 'trim|required|callback_validateEntityGUID[Category,CategoryID]');
         $this->form_validation->validation($this);  /* Run validation */
@@ -72,5 +75,4 @@ class Category extends API_Controller {
             $this->Return['Data'] = $CategoryData;
         }
     }
-
 }

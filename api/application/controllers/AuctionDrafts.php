@@ -1093,5 +1093,3 @@ class AuctionDrafts extends API_Controller {
     }
 
 }
-
-?>
