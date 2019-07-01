@@ -596,31 +596,26 @@ class Contest_model extends CI_Model {
       Description: Invite contest
      */
     function inviteContest($Input = array(), $SessionUserID) {
-        $UserData = $this->Users_model->getUsers('FirstName', array('UserID' => $SessionUserID));
-        $this->db->select('C.MatchID,TL.TeamName AS TeamNameLocal,TV.TeamName AS TeamNameVisitor,TL.TeamNameShort AS TeamNameShortLocal,TV.TeamNameShort AS TeamNameShortVisitor');
-        $this->db->from('sports_contest C, sports_matches M, sports_teams TL, sports_teams TV');
-        $this->db->where("C.UserInvitationCode", $Input['InviteCode']);
-        $this->db->where("M.MatchID", "C.MatchID", false);
-        $this->db->where("M.TeamIDLocal", "TL.TeamID", false);
-        $this->db->where("M.TeamIDVisitor", "TV.TeamID", false);
-        $Query = $this->db->get();
-        $MatchName = $Query->result_array();
+
+        /* Invite Users */
         if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
-            /* Send referral Email to User with referral url */
+
+            /* Send invite contest Email to User with invite contest url */
             send_mail(array(
-                'emailTo' => $Input['Email'],
-                'template_id' => 'd-21c013b7011144ac9ab7315081258881',
-                'Subject' => 'Contest Invitation - ' . SITE_NAME,
-                "Name" => $UserData['FirstName'],
-                "InviteCode" => $Input['InviteCode'],
-                "TeamNameLocal" => $MatchName[0]['TeamNameShortLocal'],
-                "TeamNameVisitor" => $MatchName[0]['TeamNameShortVisitor']
-            ));
+                    'emailTo'         => $Input['Email'],
+                    'template_id'     => 'd-21c013b7011144ac9ab7315081258881',
+                    'Subject'         => 'Contest Invitation - ' . SITE_NAME,
+                    "Name"            => $this->db->query('SELECT FirstName FROM tbl_users WHERE UserID = '.$SessionUserID.' LIMIT 1')->row()->FirstName,
+                    "InviteCode"      => $Input['InviteCode'],
+                    "TeamNameLocal"   => $Input['TeamNameShortLocal'],
+                    "TeamNameVisitor" => $Input['TeamNameShortVisitor']
+                ));
         } else if ($Input['ReferType'] == 'Phone' && !empty($Input['PhoneNumber'])) {
-            /* Send referral SMS to User with referral url */
+
+            /* Send invite contest SMS to User with invite contest url */
             $this->Utility_model->sendSMS(array(
                 'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Put your cricket knowledge to test and play with me on ".SITE_NAME.". Click https://fsl11.com/download-app to download the ".SITE_NAME." app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $MatchName[0]['TeamNameShortLocal'] . " V/S " . $MatchName[0]['TeamNameShortVisitor'] . " Match."
+                'Text' => "Put your cricket knowledge to test and play with me on ".SITE_NAME.". Click ".SITE_HOST . ROOT_FOLDER."download-app to download the ".SITE_NAME." app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $Input['TeamNameShortLocal'] . " V/S " . $Input['TeamNameShortVisitor'] . " Match."
             ));
         }
     }

@@ -26,8 +26,6 @@ class Users extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        /* check for media present - associate media with this Post - ends */
-
         $UsersData = $this->Users_model->getUsers('
 			U.UserID,	
 			U.Username,
@@ -102,10 +100,10 @@ class Users extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => $this->Post['IsPrivacyNameDisplay']));
+        $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => @$this->Post['IsPrivacyNameDisplay']));
         $this->Entity_model->updateEntityInfo($this->UserID, array("StatusID" => $this->StatusID));
         $this->Return['Data'] = $this->Users_model->getUsers('FirstName,LastName,Email,ProfilePic,Status', array("UserID" => $this->UserID));
-        $this->Return['Message'] = "Status has been changed.";
+        $this->Return['Message'] = "Success.";
     }
 
     /*
@@ -116,28 +114,15 @@ class Users extends API_Controller_Secure
     {
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-        $this->form_validation->set_rules('VetificationType', 'VetificationType', 'trim|required');
-        if ($this->Post['VetificationType'] == 'PAN') {
-            $this->form_validation->set_rules('PanStatus', 'PanStatus', 'trim|required|callback_validateStatus');
-        }
-        if ($this->Post['VetificationType'] == 'BANK') {
-            $this->form_validation->set_rules('BankStatus', 'BankStatus', 'trim|required|callback_validateStatus');
-        }
+        $this->form_validation->set_rules('VetificationType', 'VetificationType', 'trim|required|in_list[PAN,BANK]');
+        $this->form_validation->set_rules('PanStatus', 'PanStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'PAN' ? '|required|callback_validateStatus' : ''));
+        $this->form_validation->set_rules('BankStatus', 'BankStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'BANK' ? '|required|callback_validateStatus' : ''));
+        $this->form_validation->set_rules('Comments', 'Comments', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
-
         /* Validation - ends */
-        if ($this->Post['VetificationType'] == 'PAN' && !empty($this->Post['PanStatus'])) {
-            $UpdateData = array("PanStatus" => $this->StatusID);
-        }
-        if ($this->Post['VetificationType'] == 'BANK' && !empty($this->Post['BankStatus'])) {
-            $UpdateData = array("BankStatus" => $this->StatusID);
-        }
-        if (!empty($this->Post['Comments'])) {
-            $UpdateData['Comments'] = $this->Post['Comments'];
-        }
 
-        $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-        $this->Users_model->updateUserInfo($this->UserID, $UpdateData);
+        /* Update User Details */
+        $this->Users_model->updateUserInfo($this->UserID, array('PanStatus' => @$this->StatusID,'BankStatus' => @$this->StatusID,'Comments' => @$this->Post['Comments']));
 
         /* Get User Data */
         $UserData = $this->Users_model->getUsers('FirstName,LastName,Email,ProfilePic,Status,PanStatus,BankStatus,PhoneNumber', array("UserID" => $this->UserID));
@@ -146,12 +131,10 @@ class Users extends API_Controller_Secure
         if ($UserData['PanStatus'] == 'Verified' && $UserData['BankStatus'] == 'Verified' && !empty($UserData['PhoneNumber'])) {
             $BonusData = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "VerificationBonus" LIMIT 1');
             if ($BonusData->row()->StatusID == 2) {
-                $TransactionID = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
                 $WalletData = array(
-                    "Amount" => $BonusData->row()->ConfigTypeValue,
+                    "Amount"    => $BonusData->row()->ConfigTypeValue,
                     "CashBonus" => $BonusData->row()->ConfigTypeValue,
                     "TransactionType" => 'Cr',
-                    "TransactionID" => $TransactionID,
                     "Narration" => 'Verification Bonus',
                     "EntryDate" => date("Y-m-d H:i:s")
                 );
@@ -159,7 +142,7 @@ class Users extends API_Controller_Secure
             }
         }
         $this->Return['Data'] = $UserData;
-        $this->Return['Message'] = "Status has been changed.";
+        $this->Return['Message'] = "Success.";
     }
 
     /*
@@ -262,27 +245,6 @@ class Users extends API_Controller_Secure
 
         /* Get Withdrawal Data */
         $WithdrawalsData = $this->Users_model->getWithdrawals(@$this->Post['Params'], array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-        if (!empty($WithdrawalsData)) {
-            $this->Return['Data'] = $WithdrawalsData['Data'];
-        }
-    }
-
-    /*
-      Name: 		getWithdrawal
-      Description: 	To get Withdrawal data
-      URL: 			/admin/users/getWithdrawals/
-     */
-
-    public function getWithdrawal_post()
-    {
-        $this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
-        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
-        $this->form_validation->validation($this);  /* Run validation */
-
-        /* Get Withdrawal Data */
-        $WithdrawalsData = $this->Users_model->getWithdrawals(@$this->Post['Params'], array_merge($this->Post, array('WithdrawalID' => @$this->Post['WithdrawalID'])), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($WithdrawalsData)) {
             $this->Return['Data'] = $WithdrawalsData['Data'];
         }
@@ -396,22 +358,22 @@ class Users extends API_Controller_Secure
     }
 
     /*
-      Description: 	Use to update user profile info.
-      URL: 			/admin/users/changeStatus/
-     */
-
-    public function changeWithdrawalStatus_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required');
-        $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->validation($this);  /* Run validation */
+	Description: 	Use to update user profile info.
+	URL: 			/api_admin/entity/changeWithdrawalStatus/	
+	*/
+	public function changeWithdrawalStatus_post()
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+		$this->form_validation->set_rules('Comments', 'Comments', 'trim' . (!empty($this->Post['Status']) && $this->Post['Status'] == 'Rejected' ? '|required' : ''));
+		$this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required|callback_validateWithdrawalStatus');
+		$this->form_validation->validation($this);  /* Run validation */	
         /* Validation - ends */
-
-        $this->Users_model->updateWithdrawal(@$this->Post['WithdrawalID'], array("StatusID" => $this->StatusID, "Comments" => $this->Post['Comments']));
-        $this->Return['Data'] = $this->Users_model->getWithdrawals(@$this->Post['Params'], array("WithdrawalID" => @$this->Post['WithdrawalID']));
-        $this->Return['Message'] = "Status has been changed.";
-    }
+        
+		$this->Users_model->updateWithdrawal(array_merge(@$this->Post, array("StatusID"=>$this->StatusID)));
+		$this->Return['Data']=$this->Users_model->getWithdrawals(@$this->Post['Params'],array("WithdrawalID" => @$this->Post['WithdrawalID']));
+		$this->Return['Message'] =	"Status has been changed.";
+	}
 
     /*
       Description : To add cash bonus to user
@@ -424,6 +386,8 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
         $this->Users_model->addToWallet(array_merge($this->Post, array('CashBonus' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
         $this->Return['Message'] = "Cash bonus added Successfully.";
     }
@@ -439,8 +403,10 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
         $this->Users_model->addToWallet(array_merge($this->Post, array('WalletAmount' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
-        $this->Return['Message'] = "Cash added Successfully.";
+        $this->Return['Message'] = "Deposit added Successfully.";
     }
 
     /*
@@ -461,4 +427,30 @@ class Users extends API_Controller_Secure
             $this->Return['Data'] = $ReferredUsersData['Data'];
         }
     }
+
+
+    /**
+     * Function Name: validateWithdrawalStatus
+     * Description:   To validate withdrawal details
+     */
+    public function validateWithdrawalStatus($WithdrawalID) {
+
+		/* Validate Withdrawal ID */
+		$WithdrawalData = $this->Users_model->getWithdrawals('Status,Amount,UserID,Email', array('WithdrawalID' => $WithdrawalID));
+        if (!$WithdrawalData) {
+            $this->form_validation->set_message('validateWithdrawalStatus', 'Invalid Withdrawal ID.');
+            return FALSE;
+		}
+
+		/* Check Withdrawal request is pending ? */
+		if ($WithdrawalData['Status'] != "Pending") {
+			$this->form_validation->set_message('validateWithdrawalStatus', 'You can update only Pending withdrawal request.');
+			return FALSE;
+		}
+		$this->Post['WithdrawalAmount'] = round($WithdrawalData['Amount'], 1);
+		$this->Post['WithdrawalUserID'] = $WithdrawalData['UserID'];
+		$this->Post['UserFullName']     = $WithdrawalData['FullName'];
+		$this->Post['UserEmail']        = $WithdrawalData['Email'];
+		return TRUE;
+	}
 }

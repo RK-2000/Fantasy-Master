@@ -14,6 +14,7 @@ class Series extends API_Controller_Secure
 	*/
 	public function getSeries_post()
     {
+		$this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
@@ -28,32 +29,8 @@ class Series extends API_Controller_Secure
     }
 
 	/*
-	Description: 	use to get list of filters
-	URL: 			/api_admin/entity/getFilterData	
-	*/
-	public function getFilterData_post()
-	{
-		/* Validation section */
-		$this->form_validation->set_rules('SeriesGUID', 'Series', 'trim|callback_validateEntityGUID[Series,SeriesGUID]');
-		$this->form_validation->validation($this);  /* Run validation */		
-		/* Validation - ends */
-
-		$CategoryTypes = $this->Category_model->getCategoryTypes('',array("ParentCategoryID"=>@$this->ParentCategoryID),true,1,250);
-		if($CategoryTypes){
-			$Return['CategoryTypes'] = $CategoryTypes['Data']['Records'];			
-		}
-		$this->Return['Data'] = $Return;
-		$SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'],array());
-		if(!empty($SeriesData)){
-			$Return['SeiresData'] = $SeriesData['Data']['Records']; 
-		}
-		$this->Return['Data'] = $Return;
-
-	}
-
-		/*
-	Description: 	Use to update series status.
-	URL: 			/api_admin/entity/changeStatus/	
+		Description: 	Use to update series status.
+		URL: 			/admin/entity/changeStatus/	
 	*/
 	public function changeStatus_post()
 	{
@@ -61,9 +38,11 @@ class Series extends API_Controller_Secure
 		$this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
 		$this->form_validation->set_rules('AuctionDraftIsPlayed', 'AuctionDraftIsPlayed', 'trim|required');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->set_rules('AuctionDraftIsPlayed', 'AuctionDraftIsPlayed', 'trim' . (IS_AUCTION ? '|required' : ''));
+		$this->form_validation->validation($this);  /* Run validation */
+
 		/* Validation - ends */
-		if (!empty($this->Post['DraftPlayerSelectionCriteria'])) {
+		if (IS_AUCTION && !empty($this->Post['DraftPlayerSelectionCriteria'])) {
 			$DraftPlayerSelectionCriteria = array(
 												"Wk"	=> $this->Post['DraftPlayerSelectionCriteria'][0],
 												"Bat"	=> $this->Post['DraftPlayerSelectionCriteria'][1],
@@ -72,23 +51,8 @@ class Series extends API_Controller_Secure
 											);
 		}
 		$this->Entity_model->updateEntityInfo($this->SeriesID, array("StatusID"=>$this->StatusID,"AuctionDraftIsPlayed"=>$this->AuctionDraftIsPlayed));
-		$this->Sports_model->updateAuctionPlayStatus($this->SeriesID, array("SeriesName"=>$this->Post['SeriesName'],"AuctionDraftIsPlayed"=>$this->Post['AuctionDraftIsPlayed'],"DraftUserLimit" => $this->Post['DraftUserLimit'],"DraftTeamPlayerLimit" => $this->Post['DraftTeamPlayerLimit'],"DraftPlayerSelectionCriteria" => json_encode($DraftPlayerSelectionCriteria)));
+		$this->Sports_model->updateAuctionPlayStatus($this->SeriesID, array("SeriesName"=>$this->Post['SeriesName'],"AuctionDraftIsPlayed"=>@$this->Post['AuctionDraftIsPlayed'],"DraftUserLimit" => @$this->Post['DraftUserLimit'],"DraftTeamPlayerLimit" => @$this->Post['DraftTeamPlayerLimit'],"DraftPlayerSelectionCriteria" => @json_encode(@$DraftPlayerSelectionCriteria)));
 		$this->Return['Data']=$this->Sports_model->getSeries('SeriesName,SeriesGUID,StatusID,Status,SeriesStartDate,SeriesEndDate',array('SeriesID' => $this->SeriesID),FALSE,0);
-		$this->Return['Message']      	=	"Status has been changed.";
-	}
-	/*
-	Description : use to get series details
-	URL 		: /api_admin/series/getSeriesDetails		  
-	*/
-
-	public function getSeriesDetails_post(){
-		$this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
-		$this->form_validation->validation($this);  /* Run validation */	
-
-		/* Get Contests Data */
-		$SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'],array_merge($this->Post, array('SeriesID' => $this->SeriesID)),FALSE,0);
-		if(!empty($SeriesData)){
-			$this->Return['Data'] = $SeriesData;
-		}
+		$this->Return['Message'] =	"Success.";
 	}
 }

@@ -94,6 +94,7 @@ define('SITE_NAME', 'FSL11');
 define('SITE_CONTACT_EMAIL', 'mwadmin@mailinator.com');
 define('MULTISESSION', true);
 define('PHONE_NO_VERIFICATION', true);
+define('IS_AUCTION', true);
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy */
 define('SPORTS_FILE_PATH', FCPATH.'uploads/sports.txt');
 define('SPORTS_API_NAME', 'CRICKETAPI');

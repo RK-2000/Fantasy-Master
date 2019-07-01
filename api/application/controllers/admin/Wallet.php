@@ -28,14 +28,6 @@ class Wallet extends API_Controller
 		}
 	}
 
-	public function getTotalDeposits_post()
-	{
-		$DepositDetails = $this->Users_model->getDeposits($this->Post, @$this->Post['PageNo'], @$this->Post['PageSize']);
-		if (!empty($DepositDetails)) {
-			$this->Return['Data'] = $DepositDetails['Data'];
-		}
-	}
-
 	/*
 	Name: 			getWithdrawals
 	Description: 	To get Withdrawal data

@@ -66,11 +66,11 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE+module+'/edit_form.htm?'+Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL+'admin/series/getSeriesDetails','SeriesGUID='+SeriesGUID+'&Params=DraftUserLimit,DraftTeamPlayerLimit,DraftPlayerSelectionCriteria,SeriesName,SeriesGUID,AuctionDraftIsPlayed,Status&SessionKey='+SessionKey, contentType).then(function(response) {
+        $http.post(API_URL+'admin/series/getSeries','SeriesGUID='+SeriesGUID+'&Params=DraftUserLimit,DraftTeamPlayerLimit,DraftPlayerSelectionCriteria,SeriesName,SeriesGUID,AuctionDraftIsPlayed,Status&SessionKey='+SessionKey, contentType).then(function(response) {
             var response = response.data;
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
+                $scope.formData = response.Data.Records[0]
                 $('#edit_model').modal({show:true});
                 $timeout(function(){            
                    $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");

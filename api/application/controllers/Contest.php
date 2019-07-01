@@ -382,9 +382,9 @@ class Contest extends API_Controller_Secure {
     {
         /* Validation section */
         $this->form_validation->set_rules('ReferType', 'Refer Type', 'trim|required|in_list[Phone,Email]');
-        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required' : ''));
+        $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required' : ''));
         $this->form_validation->set_rules('Email', 'Email', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Email' ? '|required|valid_email' : ''));
-        $this->form_validation->set_rules('InviteCode', 'InviteCode', 'trim|required');
+        $this->form_validation->set_rules('UserInvitationCode', 'User Invitation Code', 'trim|required|callback_validateInviteCode');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -392,8 +392,18 @@ class Contest extends API_Controller_Secure {
         $this->Return['Message'] = "Successfully invited.";
     }
 
+        /*
+      Description:  Use to create pre draft contest
+      URL:      /api/utilities/createPreContest
+     */
+    public function createPreContest_get()
+    {
+        $this->load->model('PreContest_model');
+        $this->PreContest_model->createPreContest();
+    }
+
     /*
-      Name: 			addUserTeam
+      Name: 		addUserTeam
       Description: 	Use to create team to system.
       URL: 			/api_admin/contest/addUserTeam/
      */
@@ -831,6 +841,25 @@ class Contest extends API_Controller_Secure {
     }
 
     /**
+     * Function Name: validateInviteCode
+     * Description:   To validate contest invite code
+     */
+    public function validateInviteCode($UserInvitationCode) {
+        $ContestData = $this->Contest_model->getContests('Status,TeamNameShortLocal,TeamNameShortVisitor',array('UserInvitationCode' => $UserInvitationCode));
+        if (!$ContestData) {
+            $this->form_validation->set_message('validateInviteCode', 'Invalid Contest invite code.');
+            return FALSE;
+        }
+        if($ContestData['Status'] != 'Pending'){
+            $this->form_validation->set_message('validateInviteCode', 'You can invite users only for upcoming contest.');
+            return FALSE;
+        }
+        $this->Post['TeamNameShortLocal']   = $ContestData['TeamNameShortLocal'];
+        $this->Post['TeamNameShortVisitor'] = $ContestData['TeamNameShortVisitor'];
+        return TRUE;
+    }
+
+    /**
      * Function Name: validateAnyUserJoinedContest
      * Description:   To validate if any user joined contest
      */
@@ -839,9 +868,8 @@ class Contest extends API_Controller_Secure {
         if ($TotalJoinedContest > 0) {
             $this->form_validation->set_message('validateAnyUserJoinedContest', 'You can not ' . $Type . ' this contest');
             return FALSE;
-        } else {
-            return TRUE;
         }
+        return TRUE;
     }
 
     /**
@@ -853,9 +881,8 @@ class Contest extends API_Controller_Secure {
         if ($MatchStatus != 1) {
             $this->form_validation->set_message('validateMatchStatus', 'Sorry, you can not edit team.');
             return FALSE;
-        } else {
-            return TRUE;
         }
+        return TRUE;
     }
 
     /**

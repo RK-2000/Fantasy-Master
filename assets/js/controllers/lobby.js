@@ -992,9 +992,9 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                     $data.Email = $scope.inviteField.Email;
                 }
                 $data.ReferType = ReferType;
-                $data.InviteCode = InviteCode;
+                $data.UserInvitationCode = InviteCode;
                 appDB
-                        .callPostForm('users/InviteContest', $data)
+                        .callPostForm('contest/invite', $data)
                         .then(
                                 function successCallback(data) {
 

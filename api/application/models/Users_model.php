@@ -1940,15 +1940,6 @@ class Users_model extends CI_Model {
                     "Amount" => $UserData->Amount
                 ));
             } else if (@$Input['StatusID'] == 3) {
-                //add withdrawable amount again to account
-                /* $RefundData = array(
-                  'WinningAmount'         => ($UserData->WinningAmount + $UserData->Amount),
-                  'WithdrawalHoldAmount'  => ($UserData->WithdrawalHoldAmount - $UserData->Amount)
-                  );
-                  $this->db->where('UserID', $UserData->UserID);
-                  $this->db->limit(1);
-                  $this->db->update('tbl_users', $RefundData); */
-
                 $this->Notification_model->addNotification('Withdrawal', 'Withdrawal Request Declined', $UserData->UserID, $UserData->UserID, '', 'Your withdrawal request for ' . DEFAULT_CURRENCY . $UserData->Amount . ' has been declined by admin for ' . $Comments);
                 $WalletData = array(
                     "Amount" => $UserData->WithdrawalHoldAmount,

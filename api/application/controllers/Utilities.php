@@ -29,6 +29,7 @@ class Utilities extends API_Controller
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
 
+        /* Send Mail to admin */
         send_mail(array(
             'emailTo' => SITE_CONTACT_EMAIL,
             'template_id' => 'd-30d87722d7fa42f8b0b671f6482a83f9',
@@ -82,6 +83,7 @@ class Utilities extends API_Controller
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
         $this->load->model('Post_model');
         $Posts = $this->Post_model->getPosts('
             P.PostGUID,
@@ -114,10 +116,11 @@ class Utilities extends API_Controller
     {
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
 
         $this->Utility_model->sendSMS(array(
             'PhoneNumber' => $this->Post['PhoneNumber'],
-            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. https://fsl11.com/android/FSL11.apk"
+            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. ".$this->db->query("SELECT ConfigTypeValue FROM `set_site_config` WHERE `ConfigTypeGUID` = 'AndridAppUrl' LIMIT 1")->row()->ConfigTypeValue
         ));
         $this->Return['Message'] = "Link Sent successfully.";
     }
@@ -126,7 +129,6 @@ class Utilities extends API_Controller
       Description:  Use to get app version details
       URL:      /api/utilities/getAppVersionDetails
      */
-
     public function getAppVersionDetails_post()
     {
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
@@ -142,20 +144,9 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description:  Use to create pre draft contest
-      URL:      /api/utilities/createPreContest
-     */
-    public function createPreContest_get()
-    {
-        $this->load->model('PreContest_model');
-        $this->PreContest_model->createPreContest();
-    }
-
-    /*
       Description: 	Cron jobs to get series data.
       URL: 			/api/utilities/getSeriesLive
      */
-
     public function getSeriesLive_get()
     {
         $CronID = $this->Utility_model->insertCronLogs('getSeriesLive');
@@ -191,7 +182,6 @@ class Utilities extends API_Controller
       Description: 	Cron jobs to get players data.
       URL: 			/api/utilities/getPlayersLive
      */
-
     public function getPlayersLive_get()
     {
         $CronID = $this->Utility_model->insertCronLogs('getPlayersLive');
@@ -211,7 +201,6 @@ class Utilities extends API_Controller
       Description: 	Cron jobs to get player stats data.
       URL: 			/api/utilities/getPlayerStatsLive
      */
-
     public function getPlayerStatsLive_get()
     {
         $CronID = $this->Utility_model->insertCronLogs('getPlayerStatsLive');
@@ -231,10 +220,8 @@ class Utilities extends API_Controller
       Description: 	Cron jobs to get match live score
       URL: 			/api/utilities/getMatchScoreLive
      */
-
     public function getMatchScoreLive_get()
     {
-
         $CronID = $this->Utility_model->insertCronLogs('getMatchScoreLive');
         if (SPORTS_API_NAME == 'ENTITY') {
             $MatchScoreLiveData = $this->Sports_model->getMatchScoreLiveEntity($CronID);
@@ -434,20 +421,6 @@ class Utilities extends API_Controller
                                             ) Total'
         )->row();
         $this->Return['Data'] = $SiteStatics;
-    }
-
-    /*
-      Name:           getTotalDeposits
-      Description:    To get Total Deposits data
-      URL:            /Utilites/getTotalDeposits/
-     */
-    public function getTotalDeposits_post()
-    {
-        /* Get Total Deposit Data */
-        $WalletDetails = $this->Utility_model->getTotalDeposit(@$this->Post['Params'], $this->Post, TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-        if (!empty($WalletDetails)) {
-            $this->Return['Data'] = $WalletDetails['Data'];
-        }
     }
 
     /*
@@ -792,140 +765,5 @@ class Utilities extends API_Controller
                 }
             }
         }
-    }
-
-    /*
-      Description:  Use to manage Razor Pay Webhook
-      URL:      /api/utilities/razorpayWebResponse
-     */
-    public function razorpayWebResponse_post()
-    {
-
-        $Input = file_get_contents("php://input");
-        $PayResponse = json_decode($Input, 1);
-
-
-        $InsertData = array_filter(array(
-            "PageGUID" => "RazorPay",
-            "Title" => "Test",
-            "Content" => json_encode($Input)
-        ));
-        $this->db->insert('set_pages', $InsertData);
-
-
-
-        $payResponse = $PayResponse['payload']['payment']['entity'];
-        if ($payResponse['status'] === "authorized") {
-
-            $this->db->trans_start();
-
-            $payment_id = $payResponse['id'];
-            /* update profile table */
-            $UpdataData = array_filter(
-                array(
-                    'PaymentGatewayResponse' => @$Input,
-                    'ModifiedDate' => date("Y-m-d H:i:s"),
-                    'StatusID' => 5
-                )
-            );
-            $this->db->where('WalletID', $payResponse['notes']['OrderID']);
-            $this->db->where('UserID', $payResponse['notes']['UserID']);
-            $this->db->where('StatusID', 1);
-            $this->db->limit(1);
-            $this->db->update('tbl_users_wallet', $UpdataData);
-            if ($this->db->affected_rows() <= 0)
-                return FALSE;
-
-            $Amount = $payResponse['amount'] / 100;
-            $this->db->set('WalletAmount', 'WalletAmount+' . $Amount, FALSE);
-            $this->db->where('UserID', $payResponse['notes']['UserID']);
-            $this->db->limit(1);
-            $this->db->update('tbl_users');
-
-            $UserID = $payResponse['notes']['UserID'];
-            $this->Notification_model->addNotification('AddCash', 'Cash Added', $UserID, $UserID, '', 'Deposit of ' . DEFAULT_CURRENCY . @$Amount . ' is Successful.');
-
-            $TotalDeposits = $this->db->query('SELECT COUNT(*) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
-
-            if ($TotalDeposits == 1) { // On First Successful Transaction
-
-                /* Get Deposit Bonus Data */
-                $DepositBonusData = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "FirstDepositBonus" LIMIT 1');
-                if ($DepositBonusData->row()->StatusID == 2) {
-
-                    $MinimumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MinimumFirstTimeDepositLimit" LIMIT 1');
-                    $MaximumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MaximumFirstTimeDepositLimit" LIMIT 1');
-
-                    if ($MinimumFirstTimeDepositLimit->row()->ConfigTypeValue <= @$Amount && $MaximumFirstTimeDepositLimit->row()->ConfigTypeValue >= @$Amount) {
-                        /* Update Wallet */
-                        $FirstTimeAmount = (@$Amount * $DepositBonusData->row()->ConfigTypeValue) / 100;
-                        $WalletData = array(
-                            "Amount" => $FirstTimeAmount,
-                            "CashBonus" => $FirstTimeAmount,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'First Deposit Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserID, 5);
-                    }
-                }
-
-                /* Get User Data */
-                $UserData = $this->Users_model->getUsers('ReferredByUserID', array("UserID" => $UserID));
-                if (!empty($UserData['ReferredByUserID'])) {
-
-                    /* Get Referral To Bonus Data */
-                    $ReferralToBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" LIMIT 1');
-                    if ($ReferralToBonus->row()->StatusID == 2) {
-
-                        /* Update Wallet */
-                        $WalletData = array(
-                            "Amount" => $ReferralToBonus->row()->ConfigTypeValue,
-                            "CashBonus" => $ReferralToBonus->row()->ConfigTypeValue,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'Referral Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserID, 5);
-                        $this->Notification_model->addNotification('ReferralBonus', 'Referred Bonus Added', $UserID, $UserID, '', 'You have received ' . DEFAULT_CURRENCY . @$ReferralToBonus->row()->ConfigTypeValue . ' Cash Bonus for Referred.');
-                    }
-
-                    /* Get Referral By Bonus Data */
-                    $ReferralByBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" LIMIT 1');
-                    if ($ReferralByBonus->row()->StatusID == 2) {
-
-                        /* Update Wallet */
-                        $WalletData = array(
-                            "Amount" => $ReferralByBonus->row()->ConfigTypeValue,
-                            "CashBonus" => $ReferralByBonus->row()->ConfigTypeValue,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'Referral Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserData['ReferredByUserID'], 5);
-                        $this->Notification_model->addNotification('ReferralBonus', 'Referral Bonus Added', $UserData['ReferredByUserID'], $UserData['ReferredByUserID'], '', 'You have received ' . DEFAULT_CURRENCY . @$ReferralByBonus->row()->ConfigTypeValue . ' Cash Bonus for Successful Referral.');
-                    }
-                }
-            }
-            $this->db->trans_complete();
-            if ($this->db->trans_status() === FALSE) {
-                return FALSE;
-            }
-        } else {
-            /* if ($payResponse['status'] === "failed") {
-              $UpdataData = array_filter(
-              array(
-              'PaymentGatewayResponse' => @$Input,
-              'ModifiedDate' => date("Y-m-d H:i:s"),
-              'StatusID' => 3
-              ));
-              $this->db->where('WalletID', $payResponse['notes']['OrderID']);
-              $this->db->where('UserID', $payResponse['notes']['UserID']);
-              $this->db->where('StatusID', 1);
-              $this->db->limit(1);
-              $this->db->update('tbl_users_wallet', $UpdataData);
-              if ($this->db->affected_rows() <= 0)
-              return FALSE;
-              } */ }
     }
 }
