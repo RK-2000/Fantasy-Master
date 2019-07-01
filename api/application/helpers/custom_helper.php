@@ -5,7 +5,7 @@ if (!defined('BASEPATH')) {
 
 function send_mail($emailData = array())
 {
-    require FCPATH . 'send/vendor/autoload.php';
+    require_once APPPATH . 'libraries/sendgrid/vendor/autoload.php';
     $request_body = json_decode('{
             "personalizations": [
             {
