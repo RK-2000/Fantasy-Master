@@ -33,7 +33,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             var MatchGUID = '';
             $scope.AllMatches = true;
         }
-        $http.post(API_URL + 'admin/matches/getMatch', 'MatchGUID=' + MatchGUID + '&Params=SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation&SessionKey=' + SessionKey, contentType).then(function (response) {
+        $http.post(API_URL + 'admin/matches/getMatches', 'MatchGUID=' + MatchGUID + '&Params=SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation&SessionKey=' + SessionKey, contentType).then(function (response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.matchDetail = response.Data
@@ -91,7 +91,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/edit_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'sports/getPlayer', 'PlayerGUID=' + PlayerGUID + '&Params=PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID&SessionKey=' + SessionKey, contentType).then(function (response) {
+        $http.post(API_URL + 'sports/getPlayers', 'PlayerGUID=' + PlayerGUID + '&Params=PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID&SessionKey=' + SessionKey, contentType).then(function (response) {
             var response = response.data;
             if (response.ResponseCode == 200) {
                 /* success case */

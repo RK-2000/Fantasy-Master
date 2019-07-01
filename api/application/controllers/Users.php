@@ -160,25 +160,6 @@ class Users extends API_Controller_Secure
         $this->Return['Message'] = "User successfully invited.";
     }
 
-    /*
-      Name: 		inviteContest
-      Description: 	Use to invite contest
-      URL: 			/api/users/inviteContest
-     */
-    public function inviteContest_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('ReferType', 'Refer Type', 'trim|required|in_list[Phone,Email]');
-        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required' : ''));
-        $this->form_validation->set_rules('Email', 'Email', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Email' ? '|required|valid_email' : ''));
-        $this->form_validation->set_rules('InviteCode', 'InviteCode', 'trim|required');
-        $this->form_validation->validation($this);  /* Run validation */
-        /* Validation - ends */
-
-        $this->Users_model->InviteContest($this->Post, $this->SessionUserID);
-        $this->Return['Message'] = "Successfully invited.";
-    }
-
     /* -----Validation Functions----- */
     /* ------------------------------ */
     function validatePassword($Password)

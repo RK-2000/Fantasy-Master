@@ -117,11 +117,6 @@ define('SPORTS_API_ACCESS_KEY_ENTITY', '***');
 define('SPORTS_API_SECRET_KEY_ENTITY', '***');
 
 /* Cricket API Sports API Details */
-// define('SPORTS_API_URL_CRICKETAPI', 'https://rest.cricketapi.com');
-// define('SPORTS_API_ACCESS_KEY_CRICKETAPI', '18524df84c1b4270fc4de839577c7361');
-// define('SPORTS_API_SECRET_KEY_CRICKETAPI', '724cb1cce4e8f1cde9c2b1c69c0e64b0');
-// define('SPORTS_API_APP_ID_CRICKETAPI', 'MWB');
-// define('SPORTS_API_DEVICE_ID_CRICKETAPI', 'FSL11');
 define('SPORTS_API_URL_CRICKETAPI', 'https://rest.cricketapi.com');
 define('SPORTS_API_ACCESS_KEY_CRICKETAPI', '2e1ea489eb700576032477ba907373f5');
 define('SPORTS_API_SECRET_KEY_CRICKETAPI', 'f3c32e9d76cab75c10346b5598ca1426');
@@ -142,7 +137,6 @@ define('SMS_API_PASSWORD', '***');
 define('SENDINBLUE_SMS_API_URL', 'https://api.sendinblue.com/v3/transactionalSMS/sms');
 define('SENDINBLUE_SMS_SENDER', 'EXACT11');
 define('SENDINBLUE_SMS_API_KEY', 'xkeysib-******-72qcrDmbQ0HpGExS');
-
 
 /* MSG91 SMS API Details */
 define('MSG91_AUTH_KEY', '273511AObV1jwyud5cc067fd');
@@ -173,9 +167,9 @@ switch (ENVIRONMENT)
 	define('NOREPLY_EMAIL', SITE_NAME);
 	define('NOREPLY_NAME', "info@expertteam.in");
 
-	/*Site Related Settings*/
+	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-	define('CRON_SAVE_LOG', true);
+    define('CRON_SAVE_LOG', true);
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'Pfytge92537984428170');
@@ -214,7 +208,7 @@ switch (ENVIRONMENT)
 	define('NOREPLY_EMAIL', SITE_NAME);
 	define('NOREPLY_NAME', "info@expertteam.in");
 
-	/*Site Related Settings*/
+	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
     define('CRON_SAVE_LOG', true);
 
@@ -253,9 +247,9 @@ switch (ENVIRONMENT)
 	define('NOREPLY_EMAIL', SITE_NAME);
 	define('NOREPLY_NAME', "info@expertteam.in");
 
-	/*Site Related Settings*/
+	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-        define('CRON_SAVE_LOG', true);
+    define('CRON_SAVE_LOG', true);
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', '****');
@@ -292,9 +286,9 @@ case 'production':
 	define('NOREPLY_EMAIL', SITE_NAME);
 	define('NOREPLY_NAME', "info@expertteam.in");
 
-	/*Site Related Settings*/
+	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-        define('CRON_SAVE_LOG', true);
+    define('CRON_SAVE_LOG', true);
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'SDsAag68559014846478');
@@ -317,4 +311,11 @@ case 'production':
 define('BASE_URL', SITE_HOST . ROOT_FOLDER .'api/');
 define('ASSET_BASE_URL', BASE_URL . 'asset/');
 define('PROFILE_PICTURE_URL', BASE_URL . 'uploads/profile/picture');
+
+/* S3 Bucket Settings */
+define('BUCKET', 'BucketName');
+define('AWS_ACCESS_KEY', 'AKIAJZZB67JRZRFEVSMQ');
+define('AWS_SECRET_KEY', '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');
+define('IMAGE_SERVER', '');
+define('IMAGE_SERVER_PATH', (IMAGE_SERVER == 'remote' ? "https://".BUCKET.'.s3.amazonaws.com/':BASE_URL));
 

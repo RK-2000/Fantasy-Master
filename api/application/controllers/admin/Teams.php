@@ -32,7 +32,7 @@ class Teams extends API_Controller_Secure
 					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->TeamID);
 				}
 				$MediaData = $this->Media_model->getMedia(
-					'E.EntityGUID MediaGUID,M.MediaName',
+					'MediaGUID,M.MediaName',
 					array("SectionID" => "TeamFlag", "MediaID" => $EntityData['MediaID']),
 					FALSE
 				);

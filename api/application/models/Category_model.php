@@ -213,7 +213,7 @@ class Category_model extends CI_Model
 
 				/*get attached media*/
 				$MediaData = $this->Media_model->getMedia(
-					'E.EntityGUID MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL,	CONCAT(MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption',
+					'MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL,	CONCAT(MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption',
 					array("SectionID" => 7, "EntityID" => $Record['CategoryIDForUse']),
 					TRUE
 				);

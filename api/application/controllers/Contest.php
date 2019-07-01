@@ -374,6 +374,25 @@ class Contest extends API_Controller_Secure {
     }
 
     /*
+      Name: 		invite
+      Description: 	Use to invite contest
+      URL: 			/api/contest/invite
+     */
+    public function invite_post()
+    {
+        /* Validation section */
+        $this->form_validation->set_rules('ReferType', 'Refer Type', 'trim|required|in_list[Phone,Email]');
+        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Phone' ? '|required' : ''));
+        $this->form_validation->set_rules('Email', 'Email', 'trim' . (!empty($this->Post['ReferType']) && $this->Post['ReferType'] == 'Email' ? '|required|valid_email' : ''));
+        $this->form_validation->set_rules('InviteCode', 'InviteCode', 'trim|required');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        $this->Contest_model->inviteContest($this->Post, $this->SessionUserID);
+        $this->Return['Message'] = "Successfully invited.";
+    }
+
+    /*
       Name: 			addUserTeam
       Description: 	Use to create team to system.
       URL: 			/api_admin/contest/addUserTeam/

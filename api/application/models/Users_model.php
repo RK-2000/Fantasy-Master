@@ -136,14 +136,14 @@ class Users_model extends CI_Model {
             $UpdateArray['PanStatus'] = $Input['PanStatus'];
             $Type = 'Pancard';
             if (!empty($Input['Comments'])) {
-                $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID, M.MediaCaption', array("SectionID" => 'PAN', "EntityID" => $UserID), FALSE);
+                $MediaData = $this->Media_model->getMedia('MediaGUID, M.MediaCaption', array("SectionID" => 'PAN', "EntityID" => $UserID), FALSE);
             }
         }
         if (!empty($Input['BankStatus'])) {
             $Type = 'Bank Detail';
             $UpdateArray['BankStatus'] = $Input['BankStatus'];
             if (!empty($Input['Comments'])) {
-                $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID, M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $UserID), FALSE);
+                $MediaData = $this->Media_model->getMedia('MediaGUID, M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $UserID), FALSE);
             }
         }
 
@@ -161,7 +161,7 @@ class Users_model extends CI_Model {
         }
 
         if(!empty($Input['UpdateBankInfo']) && $Input['UpdateBankInfo'] == 'Yes'){
-            $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID, M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $UserID), FALSE);
+            $MediaData = $this->Media_model->getMedia('MediaGUID, M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $UserID), FALSE);
             
             $Caption = json_decode($MediaData['MediaCaption']);
 
@@ -588,7 +588,7 @@ class Users_model extends CI_Model {
                         'MediaThumbURL' => '',
                         'MediaCaption' => ''
                     );
-                    $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID,DATE_FORMAT(CONVERT_TZ(E.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'PAN', "EntityID" => $Record['UserID']), FALSE);
+                    $MediaData = $this->Media_model->getMedia('MediaGUID,DATE_FORMAT(CONVERT_TZ(E.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'PAN', "EntityID" => $Record['UserID']), FALSE);
                     $Record['MediaPAN'] = ($MediaData ? $MediaData : $Media['PAN']);
                 }
 
@@ -600,7 +600,7 @@ class Users_model extends CI_Model {
                         'MediaThumbURL' => '',
                         'MediaCaption' => ''
                     );
-                    $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID,DATE_FORMAT(CONVERT_TZ(E.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
+                    $MediaData = $this->Media_model->getMedia('MediaGUID,DATE_FORMAT(CONVERT_TZ(E.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
                     $Record['MediaBANK'] = ($MediaData ? $MediaData : $Media['BANK']);
                 }
 
@@ -1828,7 +1828,7 @@ class Users_model extends CI_Model {
                 foreach ($Query->result_array() as $Record) {
                     /* get attached media */
                     if (in_array('MediaBANK', $Params)) {
-                        $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,    M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
+                        $MediaData = $this->Media_model->getMedia('MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,    M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
                         $MediaData['MediaCaption'] = json_decode($MediaData['MediaCaption']);
                         $Record['MediaBANK'] = ($MediaData ? $MediaData : new stdClass());
                     }
@@ -1843,7 +1843,7 @@ class Users_model extends CI_Model {
 
                 /* get attached media */
                 if (in_array('MediaBANK', $Params)) {
-                    $MediaData = $this->Media_model->getMedia('E.EntityGUID MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,M.MediaCaption', array("SectionID" => 5, "EntityID" => $Record['UserID']), FALSE);
+                    $MediaData = $this->Media_model->getMedia('MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,M.MediaCaption', array("SectionID" => 5, "EntityID" => $Record['UserID']), FALSE);
                     if ($MediaData)
                         $MediaData['MediaCaption'] = json_decode($MediaData['MediaCaption']);
                     $Record['MediaBANK'] = ($MediaData ? $MediaData : new stdClass());
@@ -1886,39 +1886,6 @@ class Users_model extends CI_Model {
             $this->Utility_model->sendSMS(array(
                 'PhoneNumber' => $Input['PhoneNumber'],
                 'Text' => "Your Friend " . $UserData['FirstName'] . " just got registered with us and has referred you. Use his/her referral code: " . $UserData['ReferralCode'] . " Use the link provided to get " . DEFAULT_CURRENCY . REFERRAL_SIGNUP_BONUS . " signup bonus. " . $InviteURL
-            ));
-        }
-    }
-
-    function InviteContest($Input = array(), $SessionUserID) {
-
-        $UserData = $this->Users_model->getUsers('FirstName', array('UserID' => $SessionUserID));
-
-        $this->db->select('C.MatchID,TL.TeamName AS TeamNameLocal,TV.TeamName AS TeamNameVisitor,TL.TeamNameShort AS TeamNameShortLocal,TV.TeamNameShort AS TeamNameShortVisitor');
-        $this->db->from('sports_contest C, sports_matches M, sports_teams TL, sports_teams TV');
-        $this->db->where("C.UserInvitationCode", $Input['InviteCode']);
-        $this->db->where("M.MatchID", "C.MatchID", false);
-        $this->db->where("M.TeamIDLocal", "TL.TeamID", false);
-        $this->db->where("M.TeamIDVisitor", "TV.TeamID", false);
-        $Query = $this->db->get();
-        $MatchName = $Query->result_array();
-
-        if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
-            /* Send referral Email to User with referral url */
-            send_mail(array(
-                'emailTo' => $Input['Email'],
-                'template_id' => 'd-21c013b7011144ac9ab7315081258881',
-                'Subject' => 'Contest Invitation - ' . SITE_NAME,
-                "Name" => $UserData['FirstName'],
-                "InviteCode" => $Input['InviteCode'],
-                "TeamNameLocal" => $MatchName[0]['TeamNameShortLocal'],
-                "TeamNameVisitor" => $MatchName[0]['TeamNameShortVisitor']
-            ));
-        } else if ($Input['ReferType'] == 'Phone' && !empty($Input['PhoneNumber'])) {
-            /* Send referral SMS to User with referral url */
-            $this->Utility_model->sendSMS(array(
-                'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Put your cricket knowledge to test and play with me on FSL11. Click https://fsl11.com/download-app to download the FSL11 app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $MatchName[0]['TeamNameShortLocal'] . " V/S " . $MatchName[0]['TeamNameShortVisitor'] . " Match."
             ));
         }
     }

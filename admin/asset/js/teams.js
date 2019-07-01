@@ -67,7 +67,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE+module+'/edit_form.htm?'+Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL+'sports/getTeam', 'TeamGUID='+TeamGUID+'&Params=TeamID,StatusID,TeamIDLive,TeamName,TeamNameShort,TeamFlag,Status', contentType).then(function(response) {
+        $http.post(API_URL+'sports/getTeams', 'TeamGUID='+TeamGUID+'&Params=TeamID,StatusID,TeamIDLive,TeamName,TeamNameShort,TeamFlag,Status', contentType).then(function(response) {
             var response = response.data;
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
