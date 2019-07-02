@@ -11,19 +11,19 @@ class Contest extends API_Controller_Secure {
     }
 
     /*
-      Name: 			add
+      Name: 		add
       Description: 	Use to add contest to system.
-      URL: 			/api_admin/contest/add/
+      URL: 			/admin/contest/add/
      */
 
     public function add_post() {
-        //print_r($this->Post['CustomizeWinning']);exit;
         /* Validation section */
         $this->form_validation->set_rules('ContestName', 'ContestName', 'trim');
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
         $this->form_validation->set_rules('ContestType', 'Contest Type', 'trim|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners,Head to Head]');
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsPaid', 'IsPaid', 'trim|required|in_list[Yes,No]');
+        $this->form_validation->set_rules('IsConfirm', 'IsConfirm', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('ShowJoinedContest', 'ShowJoinedContest', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
@@ -31,12 +31,12 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
+        $this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
         $this->form_validation->set_rules('MatchGUID[]', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
-
-        if (!empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -45,7 +45,14 @@ class Contest extends API_Controller_Secure {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][WinningAmount]', 'WinningAmount', 'trim|required|numeric');
                 $TotalWinners += ($Value['To'] - $Value['From']) + 1;
                 $TotalPercent += $Value['Percent'];
-                $TotalWinningAmount += $TotalWinners * $Value['WinningAmount'];
+                $TotalWinningAmount += (($Value['To'] - $Value['From']) + 1) * $Value['WinningAmount'];
+                if($Key > 0){
+					if($this->Post['CustomizeWinning'][$Key]['WinningAmount'] >= $this->Post['CustomizeWinning'][$Key-1]['WinningAmount']){
+						$this->Return['ResponseCode'] = 500;
+						$this->Return['Message']      = "Winning amount ".($Key+1).",can not greater than or equals to Winning amount ".$Key;
+						exit;
+					}
+				}
             }
 
             /* Check Total No Of Winners */
@@ -56,45 +63,58 @@ class Contest extends API_Controller_Secure {
             }
 
             /* Check Total Percent */
-            if ($TotalPercent < 100 || $TotalPercent > 100) {
+            if ($TotalPercent < 90 || $TotalPercent > 100) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winners Percent should be 100%.";
+                $this->Return['Message'] = "Customize Winners Percent should be 90% to 100%.";
                 exit;
             }
 
             /* Check Total Winning Amount */
-            if ($TotalWinningAmount != $this->Post['WinningAmount']) {
+            if ($TotalWinningAmount > $this->Post['WinningAmount']) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winning Amount should be equals to Winning Amount";
+                $this->Return['Message'] = "Customize Winning Amount should be less than or equals to Winning Amount";
                 exit;
             }
+        }
+        if ($this->Post['IsPaid'] == 'Yes' && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+            $this->Return['ResponseCode'] = 500;
+			$this->Return['Message'] = "Customize winning data is required.";
+			exit;
         }
         $this->form_validation->set_message('regex_match', '{field} value should be between 0 to 100.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-
-        $all_matches = count($this->input->post('MatchGUID'));
-        for ($i = 0; $i < $all_matches; $i++) {
-            $this->Post('MatchGUID')[$i];
-            $MatchIDs = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('MatchGUID')[$i], 'EntityTypeName' => "Matches"));
-            $MatchID = $MatchIDs['EntityID'];
-            $insert = $this->Contest_model->addContest($this->Post, $this->SessionUserID, $MatchID, $this->SeriesID);
-        }
-        
-        if (!$insert) {
+        $TotalMatches = count($this->Post['MatchGUID']);
+        if($TotalMatches > 0){
+            for ($I = 0; $I < $TotalMatches; $I++) {
+                $MatchID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('MatchGUID')[$I], 'EntityTypeName' => "Matches"));
+                if(!$MatchID){
+                    $this->Return['ResponseCode'] = 500;
+                    $this->Return['Message'] = "Invalid MatchGUID.";
+                    exit;
+                }
+                $MatchIds[] = $MatchID['EntityID'];
+            }
+        }else{
             $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "An error occurred, please try again later.";
-        } else {
-            $this->Return['Message'] = "Contest created successfully.";
+			$this->Return['Message'] = "Please select matches.";
+			exit;
         }
+
+        /* Add Multiple Contests */
+        if (!$this->Contest_model->addContest($this->Post, $this->SessionUserID,$MatchIds,$this->SeriesID)) {
+			$this->Return['ResponseCode'] = 500;
+			$this->Return['Message'] = "An error occurred, please try again later.";
+		} else {
+			$this->Return['Message'] = "Contest created successfully.";
+		}
     }
 
     /*
-      Name: 			edit
+      Name: 		edit
       Description: 	Use to update contest to system.
-      URL: 			/api_admin/contest/edit/
+      URL: 			/admin/contest/edit/
      */
-
     public function edit_post() {
         /* Validation section */
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateAnyUserJoinedContest[update]');
@@ -103,6 +123,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('ContestType', 'Contest Type', 'trim|required|in_list[Normal,Reverse,InPlay,Hot,Champion,Practice,More,Head to Head]');
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsPaid', 'IsPaid', 'trim|required|in_list[Yes,No]');
+        $this->form_validation->set_rules('IsConfirm', 'IsConfirm', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('ShowJoinedContest', 'ShowJoinedContest', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
@@ -111,8 +132,9 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
+        $this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
-        if (!empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -121,7 +143,14 @@ class Contest extends API_Controller_Secure {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][WinningAmount]', 'WinningAmount', 'trim|required|numeric');
                 $TotalWinners += ($Value['To'] - $Value['From']) + 1;
                 $TotalPercent += $Value['Percent'];
-                $TotalWinningAmount += $TotalWinners * $Value['WinningAmount'];
+                $TotalWinningAmount += (($Value['To'] - $Value['From']) + 1) * $Value['WinningAmount'];
+                if($Key > 0){
+					if($this->Post['CustomizeWinning'][$Key]['WinningAmount'] >= $this->Post['CustomizeWinning'][$Key-1]['WinningAmount']){
+						$this->Return['ResponseCode'] = 500;
+						$this->Return['Message']      = "Winning amount ".($Key+1).",can not greater than or equals to Winning amount ".$Key;
+						exit;
+					}
+				}
             }
 
             /* Check Total No Of Winners */
@@ -132,18 +161,23 @@ class Contest extends API_Controller_Secure {
             }
 
             /* Check Total Percent */
-            if ($TotalPercent < 100 || $TotalPercent > 100) {
+            if ($TotalPercent < 90 || $TotalPercent > 100) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winners Percent should be 100%.";
+                $this->Return['Message'] = "Customize Winners Percent should be 90% to 100%.";
                 exit;
             }
 
             /* Check Total Winning Amount */
-            if ($TotalWinningAmount != $this->Post['WinningAmount']) {
+            if ($TotalWinningAmount > $this->Post['WinningAmount']) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winning Amount should be equals to Winning Amount";
+                $this->Return['Message'] = "Customize Winning Amount should be less than or equals to Winning Amount";
                 exit;
             }
+        }
+        if ($this->Post['IsPaid'] == 'Yes' && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+            $this->Return['ResponseCode'] = 500;
+			$this->Return['Message'] = "Customize winning data is required.";
+			exit;
         }
         $this->form_validation->set_message('regex_match', '{field} value should be between 0 to 100.');
         $this->form_validation->validation($this);  /* Run validation */
@@ -156,7 +190,6 @@ class Contest extends API_Controller_Secure {
     /*
       Description: To get joined contests data
      */
-
     public function getUserJoinedContests_post() {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
@@ -175,7 +208,6 @@ class Contest extends API_Controller_Secure {
     /*
       Description: To get private contest detail
      */
-
     public function getPrivateContest_post() {
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
@@ -195,7 +227,6 @@ class Contest extends API_Controller_Secure {
     /*
       Description: To Cancel Contest
      */
-
     public function cancel_post() {
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->validation($this);  /* Run validation */
@@ -203,43 +234,6 @@ class Contest extends API_Controller_Secure {
         /* Cancel Contests */
         $this->Contest_model->cancelContest(@$this->Post, $this->SessionUserID, $this->ContestID);
         $this->Return['Message'] = "Contest cancelled successfully.";
-    }
-
-    /**
-     * Function Name: validateAnyUserJoinedContest
-     * Description:   To validate if any user joined contest
-     */
-    public function validateAnyUserJoinedContest($ContestGUID, $Type) {
-        $TotalJoinedContest = $this->db->query('SELECT COUNT(*) AS `TotalRecords` FROM `sports_contest_join` WHERE `ContestID` =' . $this->ContestID)->row()->TotalRecords;
-        // if ($TotalJoinedContest > 0){
-        // 	$this->form_validation->set_message('validateAnyUserJoinedContest', 'You can not '.$Type.' this contest');
-        // 	return FALSE;
-        // }
-        // else{
-        return TRUE;
-        // }
-    }
-
-    /**
-     * Function Name: validateContestStatus
-     * Description:   To validate contest status
-     */
-    public function validateContestStatus($ContestGUID) {
-        $ContestData = $this->Contest_model->getContests('Status,IsPaid,SeriesName,ContestName,MatchNo,TeamNameLocal,TeamNameVisitor,EntryFee', array('ContestID' => $this->ContestID));
-        if ($ContestData['Status'] == 'Pending') {
-            $this->Post['IsPaid'] = $ContestData['IsPaid'];
-            $this->Post['EntryFee'] = $ContestData['EntryFee'];
-            $this->Post['SeriesName'] = $ContestData['SeriesName'];
-            $this->Post['ContestName'] = $ContestData['ContestName'];
-            $this->Post['MatchNo'] = $ContestData['MatchNo'];
-            $this->Post['TeamNameLocal'] = $ContestData['TeamNameLocal'];
-            $this->Post['TeamNameVisitor'] = $ContestData['TeamNameVisitor'];
-            return TRUE;
-        } 
-       /* else {
-            $this->form_validation->set_message('validateContestStatus', 'You can not cancel this contest.');
-            return FALSE;
-        }*/
     }
 
     /*
@@ -263,21 +257,32 @@ class Contest extends API_Controller_Secure {
 
     /*
       Description: 	Use to update contest status.
-      URL: 			/api_admin/entity/changeStatus/
+      URL: 			/admin/entity/changeStatus/
      */
-
     public function changeStatus_post() {
         /* Validation section */
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
         $this->Entity_model->updateEntityInfo($this->ContestID, array("StatusID" => $this->StatusID));
-
         $this->Contest_model->updateContest($this->Post, $this->SessionUserID, $this->ContestID);
-
         $this->Return['Data'] = $this->Contest_model->getContests('Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType', array_merge($this->Post, array('ContestID' => $this->ContestID, 'SessionUserID' => $this->SessionUserID)));
-        $this->Return['Message'] = "Status has been changed.";
+        $this->Return['Message'] = "Success.";
+    }
+
+
+    /**
+     * Function Name: validateAnyUserJoinedContest
+     * Description:   To validate if any user joined contest
+     */
+    public function validateAnyUserJoinedContest($ContestGUID, $Type) {
+        if ($this->db->query('SELECT COUNT(EntryDate) AS `TotalRecords` FROM `sports_contest_join` WHERE `ContestID` =' . $this->ContestID)->row()->TotalRecords > 0){
+        	$this->form_validation->set_message('validateAnyUserJoinedContest', 'You can not '.$Type.' this contest');
+        	return FALSE;
+        }
+        return TRUE;
     }
 
 }

@@ -869,7 +869,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 $data.UserInvitationCode = UserInvitationCode;
                 $data.MatchGUID = $scope.MatchesDetail.MatchGUID;
                 appDB
-                        .callPostForm('contest/getPrivateContest', $data)
+                        .callPostForm('contest/getContests', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {
