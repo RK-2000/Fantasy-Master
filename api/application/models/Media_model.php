@@ -61,7 +61,7 @@ class Media_model extends CI_Model
 	{
 		$this->db->trans_start();
 		$EntityGUID = (!empty($Input['EntityGUID']) ? $Input['EntityGUID'] : get_guid());
-		$InsertData = array_filter(array("MediaGUID" => $EntityGUID, "IsImage" => $Input['IsImage'], "UserID" => $UserID, "SectionID" => $SectionID, "MediaRealName" => $Input['MediaRealName'], "MediaName" => $Input['MediaName'], "MediaSize" => $Input['MediaSize'], "MediaExt" => $Input['MediaExt'], "MediaCaption" => $Input['MediaCaption']));
+		$InsertData = array_filter(array("MediaGUID" => $EntityGUID, "IsImage" => $Input['IsImage'], "UserID" => $UserID, "SectionID" => $SectionID, "MediaRealName" => $Input['MediaRealName'], "MediaName" => $Input['MediaName'], "MediaSize" => $Input['MediaSize'], "MediaExt" => $Input['MediaExt'], "MediaCaption" => $Input['MediaCaption'],'EntryDate' => date('Y-m-d H:i:s')));
 		$this->db->insert('tbl_media', $InsertData);
 		$EntityID = $this->db->insert_id();
 		$this->db->trans_complete();

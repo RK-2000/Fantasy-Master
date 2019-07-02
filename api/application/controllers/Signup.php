@@ -41,165 +41,57 @@ class Signup extends API_Controller
         /* Validation - ends */
 
         $UserID = $this->Users_model->addUser(array_merge($this->Post, array(
-            "Referral" => @$this->Referral, 'Username' => $this->randomString()
+            "Referral" => @$this->Referral, 'Username' => randomString()
         )), $this->Post['UserTypeID'], $this->SourceID, ($this->Post['Source'] != 'Direct' ? '2' : '1') );
         if (!$UserID) {
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
             if (!empty($this->Post['Email'])) {
+
                 /* Send welcome Email to User with Token. (only if source is Direct) */
-                $Token = ($this->Post['Source'] == 'Direct' ? $this->Recovery_model->generateToken($UserID, 2) : '');
-                $sendSS = send_mail(array(
+                send_mail(array(
                     'emailTo'       => $this->Post['Email'],
                     'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
                     'Subject'       => 'Thank you for registering at ' . SITE_NAME,
-                    "Name"          => $this->Post['FirstName'],
-                    'Token'         => $Token,
+                    "Name"          => @$this->Post['FirstName'],
+                    'Token'         => ($this->Post['Source'] == 'Direct' ? $this->Recovery_model->generateToken($UserID, 2) : ''),
                     'DeviceTypeID'  => $this->DeviceTypeID
                 ));
             }
 
             /* for update phone number */
-            $this->load->model('Utility_model');
             if (!empty($this->Post['PhoneNumber']) && PHONE_NO_VERIFICATION) {
-                /* Genrate a Token for PhoneNumber verification and save to tokens table. */
-                $this->load->model('Recovery_model');
-                $Token = $this->Recovery_model->generateToken($UserID, 3);
+
                 /* Send change phonenumber SMS to User with Token. */
                 $this->Utility_model->sendMobileSMS(array(
                     'PhoneNumber' => $this->Post['PhoneNumber'],
-                    'Text' => $Token
+                    'Text' =>  $this->Recovery_model->generateToken($UserID, 3)
                 ));
             }
 
-            /* referal code generate */
+            /* Referal code generate */
             $this->Utility_model->generateReferralCode($UserID);
+
             /* Send welcome notification */
-            $this->Notification_model->addNotification('welcome', 'Welcome to ' . SITE_NAME . '!', $UserID, $UserID, '', 'Hi ' . $this->Post['FirstName'] . ', Verify your Email and PAN Details and Earn more Cash Bonus.');
-            $this->Notification_model->addNotification('welcome', $this->Post['FirstName'] . ', got Registered', $UserID, '125');
-            /* get user data */
+            $this->Notification_model->addNotification('welcome', 'Welcome to ' . SITE_NAME . '!', $UserID, $UserID, '', 'Hi ' . @$this->Post['FirstName'] . ', Verify your Email and PAN Details and Earn more Cash Bonus.');
+            $this->Notification_model->addNotification('welcome', @$this->Post['FirstName'] . ', got Registered', $UserID, ADMIN_ID);
+
+            /* Get user data */
             $UserData = $this->Users_model->getUsers('FirstName,MiddleName,LastName,Email,ProfilePic,UserTypeID,UserTypeName', array(
                 'UserID' => $UserID
             ));
-            /* create session only if source is not Direct and account treated as Verified. */
+
+            /* Create session only if source is not Direct and account treated as Verified. */
             $UserData['SessionKey'] = '';
             $UserData['SessionKey'] = $this->Users_model->createSession($UserID, array(
-                "IPAddress" => @$this->Post['IPAddress'],
-                "SourceID" => $this->SourceID,
-                "DeviceTypeID" => $this->DeviceTypeID,
-                "DeviceGUID" => @$this->Post['DeviceGUID'],
-                "DeviceToken" => @$this->Post['DeviceToken']
-            ));
-
+                                    "IPAddress" => @$this->Post['IPAddress'],
+                                    "SourceID" => $this->SourceID,
+                                    "DeviceTypeID" => $this->DeviceTypeID,
+                                    "DeviceGUID" => @$this->Post['DeviceGUID'],
+                                    "DeviceToken" => @$this->Post['DeviceToken']
+                                ));
             $this->Return['Data'] = $UserData;
-            $this->Return['Data']['mail'] = $sendSS;
-        }
-    }
-
-    /*
-      Name: 			resendverify
-      Description: 	Use to resend OTP for Email address verification.
-      URL: 			/api/signup/resendverify
-     */
-
-    public
-    function resendverify_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('Keyword', 'Keyword', 'trim|required|valid_email');
-        $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
-        $this->form_validation->validation($this); /* Run validation */
-        /* Validation - ends */
-        $UserData = $this->Users_model->getUsers('UserID, FirstName, StatusID', array(
-            'Email' => $this->Post['Keyword']
-        ));
-
-        if (empty($UserData)) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "If your account is registered here you will receive an email from us.";
-        } elseif ($UserData && $UserData['StatusID'] == 2) {
-            $this->Return['Message'] = "Your account is already verified.";
-        } elseif ($UserData && $UserData['StatusID'] == 3) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Your account has been deleted. Please contact the Admin for more info.";
-        } elseif ($UserData && $UserData['StatusID'] == 4) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Your account has been blocked. Please contact the Admin for more info.";
-        } elseif ($UserData && $UserData['StatusID'] == 6) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "You have deactivated your account, please contact the Admin to reactivate.";
-        } else {
-            /* Re-Send welcome Email to User with Token. */
-            // sendMail(array(
-            //     'emailTo' => $this->Post['Keyword'],
-            //     'emailSubject' => "Verify your account " . SITE_NAME,
-            //     'emailMessage' => emailTemplate($this->load->view('emailer/signup', array(
-            //                 "Name" => $UserData['FirstName'],
-            //                 'Token' => $this->Recovery_model->generateToken($UserData['UserID'], 2),
-            //                 'DeviceTypeID' => $this->DeviceTypeID
-            //                     ), TRUE))
-            // ));
-
-            send_mail(array(
-                'emailTo'       => $this->Post['Keyword'],
-                'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
-                'Subject'       => 'Verify your account ' . SITE_NAME,
-                "Name"          => $UserData['FirstName'],
-                'Token'         => $this->Recovery_model->generateToken($UserData['UserID'], 2),
-                'DeviceTypeID'  => $this->DeviceTypeID
-            ));
-            $this->Return['Message'] = "Please check your email for instructions.";
-        }
-    }
-
-    /*
-    Name:           SendVerifyEmail
-    Description:    Use to send verify Email.
-    URL:            /api/signup/resendVerification
-    */
-    function resendVerification_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
-        $this->form_validation->set_rules('Type', 'Type', 'trim|required|in_list[Email,Phone]');
-        $this->form_validation->validation($this);  /* Run validation */
-        /* Validation - ends */
-        if ($this->input->post('UserGUID')) {
-            $UserData = $this->Users_model->getUsers('UserID,FirstName,EmailForChange,Email,PhoneNumberForChange,UserTypeID,UserTypeName', array("UserGUID" => $this->input->post('UserGUID')));
-            $UserID = $UserData['UserID'];
-        } else {
-            $UserData = $this->Users_model->getUsers('FirstName,LastName,Email,EmailForChange,PhoneNumberForChange,UserTypeID,UserTypeName', array("UserID" => $this->SessionUserID));
-            $UserID = $this->SessionUserID;
-        }
-        if ($this->input->post('Type') == 'Email') {
-            /* Send welcome Email to User with Token. */
-            $Token = $this->Recovery_model->generateToken($UserID, 2);
-
-            // sendMail(array(
-            //     'emailTo' => $UserData['Email'],
-            //     'emailSubject' => "Verify your account " . SITE_NAME,
-            //     'emailMessage' => emailTemplate($this->load->view('emailer/signup', array(
-            //                 "Name" => $UserData['FirstName'],
-            //                 'Token' => $this->Recovery_model->generateToken($this->SessionUserID, 2)
-            //                     ), TRUE))
-            // ));
-
-            send_mail(array(
-                'emailTo'       => $UserData['EmailForChange'],
-                'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
-                'Subject'       => 'Verify your Email ' . SITE_NAME,
-                "Name"          => $UserData['FirstName'],
-                'Token'         => $Token
-            ));
-        } else {
-            $Token = $this->Recovery_model->generateToken($UserID, 3);
-            /* Send change phonenumber SMS to User with Token. */
-            $this->Utility_model->sendMobileSMS(array(
-                'PhoneNumber' => $UserData['PhoneNumberForChange'],
-                'Text' => $Token
-                // 'Text' => SITE_NAME . ", OTP to verify Mobile no. is:" . $Token,
-            ));
         }
     }
 
@@ -222,20 +114,16 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('Longitude', 'Longitude', 'trim');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
+
+        /* Verify Token */
         $UserID = $this->Recovery_model->verifyToken($this->Post['OTP'], 2);
+
         /* check for email update */
         $UserData = $this->Users_model->getUsers('UserTypeID,FirstName,LastName,Email,EmailForChange,StatusID,ProfilePic', array(
             'UserID' => $UserID
         ));
         if (!empty($UserData['EmailForChange'])) {
             if ($this->Users_model->updateEmail($UserID, $UserData['EmailForChange'])) {
-                // sendMail(array(
-                //     'emailTo' => $UserData['Email'],
-                //     'emailSubject' => "Your " . SITE_NAME . " email has been updated!",
-                //     'emailMessage' => emailTemplate($this->load->view('emailer/change_email_confirmed', array(
-                //     "Name" => $UserData['FirstName']
-                //                     ), TRUE))
-                // ));
                 send_mail(array(
                     'emailTo'       => $UserData['Email'],
                     'template_id'   => 'd-e82c099a9b86439a9f5990722d59d0d6',
@@ -261,23 +149,23 @@ class Signup extends API_Controller
             $this->Return['Data'] = $UserData;
             $this->Return['Message'] = "Your account has been successfully verified, please login to get access your account.";
         }
-
         $this->Recovery_model->deleteToken($this->Post['OTP'], 2); /* delete token in any case */
     }
 
     /*
-      Name: 		verifyEmail
-      Description: 	Use to verify Email address and activate account by OTP.
-      URL: 			/api/signup/verifyEmail
+      Name: 		verifyPhoneNumber
+      Description: 	Use to verify phone number and activate account by OTP.
+      URL: 			/api/signup/verifyPhoneNumber
      */
-
     public function verifyPhoneNumber_post()
     {
         /* Validation section */
         $this->form_validation->set_rules('OTP', 'OTP', 'trim|required|callback_validateToken[3]');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
+        
         $UserID = $this->Recovery_model->verifyToken($this->Post['OTP'], 3);
+
         /* check for PhoneNo. update */
         $UserData = $this->Users_model->getUsers('PhoneNumberForChange', array(
             'UserID' => $UserID
@@ -295,11 +183,14 @@ class Signup extends API_Controller
         $this->Recovery_model->deleteToken($this->Post['OTP'], 3); /* delete token in any case */
     }
 
-    public function verify_get()
+    /*
+      Name: 		verifyLink
+      Description: 	Use to verify email link (For Web)
+      URL: 			/api/signup/verifyLink
+     */
+    public function verifyLink_get()
     {
         $OTP = @$this->input->get('otp');
-        $UserData = array();
-        $Msg = '';
         $UserID = $this->Recovery_model->verifyToken($OTP, 2);
         if (!$UserID) {
             $Msg = "Sorry, but this is an invalid link, or you have already verified your account.";
@@ -311,18 +202,94 @@ class Signup extends API_Controller
             $this->Users_model->updateEmail($UserID, $UserData['EmailForChange']);
             $this->Recovery_model->deleteToken($OTP, 2); /* delete token in any case */
         }
-        echo $this->load->view('email_verify', array('Error' => $Msg, 'UserData' => $UserData), true);
+        echo $this->load->view('email_verify', array('Error' => @$Msg, 'UserData' => @$UserData), true);
     }
 
-    function randomString($length = 6)
+
+    /*
+      Name: 		resendverify
+      Description: 	Use to resend OTP for Email address verification.
+      URL: 			/api/signup/resendverify
+     */
+
+    public
+    function resendverify_post()
     {
-        $str = "";
-        $characters = array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9'));
-        $max = count($characters) - 1;
-        for ($i = 0; $i < $length; $i++) {
-            $rand = mt_rand(0, $max);
-            $str .= $characters[$rand];
+        /* Validation section */
+        $this->form_validation->set_rules('Keyword', 'Keyword', 'trim|required|valid_email');
+        $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
+        $this->form_validation->validation($this); /* Run validation */
+        /* Validation - ends */
+
+        /* Get User Details */
+        $UserData = $this->Users_model->getUsers('UserID, FirstName, StatusID', array(
+            'Email' => $this->Post['Keyword']
+        ));
+
+        if (empty($UserData)) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "If your account is registered here you will receive an email from us.";
+        } elseif ($UserData && $UserData['StatusID'] == 2) {
+            $this->Return['Message'] = "Your account is already verified.";
+        } elseif ($UserData && $UserData['StatusID'] == 3) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "Your account has been deleted. Please contact the Admin for more info.";
+        } elseif ($UserData && $UserData['StatusID'] == 4) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "Your account has been blocked. Please contact the Admin for more info.";
+        } elseif ($UserData && $UserData['StatusID'] == 6) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "You have deactivated your account, please contact the Admin to reactivate.";
+        } else {
+            /* Re-Send welcome Email to User with Token. */
+            send_mail(array(
+                'emailTo'       => $this->Post['Keyword'],
+                'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
+                'Subject'       => 'Verify your account ' . SITE_NAME,
+                "Name"          => $UserData['FirstName'],
+                'Token'         => $this->Recovery_model->generateToken($UserData['UserID'], 2),
+                'DeviceTypeID'  => $this->DeviceTypeID
+            ));
+            $this->Return['Message'] = "Please check your email for instructions.";
         }
-        return $str;
     }
+
+    /*
+    Name:           resendVerification
+    Description:    Use to resend verification OTP for Phone & Email.
+    URL:            /api/signup/resendVerification
+    */
+    function resendVerification_post()
+    {
+        /* Validation section */
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
+        $this->form_validation->set_rules('Type', 'Type', 'trim|required|in_list[Email,Phone]');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        /* Get User Details */
+        $UserID = (!empty($this->UserID)) ? $this->UserID : $this->SessionUserID;
+        $UserData = $this->Users_model->getUsers('FirstName,LastName,Email,EmailForChange,PhoneNumberForChange,UserTypeID,UserTypeName', array("UserID" => $UserID));
+        if ($this->Post['Type'] == 'Email') {
+
+            /* Send welcome Email to User with Token. */
+            send_mail(array(
+                'emailTo'       => $UserData['EmailForChange'],
+                'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
+                'Subject'       => 'Verify your Email ' . SITE_NAME,
+                "Name"          => $UserData['FirstName'],
+                'Token'         => $this->Recovery_model->generateToken($UserID, 2)
+            ));
+        } else {
+
+            /* Send change phonenumber SMS to User with Token. */
+            $this->Utility_model->sendMobileSMS(array(
+                'PhoneNumber' => $UserData['PhoneNumberForChange'],
+                'Text' => $this->Recovery_model->generateToken($UserID, 3)
+            ));
+        }
+    }
+
+    
 }

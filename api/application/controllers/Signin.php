@@ -12,7 +12,7 @@ class Signin extends API_Controller
     }
 
     /*
-      Name: 			Login
+      Name: 		Login
       Description: 	Verify login and activate session
       URL: 			/api/signin/
      */
@@ -31,19 +31,17 @@ class Signin extends API_Controller
         $this->form_validation->set_rules('IPAddress', 'IPAddress', 'trim|callback_validateIP');
         $this->form_validation->set_rules('Latitude', 'Latitude', 'trim');
         $this->form_validation->set_rules('Longitude', 'Longitude', 'trim');
-
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         if (!empty($this->Post['PhoneNumber']) && !empty($this->Post['OTP'])) {
             $UserID = $this->Recovery_model->verifyToken($this->Post['OTP'], 3);
-            if ($UserID) {
-                $UserData = $this->Users_model->getUsers('UserTypeID,UserID,FirstName,MiddleName,LastName,Email,StatusID,ProfilePic,PhoneNumber,WalletAmount,ReferralCode,TotalCash', array('UserID' => $UserID));
-            } else {
+            if (!$UserID) {
                 $this->Return['ResponseCode'] = 500;
                 $this->Return['Message'] = "Invalid OTP";
-                return false;
+                exit;
             }
+            $UserData = $this->Users_model->getUsers('UserTypeID,UserID,FirstName,MiddleName,LastName,Email,StatusID,ProfilePic,PhoneNumber,WalletAmount,ReferralCode,TotalCash', array('PhoneNumber' => $this->Post['PhoneNumber'], 'UserID' => $UserID));
         } else {
             $UserData = $this->Users_model->getUsers('UserTypeID,UserID,FirstName,MiddleName,LastName,Email,StatusID,ProfilePic,PhoneNumber,WalletAmount,ReferralCode,TotalCash', array('LoginKeyword' => @$this->Post['Keyword'], 'Password' => $this->Post['Password'], 'SourceID' => $this->SourceID));
         }
@@ -83,7 +81,7 @@ class Signin extends API_Controller
     }
 
     /*
-      Name: 			OTP for sigin
+      Name: 		Signin with OTP
       Description: 	Signin using OTP
       URL: 			/api/signin/OtpSignIn/
      */
@@ -96,17 +94,31 @@ class Signin extends API_Controller
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
+        /* Get User Details */
         $UserData = $this->Users_model->getUsers('UserID,FirstName,LastName,Email,StatusID,PhoneNumber', array('PhoneNumber' => @$this->Post['PhoneNumber']));
-        if ($UserData) {
-            $Token = $this->Recovery_model->generateToken($UserData['UserID'], 3);
+        if(!$UserData){
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "Invalid Phone number.";
+        } elseif ($UserData && $UserData['StatusID'] == 1) {
+            $this->Return['ResponseCode'] = 501;
+            $this->Return['Message'] = "You have not activated your account yet, please verify your email address first.";
+        } elseif ($UserData && $UserData['StatusID'] == 3) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "Your account has been deleted. Please contact the Admin for more info.";
+        } elseif ($UserData && $UserData['StatusID'] == 4) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "Your account has been blocked. Please contact the Admin for more info.";
+        } elseif ($UserData && $UserData['StatusID'] == 6) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "You have deactivated your account, please contact the Admin to reactivate.";
+        }else{
+
+            /* Send OTP */
             $this->Utility_model->sendMobileSMS(array(
                 'PhoneNumber' => $UserData['PhoneNumber'],
-                'Text' => $Token
+                'Text'        => $this->Recovery_model->generateToken($UserData['UserID'], 3)
             ));
             $this->Return['Data'] = $UserData;
-        } else if (!$UserData) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Phone number not found";
         }
     }
 
@@ -115,7 +127,6 @@ class Signin extends API_Controller
       Description: 	Delete session
       URL: 			/api/signin/signout/
      */
-
     public function signout_post()
     {
         /* Validation section */

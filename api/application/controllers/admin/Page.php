@@ -8,9 +8,7 @@ class Page extends API_Controller
 		parent::__construct();
 		$this->load->model('Page_model');
 	}
-
-
-
+	
 	/*
 	Name: 			getPage
 	Description: 	Use to get page data.

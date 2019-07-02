@@ -61,9 +61,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
     /*Withdrawal list append*/
     $scope.WithdrawalsTransactions = [];
     $scope.getWithdrawals = function() {
-        
         var data = 'SessionKey=' + SessionKey + '&UserGUID='+getQueryStringValue('UserGUID')+'&Params=Amount,Comments,PaymentGateway,EntryDate,Status&OrderBy=EntryDate&Sequence=DESC&'+$('#filterForm').serialize();
-
         $http.post(API_URL + 'admin/wallet/getWithdrawals', data, contentType).then(function(response) {
             var response = response.data;
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */

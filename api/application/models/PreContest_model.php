@@ -331,7 +331,7 @@ class PreContest_model extends CI_Model {
                 foreach ($MatchesData['Data']['Records'] as $Record) {
                     $GetContest = $this->db->query('SELECT * FROM sports_contest WHERE PreContestID = ' . $Res['PreContestID'] . ' AND MatchID = ' . $Record['MatchID'] . '');
                     if ($GetContest->num_rows() == 0) {
-                        $this->Contest_model->addContest($FieldArray, '125', $Record['MatchID'], $Record['SeriesID']);
+                        $this->Contest_model->addContest($FieldArray, ADMIN_ID, $Record['MatchID'], $Record['SeriesID']);
                     }
                 }
             }

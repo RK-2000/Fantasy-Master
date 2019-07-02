@@ -105,6 +105,7 @@ define('DEFAULT_CURRENCY', 'Rs.');
 define('REFERRAL_SIGNUP_BONUS', 50);
 define('DEFAULT_PLAYER_CREDITS', 6.5);
 define('DEFAULT_TIMEZONE', '+05:30');
+define('ADMIN_ID', 125);
 
 /*Social */
 define('FACEBOOK_URL', 'https://www.facebook.com/FSLEleven/');
