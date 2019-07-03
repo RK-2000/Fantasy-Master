@@ -171,6 +171,7 @@ class Sports_model extends CI_Model {
                 'IsPreSquad' => 'M.IsPreSquad',
                 'IsPlayerPointsUpdated' => 'M.IsPlayerPointsUpdated',
                 'MatchScoreDetails' => 'M.MatchScoreDetails',
+                'MatchClosedInMinutes' => 'M.MatchClosedInMinutes',
                 'MatchStartDateTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") MatchStartDateTime',
                 'CurrentDateTime' => 'DATE_FORMAT(CONVERT_TZ(Now(),"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' ") CurrentDateTime',
                 'MatchDate' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") MatchDate',
