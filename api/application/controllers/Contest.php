@@ -80,7 +80,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        $ContestID = $this->Contest_model->addContest(array_merge($this->Post, array('IsPaid' => 'Yes', 'Privacy' => 'Yes', 'ShowJoinedContest' => 'Yes', 'IsConfirm' => 'No', 'CashBonusContribution' => 0, 'AdminPercent' => ADMIN_CONTEST_PERCENT, 'ContestType' => ($this->Post['ContestSize'] == 2) ? 'Head to Head' : 'Normal')), $this->SessionUserID, $this->MatchID, $this->SeriesID);
+        $ContestID = $this->Contest_model->addContest(array_merge($this->Post, array('IsPaid' => 'Yes', 'Privacy' => 'Yes', 'ShowJoinedContest' => 'Yes', 'IsConfirm' => 'No', 'CashBonusContribution' => 0, 'AdminPercent' => ADMIN_CONTEST_PERCENT, 'ContestType' => ($this->Post['ContestSize'] == 2) ? 'Head to Head' : 'Normal')), $this->SessionUserID, array($this->MatchID), $this->SeriesID);
         if (!$ContestID) {
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";
@@ -225,37 +225,60 @@ class Contest extends API_Controller_Secure
       Description: 	Use to  switch user team with joined contest.
       URL: 			/contest/switchUserTeam/
      */
-
     public function switchUserTeam_post()
     {
-        $this->form_validation->set_rules('UserTeamGUID[]', 'UserTeamGUID', 'trim|required');
-        $this->form_validation->set_rules('OldUserTeamGUID[]', 'OldUserTeamGUID', 'trim|required');
-        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
+        $this->form_validation->set_rules('UserTeamGUID[]', 'UserTeamGUID', 'trim');
+        $this->form_validation->set_rules('OldUserTeamGUID[]', 'OldUserTeamGUID', 'trim');
+        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateMatchLiveTime');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-        
-        $Contest = $this->Contest_model->getContests('MatchStartDateTimeUTC,GameTimeLive', array('StatusID' => array(1, 2), 'ContestID' => $this->ContestID));
-        $CurrentDateTime = strtotime(date('Y-m-d H:i:s')); // UTC 
-        $Contest['GameTimeLive'] = 0;
-        if ($Contest['GameTimeLive'] > 0) {
-            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $Contest['GameTimeLive'] * 60;
-        } else {
-            $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
-            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $ClosedInMinutes * 60;
-        }
-        if ($MatchStartDateTime > $CurrentDateTime) {
-            $UserTeamGUID = json_decode($this->Post['UserTeamGUID']);
-            $OldUserTeamGUID = json_decode($this->Post['OldUserTeamGUID']);
-            foreach ($UserTeamGUID as $key => $Rows) {
-                $UserTeamIDNew = $this->Entity_model->getEntity("EntityID", array("EntityGUID" => $Rows, 'EntityTypeName' => 'User Teams'));
-                $UserTeamIDOld = $this->Entity_model->getEntity("EntityID", array("EntityGUID" => $OldUserTeamGUID[$key], 'EntityTypeName' => 'User Teams'));
-                $this->Contest_model->switchUserTeam($this->SessionUserID, $this->ContestID, $UserTeamIDNew['EntityID'], $UserTeamIDOld['EntityID']);
+
+        /* Validate User Team GUID */
+        if (!empty($this->Post['UserTeamGUID']) && is_array($this->Post['UserTeamGUID'])) {
+            foreach ($this->Post['UserTeamGUID'] as $Key => $Value) {
+                $UserTeamID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $Value, 'EntityTypeName' => "User Teams"));
+                if (!$UserTeamID) {
+                    $this->Return['ResponseCode'] = 500;
+                    $this->Return['Message'] = "Invalid UserTeamGUID.";
+                    exit;
+                }
+                $UserTeamIDs[] = $UserTeamID['EntityID'];
             }
-            $this->Return['Message'] = "Team switched successfully.";
         } else {
             $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Sorry! This match has already started.";
+            $this->Return['Message'] = "UserTeamGUID Requuired.";
+            exit;
         }
+
+        /* Validate Old User Team GUID */
+        if (!empty($this->Post['OldUserTeamGUID']) && is_array($this->Post['OldUserTeamGUID'])) {
+            foreach ($this->Post['OldUserTeamGUID'] as $Key => $Value) {
+                $OldUserTeamID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $Value, 'EntityTypeName' => "User Teams"));
+                if (!$OldUserTeamID) {
+                    $this->Return['ResponseCode'] = 500;
+                    $this->Return['Message'] = "Invalid OldUserTeamGUID.";
+                    exit;
+                }
+                $OldUserTeamIDs[] = $OldUserTeamID['EntityID'];
+            }
+        } else {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "OldUserTeamGUID Requuired.";
+            exit;
+        }
+
+        /* Validate User Teams & Old User Teams Count */
+        if (count($UserTeamIDs) != count($OldUserTeamIDs)) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "New & Old Teams count should be equal.";
+            exit;
+        }
+
+        /* Switch User Team */
+        foreach ($UserTeamIDs as $Key => $UserTeam) {
+            $this->Contest_model->switchUserTeam($this->SessionUserID, $this->ContestID, $UserTeam, $OldUserTeamIDs[$Key]);
+        }
+        $this->Return['Message'] = "Team switched successfully.";
     }
 
     /*
@@ -273,6 +296,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
 
         /* Get User Teams Data */
         $UserTeams = $this->Contest_model->getUserTeams(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'UserTeamID' => @$this->UserTeamID, 'TeamsContestID' => @$this->ContestID)), (!empty($this->Post['UserTeamGUID'])) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
@@ -305,31 +329,18 @@ class Contest extends API_Controller_Secure
     public function join_post()
     {
         $this->form_validation->set_rules('UserTeamGUID', 'UserTeamGUID', 'trim|required|callback_validateEntityGUID[User Teams,UserTeamID]');
-        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateUserJoinContest');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateUserJoinContest');
         $this->form_validation->validation($this);  /* Run validation */
+
         /* Join Contests */
-        $Contest = $this->Contest_model->getContests('MatchStartDateTimeUTC,GameTimeLive', array('StatusID' => array(1, 2), 'ContestID' => $this->ContestID));
-        $CurrentDateTime = strtotime(date('Y-m-d H:i:s')); // UTC 
-        $Contest['GameTimeLive'] = 0;
-        if ($Contest['GameTimeLive'] > 0) {
-            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $Contest['GameTimeLive'] * 60;
-        } else {
-            $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
-            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $ClosedInMinutes * 60;
-        }
-        if ($MatchStartDateTime > $CurrentDateTime) {
-            $JoinContest = $this->Contest_model->joinContest($this->Post, $this->SessionUserID, $this->ContestID, $this->MatchID, $this->UserTeamID);
-            if (!$JoinContest) {
-                $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "An error occurred, please try again later.";
-            } else {
-                $this->Return['Data'] = $JoinContest;
-                $this->Return['Message'] = "Contest joined successfully.";
-            }
-        } else {
+        $JoinContest = $this->Contest_model->joinContest($this->Post, $this->SessionUserID, $this->ContestID, $this->MatchID, $this->UserTeamID);
+        if (!$JoinContest) {
             $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Sorry! This contest has already started.";
+            $this->Return['Message'] = "An error occurred, please try again later.";
+        } else {
+            $this->Return['Data'] = $JoinContest;
+            $this->Return['Message'] = "Contest joined successfully.";
         }
     }
 
@@ -479,18 +490,29 @@ class Contest extends API_Controller_Secure
      */
     public function validateUserJoinContest($ContestGUID)
     {
-
-        $ContestData = $this->Contest_model->getContests('MatchID,ContestSize,Privacy,IsPaid,EntryType,EntryFee,UserInvitationCode,ContestID,ContestType,UserJoinLimit,CashBonusContribution', array('ContestID' => $this->ContestID));
+        $ContestData = $this->Contest_model->getContests('MatchID,ContestSize,Privacy,IsPaid,EntryType,EntryFee,UserInvitationCode,ContestID,UserJoinLimit,CashBonusContribution,MatchStartDateTimeUTC,GameTimeLive', array('ContestID' => $this->ContestID));
         if (!empty($ContestData)) {
+
+            /* To Check Match Start Date Time */
+            if ($ContestData['GameTimeLive'] > 0) {
+                $MatchStartDateTime = strtotime($ContestData['MatchStartDateTimeUTC']) - $ContestData['GameTimeLive'] * 60;
+            } else {
+                $MatchStartDateTime = strtotime($ContestData['MatchStartDateTimeUTC']) - $this->Settings_model->getSiteSettings("MatchLiveTime") * 60;
+            }
+            if ($MatchStartDateTime <= strtotime(date('Y-m-d H:i:s'))) {
+                $this->form_validation->set_message('validateUserJoinContest', 'You can join only upcoming matches contest.');
+                return FALSE;
+            }
+
             /* Get Match Status */
-            $MatchData = $this->Sports_model->getMatches('MatchType,Status,MatchScoreDetails,MatchGUID', array('MatchID' => $ContestData['MatchID']));
+            $MatchData = $this->Sports_model->getMatches('Status', array('MatchID' => $ContestData['MatchID']));
             if ($MatchData['Status'] != 'Pending') {
                 $this->form_validation->set_message('validateUserJoinContest', 'You can join only upcoming matches contest.');
                 return FALSE;
             }
 
             /* Check Join Contest Size Limit */
-            if ($this->db->query('SELECT COUNT(*) AS `TotalRecords` FROM `sports_contest_join` WHERE `ContestID` =' . $ContestData['ContestID'])->row()->TotalRecords >= $ContestData['ContestSize']) {
+            if ($this->db->query('SELECT COUNT(EntryDate) `TotalRecords` FROM `sports_contest_join` WHERE `ContestID` =' . $ContestData['ContestID'])->row()->TotalRecords >= $ContestData['ContestSize']) {
                 $this->form_validation->set_message('validateUserJoinContest', 'Join Contest limit is exceeded.');
                 return FALSE;
             }
@@ -500,7 +522,7 @@ class Contest extends API_Controller_Secure
             if ($ContestData['EntryType'] == 'Multiple') {
 
                 /* Get User Join Limit */
-                if ($this->db->query('SELECT COUNT(*) AS `TotalJoined` FROM `sports_contest_join` WHERE `ContestID` =' . $ContestData['ContestID'] . ' AND UserID = ' . $this->SessionUserID)->row()->TotalJoined >= $ContestData['UserJoinLimit']) {
+                if ($this->db->query('SELECT COUNT(EntryDate) `TotalJoined` FROM `sports_contest_join` WHERE `ContestID` =' . $ContestData['ContestID'] . ' AND UserID = ' . $this->SessionUserID)->row()->TotalJoined >= $ContestData['UserJoinLimit']) {
                     $this->form_validation->set_message('validateUserJoinContest', 'You can join this contest only ' . $ContestData['UserJoinLimit'] . ' times.');
                     return FALSE;
                 }
@@ -532,55 +554,47 @@ class Contest extends API_Controller_Secure
 
             /* To Check Wallet Amount, If Contest Is Paid */
             if ($ContestData['IsPaid'] == 'Yes') {
+
+                /* Get User Wallet Details */
                 $this->load->model('Users_model');
                 $UserData = $this->Users_model->getUsers('TotalCash,WalletAmount,WinningAmount,CashBonus', array('UserID' => $this->SessionUserID));
-                $this->Post['WalletAmount'] = $UserData['WalletAmount'];
+                $this->Post['WalletAmount']  = $UserData['WalletAmount'];
                 $this->Post['WinningAmount'] = $UserData['WinningAmount'];
-                $this->Post['CashBonus'] = $UserData['CashBonus'];
+                $this->Post['CashBonus']     = $UserData['CashBonus'];
 
+                /* Calculate Wallet Amount */
                 $ContestEntryRemainingFees = @$ContestData['EntryFee'];
                 $CashBonusContribution = @$ContestData['CashBonusContribution'];
-                $WalletAmountDeduction = 0;
-                $WinningAmountDeduction = 0;
-                $CashBonusDeduction = 0;
+                $WalletAmountDeduction = $WinningAmountDeduction = $CashBonusDeduction = 0;
                 if (!empty($CashBonusContribution) && @$UserData['CashBonus'] > 0) {
                     $CashBonusContributionAmount = $ContestEntryRemainingFees * ($CashBonusContribution / 100);
-                    if (@$UserData['CashBonus'] >= $CashBonusContributionAmount) {
-                        $CashBonusDeduction = $CashBonusContributionAmount;
-                    } else {
-                        $CashBonusDeduction = @$UserData['CashBonus'];
-                    }
+                    $CashBonusDeduction = (@$UserData['CashBonus'] >= $CashBonusContributionAmount) ? $CashBonusContributionAmount : @$UserData['CashBonus'];
                     $ContestEntryRemainingFees = $ContestEntryRemainingFees - $CashBonusDeduction;
                 }
                 if ($ContestEntryRemainingFees > 0 && @$UserData['WinningAmount'] > 0) {
-                    if (@$UserData['WinningAmount'] >= $ContestEntryRemainingFees) {
-                        $WinningAmountDeduction = $ContestEntryRemainingFees;
-                    } else {
-                        $WinningAmountDeduction = @$UserData['WinningAmount'];
-                    }
+                    $WinningAmountDeduction = (@$UserData['WinningAmount'] >= $ContestEntryRemainingFees) ? $ContestEntryRemainingFees : @$UserData['WinningAmount'];
                     $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WinningAmountDeduction;
                 }
                 if ($ContestEntryRemainingFees > 0 && @$UserData['WalletAmount'] > 0) {
-                    if (@$UserData['WalletAmount'] >= $ContestEntryRemainingFees) {
-                        $WalletAmountDeduction = $ContestEntryRemainingFees;
-                    } else {
-                        $WalletAmountDeduction = @$UserData['WalletAmount'];
-                    }
+                    $WalletAmountDeduction = (@$UserData['WalletAmount'] >= $ContestEntryRemainingFees) ? $ContestEntryRemainingFees : @$UserData['WalletAmount'];
                     $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WalletAmountDeduction;
                 }
                 if ($ContestEntryRemainingFees > 0) {
                     $this->form_validation->set_message('validateUserJoinContest', 'Insufficient wallet amount.');
                     return FALSE;
                 }
+                $this->Post['CashBonusDeduction']     = $CashBonusDeduction;
+                $this->Post['WinningAmountDeduction'] = $WinningAmountDeduction;
+                $this->Post['WalletAmountDeduction']  = $WalletAmountDeduction;
             }
             $this->Post['IsPaid'] = $ContestData['IsPaid'];
             $this->Post['EntryFee'] = $ContestData['EntryFee'];
             $this->Post['CashBonusContribution'] = $ContestData['CashBonusContribution'];
-            return TRUE;
         } else {
             $this->form_validation->set_message('validateUserJoinContest', 'Invalid ContestGUID.');
             return FALSE;
         }
+        return TRUE;
     }
 
     /**
@@ -629,7 +643,7 @@ class Contest extends API_Controller_Secure
      * Function Name: validateMatchDateTime
      * Description:   To validate match date time
      */
-    public function validateMatchDateTime($MatchGUID,$Module)
+    public function validateMatchDateTime($MatchGUID, $Module)
     {
         $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
         if ($ClosedInMinutes > 0) {
@@ -800,14 +814,35 @@ class Contest extends API_Controller_Secure
         $AllPlayersIds  = sort(array_column($this->Post['UserTeamPlayers'], 'PlayerID')); // Sort Players ID In Ascending Order
         $AllPlayerRoles = array_column($this->Post['UserTeamPlayers'], 'PlayerRole');
         $PlayerString   = '';
-        for ($I = 0; $I < 11; $I++) { 
-            $PlayerString .= $AllPlayersIds[$I].$AllPlayerRoles[$I];
+        for ($I = 0; $I < 11; $I++) {
+            $PlayerString .= $AllPlayersIds[$I] . $AllPlayerRoles[$I];
         }
-        $Query = $this->db->query("SELECT (SELECT GROUP_CONCAT(CONCAT(UTP.PlayerID, '', UTP.PlayerPosition) SEPARATOR '') FROM sports_users_team_players UTP WHERE UTP.UserTeamID = TP.UserTeamID ORDER BY UTP.PlayerID ASC) UserTeamPlayers FROM sports_users_teams TP WHERE TP.UserID = ".$this->SessionUserID." AND TP.MatchID = ".$this->MatchID." HAVING UserTeamPlayers = '".$PlayerString."'");
-        if($Query->num_rows() > 0){
+        $Query = $this->db->query("SELECT (SELECT GROUP_CONCAT(CONCAT(UTP.PlayerID, '', UTP.PlayerPosition) SEPARATOR '') FROM sports_users_team_players UTP WHERE UTP.UserTeamID = TP.UserTeamID ORDER BY UTP.PlayerID ASC) UserTeamPlayers FROM sports_users_teams TP WHERE TP.UserID = " . $this->SessionUserID . " AND TP.MatchID = " . $this->MatchID . " HAVING UserTeamPlayers = '" . $PlayerString . "'");
+        if ($Query->num_rows() > 0) {
             $this->form_validation->set_message('validateUserTeamPlayers', "You've already created this team. Change your Playing (XI) and/or Captain & Vice-Captain.");
             return FALSE;
         }
         return TRUE;
     }
+
+    /**
+     * Function Name: validateMatchLiveTime
+     * Description:   To validate match live time
+     */
+    public function validateMatchLiveTime($ContestGUID)
+    {
+        /* Get Contest Details */
+        $Contest = $this->Contest_model->getContests('MatchStartDateTimeUTC,GameTimeLive', array('StatusID' => array(1, 2), 'ContestID' => $this->ContestID));
+        if ($Contest['GameTimeLive'] > 0) {
+            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $Contest['GameTimeLive'] * 60;
+        } else {
+            $MatchStartDateTime = strtotime($Contest['MatchStartDateTimeUTC']) - $this->Settings_model->getSiteSettings("MatchLiveTime") * 60;
+        }
+        if ($MatchStartDateTime <= strtotime(date('Y-m-d H:i:s'))) {
+            $this->form_validation->set_message('validateMatchLiveTime', 'You can switch teams only for upcoming matches.');
+            return FALSE;
+        }
+        return TRUE;
+    }
+
 }

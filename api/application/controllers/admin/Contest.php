@@ -84,6 +84,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_message('regex_match', '{field} value should be between 0 to 100.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+        
         $TotalMatches = count($this->Post['MatchGUID']);
         if($TotalMatches > 0){
             for ($I = 0; $I < $TotalMatches; $I++) {
