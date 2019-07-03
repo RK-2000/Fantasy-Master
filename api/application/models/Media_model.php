@@ -220,4 +220,14 @@ class Media_model extends CI_Model
 		}
 		$this->db->update_batch('tbl_media', $updateArray, 'MediaID');
 	}
+
+	/*
+	Description: Use to delete media
+	*/
+	function deleteMedia($MediaID)
+	{
+		$this->db->where(array("MediaID" => $MediaID));
+		$this->db->delete('tbl_media');
+		$this->db->limit(1);
+	}
 }

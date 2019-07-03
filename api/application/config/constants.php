@@ -94,6 +94,7 @@ define('SITE_NAME', 'FSL11');
 define('SITE_CONTACT_EMAIL', 'mwadmin@mailinator.com');
 define('MULTISESSION', true);
 define('PHONE_NO_VERIFICATION', true);
+define('IS_VICECAPTAIN', true);
 define('IS_AUCTION', true);
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy */
 define('SPORTS_FILE_PATH', FCPATH.'uploads/sports.txt');
@@ -107,6 +108,9 @@ define('DEFAULT_PLAYER_CREDITS', 6.5);
 define('DEFAULT_TIMEZONE', '+05:30');
 define('ADMIN_ID', 125);
 define('ADMIN_CONTEST_PERCENT', 10);
+define('IS_USER_TEAMS_LIMIT', true);
+define('IS_USER_TEAMS_ROLES', true);
+define('USER_TEAMS_LIMIT', 6);
 
 /*Social */
 define('FACEBOOK_URL', 'https://www.facebook.com/FSLEleven/');

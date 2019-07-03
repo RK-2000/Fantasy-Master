@@ -112,12 +112,17 @@ class Utility_model extends CI_Model
 
     function bannerList($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
     {
-        $MediaData = $this->Media_model->getMedia('MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'Banner'), TRUE);
-        if ($MediaData) {
-            $Return = ($MediaData ? $MediaData : new StdClass());
-            return $Return;
+        $MediaData = $this->cache->memcached->get('Banners');
+        if(empty($MediaData)){
+            $MediaData = $this->Media_model->getMedia('MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'Banner'), TRUE);
+            if ($MediaData) {
+                $Return = ($MediaData ? $MediaData : new StdClass());
+                $this->cache->memcached->save('Banners',$Return);
+                return $Return;
+            }
+            return false;
         }
-        return false;
+        return $MediaData;
     }
 
     /*
@@ -213,6 +218,7 @@ class Utility_model extends CI_Model
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
         }
+        $this->cache->memcached->delete('Banners');
         return array('BannerID' => $BannerID, 'BannerGUID' => $EntityGUID);
     }
 
