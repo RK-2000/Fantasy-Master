@@ -133,18 +133,6 @@ class Upload extends API_Controller_Secure
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	/*
 	Description: 	Use to delete entity.
 	URL: 			/api/upload/delete/	
@@ -157,15 +145,12 @@ class Upload extends API_Controller_Secure
 		/* Validation - ends */
 
 		$UserData = $this->Users_model->getUsers('IsAdmin', array('UserID' => $this->SessionUserID));
-		$MediaData = $this->Media_model->getMedia('M.UserID, M.MediaName,MS.SectionFolderPath, MS.SectionThumbSize', array("MediaID" => $this->MediaID));
-
-
+		$MediaData = $this->Media_model->getMedia('M.UserID, M.MediaName,MS.SectionFolderPath, MS.SectionThumbSize, M.SectionID', array("MediaID" => $this->MediaID));
 		if ($UserData['IsAdmin'] != "Yes" && $MediaData['UserID'] != $this->SessionUserID) {
 			$this->Return['ResponseCode'] 	=	500;
 			$this->Return['Message']      	=	"You don't have permission to perform this action.";
 			return FALSE;
 		}
-
 
 		$SectionThumbSize = explode(',', $MediaData['SectionThumbSize']);
 		/*delete primary image*/
@@ -176,7 +161,13 @@ class Upload extends API_Controller_Secure
 			@unlink($MediaData['SectionFolderPath'] . $Value . "_" . $MediaData['MediaName']);
 		}
 
-		$this->Entity_model->deleteEntity($this->MediaID);
-		$this->Return['Message']      	=	"Deleted successfully.";
+		/* Delete Media */
+		$this->Media_model->deleteMedia($this->MediaID);
+
+		/* Delete Media Caching */
+		if($MediaData['SectionID'] == 'Banner'){
+			$this->cache->memcached->delete('Banners');
+		}
+		$this->Return['Message'] =	"Deleted successfully.";
 	}
 }
