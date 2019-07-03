@@ -30,6 +30,7 @@ class Matches extends API_Controller_Secure
 
         /* Get Matches Data */
         $MatchesData = $this->Sports_model->getMatches(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => $this->SeriesID, 'TeamIDLocal' => @$this->LTeamID, 'TeamIDVisitor' => @$this->VTeamID,'MatchID' => @$this->MatchID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+      
         if (!empty($MatchesData)) {
             $this->Return['Data'] = $MatchesData['Data'];
         }

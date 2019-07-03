@@ -12,16 +12,14 @@
 
 			<hr>
 			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Series Name</label>
 						<input type="text" id="SeriesName" class="form-control" placeholder="SERIES NAME" name="SeriesName" ng-model="formData.SeriesName" value="{{formData.SeriesName}}" readonly>
-						<a href="javascript:void(0)" onclick="EditSeriesName()"><i class="fa fa-edit"></i> Edit</a>
+						
 					</div>
 				</div>
-			</div>
-			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Status</label>
 						<select name="Status" id="Status" class="form-control chosen-select">
@@ -32,8 +30,9 @@
 					</div>
 				</div>
 			</div>
+			
 			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Auction Draft Play</label>
 						<select name="AuctionDraftIsPlayed" id="AuctionDraftIsPlayed" class="form-control chosen-select">
@@ -43,17 +42,16 @@
 						</select>
 					</div>
 				</div>
-			</div>
-			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Draft User Limit </label>
 						<input name="DraftUserLimit" id="DraftUserLimit" placeholder="DRAFT USER LIMIT" ng-model="formData.DraftUserLimit" type="text" class="form-control numeric">
 					</div>
 				</div>
 			</div>
+		
 			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Draft Team Player Limit</label>
 						<input name="DraftTeamPlayerLimit" id="DraftTeamPlayerLimit" placeholder="DRAFT TEAM PLAYER LIMIT" ng-model="formData.DraftTeamPlayerLimit" type="text" class="form-control numeric">
@@ -61,35 +59,37 @@
 				</div>
 			</div>
 			<div class="row"> 
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Draft Player Selection Criteria</label>
 					</div>
 				</div>
 			</div>
 			<div class="row"> 
-				<div class="col-md-2">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="control-label">WK</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="WK" type="text" class="form-control numeric">
+						<label class="control-label">Wicket Keeper</label>
+						<input name="DraftPlayerSelectionCriteria[]" placeholder="WICKET KEEPER" type="text" class="form-control numeric">
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="control-label">BAT</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="BAT" type="text" class="form-control numeric">
+						<label class="control-label">Batsman</label>
+						<input name="DraftPlayerSelectionCriteria[]" placeholder="BATSMAN" type="text" class="form-control numeric">
 					</div>
 				</div>
-				<div class="col-md-2">
+			</div>
+			<div class="row"> 
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="control-label">AR</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="AR" type="text" class="form-control numeric">
+						<label class="control-label">All Rounder</label>
+						<input name="DraftPlayerSelectionCriteria[]" placeholder="ALL ROUNDER" type="text" class="form-control numeric">
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="control-label">BOWL</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="BOWL" type="text" class="form-control numeric">
+						<label class="control-label">Bowler</label>
+						<input name="DraftPlayerSelectionCriteria[]" placeholder="BOWLER" type="text" class="form-control numeric">
 					</div>
 				</div>
 			</div>
@@ -106,8 +106,3 @@
 	<button type="submit" class="btn btn-success btn-sm" ng-disabled="editDataLoading" ng-click="editData()">Save</button>
 </div>
 
-<script type="text/javascript">
-	function EditSeriesName() {
-		$('#SeriesName').removeAttr('readonly');
-	}
-</script>

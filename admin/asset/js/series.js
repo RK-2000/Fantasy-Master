@@ -107,6 +107,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $('.modal-header .close').click();
             } else {
                 alertify.error(response.Message);
             }
