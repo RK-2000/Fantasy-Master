@@ -11,21 +11,13 @@
 			<span class="h5" ng-if="!AllMatches" >Match Date : <b>{{matchDetail.MatchStartDateTime}}</b></span><br>
 		</span>
 	
-	</div>
+	</div> 
 	<div class="clearfix mt-2 mb-2" ng-if="data.dataList.length">
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control ml-1" name="Keyword" placeholder="Search">
-			</form>
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -44,13 +36,8 @@
 					<th>Player's Name</th>
 					<th>Team Name</th>
 					<th style="width: 100px;" ng-if="!AllMatches" >Player's Role</th>
-                    <th style="width: 100px;" ng-if="!SGUID">Salary Credit</th>
-					<!--<th style="width: 100px;" >T20</th>
-					<th style="width: 100px;" >T20i</th>
-					<th style="width: 100px;" >ODI</th>
-					<th style="width: 100px;" >TEST</th>	-->
-					<th style="width: 100px;" class="text-center"></th>
-                    <th style="width: 100px;" class="text-center">Action</th>
+                    <th style="width: 100px;" ng-if="!AllMatches" >Credit Points</th>
+			        <th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>
 			<!-- table body -->
@@ -68,17 +55,10 @@
 					<td ng-if="!AllMatches" >
 						<p>{{row.PlayerRole}}</p>
 					</td>
-                    <td ng-if="!SGUID"><input type="text" class="form-control" ng-model="row.PlayerSalaryCredit"  ></td>
-<!--					<td><input type="text" class="form-control numeric" ng-model="row.PlayerSalary.T20Credits"  ></td>
-					<td><input type="text" class="form-control numeric" ng-model="row.PlayerSalary.T20iCredits"  ></td>
-					<td><input type="text" class="form-control numeric" ng-model="row.PlayerSalary.ODICredits"  ></td>
-					<td><input type="text" class="form-control numeric" ng-model="row.PlayerSalary.TestCredits"  ></td>-->
-					<td ng-if="!AllMatches" class="text-center">
-						
-						<a class="btn btn-success btn-sm" href="" ng-if="!SGUID" ng-click="updatePlayerSalary(row.PlayerGUID,matchDetail.MatchGUID,row)">Update</a>
-						
+					<td ng-if="!AllMatches" >
+						<p>{{row.PlayerSalary}}</p>
 					</td>
-                    <td ng-if="!AllMatches" class="text-center">
+               <td ng-if="!AllMatches" class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
@@ -117,7 +97,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="CategoryTypeName">Team Name</label>
 										<select id="TeamGUID" name="TeamGUID" class="form-control chosen-select">
@@ -126,9 +106,7 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col">Player Role</label>
 										<select id="Player Role" name="PlayerRole" class="form-control chosen-select">
@@ -141,7 +119,14 @@
 									</div>
 								</div>
 							</div>
-
+							<div class="row">
+							<div class="col-md-6">
+							<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+								</div>
+							</div>
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
 

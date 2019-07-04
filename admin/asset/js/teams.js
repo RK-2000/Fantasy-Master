@@ -71,7 +71,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             var response = response.data;
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
+                $scope.formData = response.Data.Records[0]
                 $('#edit_model').modal({show:true});
                 $timeout(function(){            
                    $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
