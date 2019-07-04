@@ -45,12 +45,17 @@ class Matches extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->set_rules('MatchClosedInMinutes', 'MatchClosedInMinutes', 'trim|integer');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
+        /* Update Match Details */
+        $this->Entity_model->updateMatchDetails($this->MatchID, $this->Post);
+
+        /* Update Match Status */
         $this->Entity_model->updateEntityInfo($this->MatchID, array("StatusID" => $this->StatusID));
-        $this->Return['Data'] = $this->Sports_model->getMatches('SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status', array('MatchID' => $this->MatchID), FALSE, 0);
-        $this->Return['Message'] = "Status has been changed.";
+        $this->Return['Data'] = $this->Sports_model->getMatches('SeriesName,MatchType,MatchNo,MatchClosedInMinutes,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status', array('MatchID' => $this->MatchID), FALSE, 0);
+        $this->Return['Message'] = "Success.";
     }
 
     /*
@@ -106,7 +111,7 @@ class Matches extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        $this->Sports_model->updatePlayerRole($this->PlayerID, $this->MatchID, array("PlayerRole" => $this->Post['PlayerRole'], 'IsAdminUpdate' => 'Yes'));
+        $this->Sports_model->updatePlayerRole($this->PlayerID,$this->MatchID,array("PlayerRole"=>$this->Post['PlayerRole'],"PlayerSalary"=>$this->Post['PlayerSalary']));
 
         /* check for media present - associate media with this Post */
         if (!empty($this->Post['MediaGUIDs'])) {

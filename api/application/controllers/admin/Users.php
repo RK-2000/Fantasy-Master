@@ -190,13 +190,6 @@ class Users extends API_Controller_Secure
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
-            /* Send welcome Email to User with login details */
-            // sendMail(array(
-            // 	'emailTo' 		=> $this->Post['Email'],			
-            // 	'emailSubject'	=> "Your Login Credentials - ".SITE_NAME,
-            // 	'emailMessage'	=> emailTemplate($this->load->view('emailer/adduser',array("Name" =>  $this->Post['FirstName'], 'Password' => $this->Post['Password']),TRUE)) 
-            // ));
-
             send_mail(array(
                 'emailTo' => $this->Post['Email'],
                 'template_id' => 'd-2baba49071954ed98fee6f146b5168e2',
@@ -250,113 +243,6 @@ class Users extends API_Controller_Secure
         }
     }
 
-    public function export_Withdrawal_list_post()
-    {
-        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-        $this->form_validation->validation($this);  /* Run validation */
-
-        /* Get Withdrawal Data */
-        $from_date = $this->input->post('FromDate');
-        $to_date = $this->input->post('ToDate');
-        $user_type = 2;
-
-        $requestList = $this->Users_model->getWithdrawals(@$this->Post['Params'], array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-
-        $requestList = $requestList['Data']['Records'];
-
-        if ($requestList) {
-            $print_array = array();
-            $i = 1;
-            foreach ($requestList as $value) {
-                $print_array[] = array(
-                    's_no' => $i,
-                    'UserID' => $value['UserID'],
-                    'FirstName' => $value['FirstName'],
-                    'Email' => $value['Email'],
-                    'PhoneNumber' => $value['PhoneNumber'],
-                    'Amount' => $value['Amount'],
-                    'AccountNumber' => $value['MediaBANK']['MediaCaption']->AccountNumber,
-                    'Bank' => $value['MediaBANK']['MediaCaption']->Bank,
-                    'IFSCCode' => $value['MediaBANK']['MediaCaption']->IFSCCode,
-                    'EntryDate' => $value['EntryDate'],
-                    'Status' => $value['Status']
-                );
-                $i++;
-            }
-
-            $fp = fopen('WithdrawalList.csv', 'w');
-
-            header('Content-type: application/csv');
-            header('Content-Disposition: attachment; filename=WithdrawalList.csv');
-            fputcsv($fp, array('S.no', 'User Id', 'User Name', 'Email', 'Phone', 'Amount', 'AccountNumber', 'Bank', 'IFSCCode', 'Request Date', 'Status'));
-
-            foreach ($print_array as $row) {
-                fputcsv($fp, $row);
-            }
-
-            $this->Return['ResponseCode'] = 200;
-            $this->Return['Message'] = "Successfully Exported";
-            $this->Return['Data'] = BASE_URL . 'WithdrawalList.csv';
-        } else {
-            $this->Return['Message'] = "Something Went Wrong";
-        }
-    }
-
-    public function export_Transactions_list_post()
-    {
-        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-        $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
-        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
-        $this->form_validation->validation($this);  /* Run validation */
-
-        $from_date = $this->input->post('FromDate');
-        $to_date = $this->input->post('ToDate');
-        $user_type = 2;
-
-        /* Get Wallet Data */
-        $requestList = $this->Users_model->getWallet(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-
-        $requestList = $requestList['Data']['Records'];
-
-        if ($requestList) {
-            $print_array = array();
-            $i = 1;
-            foreach ($requestList as $value) {
-                $print_array[] = array(
-                    's_no' => $i,
-                    'TransactionID' => $value['TransactionID'],
-                    'Narration' => $value['Narration'],
-                    'TransactionType' => $value['TransactionType'],
-                    'OpeningBalance' => $value['OpeningBalance'],
-                    'Amount' => $value['Amount'],
-                    'ClosingBalance' => $value['ClosingBalance'],
-                    'AvailableBalance' => ($value['WalletAmount'] + $value['CashBonus']) + $value['WinningAmount'],
-                    'EntryDate' => $value['EntryDate'],
-                    'Status' => $value['Status']
-                );
-                $i++;
-            }
-
-            $fp = fopen('TransactionList.csv', 'w');
-
-            header('Content-type: application/csv');
-            header('Content-Disposition: attachment; filename=WithdrawalList.csv');
-            fputcsv($fp, array('S.no', 'Transaction ID', 'Narration', 'Transaction Type', 'OpeningBalance', 'Amount', 'ClosingBalance', 'AvailableBalance', 'Entry Date', 'Status'));
-
-            foreach ($print_array as $row) {
-                fputcsv($fp, $row);
-            }
-
-            $this->Return['ResponseCode'] = 200;
-            $this->Return['Message'] = "Successfully Exported";
-            $this->Return['Data'] = BASE_URL . 'TransactionList.csv';
-        } else {
-            $this->Return['Message'] = "Something Went Wrong";
-        }
-    }
-
     /*
 	Description: 	Use to update user profile info.
 	URL: 			/api_admin/entity/changeWithdrawalStatus/	
@@ -377,7 +263,6 @@ class Users extends API_Controller_Secure
 
     /*
       Description : To add cash bonus to user
-
      */
     public function addCashBonus_post()
     {
@@ -394,7 +279,6 @@ class Users extends API_Controller_Secure
 
     /*
       Description : To add cash deposit to user
-
      */
     public function addCashDeposit_post()
     {
@@ -407,6 +291,90 @@ class Users extends API_Controller_Secure
 
         $this->Users_model->addToWallet(array_merge($this->Post, array('WalletAmount' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
         $this->Return['Message'] = "Deposit added Successfully.";
+    }
+
+    /*
+      Description : To export user withdrawals
+     */
+    public function exportWithdrawals_post()
+    {
+        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        /* Get Withdrawal Data */
+        $WithdrawalData = $this->Users_model->getWithdrawals(@$this->Post['Params'], array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        if ($WithdrawalData['Data']['TotalRecords'] > 0) {
+            foreach ($WithdrawalData['Data']['Records'] as $Key => $Value) {
+                $DataArr[] = array(
+                            's_no'          => $Key++,
+                            'FirstName'     => $Value['FirstName'],
+                            'Email'         => $Value['Email'],
+                            'PhoneNumber'   => $Value['PhoneNumber'],
+                            'Amount'        => $Value['Amount'],
+                            'AccountNumber' => $Value['MediaBANK']['MediaCaption']->AccountNumber,
+                            'Bank'          => $Value['MediaBANK']['MediaCaption']->Bank,
+                            'IFSCCode'      => $Value['MediaBANK']['MediaCaption']->IFSCCode,
+                            'EntryDate'     => $Value['EntryDate'],
+                            'Status'        => $Value['Status']
+                        );
+            }
+            $FP = fopen('WithdrawalList.csv', 'w');
+            header('Content-type: application/csv');
+            header('Content-Disposition: attachment; filename=WithdrawalList.csv');
+            fputcsv($FP, array('S.no', 'User Name', 'Email', 'Phone', 'Amount', 'Account Number', 'Bank', 'IFSC Code', 'Request Date', 'Status'));
+            foreach ($DataArr as $Row) {
+                fputcsv($FP, $Row);
+            }
+            $this->Return['ResponseCode'] = 200;
+            $this->Return['Data'] = BASE_URL . 'WithdrawalList.csv';
+        } else {
+            $this->Return['Message'] = "Withdrawal history not found.";
+        }
+    }
+
+    /*
+      Description : To export user transactions
+     */
+    public function exportTransactions_post()
+    {
+        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
+        $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
+        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
+        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
+        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        /* Get Wallet Data */
+        $WalletData = $this->Users_model->getWallet(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        if ($WalletData['Data']['TotalRecords'] > 0) {
+            foreach ($WalletData['Data']['Records'] as $Key => $Value) {
+                $DataArr[] = array(
+                    's_no'             => $Key++,
+                    'TransactionID'    => $Value['TransactionID'],
+                    'Narration'        => $Value['Narration'],
+                    'TransactionType'  => $Value['TransactionType'],
+                    'OpeningBalance'   => $Value['OpeningBalance'],
+                    'Amount'           => $Value['Amount'],
+                    'ClosingBalance'   => $Value['ClosingBalance'],
+                    'AvailableBalance' => ($Value['WalletAmount'] + $Value['CashBonus']) + $Value['WinningAmount'],
+                    'EntryDate'        => $Value['EntryDate'],
+                    'Status'           => $Value['Status']
+                );
+            }
+            $FP = fopen('TransactionList.csv', 'w');
+            header('Content-type: application/csv');
+            header('Content-Disposition: attachment; filename=WithdrawalList.csv');
+            fputcsv($FP, array('S.no', 'Transaction ID', 'Narration', 'Transaction Type', 'Opening Balance', 'Amount', 'Closing Balance', 'Available Balance', 'Entry Date', 'Status'));
+            foreach ($DataArr as $Row) {
+                fputcsv($FP, $Row);
+            }
+            $this->Return['ResponseCode'] = 200;
+            $this->Return['Data'] = BASE_URL . 'TransactionList.csv';
+        } else {
+            $this->Return['Message'] = "Wallet history not found.";
+        }
     }
 
     /*
@@ -427,7 +395,6 @@ class Users extends API_Controller_Secure
             $this->Return['Data'] = $ReferredUsersData['Data'];
         }
     }
-
 
     /**
      * Function Name: validateWithdrawalStatus

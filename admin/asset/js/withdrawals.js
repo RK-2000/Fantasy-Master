@@ -84,7 +84,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     /*Export List*/
     $scope.ExportList = function() {
         var data = 'SessionKey='+SessionKey+'&Params=Amount,Email,PhoneNumber,PaymentGateway,Status,EntryDate,FirstName,MediaBANK&' + $('#filterForm1').serialize();
-        $http.post(API_URL + 'admin/users/export_Withdrawal_list', data, contentType).then(function(response) {
+        $http.post(API_URL + 'admin/users/exportWithdrawals', data, contentType).then(function(response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 var encodedUri = encodeURI(response.Data);

@@ -120,7 +120,7 @@ class Utilities extends API_Controller
 
         $this->Utility_model->sendSMS(array(
             'PhoneNumber' => $this->Post['PhoneNumber'],
-            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. ".$this->db->query("SELECT ConfigTypeValue FROM `set_site_config` WHERE `ConfigTypeGUID` = 'AndridAppUrl' LIMIT 1")->row()->ConfigTypeValue
+            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. " . $this->db->query("SELECT ConfigTypeValue FROM `set_site_config` WHERE `ConfigTypeGUID` = 'AndridAppUrl' LIMIT 1")->row()->ConfigTypeValue
         ));
         $this->Return['Message'] = "Link Sent successfully.";
     }
@@ -144,14 +144,14 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get series data.
-      URL: 			/api/utilities/getSeriesLive
+      Description: 	Cron jobs to get cricket series data.
+      URL: 			/api/utilities/getSeriesLiveCricket
      */
-    public function getSeriesLive_get()
+    public function getSeriesLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getSeriesLive');
-        if (SPORTS_API_NAME == 'ENTITY') {
-            $SeriesData = $this->Sports_model->getSeriesLiveEntity($CronID);
+        $CronID = $this->Utility_model->insertCronLogs('getSeriesLiveCricket');
+        if (CRICKET_SPORT_API_NAME == 'ENTITY') {
+            $SeriesData = $this->Utility_model->getSeriesLive_Cricket_Entity($CronID);
         }
         if (!empty($SeriesData)) {
             $this->Return['Data'] = $SeriesData;
@@ -160,17 +160,17 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get matches data.
-      URL: 			/api/utilities/getMatchesLive
+      Description: 	Cron jobs to get cricket matches data.
+      URL: 			/api/utilities/getMatchesLiveCricket
      */
-    public function getMatchesLive_get()
+    public function getMatchesLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getMatchesLive');
-        if (SPORTS_API_NAME == 'ENTITY') {
-            $MatchesData = $this->Sports_model->getMatchesLiveEntity($CronID);
+        $CronID = $this->Utility_model->insertCronLogs('getMatchesLiveCricket');
+        if (CRICKET_SPORT_API_NAME == 'ENTITY') {
+            $MatchesData = $this->Utility_model->getMatchesLive_Cricket_Entity($CronID);
         }
-        if (SPORTS_API_NAME == 'CRICKETAPI') {
-            $MatchesData = $this->Sports_model->getMatchesLiveCricketApi($CronID);
+        if (CRICKET_SPORT_API_NAME == 'CRICKETAPI') {
+            $MatchesData = $this->Utility_model->getMatchesLive_Cricket_CricketApi($CronID);
         }
         if (!empty($MatchesData)) {
             $this->Return['Data'] = $MatchesData;
@@ -179,17 +179,17 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get players data.
-      URL: 			/api/utilities/getPlayersLive
+      Description: 	Cron jobs to get cricket players data.
+      URL: 			/api/utilities/getPlayersLiveCricket
      */
-    public function getPlayersLive_get()
+    public function getPlayersLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayersLive');
-        if (SPORTS_API_NAME == 'ENTITY') {
-            $PlayersData = $this->Sports_model->getPlayersLiveEntity($CronID);
+        $CronID = $this->Utility_model->insertCronLogs('getPlayersLiveCricket');
+        if (CRICKET_SPORT_API_NAME == 'ENTITY') {
+            $PlayersData = $this->Utility_model->getPlayersLive_Cricket_Entity($CronID);
         }
-        if (SPORTS_API_NAME == 'CRICKETAPI') {
-            $PlayersData = $this->Sports_model->getPlayersLiveCricketApi($CronID);
+        if (CRICKET_SPORT_API_NAME == 'CRICKETAPI') {
+            $PlayersData = $this->Utility_model->getPlayersLive_Cricket_CricketApi($CronID);
         }
         if (!empty($PlayersData)) {
             $this->Return['Data'] = $PlayersData;
@@ -198,17 +198,17 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get player stats data.
-      URL: 			/api/utilities/getPlayerStatsLive
+      Description: 	Cron jobs to get cricket player stats data.
+      URL: 			/api/utilities/getPlayerStatsLiveCricket
      */
-    public function getPlayerStatsLive_get()
+    public function getPlayerStatsLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayerStatsLive');
-        if (SPORTS_API_NAME == 'ENTITY') {
-            $PlayersStatsData = $this->Sports_model->getPlayerStatsLiveEntity($CronID);
+        $CronID = $this->Utility_model->insertCronLogs('getPlayerStatsLiveCricket');
+        if (CRICKET_SPORT_API_NAME == 'ENTITY') {
+            $PlayersStatsData = $this->Utility_model->getPlayerStatsLive_Cricket_Entity($CronID);
         }
-        if (SPORTS_API_NAME == 'CRICKETAPI') {
-            $PlayersStatsData = $this->Sports_model->getPlayerStatsLiveCricketApi($CronID);
+        if (CRICKET_SPORT_API_NAME == 'CRICKETAPI') {
+            $PlayersStatsData = $this->Utility_model->getPlayerStatsLive_Cricket_CricketApi($CronID);
         }
         if (!empty($PlayersStatsData)) {
             $this->Return['Data'] = $PlayersStatsData;
@@ -217,17 +217,17 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get match live score
-      URL: 			/api/utilities/getMatchScoreLive
+      Description: 	Cron jobs to get cricket match live score
+      URL: 			/api/utilities/getMatchScoreLiveCricket
      */
-    public function getMatchScoreLive_get()
+    public function getMatchScoreLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getMatchScoreLive');
-        if (SPORTS_API_NAME == 'ENTITY') {
-            $MatchScoreLiveData = $this->Sports_model->getMatchScoreLiveEntity($CronID);
+        $CronID = $this->Utility_model->insertCronLogs('getMatchScoreLiveCricket');
+        if (CRICKET_SPORT_API_NAME == 'ENTITY') {
+            $MatchScoreLiveData = $this->Utility_model->getMatchScoreLive_Cricket_Entity($CronID);
         }
-        if (SPORTS_API_NAME == 'CRICKETAPI') {
-            $MatchScoreLiveData = $this->Sports_model->getMatchScoreLiveCricketApi($CronID);
+        if (CRICKET_SPORT_API_NAME == 'CRICKETAPI') {
+            $MatchScoreLiveData = $this->Utility_model->getMatchScoreLive_Cricket_CricketApi($CronID);
         }
         if (!empty($MatchScoreLiveData)) {
             $this->Return['Data'] = $MatchScoreLiveData;
@@ -333,6 +333,33 @@ class Utilities extends API_Controller
         $this->load->model('AuctionDrafts_model');
         $this->AuctionDrafts_model->auctionLiveAddMinuteInEveryHours($CronID);
         $this->Utility_model->updateCronLogs($CronID);
+    }
+
+    /*
+      Description:  Cron jobs to create pre draft contest
+      URL:      /api/utilities/createPreDraftContest
+    */
+    public function createPreDraftContest_get()
+    {
+        $this->PredraftContest_model->createPreDraftContest();
+    }
+
+    /*
+        Description: Use to manage razorpay webhook response
+        URL: /api/utilities/razorpayWebhook
+    */
+    public function razorpayWebhook_post()
+    {
+        $this->Users_model->razorpayWebhook(file_get_contents("php://input"));
+    }
+
+    /*
+        Description: Use to manage cashfree webhook response
+        URL: /api/utilities/cashFreeWebHookResponse
+    */
+    public function cashFreeWebHookResponse_post()
+    {
+        $this->Users_model->cashFreeWebHookResponse($this->input->post());
     }
 
     /*

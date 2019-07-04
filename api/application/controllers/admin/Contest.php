@@ -24,6 +24,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsPaid', 'IsPaid', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsConfirm', 'IsConfirm', 'trim|required|in_list[Yes,No]');
+        $this->form_validation->set_rules('IsAutoCreate', 'Is Auto Create', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('ShowJoinedContest', 'ShowJoinedContest', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
@@ -84,6 +85,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_message('regex_match', '{field} value should be between 0 to 100.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+        
         $TotalMatches = count($this->Post['MatchGUID']);
         if($TotalMatches > 0){
             for ($I = 0; $I < $TotalMatches; $I++) {

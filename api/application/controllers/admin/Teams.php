@@ -20,6 +20,8 @@ class Teams extends API_Controller_Secure
 		/* Validation section */
 		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
 		$this->form_validation->set_rules('TeamGUID', 'teamGUID', 'trim|required|callback_validateEntityGUID[Teams,TeamID]');
+		$this->form_validation->set_rules('TeamName', 'Team Name', 'trim');
+		$this->form_validation->set_rules('TeamNameShort', 'Team Short Name', 'trim');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
@@ -36,9 +38,11 @@ class Teams extends API_Controller_Secure
 					array("SectionID" => "TeamFlag", "MediaID" => $EntityData['MediaID']),
 					FALSE
 				);
+				$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamFlag'=>$MediaData['MediaName'],'TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
 			}
+		}else{
+			$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
 		}
-		$this->Sports_model->updateTeamFlag($this->TeamID, array('TeamName' => $this->Post['TeamName'], 'TeamFlag' => @$MediaData['MediaName']));
 		/* check for media present - associate media with this Post - ends */
 
 		$TeamData = $this->Sports_model->getTeams(

@@ -10,7 +10,7 @@ class Wallet extends API_Controller
 	/*
 	Name: 			getWallet
 	Description: 	To get wallet data
-	URL: 			/admin/users/getWallet/	
+	URL: 			/admin/wallet/getWallet/	
 	*/
 	public function getWallet_post()
 	{
@@ -31,7 +31,7 @@ class Wallet extends API_Controller
 	/*
 	Name: 			getWithdrawals
 	Description: 	To get Withdrawal data
-	URL: 			/wallet/getWithdrawals/	
+	URL: 			/admin/wallet/getWithdrawals/	
 	*/
 	public function getWithdrawals_post()
 	{

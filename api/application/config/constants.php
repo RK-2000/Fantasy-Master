@@ -95,10 +95,12 @@ define('SITE_CONTACT_EMAIL', 'mwadmin@mailinator.com');
 define('MULTISESSION', true);
 define('PHONE_NO_VERIFICATION', true);
 define('IS_VICECAPTAIN', true);
+define('AUTO_WITHDRAWAL', false);
+define('OTP_WITHDRAWAL', false);
 define('IS_AUCTION', true);
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy */
 define('SPORTS_FILE_PATH', FCPATH.'uploads/sports.txt');
-define('SPORTS_API_NAME', 'CRICKETAPI');
+define('CRICKET_SPORT_API_NAME', 'CRICKETAPI');
 
 define('DEFAULT_SOURCE_ID', 1);
 define('DEFAULT_DEVICE_TYPE_ID', 1);
