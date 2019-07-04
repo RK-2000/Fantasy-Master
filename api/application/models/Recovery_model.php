@@ -92,13 +92,20 @@ class Recovery_model extends CI_Model
 	*/
 	function generateToken($UserID, $Type = 1)
 	{
-		/* delete old unused token */
-		$this->db->where(array("UserID" => $UserID, "Type" => $Type, "StatusID" => 1));
-		$this->db->delete('tbl_tokens');
-		$this->db->limit(1);
-
+		/* Generate Token */
 		$Token =  random_string('numeric', 6);
-		$this->db->insert('tbl_tokens', array('UserID' => $UserID, 'Type' => $Type, 'Token' => $Token, 'EntryDate' => date("Y-m-d H:i:s")));
-		return $Token;
+
+		/* To check duplicate token */
+		if($this->db->query('SELECT Token FROM tbl_tokens WHERE Token = "'.$Token.'" LIMIT 1')->num_rows() > 0){
+			$this->generateToken($UserID, $Type);
+		}else{
+			/* delete old unused token */
+			$this->db->where(array("UserID" => $UserID, "Type" => $Type, "StatusID" => 1));
+			$this->db->delete('tbl_tokens');
+			$this->db->limit(1);
+
+			$this->db->insert('tbl_tokens', array('UserID' => $UserID, 'Type' => $Type, 'Token' => $Token, 'EntryDate' => date("Y-m-d H:i:s")));
+			return $Token;
+		}
 	}
 }

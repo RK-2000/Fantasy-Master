@@ -27,6 +27,7 @@ class Sports_model extends CI_Model {
                 'SeriesID' => 'S.SeriesID',
                 'StatusID' => 'E.StatusID',
                 'SeriesIDLive' => 'S.SeriesIDLive',
+                'SportsType' => 'S.SportsType',
                 'AuctionDraftIsPlayed' => 'S.AuctionDraftIsPlayed',
                 'DraftUserLimit' => 'S.DraftUserLimit',
                 'DraftTeamPlayerLimit' => 'S.DraftTeamPlayerLimit',
@@ -60,6 +61,9 @@ class Sports_model extends CI_Model {
         }
         if (!empty($Where['SeriesID'])) {
             $this->db->where("S.SeriesID", $Where['SeriesID']);
+        }
+        if (!empty($Where['SportsType'])) {
+            $this->db->where("S.SportsType", $Where['SportsType']);
         }
         if (!empty($Where['AuctionDraftIsPlayed'])) {
             $this->db->where("S.AuctionDraftIsPlayed", $Where['AuctionDraftIsPlayed']);
@@ -167,6 +171,7 @@ class Sports_model extends CI_Model {
                 'MatchIDLive' => 'M.MatchIDLive',
                 'MatchTypeID' => 'M.MatchTypeID',
                 'MatchNo' => 'M.MatchNo',
+                'SportsType' => 'M.SportsType',
                 'MatchLocation' => 'M.MatchLocation',
                 'IsPreSquad' => 'M.IsPreSquad',
                 'IsPlayerPointsUpdated' => 'M.IsPlayerPointsUpdated',
@@ -250,6 +255,9 @@ class Sports_model extends CI_Model {
         }
         if (!empty($Where['MatchTypeID'])) {
             $this->db->where("M.MatchTypeID", $Where['MatchTypeID']);
+        }
+        if (!empty($Where['SportsType'])) {
+            $this->db->where("M.SportsType", $Where['SportsType']);
         }
         if (!empty($Where['TeamIDLocal'])) {
             $this->db->where("M.TeamIDLocal", $Where['TeamIDLocal']);
@@ -359,10 +367,12 @@ class Sports_model extends CI_Model {
       Description: To get all teams
      */
 
-    function getTeams($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
+    function getTeams($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) 
+    {
         $Params = array();
         if (!empty($Field)) {
             $Params = array_map('trim', explode(',', $Field));
+            
             $Field = '';
             $FieldArray = array(
                 'TeamID' => 'T.TeamID',
@@ -370,32 +380,31 @@ class Sports_model extends CI_Model {
                 'TeamIDLive' => 'T.TeamIDLive',
                 'TeamName' => 'T.TeamName',
                 'TeamNameShort' => 'T.TeamNameShort',
-                'TeamFlag' => 'T.TeamFlag',
+                'SportsType' => 'T.SportsType',
                 'TeamFlag' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",T.TeamFlag) as TeamFlag',
                 'Status' => 'CASE E.StatusID
-                when "2" then "Active"
-                when "6" then "Inactive"
-                END as Status',
-                'SeriesName' => '(SELECT SeriesName FROM `sports_series` WHERE `SeriesID` = M.SeriesID) SeriesName',
-            );
+                                when "2" then "Active"
+                                when "6" then "Inactive"
+                                END as Status',
+                );
+
             if ($Params) {
                 foreach ($Params as $Param) {
                     $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
                 }
             }
         }
-        $this->db->select('T.TeamName,T.TeamGUID');
-        if (!empty($Field))
+        $this->db->select('DISTINCT(T.TeamGUID),T.TeamName');
+        if (!empty($Field)){
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_teams T');
-        if (!empty($Where['SeriesName']) && $Where['SeriesName'] == 'Yes' || !empty($Where['SeriesID'])) {
-            $this->db->from('sports_matches M, sports_matches V');
         }
+        $this->db->from('tbl_entity E, sports_teams T');
         if (!empty($Where['SeriesID'])) {
-            $this->db->from('sports_team_players TP');
+            $this->db->join('sports_matches M', "M.TeamIDLocal = T.TeamID", 'left');
+            $this->db->join('sports_matches V', "V.TeamIDVisitor = T.TeamID", 'left');
+            $this->db->where("M.SeriesID", $Where['SeriesID']);
         }
         $this->db->where("T.TeamID", "E.EntityID", FALSE);
-
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();
@@ -409,29 +418,12 @@ class Sports_model extends CI_Model {
         if (!empty($Where['TeamIDLive'])) {
             $this->db->where("T.TeamIDLive", $Where['TeamIDLive']);
         }
+        if (!empty($Where['SportsType'])) {
+            $this->db->where("T.SportsType", $Where['SportsType']);
+        }
         if (!empty($Where['StatusID'])) {
             $this->db->where("E.StatusID", $Where['StatusID']);
         }
-
-        if (!empty($Where['SeriesName']) && $Where['SeriesName'] == 'Yes') {
-            $this->db->where("M.TeamIDLocal", "T.TeamID", false);
-            $this->db->where("V.TeamIDVisitor", "T.TeamID", false);
-            $this->db->group_by("T.TeamGUID");
-        }
-        if (!empty($Where['SeriesID']) && empty($Where['LocalTeamGUID'])) {
-            $this->db->where("TP.SeriesID", $Where['SeriesID']);
-            $this->db->where("TP.TeamID", 'T.TeamID', false);
-            $this->db->where("M.TeamIDLocal", "T.TeamID", false);
-            $this->db->group_by("T.TeamGUID");
-        }
-        if (!empty($Where['LocalTeamGUID'])) {
-            $this->db->where("M.TeamIDLocal", $Where['LocalTeamGUID']);
-            $this->db->where("TP.SeriesID", $Where['SeriesID']);
-            $this->db->where("TP.TeamID", 'T.TeamID', false);
-            $this->db->where("M.TeamIDVisitor", "T.TeamID", false);
-            $this->db->group_by("T.TeamGUID");
-        }
-
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
         }
@@ -448,11 +440,21 @@ class Sports_model extends CI_Model {
         } else {
             $this->db->limit(1);
         }
-        // $this->db->cache_on(); //Turn caching on
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             if ($multiRecords) {
-                $Return['Data']['Records'] = $Query->result_array();
+                $Records = array();
+                $key = 0;
+                foreach ($Query->result_array() as $key => $Record) {
+                    $Records[] = $Record;
+                    if ($Where['SeriesName'] == 'Yes') {
+                        $Query1 = $this->db->query('SELECT GROUP_CONCAT(DISTINCT S.SeriesName) as SeriesName
+                            FROM `sports_matches` `M` INNER JOIN sports_series S ON S.SeriesID=M.SeriesID WHERE '. (!empty($Where['SeriesID']) ? '`M`.`SeriesID` = '.$Where['SeriesID'] : '(`M`.`TeamIDLocal` ='.$Records[$key]['TeamID']. ' OR M.TeamIDVisitor = '.$Records[$key]['TeamID'].')'))->result_array();
+                        $Records[$key]['SeriesName'] = (isset($Query1[0]['SeriesName']) ? $Query1[0]['SeriesName'] : '');
+                    }
+                    $key++;
+                }
+                $Return['Data']['Records'] = $Records;
                 return $Return;
             } else {
                 return $Query->row_array();
@@ -854,10 +856,10 @@ class Sports_model extends CI_Model {
       Description: To get player points
      */
 
-    function getPlayerPoints($CronID,$MatchID = "") {
+    function getPlayerPointsCricket($CronID,$MatchID = "") {
 
         /* Get Live Matches Data */
-        $LiveMatches = $this->getMatches('MatchID,MatchType,MatchScoreDetails,StatusID,IsPlayerPointsUpdated', array('Filter' => 'Yesterday', 'StatusID' => array(2, 5, 10), 'IsPlayerPointsUpdated' => 'No', 'OrderBy' => 'M.MatchStartDateTime', 'Sequence' => 'DESC','MatchID' => $MatchID), true, 1, 10);
+        $LiveMatches = $this->getMatches('MatchID,MatchType,MatchScoreDetails,StatusID,IsPlayerPointsUpdated', array('Filter' => 'Yesterday', 'StatusID' => array(2, 5, 10), 'IsPlayerPointsUpdated' => 'No', 'OrderBy' => 'M.MatchStartDateTime', 'Sequence' => 'DESC','MatchID' => $MatchID,'SportsType' => 'Cricket'), true, 1, 10);
         if (!empty($LiveMatches)) {
 
                 /* Get Points Data */
@@ -1029,9 +1031,9 @@ class Sports_model extends CI_Model {
                 }
 
                 /* Update Final player points before complete match */
-                $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-                $this->getJoinedContestPlayerPoints($CronID,array(2),$Value['MatchID']);
-                $this->Utility_model->updateCronLogs($CronID);
+                $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPoints');
+                $this->getJoinedContestPlayerPointsCricket($CronID,array(2),$Value['MatchID']);
+                $this->Common_model->updateCronLogs($CronID);
 
                 /* Update Match Player Points Status */
                 if ($Value['StatusID'] == 5) {
@@ -1040,9 +1042,9 @@ class Sports_model extends CI_Model {
                     $this->db->update('sports_matches', array('IsPlayerPointsUpdated' => 'Yes'));
 
                     /* Update Final player points before complete match */
-                    $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-                    $this->getJoinedContestPlayerPoints($CronID,array(2,5));
-                    $this->Utility_model->updateCronLogs($CronID);
+                    $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPoints');
+                    $this->getJoinedContestPlayerPointsCricket($CronID,array(2,5));
+                    $this->Common_model->updateCronLogs($CronID);
                 }
             }
         }
@@ -1052,7 +1054,7 @@ class Sports_model extends CI_Model {
       Description: To get joined contest player points
      */
 
-    function getJoinedContestPlayerPoints($CronID, $StatusArr = array(2),$MatchID = "") {
+    function getJoinedContestPlayerPointsCricket($CronID, $StatusArr = array(2),$MatchID = "") {
 
         ini_set('memory_limit','512M');
 

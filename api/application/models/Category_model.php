@@ -14,7 +14,6 @@ class Category_model extends CI_Model
 	*/
 	function getAttributes($Field = 'E.EntityGUID', $Where = array(), $multiRecords = FALSE,  $PageNo = 1, $PageSize = 10)
 	{
-
 		$this->db->select($Field);
 		$this->db->select('
 			CASE E.StatusID
@@ -90,7 +89,6 @@ class Category_model extends CI_Model
 		$UpdateArray = array_filter(array(
 			"CategoryName" => @$Input['CategoryName']
 		));
-
 		if (!empty($UpdateArray)) {
 			/* Update User details to users table. */
 			$this->db->where('CategoryID', $CategoryID);
@@ -107,7 +105,6 @@ class Category_model extends CI_Model
 	*/
 	function getCategoryTypes($Field = 'E.EntityGUID', $Where = array(), $multiRecords = FALSE,  $PageNo = 1, $PageSize = 10)
 	{
-
 		$this->db->select('CT.*');
 		$this->db->select($Field);
 		$this->db->select('

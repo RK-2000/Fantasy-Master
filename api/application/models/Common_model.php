@@ -23,6 +23,42 @@ class Common_model extends CI_Model
 		));
 	}
 
+	/*
+      Description: Use to manage cron api logs
+     */
+    function insertCronAPILogs($CronID, $Response)
+    {
+        if (!CRON_SAVE_LOG) {
+            return true;
+        }
+        $this->db->insert('log_cron_api', array('CronID' => $CronID, 'Response' => @json_encode($Response, JSON_UNESCAPED_UNICODE)));
+    }
+
+    /*
+      Description: Use to manage cron logs
+     */
+    function insertCronLogs($CronType)
+    {
+        if (!CRON_SAVE_LOG) {
+            return true;
+        }
+        $this->db->insert('log_cron', array('CronType' => $CronType, 'EntryDate' => date('Y-m-d H:i:s')));
+        return $this->db->insert_id();
+    }
+
+    /*
+      Description: Use to manage cron logs
+     */
+    function updateCronLogs($CronID, $CronStatus = 'Completed')
+    {
+        if (!CRON_SAVE_LOG) {
+            return true;
+        }
+        $this->db->where('CronID', $CronID);
+        $this->db->limit(1);
+        $this->db->update('log_cron', array('CompletionDate' => date('Y-m-d H:i:s'), 'CronStatus' => $CronStatus));
+    }
+
 
 	/*
 	Description: 	Use to get EntityTypeID by EntityTypeName

@@ -42,7 +42,7 @@ class Contest_model extends CI_Model {
             "UserID" => $SessionUserID,
             "GameTimeLive" => @$Input['GameTimeLive'],
             "GameType" => @$Input['GameType'],
-            "PreContestID" => @$Input['PreContestID'],
+            "PredraftContestID" => @$Input['PredraftContestID'],
             "ContestName" => $ContestName,
             "ContestFormat" => @$Input['ContestFormat'],
             "ContestType" => @$Input['ContestType'],
@@ -274,6 +274,9 @@ class Contest_model extends CI_Model {
         }
         if (!empty($Where['UserID'])) {
             $this->db->where("C.UserID", $Where['UserID']);
+        }
+        if (!empty($Where['Filter']) && $Where['Filter'] == 'NonJoined') {
+            $this->db->having("TotalJoined", "0");
         }
         if (!empty($Where['Filter']) && $Where['Filter'] == 'Today') {
             $this->db->where("DATE(M.MatchStartDateTime)", date('Y-m-d'));

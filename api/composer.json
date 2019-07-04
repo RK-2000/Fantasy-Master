@@ -1,6 +1,5 @@
 {
     "require": {
-        "mpdf/mpdf": "^8.0",
         "mongodb/mongodb": "^1.4"
     }
 }

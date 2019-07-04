@@ -17,7 +17,6 @@ class Settings_model extends CI_Model
 
     function getSiteSettings($ConfigTypeGUID)
     {
-
         $this->db->select("ConfigTypeValue");
         $this->db->from('set_site_config');
         $this->db->where(array('ConfigTypeGUID' => $ConfigTypeGUID, 'StatusID' => 2));
