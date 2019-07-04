@@ -10,7 +10,7 @@
 				<img id="picture-box-picture" ng-if="formData.TeamFlag" ng-src="{{formData.TeamFlag}}">
 
 				<!-- picture upload form -->
-				<div class="picture-upload">
+				<div class="picture-upload">  
 					<img src="./asset/img/upload.svg" id="picture-uploadBtn">
 					<form enctype="multipart/form-data" action="../api/upload/image" method="post" name="picture_upload_form" id="picture_upload_form">
 						<input type="hidden" name="Section" value="TeamFlag">
@@ -30,6 +30,14 @@
 						<div class="form-group">
 							<label class="control-label">Team Name</label>
 							<input type="text" id="TeamName" class="form-control" placeholder="TEAM NAME" name="TeamName" ng-model="formData.TeamName" value="{{formData.TeamName}}" readonly>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">Team Name Short</label>
+							<input type="text" class="form-control" maxlength="10" id="TeamNameShort" name="TeamNameShort" value="{{formData.TeamNameShort}}">
 						</div>
 					</div>
 				</div>

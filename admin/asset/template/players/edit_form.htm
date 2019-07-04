@@ -19,7 +19,7 @@
 					</form>
 				</div>
 				<!-- progressbar -->
-				<div class="progressBar">
+				<div class="progressBar"> 
 					<div class="bar"></div>
 					<div class="percent">0%</div>
 				</div>
@@ -29,7 +29,7 @@
 		<form id="edit_form" name="edit_form" autocomplete="off" >
 
 			<div class="row">
-				<div class="col-md-7">
+				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Player Role</label>
 						<select name="PlayerRole" id="PlayerRole" class="form-control chosen-select">
@@ -38,6 +38,14 @@
 							<option value="AllRounder" ng-selected="formData.PlayerRole=='AllRounder'">AllRounder</option>
 							<option value="WicketKeeper" ng-selected="formData.PlayerRole=='WicketKeeper'">WicketKeeper</option>
 						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Credit Points</label>
+						<input type="text" class="form-control numeric" maxlength="8" id="PlayerSalary" name="PlayerSalary" value="{{formData.PlayerSalary}}">
 					</div>
 				</div>
 			</div>
