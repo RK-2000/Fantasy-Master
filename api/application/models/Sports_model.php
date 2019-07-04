@@ -462,10 +462,10 @@ class Sports_model extends CI_Model {
     }
 
     /*
-      Description : To Update Team Flag
+      Description : To Update Team Details
      */
 
-    function updateTeamFlag($TeamID, $Input = array()) {
+    function updateTeamDetails($TeamID, $Input = array()) {
         $UpdateArray = array();
         if (!empty($Input['TeamFlag'])) {
             $UpdateArray['TeamFlag'] = $Input['TeamFlag'];
@@ -475,6 +475,22 @@ class Sports_model extends CI_Model {
             $this->db->where('TeamID', $TeamID);
             $this->db->limit(1);
             $this->db->update('sports_teams', $UpdateArray);
+        }
+        return TRUE;
+    }
+
+    /*
+      Description : To Update Match Details
+     */
+
+    function updateMatchDetails($MatchID, $Input = array()) {
+        $UpdateArray = array_filter(array(
+            'MatchClosedInMinutes' => @$Input['MatchClosedInMinutes']
+        ));
+        if (!empty($UpdateArray)) {
+            $this->db->where('MatchID', $MatchID);
+            $this->db->limit(1);
+            $this->db->update('sports_matches', $UpdateArray);
         }
         return TRUE;
     }

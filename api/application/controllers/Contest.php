@@ -80,7 +80,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        $ContestID = $this->Contest_model->addContest(array_merge($this->Post, array('IsPaid' => 'Yes', 'Privacy' => 'Yes', 'ShowJoinedContest' => 'Yes', 'IsConfirm' => 'No', 'CashBonusContribution' => 0, 'AdminPercent' => ADMIN_CONTEST_PERCENT, 'ContestType' => ($this->Post['ContestSize'] == 2) ? 'Head to Head' : 'Normal')), $this->SessionUserID, array($this->MatchID), $this->SeriesID);
+        $ContestID = $this->Contest_model->addContest(array_merge($this->Post, array('IsPaid' => 'Yes', 'Privacy' => 'Yes', 'IsAutoCreate' => 'No', 'ShowJoinedContest' => 'Yes', 'IsConfirm' => 'No', 'CashBonusContribution' => 0, 'AdminPercent' => ADMIN_CONTEST_PERCENT, 'ContestType' => ($this->Post['ContestSize'] == 2) ? 'Head to Head' : 'Normal')), $this->SessionUserID, array($this->MatchID), $this->SeriesID);
         if (!$ContestID) {
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";

@@ -38,7 +38,7 @@ class Teams extends API_Controller_Secure
 				);
 			}
 		}
-		$this->Sports_model->updateTeamFlag($this->TeamID, array('TeamName' => $this->Post['TeamName'], 'TeamFlag' => @$MediaData['MediaName']));
+		$this->Sports_model->updateTeamDetails($this->TeamID, array('TeamName' => $this->Post['TeamName'], 'TeamFlag' => @$MediaData['MediaName']));
 		/* check for media present - associate media with this Post - ends */
 
 		$TeamData = $this->Sports_model->getTeams(

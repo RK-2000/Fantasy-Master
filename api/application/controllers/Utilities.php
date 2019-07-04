@@ -120,7 +120,7 @@ class Utilities extends API_Controller
 
         $this->Utility_model->sendSMS(array(
             'PhoneNumber' => $this->Post['PhoneNumber'],
-            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. ".$this->db->query("SELECT ConfigTypeValue FROM `set_site_config` WHERE `ConfigTypeGUID` = 'AndridAppUrl' LIMIT 1")->row()->ConfigTypeValue
+            'Text' => "Here is the new " . SITE_NAME . " Android Application! Click on the link to download the App and Start Winning. " . $this->db->query("SELECT ConfigTypeValue FROM `set_site_config` WHERE `ConfigTypeGUID` = 'AndridAppUrl' LIMIT 1")->row()->ConfigTypeValue
         ));
         $this->Return['Message'] = "Link Sent successfully.";
     }
@@ -336,10 +336,20 @@ class Utilities extends API_Controller
     }
 
     /*
+      Description:  Cron jobs to create pre draft contest
+      URL:      /api/utilities/createPreDraftContest
+    */
+    public function createPreDraftContest_get()
+    {
+        $this->PredraftContest_model->createPreDraftContest();
+    }
+
+    /*
         Description: Use to manage razorpay webhook response
         URL: /api/utilities/razorpayWebhook
     */
-    public function razorpayWebhook_post() {
+    public function razorpayWebhook_post()
+    {
         $this->Users_model->razorpayWebhook(file_get_contents("php://input"));
     }
 
@@ -347,7 +357,8 @@ class Utilities extends API_Controller
         Description: Use to manage cashfree webhook response
         URL: /api/utilities/cashFreeWebHookResponse
     */
-    public function cashFreeWebHookResponse_post() {
+    public function cashFreeWebHookResponse_post()
+    {
         $this->Users_model->cashFreeWebHookResponse($this->input->post());
     }
 
