@@ -466,11 +466,11 @@ class Sports_model extends CI_Model {
      */
 
     function updateTeamDetails($TeamID, $Input = array()) {
-        $UpdateArray = array();
-        if (!empty($Input['TeamFlag'])) {
-            $UpdateArray['TeamFlag'] = $Input['TeamFlag'];
-        }
-        $UpdateArray['TeamName'] = $Input['TeamName'];
+        $UpdateArray = array_filter(array(
+            'TeamFlag' => @$Input['TeamFlag'],
+            'TeamName' => @$Input['TeamName'],
+            'TeamNameShort' => @$Input['TeamNameShort']
+        ));
         if (!empty($UpdateArray)) {
             $this->db->where('TeamID', $TeamID);
             $this->db->limit(1);

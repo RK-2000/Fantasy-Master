@@ -84,7 +84,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     /*Export List*/
     $scope.ExportList = function() {
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&' + $('#filterForm').serialize();
-        $http.post(API_URL + 'admin/users/export_Transactions_list', data, contentType).then(function(response) {
+        $http.post(API_URL + 'admin/users/exportTransactions', data, contentType).then(function(response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 var encodedUri = encodeURI(response.Data);

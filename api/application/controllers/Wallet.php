@@ -41,19 +41,18 @@ class Wallet extends API_Controller_Secure
     }
 
     /*
-      Name: 			confirm
+      Name: 		confirm
       Description: 	Use to update payment gateway response
       URL: 			/wallet/confirm/
      */
-
-    public function confirmWeb_post()
+    public function confirm_post()
     {
         /* Validation section */
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
         $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
         $this->form_validation->set_rules('WalletID', 'WalletID', 'trim|required|numeric|callback_validateWalletID');
         $this->form_validation->set_rules('PaymentGatewayResponse', 'PaymentGatewayResponse', 'trim');
-        $this->form_validation->set_rules('Razor_payment_id', 'Razor_payment_id', 'trim|required');
+        $this->form_validation->set_rules('RazorPaymentId', 'RazorPaymentId', 'trim' . (!empty($this->Post['PaymentGateway']) && $this->Post['PaymentGateway'] == 'Razorpay' ? '|required' : ''));
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -67,33 +66,11 @@ class Wallet extends API_Controller_Secure
         }
     }
 
-    public function confirmApp_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
-        $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
-        $this->form_validation->set_rules('WalletID', 'WalletID', 'trim|required|numeric|callback_validateWalletID');
-        $this->form_validation->set_rules('PaymentGatewayResponse', 'PaymentGatewayResponse', 'trim');
-        $this->form_validation->set_rules('Razor_payment_id', 'Razor_payment_id', 'trim');
-        $this->form_validation->validation($this);  /* Run validation */
-        /* Validation - ends */
-
-        $WalletData = $this->Users_model->confirmApp($this->Post, $this->SessionUserID);
-        if (!$WalletData) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "An error occurred, please try again later.";
-        } else {
-            $this->Return['Data'] = $WalletData;
-            $this->Return['Message'] = "Success.";
-        }
-    }
-
     /*
-      Name: 			getWallet
+      Name: 		getWallet
       Description: 	To get wallet data
       URL: 			/wallet/getWallet/
-     */
-
+    */
     public function getWallet_post()
     {
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
@@ -110,30 +87,53 @@ class Wallet extends API_Controller_Secure
     }
 
     /*
-      Name: 		withdrawal
-      Description: 	Use to withdrawal winning amount
-      URL: 			/wallet/withdrawal/
-     */
+	Name: 			withdrawal_add
+	Description: 	Use to add withdrawal winning amount 
+	URL: 			/wallet/withdrawal/	
+	*/
+	public function withdrawal_post()
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required');
+		$this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[Paytm,Bank]');
+		$this->form_validation->set_rules('PaytmPhoneNumber', 'PaytmPhoneNumber', 'trim' . (!empty($this->Post['PaymentGateway']) && $this->Post['PaymentGateway'] == 'Paytm' ? '|required' : ''));
+		$this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|callback_validateWithdrawalAmount');
+		$this->form_validation->validation($this);  /* Run validation */		
+		/* Validation - ends */
 
-    public function withdrawal_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateAccountStatus');
-        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[Paytm,Bank]');
-        $this->form_validation->set_rules('PaytmPhoneNumber', 'PaytmPhoneNumber', 'trim' . (!empty($this->Post['PaymentGateway']) && $this->Post['PaymentGateway'] == 'Paytm' ? '|required' : ''));
-        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|callback_validateWithdrawalAmount');
-        $this->form_validation->validation($this);  /* Run validation */
+        /* Withdrawal Data */
+		$WithdrawalData = $this->Users_model->withdrawal($this->Post, $this->SessionUserID); 
+		if(empty($WithdrawalData)){
+			$this->Return['ResponseCode'] 	=	500;
+			$this->Return['Message']      	=	"An error occurred, please try again later.";  
+		}else{
+			$this->Return['Data']      	    =   $WithdrawalData;
+			$this->Return['Message']      	=	(!OTP_WITHDRAWAL) ? "Your withdrawal request submitted succefully." : "Success."; 
+		}
+	}
+
+	/*
+	Name: 			withdrawal_confirm
+	Description: 	Use to confirm withdrawal winning amount
+	URL: 			/wallet/withdrawal_confirm/	
+	*/
+	public function withdrawal_confirm_post()
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required|callback_validateWithdrawalID');
+		$this->form_validation->set_rules('OTP', 'OTP', 'trim|required');
+		$this->form_validation->validation($this);  /* Run validation */		
         /* Validation - ends */
-
-        $WalletData = $this->Users_model->withdrawal($this->Post, $this->SessionUserID);
-        if (empty($WalletData)) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "An error occurred, please try again later.";
-        } else {
-            $this->Return['Data'] = $WalletData;
-            $this->Return['Message'] = "Withdrawal Request had been Sent.";
-        }
-    }
+        
+		$WalletData = $this->Users_model->withdrawal_confirm($this->Post, $this->SessionUserID); 
+		if(empty($WalletData)){
+			$this->Return['ResponseCode'] 	=	500;
+			$this->Return['Message']      	=	"An error occurred, please try again later.";  
+		}else{
+			$this->Return['Data']      	    =   $WalletData;
+			$this->Return['Message']      	=	"Success."; 
+		}
+	}
 
     /*
       Name: 		getWithdrawals
@@ -205,7 +205,7 @@ class Wallet extends API_Controller_Secure
         }
 
         /* Validate Winning Amount */
-        $WinningAmount = $this->db->query('SELECT WinningAmount FROM tbl_users WHERE UserID = '.$this->SessionUserID.' LIMIT 1')->row()->WinningAmount;
+        $WinningAmount = $this->db->query('SELECT WinningAmount FROM tbl_users WHERE UserID = ' . $this->SessionUserID . ' LIMIT 1')->row()->WinningAmount;
         if ($Amount > $WinningAmount) {
             $this->form_validation->set_message('validateWithdrawalAmount', 'Withdrawal amount can not greater than to winning amount.');
             return FALSE;
