@@ -113,6 +113,7 @@ define('ADMIN_CONTEST_PERCENT', 10);
 define('IS_USER_TEAMS_LIMIT', true);
 define('IS_USER_TEAMS_ROLES', true);
 define('USER_TEAMS_LIMIT', 6);
+define('CONTEST_FILL_PERCENT_LIMIT', 80);
 
 /*Social */
 define('FACEBOOK_URL', 'https://www.facebook.com/FSLEleven/');
