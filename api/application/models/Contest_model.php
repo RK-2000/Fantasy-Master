@@ -13,39 +13,67 @@ class Contest_model extends CI_Model {
     /*
       Description:    ADD contest to system.
      */
-
     function addContest($Input = array(), $SessionUserID, $MatchID, $SeriesID, $StatusID = 1) {
+        
+        /* Create Multiple Contests */
+        foreach($MatchID as $Match){
+            $this->db->trans_start();
+            $EntityGUID = get_guid();
 
-        $defaultCustomizeWinningObj = new stdClass();
-        $defaultCustomizeWinningObj->From = 1;
-        $defaultCustomizeWinningObj->To = 1;
-        $defaultCustomizeWinningObj->Percent = 100;
-        $defaultCustomizeWinningObj->WinningAmount = @$Input['WinningAmount'];
+            /* Add contest to entity table and get EntityID. */
+            $EntityID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 11, "UserID" => $SessionUserID, "StatusID" => $StatusID));
 
-        $this->db->trans_start();
-        $EntityGUID = get_guid();
+            /* Add contest to contest table . */
+            $InsertData = array_filter(array(
+                "ContestID" => $EntityID,
+                "ContestGUID" => $EntityGUID,
+                "UserID" => $SessionUserID,
+                "GameTimeLive" => @$Input['GameTimeLive'],
+                "GameType" => @$Input['GameType'],
+                "PredraftContestID" => @$Input['PredraftContestID'],
+                "ContestName" => (empty($Input['ContestName'])) ? (($Input['IsPaid'] == 'Yes') ? "Win " . @$Input['WinningAmount'] : 'Win Skill') : $Input['ContestName'],
+                "ContestFormat" => @$Input['ContestFormat'],
+                "ContestType" => (@$Input['ContestFormat'] == 'Head to Head') ? 'Head to Head' : @$Input['ContestType'],
+                "AdminPercent" => @$Input['AdminPercent'],
+                "Privacy" => @$Input['Privacy'],
+                "IsPaid" => @$Input['IsPaid'],
+                "IsConfirm" => (@$Input['Privacy'] == 'Yes') ? 'No' : @$Input['IsConfirm'],
+                "IsAutoCreate" => @$Input['IsAutoCreate'],
+                "ShowJoinedContest" => @$Input['ShowJoinedContest'],
+                "WinningAmount" => @$Input['WinningAmount'],
+                "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
+                "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
+                "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
+                "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+                "EntryType" => @$Input['EntryType'],
+                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+                "CashBonusContribution" => @$Input['CashBonusContribution'],
+                "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
+                "SeriesID" => @$SeriesID,
+                "MatchID" => @$Match,
+                "UserInvitationCode" => random_string('alnum', 6)
+            ));
+            $InsertData['CustomizeWinning'] = ($InsertData['IsPaid'] == 'Yes') ? (($InsertData['ContestSize'] == 2) ? json_encode(array(array('From' => 1,'To' => 1,'Percent' => 100,'WinningAmount' => $InsertData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
+            $this->db->insert('sports_contest', $InsertData);
 
-        /* Add contest to entity table and get EntityID. */
-        $EntityID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 11, "UserID" => $SessionUserID, "StatusID" => $StatusID));
-        $ContestName = $Input['ContestName'];
-        if (empty($Input['ContestName'])) {
-            if (($Input['IsPaid'] == 'Yes')) {
-                $ContestName = "Win " . @$Input['WinningAmount'];
-            } else {
-                $ContestName = "Win Skill";
+            $this->db->trans_complete();
+            if ($this->db->trans_status() === FALSE) {
+                return FALSE;
             }
         }
-        /* Add contest to contest table . */
-        $InsertData = array_filter(array(
-            "ContestID" => $EntityID,
-            "ContestGUID" => $EntityGUID,
-            "UserID" => $SessionUserID,
+        return $EntityID;
+    }
+
+    /*
+      Description: Update contest to system.
+    */
+    function updateContest($Input = array(), $SessionUserID, $ContestID, $StatusID = 1) {
+        $UpdateData = array_filter(array(
             "GameTimeLive" => @$Input['GameTimeLive'],
             "GameType" => @$Input['GameType'],
-            "PredraftContestID" => @$Input['PredraftContestID'],
-            "ContestName" => $ContestName,
+            "ContestName" => (empty($Input['ContestName'])) ? (($Input['IsPaid'] == 'Yes') ? "Win " . @$Input['WinningAmount'] : 'Win Skill') : $Input['ContestName'],
             "ContestFormat" => @$Input['ContestFormat'],
-            "ContestType" => @$Input['ContestType'],
+            "ContestType" => (@$Input['ContestFormat'] == 'Head to Head') ? 'Head to Head' : @$Input['ContestType'],
             "AdminPercent" => @$Input['AdminPercent'],
             "Privacy" => @$Input['Privacy'],
             "IsPaid" => @$Input['IsPaid'],
@@ -53,61 +81,16 @@ class Contest_model extends CI_Model {
             "IsAutoCreate" => @$Input['IsAutoCreate'],
             "ShowJoinedContest" => @$Input['ShowJoinedContest'],
             "WinningAmount" => @$Input['WinningAmount'],
+            "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
             "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
             "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
             "EntryType" => @$Input['EntryType'],
             "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
-            "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
-            "CustomizeWinning" => (@$Input['ContestFormat'] == 'League' && !empty($Input['CustomizeWinning'])) ? $Input['CustomizeWinning'] : json_encode(array($defaultCustomizeWinningObj)),
-            "SeriesID" => @$SeriesID,
-            "MatchID" => @$MatchID,
-            "UserInvitationCode" => random_string('alnum', 6)
+            "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay']
         ));
-        $this->db->insert('sports_contest', $InsertData);
-
-        $this->db->trans_complete();
-        if ($this->db->trans_status() === FALSE) {
-            return FALSE;
-        }
-        return $EntityID;
-    }
-
-    /*
-      Description: Update contest to system.
-     */
-
-    function updateContest($Input = array(), $SessionUserID, $ContestID, $StatusID = 1) {
-        $defaultCustomizeWinningObj = new stdClass();
-        $defaultCustomizeWinningObj->From = 1;
-        $defaultCustomizeWinningObj->To = 1;
-        $defaultCustomizeWinningObj->Percent = "100";
-        $defaultCustomizeWinningObj->WinningAmount = @$Input['WinningAmount'];
-        /* Add contest to contest table . */
-        $UpdateData = array_filter(array(
-            "GameType" => @$Input['GameType'],
-            "GameTimeLive" => @$Input['GameTimeLive'],
-            "ContestName" => @$Input['ContestName'],
-            "ContestFormat" => @$Input['ContestFormat'],
-            "ContestType" => @$Input['ContestType'],
-            "Privacy" => @$Input['Privacy'],
-            "AdminPercent" => @$Input['AdminPercent'],
-            "IsPaid" => @$Input['IsPaid'],
-            "IsConfirm" => @$Input['IsConfirm'],
-            "IsAutoCreate" => @$Input['IsAutoCreate'],
-            "ShowJoinedContest" => @$Input['ShowJoinedContest'],
-            "WinningAmount" => @$Input['WinningAmount'],
-            "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
-            "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-            "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
-            "EntryType" => @$Input['EntryType'],
-            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
-            "CashBonusContribution" => @$Input['CashBonusContribution'],
-            "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
-            // "CustomizeWinning" => (@$Input['IsPaid'] == 'Yes') ? @$Input['CustomizeWinning'] : NULL,
-            "CustomizeWinning" => (@$Input['IsPaid'] == 'Yes') ? @$Input['CustomizeWinning'] : json_encode(array($defaultCustomizeWinningObj)),
-        ));
+        $UpdateData['CustomizeWinning'] = ($UpdateData['IsPaid'] == 'Yes') ? (($UpdateData['ContestSize'] == 2) ? json_encode(array(array('From' => 1,'To' => 1,'Percent' => 100,'WinningAmount' => $UpdateData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);
         $this->db->update('sports_contest', $UpdateData);
@@ -116,7 +99,6 @@ class Contest_model extends CI_Model {
     /*
       Description: Delete contest to system.
      */
-
     function deleteContest($SessionUserID, $ContestID) {
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);
@@ -124,9 +106,19 @@ class Contest_model extends CI_Model {
     }
 
     /*
+      Description: To Cancel Contest
+     */
+    function cancelContest($Input = array(), $SessionUserID, $ContestID) {
+
+        /* Update Contest Status */
+        $this->db->where('EntityID', $ContestID);
+        $this->db->limit(1);
+        $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
+    }
+
+    /*
       Description: To get contest
      */
-
     function getContests($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
         $Params = array();
         if (!empty($Field)) {
@@ -180,22 +172,26 @@ class Contest_model extends CI_Model {
                 'SeriesName' => 'S.SeriesName',
                 'IsJoined' => '(SELECT IF( EXISTS(SELECT EntryDate FROM sports_contest_join
                                                         WHERE sports_contest_join.ContestID =  C.ContestID AND UserID = ' . @$Where['SessionUserID'] . ' LIMIT 1), "Yes", "No")) AS IsJoined',
-                'TotalJoined' => '(SELECT COUNT(*)
+                'TotalJoined' => '(SELECT COUNT(TotalPoints)
                                                         FROM sports_contest_join
-                                                        WHERE ContestID =  C.ContestID ) AS TotalJoined',
-                'UserTotalJoinedInMatch' => '(SELECT COUNT(*)
+                                                        WHERE ContestID =  C.ContestID ) TotalJoined',
+                'UserTotalJoinedInMatch' => '(SELECT COUNT(TotalPoints)
                                                 FROM sports_contest_join,tbl_entity
-                                                WHERE sports_contest_join.MatchID =  M.MatchID AND sports_contest_join.ContestID = tbl_entity.EntityID AND tbl_entity.StatusID != 3 AND sports_contest_join.UserID= ' . @$Where['SessionUserID'] . ') AS UserTotalJoinedInMatch',
+                                                WHERE sports_contest_join.MatchID =  M.MatchID AND sports_contest_join.ContestID = tbl_entity.EntityID AND tbl_entity.StatusID != 3 AND sports_contest_join.UserID= ' . @$Where['SessionUserID'] . ') UserTotalJoinedInMatch',
                 'Status' => 'CASE E.StatusID
-                                                    when "1" then "Pending"
-                                                    when "2" then "Running"
-                                                    when "3" then "Cancelled"
-                                                    when "5" then "Completed"
-                                                    END as Status',
+                                    when "1" then "Pending"
+                                    when "2" then "Running"
+                                    when "3" then "Cancelled"
+                                    when "5" then "Completed"
+                                    END as Status',
                 'MatchType' => 'MT.MatchTypeName AS MatchType',
                 'CurrentDateTime' => 'DATE_FORMAT(CONVERT_TZ(Now(),"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' ") CurrentDateTime',
                 'MatchDate' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") MatchDate',
                 'MatchTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%H:%i:%s") MatchTime',
+                'UserTeamName' => 'UT.UserTeamName',
+                'UserWinningAmount' => 'JC.UserWinningAmount',
+                'TotalPoints' => 'JC.TotalPoints',
+                'UserRank' => 'JC.UserRank'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -203,66 +199,44 @@ class Contest_model extends CI_Model {
                 }
             }
         }
-        $this->db->select('C.ContestGUID,C.ContestName');
+        $this->db->select('C.ContestGUID,C.ContestName,C.ContestID ContestIDAsUse');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_contest C, sports_matches M, sports_teams TL, sports_teams TV,sports_series S,sports_set_match_types MT');
-        $this->db->where("C.ContestID", "E.EntityID", FALSE);
-        $this->db->where("M.MatchID", "C.MatchID", FALSE);
-        $this->db->where("S.SeriesID", "C.SeriesID", FALSE);
-        $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
-        $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
-        $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
-        if (!empty($Where['Keyword'])) {
-            if (is_array(json_decode($Where['Keyword'], true))) {
-                $Where['Keyword'] = json_decode($Where['Keyword'], true);
-
-                if (isset($Where['Keyword']['ContestName'])) {
-                    $this->db->like("C.ContestName", @$Where['Keyword']['ContestName']);
-                }
-                if (isset($Where['Keyword']['ContestType'])) {
-                    $this->db->where("C.ContestType", @$Where['Keyword']['ContestType']);
-                }
-                if (isset($Where['Keyword']['GameType'])) {
-                    $this->db->where("C.GameType", @$Where['Keyword']['GameType']);
-                }
-                if (isset($Where['Keyword']['ContestSize'])) {
-                    $ContestSize = explode("-", $Where['Keyword']['ContestSize']);
-
-                    if (count($ContestSize) > 1) {
-                        $this->db->where("C.ContestSize >=", @$ContestSize[0]);
-                        $this->db->where("C.ContestSize <=", @$ContestSize[1]);
-                    } else {
-                        $this->db->where("C.ContestSize >=", @$ContestSize[0]);
-                    }
-                }
-                if (isset($Where['Keyword']['EntryFee'])) {
-
-                    $EntryFee = explode("-", $Where['Keyword']['EntryFee']);
-                    if (count($EntryFee) > 1) {
-                        $this->db->where("C.EntryFee >=", $EntryFee[0]);
-                        $this->db->where("C.EntryFee <=", $EntryFee[1]);
-                    } else {
-                        $this->db->where("C.EntryFee >=", $EntryFee[0]);
-                    }
-                }
-            } else {
-                $this->db->group_start();
-                $this->db->like("C.ContestName", $Where['Keyword']);
-                $this->db->or_like("C.GameType", $Where['Keyword']);
-                $this->db->or_like("C.WinningAmount", $Where['Keyword']);
-                $this->db->or_like("C.ContestSize", $Where['Keyword']);
-                $this->db->or_like("C.EntryFee", $Where['Keyword']);
-                $this->db->or_like("M.MatchLocation", $Where['Keyword']);
-                $this->db->or_like("M.MatchNo", $Where['Keyword']);
-                $this->db->group_end();
-            }
+            $this->db->from('tbl_entity E, sports_contest C, sports_matches M');
+        if(in_array('MatchType', $Params)){
+            $this->db->from('sports_set_match_types MT');
+            $this->db->where("M.MatchTypeID", "MT.MatchTypeID", FALSE);
         }
-
+        if(in_array('SeriesName', $Params)){
+            $this->db->from('sports_series S');
+            $this->db->where("S.SeriesID", "C.SeriesID", FALSE);
+        }
+        if (array_keys_exist($Params, array('TeamNameLocal','TeamNameVisitor','TeamNameShortLocal','TeamNameShortVisitor','TeamFlagLocal','TeamFlagVisitor'))) {
+            $this->db->from('sports_teams TL, sports_teams TV');
+            $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
+            $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
+        }
+        if(in_array('UserTeamName', $Params)){
+            $this->db->from('sports_users_teams UT');
+            $this->db->where("JC.UserTeamID", "UT.UserTeamID", false);
+        }
+        if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes") {
+            $this->db->from('sports_contest_join JC');
+            $this->db->where("JC.ContestID", "C.ContestID", FALSE);
+            $this->db->where("JC.UserID", $Where['SessionUserID']);
+        }
+        $this->db->where("C.ContestID", "E.EntityID", FALSE);
+        $this->db->where("C.MatchID", "M.MatchID", FALSE);
+        if (!empty($Where['Keyword'])) {
+            $this->db->group_start();
+            $this->db->like("C.ContestName", $Where['Keyword']);
+            $this->db->or_like("M.MatchLocation", $Where['Keyword']);
+            $this->db->or_like("M.MatchNo", $Where['Keyword']);
+            $this->db->group_end();
+        }
         if (!empty($Where['AdvanceSafeValidate'])) {
             $this->db->where("M.MatchStartDateTime >= (UTC_TIMESTAMP() + INTERVAL C.GameTimeLive MINUTE)");
         }
-
         if (!empty($Where['ContestID'])) {
             $this->db->where("C.ContestID", $Where['ContestID']);
         }
@@ -286,6 +260,9 @@ class Contest_model extends CI_Model {
         }
         if (!empty($Where['Filter']) && $Where['Filter'] == 'Yesterday') {
             $this->db->where("DATE(M.MatchStartDateTime) <=", date('Y-m-d'));
+        }
+        if (!empty($Where['Filter']) && $Where['Filter'] == 'NonCanceled') {
+            $this->db->where_in("E.StatusID", array(1,2,5));
         }
         if (!empty($Where['GameType'])) {
             $this->db->where("C.GameType", $Where['GameType']);
@@ -360,10 +337,10 @@ class Contest_model extends CI_Model {
             $this->db->where("M.SeriesID", $Where['SeriesID']);
         }
         if (!empty($Where['StatusID'])) {
-            $this->db->where_in("E.StatusID", $Where['StatusID']);
+            $this->db->where_in("E.StatusID", ($Where['StatusID'] == 10) ? 2 : $Where['StatusID']);
         }
         if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes") {
-            $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID=' . @$Where['SessionUserID'] . ')');
+            $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID=' . @$Where['SessionUserID'] . ' LIMIT 1)');
         }
         if (!empty($Where['UserInvitationCode'])) {
             $this->db->where("C.UserInvitationCode", $Where['UserInvitationCode']);
@@ -396,74 +373,54 @@ class Contest_model extends CI_Model {
         } else {
             $this->db->limit(1);
         }
-        //$this->db->group_by('C.ContestID'); // Will manage later
         $Query = $this->db->get();
-        // echo $this->db->last_query(); die();
         if ($Query->num_rows() > 0) {
             if ($multiRecords) {
                 $Records = array();
                 foreach ($Query->result_array() as $key => $Record) {
-
                     $Records[] = $Record;
-                    $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
-                    $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
-                    $TotalAmountReceived = $this->getTotalContestCollections($Record['ContestGUID']);
-                    $Records[$key]['TotalAmountReceived'] = ($TotalAmountReceived) ? (int)$TotalAmountReceived : 0;
-                    $TotalWinningAmount = $this->getTotalWinningAmount($Record['ContestGUID']);
-                    $Records[$key]['TotalWinningAmount'] = ($TotalWinningAmount) ? (int)$TotalWinningAmount : 0;
-                    $Records[$key]['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
-                    if (in_array('IsJoined', $Params)) {
-                        if ($Record['IsJoined'] == 'Yes') {
-                            $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
-                            $Records[$key]['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
-                        } else {
-                            $Records[$key]['UserTeamDetails'] = array();
-                        }
-                        unset($Records[$key]['ContestID']);
+                    if(in_array('CustomizeWinning',$Params)){
+                        $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
                     }
-
-                    if (in_array('UserWinningAmount', $Params)) {
-                        /* update user time break . */
-                        $Query = $this->db->query('SELECT JC.UserWinningAmount,JC.TotalPoints,JC.UserRank,UT.UserTeamName FROM sports_contest_join JC,sports_users_teams UT WHERE UT.UserTeamID = JC.UserTeamID AND JC.ContestID = "' . $Record['ContestID'] . '" AND JC.UserID = "' . $Where['SessionUserID'] . '"');
-                        $UserWinningAmount = $Query->row_array();
-                        if (!empty($UserWinningAmount)) {
-                            $Records[$key]['UserWinningAmount'] = $UserWinningAmount['UserWinningAmount'];
-                            $Records[$key]['TotalPoints'] = $UserWinningAmount['TotalPoints'];
-                            $Records[$key]['UserRank'] = $UserWinningAmount['UserRank'];
-                            $Records[$key]['UserTeamName'] = $UserWinningAmount['UserTeamName'];
-                        }
+                    if(in_array('MatchScoreDetails',$Params)){
+                        $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                    }
+                    if(in_array('TotalAmountReceived',$Params)){
+                        $Records[$key]['TotalAmountReceived'] = $this->db->query('SELECT IFNULL(SUM(C.EntryFee),0) TotalAmountReceived FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalAmountReceived;
+                    }
+                    if(in_array('TotalWinningAmount',$Params)){
+                        $Records[$key]['TotalWinningAmount'] = $this->db->query('SELECT IFNULL(SUM(J.UserWinningAmount),0) TotalWinningAmount FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalWinningAmount;
+                    }
+                    if(in_array('NoOfWinners',$Params)){
+                        $Records[$key]['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
+                    }
+                    if (in_array('IsJoined', $Params)) {
+                        $Records[$key]['UserTeamDetails'] = ($Record['IsJoined'] == 'Yes') ? $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestIDAsUse'],'UserID' => $Where['SessionUserID']), true, 0)['Data']['Records'] : array();
+                        unset($Records[$key]['ContestIDAsUse']);
                     }
                 }
                 $Return['Data']['Records'] = $Records;
             } else {
                 $Record = $Query->row_array();
-                $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], TRUE) : array();
-                $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
-                $TotalAmountReceived = $this->getTotalContestCollections($Record['ContestGUID']);
-                $Record['TotalAmountReceived'] = ($TotalAmountReceived) ? $TotalAmountReceived : 0;
-                $TotalWinningAmount = $this->getTotalWinningAmount($Record['ContestGUID']);
-                $Record['TotalWinningAmount'] = ($TotalWinningAmount) ? $TotalWinningAmount : 0;
+                if(in_array('CustomizeWinning',$Params)){
+                    $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
+                }
+                if(in_array('MatchScoreDetails',$Params)){
+                    $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
+                }
+                if(in_array('TotalAmountReceived',$Params)){
+                    $Record['TotalAmountReceived'] = $this->db->query('SELECT IFNULL(SUM(C.EntryFee),0) TotalAmountReceived FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalAmountReceived;
+                }
+                if(in_array('TotalWinningAmount',$Params)){
+                    $Record['TotalWinningAmount'] = $this->db->query('SELECT IFNULL(SUM(J.UserWinningAmount),0) TotalWinningAmount FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalWinningAmount;
+                }
                 if (in_array('IsJoined', $Params)) {
-                    if ($Record['IsJoined'] == 'Yes') {
-                        $UserTeamDetails = $this->getUserTeams('TotalPoints', array('ContestID' => $Where['ContestID'],'UserID' => $Where['SessionUserID']), true, 0);
-                        $Record['UserTeamDetails'] = $UserTeamDetails['Data']['Records'];
-                    } else {
-                        $Record['UserTeamDetails'] = array();
-                    }
-                    unset($Record['ContestID']);
+                    $Record['UserTeamDetails'] = ($Record['IsJoined'] == 'Yes') ? $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestIDAsUse'],'UserID' => $Where['SessionUserID']), true, 0)['Data']['Records'] : array();
+                    unset($Record['ContestIDAsUse']);
                 }
-
-                if (!empty($Where['MatchID'])) {
-                    $Record['Statics'] = $this->db->query('SELECT (SELECT COUNT(*) AS `NormalContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Normal" AND C.ContestFormat="League" AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                                            )as NormalContest,
-                            ( SELECT COUNT(*) AS `ReverseContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN(1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Reverse" AND C.ContestFormat="League" AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                            )as ReverseContest,(
-                            SELECT COUNT(*) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . @$Where['SessionUserID'] . '" AND C.MatchID = "' . $Where['MatchID'] . '" 
-                            )as JoinedContest,( 
-                            SELECT COUNT(*) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . @$Where['SessionUserID'] . '" AND MatchID = "' . $Where['MatchID'] . '"
-                        ) as TotalTeams,(SELECT COUNT(*) AS `H2HContest` FROM `sports_contest` C, `tbl_entity` E, `sports_contest_join` CJ WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestFormat="Head to Head" AND E.StatusID = 1 AND C.ContestID = CJ.ContestID AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID )) as H2HContests')->row();
+                if (in_array('Statics', $Params)) {
+                    $Record['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
                 }
-
                 return $Record;
             }
         } else {
@@ -471,377 +428,19 @@ class Contest_model extends CI_Model {
                 return array();
             }
         }
-        if (!empty($Where['MatchID'])) {
-            $Return['Data']['Statics'] = $this->db->query('SELECT (SELECT COUNT(*) AS `NormalContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Normal" AND C.ContestFormat="League" AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                                    )as NormalContest,
-                    ( SELECT COUNT(*) AS `ReverseContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN(1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Reverse" AND C.ContestFormat="League" AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                    )as ReverseContest,(
-                    SELECT COUNT(*) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . @$Where['SessionUserID'] . '" AND C.MatchID = "' . $Where['MatchID'] . '" 
-                    )as JoinedContest,( 
-                    SELECT COUNT(*) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . @$Where['SessionUserID'] . '" AND MatchID = "' . $Where['MatchID'] . '"
-                ) as TotalTeams,(SELECT COUNT(*) AS `H2HContest` FROM `sports_contest` C, `tbl_entity` E, `sports_contest_join` CJ WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestFormat="Head to Head" AND E.StatusID = 1 AND C.ContestID = CJ.ContestID AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID )) as H2HContests')->row();
+        if (in_array('Statics', $Params)) {
+            $Return['Data']['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
         }
-
         $Return['Data']['Records'] = empty($Records) ? array() : $Records;
-        return $Return;
-    }
-
-    function getTotalContestCollections($ContestGUID) {
-        return $this->db->query('SELECT SUM(C.EntryFee) as TotalAmountReceived FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestGUID = "' . $ContestGUID . '"')->row()->TotalAmountReceived;
-    }
-
-    function getTotalWinningAmount($ContestGUID) {
-        return $this->db->query('SELECT SUM(J.UserWinningAmount) as TotalWinningAmount FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestGUID = "' . $ContestGUID . '"')->row()->TotalWinningAmount;
-    }
-
-    /*
-      Description: Join contest
-     */
-
-    function joinContest($Input = array(), $SessionUserID, $ContestID, $MatchID, $UserTeamID) {
-
-        $this->db->trans_start();
-
-        /* Add entry to join contest table . */
-        $InsertData = array(
-            "UserID" => $SessionUserID,
-            "ContestID" => $ContestID,
-            "MatchID" => $MatchID,
-            "UserTeamID" => $UserTeamID,
-            "EntryDate" => date('Y-m-d H:i:s')
-        );
-        $this->db->insert('sports_contest_join', $InsertData);
-        /* Manage User Wallet */
-        if (@$Input['IsPaid'] == 'Yes') {
-            $ContestEntryRemainingFees = @$Input['EntryFee'];
-            $CashBonusContribution = @$Input['CashBonusContribution'];
-            $WalletAmountDeduction = 0;
-            $WinningAmountDeduction = 0;
-            $CashBonusDeduction = 0;
-            if (!empty($CashBonusContribution) && @$Input['CashBonus'] > 0) {
-                $CashBonusContributionAmount = $ContestEntryRemainingFees * ($CashBonusContribution / 100);
-                if (@$Input['CashBonus'] >= $CashBonusContributionAmount) {
-                    $CashBonusDeduction = $CashBonusContributionAmount;
-                } else {
-                    $CashBonusDeduction = @$Input['CashBonus'];
-                }
-                $ContestEntryRemainingFees = $ContestEntryRemainingFees - $CashBonusDeduction;
-            }
-            if ($ContestEntryRemainingFees > 0 && @$Input['WalletAmount'] > 0) {
-                if (@$Input['WalletAmount'] >= $ContestEntryRemainingFees) {
-                    $WalletAmountDeduction = $ContestEntryRemainingFees;
-                } else {
-                    $WalletAmountDeduction = @$Input['WalletAmount'];
-                }
-                $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WalletAmountDeduction;
-            }
-            if ($ContestEntryRemainingFees > 0 && @$Input['WinningAmount'] > 0) {
-                if (@$Input['WinningAmount'] >= $ContestEntryRemainingFees) {
-                    $WinningAmountDeduction = $ContestEntryRemainingFees;
-                } else {
-                    $WinningAmountDeduction = @$Input['WinningAmount'];
-                }
-                $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WinningAmountDeduction;
-            }
-            $TransactionID = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
-            $InsertData = array(
-                "Amount" => @$Input['EntryFee'],
-                "WalletAmount" => $WalletAmountDeduction,
-                "WinningAmount" => $WinningAmountDeduction,
-                "CashBonus" => $CashBonusDeduction,
-                "TransactionType" => 'Dr',
-                "TransactionID" => $TransactionID,
-                "EntityID" => $ContestID,
-                "UserTeamID" => $UserTeamID,
-                "Narration" => 'Join Contest',
-                "EntryDate" => date("Y-m-d H:i:s")
-            );
-            $WalletID = $this->Users_model->addToWallet($InsertData, $SessionUserID, 5);
-            if (!$WalletID)
-                return FALSE;
-            $ContestsData = $this->getContests('ContestSize,TotalJoined,IsAutoCreate', array('ContestID' => $ContestID));
-            /* To Check If Contest Is Auto Create (Yes) */
-            if ($ContestsData['IsAutoCreate'] == 'Yes' && ($ContestsData['ContestSize'] - $ContestsData['TotalJoined']) == 0) {
-                /* Get Contests Details */
-                $ContestData = $this->db->query('SELECT * FROM sports_contest WHERE ContestID = ' . $ContestID . ' LIMIT 1')->result_array()[0];
-
-                /* Create Contest */
-                $Contest = array();
-                $Contest['ContestName'] = $ContestData['ContestName'];
-                $Contest['ContestFormat'] = $ContestData['ContestFormat'];
-                $Contest['ContestType'] = $ContestData['ContestType'];
-                $Contest['Privacy'] = $ContestData['Privacy'];
-                $Contest['IsPaid'] = $ContestData['IsPaid'];
-                $Contest['IsConfirm'] = $ContestData['IsConfirm'];
-                $Contest['IsAutoCreate'] = $ContestData['IsAutoCreate'];
-                $Contest['ShowJoinedContest'] = $ContestData['ShowJoinedContest'];
-                $Contest['WinningAmount'] = $ContestData['WinningAmount'];
-                $Contest['ContestSize'] = $ContestData['ContestSize'];
-                $Contest['EntryFee'] = $ContestData['EntryFee'];
-                $Contest['NoOfWinners'] = $ContestData['NoOfWinners'];
-                $Contest['EntryType'] = $ContestData['EntryType'];
-                $Contest['UserJoinLimit'] = $ContestData['UserJoinLimit'];
-                $Contest['CashBonusContribution'] = $ContestData['CashBonusContribution'];
-                $Contest['CustomizeWinning'] = $ContestData['CustomizeWinning'];
-                $Contest['IsWinnerSocialFeed'] = $ContestData['IsWinnerSocialFeed'];
-                $this->addContest($Contest, $ContestData['UserID'], $ContestData['MatchID'], $ContestData['SeriesID']);
-            }
-        }
-
-        $this->db->trans_complete();
-        if ($this->db->trans_status() === FALSE) {
-            return FALSE;
-        }
-        return $this->Users_model->getWalletDetails($SessionUserID);
-    }
-
-    /*
-      Description: Invite contest
-     */
-    function inviteContest($Input = array(), $SessionUserID) {
-
-        /* Invite Users */
-        if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
-
-            /* Send invite contest Email to User with invite contest url */
-            send_mail(array(
-                    'emailTo'         => $Input['Email'],
-                    'template_id'     => 'd-21c013b7011144ac9ab7315081258881',
-                    'Subject'         => 'Contest Invitation - ' . SITE_NAME,
-                    "Name"            => $this->db->query('SELECT FirstName FROM tbl_users WHERE UserID = '.$SessionUserID.' LIMIT 1')->row()->FirstName,
-                    "InviteCode"      => $Input['InviteCode'],
-                    "TeamNameLocal"   => $Input['TeamNameShortLocal'],
-                    "TeamNameVisitor" => $Input['TeamNameShortVisitor']
-                ));
-        } else if ($Input['ReferType'] == 'Phone' && !empty($Input['PhoneNumber'])) {
-
-            /* Send invite contest SMS to User with invite contest url */
-            $this->Utility_model->sendSMS(array(
-                'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Put your cricket knowledge to test and play with me on ".SITE_NAME.". Click ".SITE_HOST . ROOT_FOLDER."download-app to download the ".SITE_NAME." app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $Input['TeamNameShortLocal'] . " V/S " . $Input['TeamNameShortVisitor'] . " Match."
-            ));
-        }
-    }
-
-    /*
-      Description: To get joined contest
-     */
-
-    function getJoinedContests($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
-
-        $Params = array();
-        if (!empty($Field)) {
-            $Params = array_map('trim', explode(',', $Field));
-            $Field = '';
-            $FieldArray = array(
-                'MatchID' => 'M.MatchID',
-                'MatchGUID' => 'M.MatchGUID',
-                'StatusID' => 'E.StatusID',
-                'MatchIDLive' => 'M.MatchIDLive',
-                'MatchTypeID' => 'M.MatchTypeID',
-                'MatchNo' => 'M.MatchNo',
-                'MatchLocation' => 'M.MatchLocation',
-                'MatchStartDateTime' => 'CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '") AS MatchStartDateTime',
-                'MatchStartDateTimeUTC' => 'M.MatchStartDateTime MatchStartDateTimeUTC',
-                'ContestID' => 'C.ContestID',
-                'Privacy' => 'C.Privacy',
-                'IsPaid' => 'C.IsPaid',
-                'IsConfirm' => 'C.IsConfirm',
-                'ShowJoinedContest' => 'C.ShowJoinedContest',
-                'CashBonusContribution' => 'C.CashBonusContribution',
-                'UserInvitationCode' => 'C.UserInvitationCode',
-                'WinningAmount' => 'C.WinningAmount',
-                'GameType' => 'C.GameType',
-                'ContestSize' => 'C.ContestSize',
-                'ContestFormat' => 'C.ContestFormat',
-                'ContestType' => 'C.ContestType',
-                'GameTimeLive' => 'C.GameTimeLive',
-                'EntryFee' => 'C.EntryFee',
-                'NoOfWinners' => 'C.NoOfWinners',
-                'EntryType' => 'C.EntryType',
-                'CustomizeWinning' => 'C.CustomizeWinning',
-                'UserID' => 'JC.UserID',
-                'UserTeamID' => 'JC.UserTeamID',
-                'JoinInning' => 'JC.JoinInning',
-                'EntryDate' => 'JC.EntryDate',
-                'TotalPoints' => 'JC.TotalPoints',
-                'UserWinningAmount' => 'JC.UserWinningAmount',
-                'SeriesID' => 'M.SeriesID',
-                'TeamNameLocal' => 'TL.TeamName AS TeamNameLocal',
-                'TeamNameVisitor' => 'TV.TeamName AS TeamNameVisitor',
-                'TeamNameShortLocal' => 'TL.TeamNameShort AS TeamNameShortLocal',
-                'TeamNameShortVisitor' => 'TV.TeamNameShort AS TeamNameShortVisitor',
-                'TeamFlagLocal' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag) as TeamFlagLocal',
-                'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
-                'SeriesName' => 'S.SeriesName AS SeriesName',
-                'TotalJoined' => '(SELECT COUNT(*) AS TotalJoined
-                                                FROM sports_contest_join
-                                                WHERE sports_contest_join.ContestID =  C.ContestID ) AS TotalJoined',
-                'UserTotalJoinedInMatch' => '(SELECT COUNT(*)
-                                                FROM sports_contest_join
-                                                WHERE sports_contest_join.MatchID =  M.MatchID AND UserID= ' . $Where['SessionUserID'] . ') AS UserTotalJoinedInMatch',
-                'UserRank' => 'JC.UserRank',
-                'StatusID' => 'E.StatusID',
-                'Status' => 'CASE E.StatusID
-                when "1" then "Pending"
-                when "2" then "Running"
-                when "3" then "Cancelled"
-                when "5" then "Completed"
-                END as Status',
-                'MatchStartDateTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' %h:%i %p") as MatchStartDateTime',
-                'CurrentDateTime' => 'DATE_FORMAT(CONVERT_TZ(Now(),"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' ") as CurrentDateTime',
-                'MatchDate' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") MatchDate',
-                'MatchTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%H:%i:%s") MatchTime',
-            );
-            if ($Params) {
-                foreach ($Params as $Param) {
-                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
-                }
-            }
-        }
-
-        $this->db->select('C.ContestGUID,C.ContestName');
-        if (!empty($Field))
-            $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_contest C, sports_matches M, sports_teams TL, sports_teams TV,sports_series S,sports_contest_join JC');
-        $this->db->where("C.ContestID", "JC.ContestID", FALSE);
-        $this->db->where("C.ContestID", "E.EntityID", FALSE);
-        $this->db->where("M.MatchID", "C.MatchID", FALSE);
-        $this->db->where("S.SeriesID", "C.SeriesID", FALSE);
-        $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
-        $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
-        if (!empty($Where['Keyword'])) {
-            $Where['Keyword'] = $Where['Keyword'];
-            $this->db->group_start();
-            $this->db->like("C.ContestName", $Where['Keyword']);
-            $this->db->or_like("C.GameType", $Where['Keyword']);
-            $this->db->or_like("C.ContestSize", $Where['Keyword']);
-            $this->db->or_like("C.EntryFee", $Where['Keyword']);
-            $this->db->or_like("C.WinningAmount", $Where['Keyword']);
-            $this->db->or_like("M.MatchLocation", $Where['Keyword']);
-            $this->db->or_like("M.MatchNo", $Where['Keyword']);
-            $this->db->group_end();
-        }
-        if (!empty($Where['ContestID'])) {
-            $this->db->where("C.ContestID", $Where['ContestID']);
-        }
-        if (!empty($Where['SessionUserID'])) {
-            $this->db->where("JC.UserID", $Where['SessionUserID']);
-        }
-        if (!empty($Where['UserTeamID'])) {
-            $this->db->where("JC.UserTeamID", $Where['UserTeamID']);
-        }
-        if (!empty($Where['Privacy'])) {
-            $this->db->where("C.Privacy", $Where['Privacy']);
-        }
-        if (!empty($Where['GameType'])) {
-            $this->db->where("C.GameType", $Where['GameType']);
-        }
-        if (!empty($Where['IsPaid'])) {
-            $this->db->where("C.IsPaid", $Where['IsPaid']);
-        }
-        if (!empty($Where['LeagueType'])) {
-            $this->db->where("C.LeagueType", $Where['LeagueType']);
-        }
-        if (!empty($Where['WinningAmount'])) {
-            $this->db->where("C.WinningAmount >=", $Where['WinningAmount']);
-        }
-        if (!empty($Where['ContestSize'])) {
-            $this->db->where("C.ContestSize", $Where['ContestSize']);
-        }
-        if (!empty($Where['EntryFee'])) {
-            $this->db->where("C.EntryFee", $Where['EntryFee']);
-        }
-        if (!empty($Where['NoOfWinners'])) {
-            $this->db->where("C.NoOfWinners", $Where['NoOfWinners']);
-        }
-        if (!empty($Where['EntryType'])) {
-            $this->db->where("C.EntryType", $Where['EntryType']);
-        }
-        // print_r($Where['MatchID']);die;
-        if (!empty($Where['MatchID'])) {
-            $this->db->where("C.MatchID", $Where['MatchID']);
-        }
-        if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
-        }
-        if (!empty($Where['StatusIDIn'])) {
-            $this->db->where_in("E.StatusID", $Where['StatusIDIn']);
-        }
-
-        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
-            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
-        }
-        $this->db->order_by('M.MatchStartDateTime', 'ASC');
-        //$this->db->group_by('C.ContestGUID');
-
-        if (!empty($Where['getJoinedMatches']) && $Where['getJoinedMatches'] == 'Yes') {
-            // $this->db->group_by('C.MatchID');
-        }
-        //$this->db->group_by('C.ContestID');
-        /* Total records count only if want to get multiple records */
-        if ($multiRecords) {
-            $TempOBJ = clone $this->db;
-            $TempQ = $TempOBJ->get();
-            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
-            if ($PageNo != 0) {
-                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
-            }
-        } else {
-            $this->db->limit(1);
-        }
-        $Query = $this->db->get();
-        //echo $this->db->last_query();exit;
-        if ($Query->num_rows() > 0) {
-            if ($multiRecords) {
-                $Records = array();
-                foreach ($Query->result_array() as $key => $Record) {
-                    $Records[] = $Record;
-                    $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], TRUE) : array();
-                }
-                $Return['Data']['Records'] = $Records;
-            } else {
-                $Record = $Query->row_array();
-                $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], TRUE) : array();
-                return $Record;
-            }
-        } else {
-            $Return['Data']['Records'] = array();
-        }
-
-        if (!empty($Where['MatchID'])) {
-            $Return['Data']['Statics'] = $this->db->query('SELECT (SELECT COUNT(*) AS `NormalContest` FROM `sports_contest` C, `tbl_entity` E, `sports_contest_join` CJ WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Normal" AND C.ContestFormat="League" AND E.StatusID = 1 AND C.ContestID = CJ.ContestID AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                                    )as NormalContest,
-                    ( SELECT COUNT(*) AS `ReverseContest` FROM `sports_contest` C, `tbl_entity` E, `sports_contest_join` CJ WHERE C.ContestID = E.EntityID AND E.StatusID IN(1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Reverse" AND C.ContestFormat="League" AND E.StatusID = 1 AND C.ContestID = CJ.ContestID AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID)
-                    )as ReverseContest,(
-                    SELECT COUNT(*) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . @$Where['SessionUserID'] . '" AND C.MatchID = "' . $Where['MatchID'] . '" 
-                    )as JoinedContest,( 
-                    SELECT COUNT(*) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . @$Where['SessionUserID'] . '" AND MatchID = "' . $Where['MatchID'] . '"
-                ) as TotalTeams,(SELECT COUNT(*) AS `H2HContest` FROM `sports_contest` C, `tbl_entity` E, `sports_contest_join` CJ WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestFormat="Head to Head" AND E.StatusID = 1 AND C.ContestID = CJ.ContestID AND C.ContestSize != (SELECT COUNT(*) from sports_contest_join where sports_contest_join.ContestID = C.ContestID )) as H2HContests')->row();
-        } else {
-            $Return['Data']['Statics'] = $this->db->query('SELECT (
-                SELECT COUNT(DISTINCT J.MatchID) AS `UpcomingJoinedContest` FROM `sports_contest_join` J, `tbl_entity` E , `sports_matches` M WHERE E.EntityID = J.ContestID AND J.MatchID=M.MatchID AND E.StatusID = 1 AND J.UserID = "' . @$Where['SessionUserID'] . '" 
-                )as UpcomingJoinedContest,
-                (
-                SELECT COUNT(DISTINCT J.MatchID) AS `LiveJoinedContest` FROM `sports_contest_join` J, `tbl_entity` E , `sports_matches` M WHERE E.EntityID = J.ContestID AND J.MatchID=M.MatchID AND E.StatusID = 2 AND J.UserID = "' . @$Where['SessionUserID'] . '" 
-                )as LiveJoinedContest,
-                (
-                SELECT COUNT(DISTINCT J.MatchID) AS `CompletedJoinedContest` FROM `sports_contest_join` J, `tbl_entity` E, `sports_matches` M WHERE E.EntityID = J.ContestID AND J.MatchID=M.MatchID AND E.StatusID = 5 AND J.UserID = "' . @$Where['SessionUserID'] . '"
-            )as CompletedJoinedContest'
-                    )->row();
-        }
-
         return $Return;
     }
 
     /*
       Description: ADD user team
      */
-
     function addUserTeam($Input = array(), $SessionUserID, $MatchID, $StatusID = 2) {
 
         $this->db->trans_start();
-
         $EntityGUID = get_guid();
 
         /* Add user team to entity table and get EntityID. */
@@ -884,19 +483,16 @@ class Contest_model extends CI_Model {
         if ($UserTeamPlayers){
             $this->db->insert_batch('sports_users_team_players', $UserTeamPlayers);
         }
-
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
         }
-
         return $EntityGUID;
     }
 
     /*
       Description: EDIT user team
      */
-
     function editUserTeam($Input = array(), $UserTeamID, $MatchID) {
 
         $this->db->trans_start();
@@ -938,14 +534,23 @@ class Contest_model extends CI_Model {
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
         }
-
         return TRUE;
     }
 
     /*
-      Description: To get user teams
+      Description: Switch user team
      */
+    function switchUserTeam($UserID, $ContestID, $UserTeamID, $OldUserTeamGUID) {
 
+        /* Switch Team */
+        $this->db->where(array('UserID' => $UserID,'ContestID' => $ContestID,'UserTeamID' => $OldUserTeamGUID));
+        $this->db->limit(1);
+        $this->db->update('sports_contest_join', array('UserTeamID' => $UserTeamID));
+    }
+
+    /*
+      Description: To get user teams
+    */
     function getUserTeams($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
         $Params = array();
         if (!empty($Field)) {
@@ -970,15 +575,14 @@ class Contest_model extends CI_Model {
         $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType,UT.UserTeamID,UT.MatchID,UT.UserID');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        if (in_array('TotalPoints', $Params)) {
+        if(in_array('TotalPoints',$Params)){
             $this->db->from('tbl_entity E, sports_users_teams UT,sports_contest_join JC');
             $this->db->where("UT.UserTeamID", "E.EntityID", false);
             $this->db->where("JC.UserTeamID", "UT.UserTeamID", false);
-        } else {
+        }else{
             $this->db->from('tbl_entity E, sports_users_teams UT');
             $this->db->where("UT.UserTeamID", "E.EntityID", false);
         }
-
         if (!empty($Where['Keyword'])) {
             $this->db->like("UT.UserTeamName", $Where['Keyword']);
         }
@@ -1006,23 +610,14 @@ class Contest_model extends CI_Model {
 
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        }else{
+            $this->db->order_by('UT.UserTeamID', 'DESC');
         }
         $this->db->order_by('UT.UserTeamID', 'DESC');
-        if (!empty($Where['MatchID'])) {
-            $Return['Data']['Statics'] = $this->db->query('SELECT (
-                SELECT COUNT(*) AS `NormalContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN (1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Normal"
-                )as NormalContest,
-                (
-                SELECT COUNT(*) AS `ReverseContest` FROM `sports_contest` C, `tbl_entity` E WHERE C.ContestID = E.EntityID AND E.StatusID IN(1,2,5) AND C.MatchID = "' . $Where['MatchID'] . '" AND C.ContestType="Reverse"
-                )as ReverseContest,
-                (
-                SELECT COUNT(*) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . @$Where['SessionUserID'] . '" AND C.MatchID = "' . $Where['MatchID'] . '"
-                )as JoinedContest,
-                ( 
-                SELECT COUNT(*) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . @$Where['SessionUserID'] . '" AND MatchID = "' . $Where['MatchID'] . '" 
-            ) as TotalTeams'
-                    )->row();
+        if (in_array('Statics', $Params)) {
+            $Return['Data']['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
         }
+        
         /* Total records count only if want to get multiple records */
         if ($multiRecords) {
             $TempOBJ = clone $this->db;
@@ -1069,8 +664,7 @@ class Contest_model extends CI_Model {
 
     /*
       Description: To get user team players
-     */
-
+    */
     function getUserTeamPlayers($Field = '', $Where = array()) {
         $Params = array();
         if (!empty($Field)) {
@@ -1082,8 +676,7 @@ class Contest_model extends CI_Model {
                 'Points' => 'UTP.Points',
                 'PlayerID' => 'UTP.PlayerID',
                 'PlayerName' => 'P.PlayerName',
-                // 'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
-                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png")) AS PlayerPic',
+                'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) AS PlayerPic',
                 'PlayerCountry' => 'P.PlayerCountry',
                 'PlayerSalary' => 'TP.PlayerSalary',
                 'PlayerBattingStyle' => 'P.PlayerBattingStyle',
@@ -1100,10 +693,18 @@ class Contest_model extends CI_Model {
                 }
             }
         }
-        $this->db->select('P.PlayerGUID,P.PlayerID,M.MatchGUID,UTP.Points');
+        $this->db->select('P.PlayerGUID,M.MatchGUID,UTP.Points');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('sports_users_team_players UTP, sports_players P, sports_team_players TP,sports_teams T,sports_matches M,sports_set_match_types SM');
+        $this->db->from('sports_users_team_players UTP, sports_players P, sports_team_players TP,sports_matches M');
+        if (array_keys_exist($Params, array('TeamGUID'))) {
+            $this->db->from('sports_teams T');
+            $this->db->where("T.TeamID", "TP.TeamID", FALSE);
+        }
+        if (array_keys_exist($Params, array('MatchType'))) {
+            $this->db->from('sports_set_match_types SM');
+            $this->db->where("M.MatchTypeID", "SM.MatchTypeID", FALSE);
+        }
         if (array_keys_exist($Params, array('SeriesGUID'))) {
             $this->db->from('sports_series S');
             $this->db->where("S.SeriesID", "TP.SeriesID", FALSE);
@@ -1111,9 +712,7 @@ class Contest_model extends CI_Model {
         $this->db->where("UTP.PlayerID", "P.PlayerID", FALSE);
         $this->db->where("UTP.PlayerID", "TP.PlayerID", FALSE);
         $this->db->where("UTP.MatchID", "TP.MatchID", FALSE);
-        $this->db->where("T.TeamID", "TP.TeamID", FALSE);
         $this->db->where("M.MatchID", "TP.MatchID", FALSE);
-        $this->db->where("M.MatchTypeID", "SM.MatchTypeID", FALSE);
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = $Where['Keyword'];
             $this->db->like("P.PlayerName", $Where['Keyword']);
@@ -1136,8 +735,9 @@ class Contest_model extends CI_Model {
 
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        }else{
+            $this->db->order_by('P.PlayerName', 'ASC');
         }
-        $this->db->order_by('P.PlayerName', 'ASC');
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             $Records = array();
@@ -1150,7 +750,7 @@ class Contest_model extends CI_Model {
                 }
                 $Records[] = $Record;
                 $Records[$key]['PointCredits'] = ($MatchStatus == 2 || $MatchStatus == 5) ? $Record['Points'] : $Record['PlayerSalary'];
-                if (in_array('MyTeamPlayer', $Params)) {
+                    if (in_array('MyTeamPlayer', $Params)) {
                         $this->db->select('DISTINCT(SUTP.PlayerID)');
                         $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
                         $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
@@ -1164,7 +764,6 @@ class Contest_model extends CI_Model {
 
                     if (in_array('PlayerSelectedPercent', $Params)) {
                         $TotalTeams = $this->db->query('Select count(*) as TotalTeams from sports_users_teams WHERE MatchID="' . $Where['MatchID'] . '"')->row()->TotalTeams;
-
                         $this->db->select('count(SUTP.PlayerID) as TotalPlayer');
                         $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
                         $this->db->where("SUTP.PlayerID", $Record['PlayerID']);
@@ -1173,7 +772,6 @@ class Contest_model extends CI_Model {
                         $Players = $this->db->get()->row();
                         $Records[$key]['PlayerSelectedPercent'] = ($TotalTeams > 0 ) ? round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) > 100 ? 100 : round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) : 0;
                     }
-
                     if (in_array('TopPlayer', $Params)) {
                         $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
                         $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
@@ -1206,7 +804,6 @@ class Contest_model extends CI_Model {
                             return $b['TotalPoints'] - $a['TotalPoints'];
                         });
                     }
-
                     if (in_array($Record['PlayerID'], array_column($AllPlayers, 'PlayerID'))) {
                         $Records[$key]['TopPlayer'] = 'Yes';
                     } else {
@@ -1220,283 +817,8 @@ class Contest_model extends CI_Model {
     }
 
     /*
-      Description: To get contest winning users
-     */
-
-    function getContestWinningUsers($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
-        $Params = array();
-        if (!empty($Field)) {
-            $Params = array_map('trim', explode(',', $Field));
-            $Field = '';
-            $FieldArray = array(
-                'UserWinningAmount' => 'JC.UserWinningAmount',
-                'TotalPoints' => 'JC.TotalPoints',
-                'EntryFee' => 'C.EntryFee',
-                'ContestSize' => 'C.ContestSize',
-                'NoOfWinners' => 'C.NoOfWinners',
-                'UserTeamName' => 'UT.UserTeamName',
-                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
-                'UserRank' => 'JC.UserRank'
-            );
-            if ($Params) {
-                foreach ($Params as $Param) {
-                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
-                }
-            }
-        }
-        $this->db->select('C.ContestName');
-        if (!empty($Field))
-            $this->db->select($Field, FALSE);
-        $this->db->from('sports_contest_join JC, sports_contest C, sports_users_teams UT, tbl_users U');
-        $this->db->where("C.ContestID", "JC.ContestID", FALSE);
-        $this->db->where("JC.UserTeamID", "UT.UserTeamID", FALSE);
-        $this->db->where("JC.UserID", "U.UserID", FALSE);
-        $this->db->where("JC.UserWinningAmount >", 0);
-        if (!empty($Where['Keyword'])) {
-            $this->db->like("C.ContestName", $Where['ContestName']);
-        }
-        if (!empty($Where['ContestID'])) {
-            $this->db->where("JC.ContestID", $Where['ContestID']);
-        }
-        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
-            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
-        }
-        $this->db->order_by('UserRank', 'ASC');
-
-        /* Total records count only if want to get multiple records */
-        if ($multiRecords) {
-            $TempOBJ = clone $this->db;
-            $TempQ = $TempOBJ->get();
-            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
-            if ($PageNo != 0) {
-                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
-            }
-        } else {
-            $this->db->limit(1);
-        }
-        // $this->db->cache_on(); //Turn caching on
-        $Query = $this->db->get();
-        if ($Query->num_rows() > 0) {
-            if ($multiRecords) {
-                $Return['Data']['Records'] = $Query->result_array();
-                return $Return;
-            } else {
-                return $Query->row_array();
-            }
-        }
-        return FALSE;
-    }
-
-    /*
-      Description: To get joined contest users
-     */
-
-    function getJoinedContestsUsers($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
-        $Params = array();
-        if (!empty($Field)) {
-            $Params = array_map('trim', explode(',', $Field));
-            $Field = '';
-            $FieldArray = array(
-                'TotalPoints' => 'JC.TotalPoints',
-                'UserWinningAmount' => 'JC.UserWinningAmount',
-                'FirstName' => 'U.FirstName',
-                'MiddleName' => 'U.MiddleName',
-                'LastName' => 'U.LastName',
-                'Username' => 'U.Username',
-                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
-                'Email' => 'U.Email',
-                'PhoneNumber' => 'U.PhoneNumber',
-                'UserID' => 'U.UserID',
-                'UserRank' => 'JC.UserRank',
-                'UserTeamName' => 'UT.UserTeamName',
-                'UserTeamID' => 'UT.UserTeamID',
-                'ProfilePic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/picture/","default.jpg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfilePic)) AS ProfilePic',
-                'UserRank' => 'JC.UserRank'
-            );
-            if ($Params) {
-                foreach ($Params as $Param) {
-                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
-                }
-            }
-        }
-        $this->db->select('U.UserGUID,UT.UserTeamGUID');
-        if (!empty($Field))
-            $this->db->select($Field, FALSE);
-        $this->db->from('sports_contest_join JC, tbl_users U, sports_users_teams UT');
-        $this->db->where("JC.UserTeamID", "UT.UserTeamID", FALSE);
-        $this->db->where("JC.UserID", "U.UserID", FALSE);
-        if (!empty($Where['UserID'])) {
-            //$this->db->where("JC.UserID", $Where['UserID']);
-        }
-        if (!empty($Where['NotInUser'])) {
-            // $this->db->where("JC.UserID !=", $Where['NotInUser']);
-        }
-
-        if (!empty($Where['PointFilter']) && $Where['PointFilter'] == 'TotalPoints') {
-            $this->db->where("JC.TotalPoints >", 0);
-        }
-        if (!empty($Where['ContestID'])) {
-            $this->db->where("JC.ContestID", $Where['ContestID']);
-        }
-        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
-            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
-        } else {
-            if (!empty($Where['UserID'])) {
-                $this->db->order_by('JC.UserID=' . $Where['UserID'] . ' DESC', null, FALSE);
-            }
-
-            $this->db->order_by('JC.UserRank', 'ASC');
-        }
-        /* Total records count only if want to get multiple records */
-        if ($multiRecords) {
-            $TempOBJ = clone $this->db;
-            $TempQ = $TempOBJ->get();
-            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
-            if ($PageNo != 0) {
-                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
-            }
-        } else {
-            $this->db->limit(1);
-        }
-        $Query = $this->db->get();
-        if ($Query->num_rows() > 0) {
-            if ($multiRecords) {
-                $Return['Data']['Records'] = $Query->result_array();
-                foreach ($Return['Data']['Records'] as $key => $record) {
-                    $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerBattingStyle,PlayerBowlingStyle,PlayerPic,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamID'],'UserID' => $Where['UserID'],'MatchID' => $Where['MatchID']));
-                    $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
-                }
-                return $Return;
-            } else {
-                $result = $Query->row_array();
-
-                foreach ($result as $key => $record) {
-                    $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamGUID'],'UserID' => $Where['UserID'],'MatchID' => $Where['MatchID']));
-                    $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
-                }
-                return $Return;
-            }
-        }
-        return FALSE;
-    }
-
-    /*
-      Description: To get joined contest users (MongoDB)
-     */
-    function getJoinedContestsUsersMongoDB($Where = array(), $PageNo = 1, $PageSize = 15) {
-
-        /* Get Joined Contest Users */
-        $ContestCollection   = $this->fantasydb->{'Contest_'.$Where['ContestID']};
-        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0, 'UserGUID' => 1,'UserTeamName' => 1,'Username' => 1,'FullName' => 1,'ProfilePic' => 1,'TotalPoints' => 1,'UserTeamPlayers' => 1,'UserRank' => 1,'UserWinningAmount' => 1],'skip' => paginationOffset($PageNo, $PageSize) ,'limit' => $PageSize,'sort' => ['UserRank' => 1]]));
-        if(count($JoinedContestsUsers) > 0){
-            $Return['Data']['TotalRecords'] = $ContestCollection->count();
-            $Return['Data']['Records'] = $JoinedContestsUsers;
-            return $Return;
-        }
-        return FALSE;
-    }
-
-    /*
-      Description: To Cancel Contest
-     */
-
-    function cancelContest($Input = array(), $SessionUserID, $ContestID) {
-
-        /* Update Contest Status */
-        $this->db->where('EntityID', $ContestID);
-        $this->db->limit(1);
-        $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
-    }
-
-    /*
       Description: To Download Contest Teams (MPDF)
-     */
-
-    function downloadTeams_MPDF($Input = array()) {
-
-        error_reporting(1);
-        /* Teams File Name */
-        $FileName = 'contest-teams-' . $Input['ContestGUID'] . '.pdf';
-        if (file_exists(getcwd() . '/uploads/Contests/' . $FileName)) {
-            return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
-        } else {
-
-            /* Create PDF file using MPDF Library */
-            ob_start();
-            require_once getcwd() . '/vendor/autoload.php';
-
-            /* Get Matches Details */
-            $ContestsData = $this->getContests('TeamNameLocal,TeamNameVisitor,EntryFee,ContestSize,UserInvitationCode', array('ContestID' => $Input['ContestID']));
-
-            /* Get Contest User Teams */
-            $ContestCollection = $this->fantasydb->{'Contest_'.$Input['ContestID']};
-            $UserTeams = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0,'UserTeamName' => 1,'UserTeamPlayers' => 1],'sort' => ['UserTeamID' => 1]]));
-            if($ContestCollection->count() == 0){
-                $UserTeams = $this->getUserTeams('TotalPoints,UserTeamPlayers', array('ContestID' => $Input['ContestID']), TRUE, 0)['Data']['Records'];
-            }
-
-            /* Player Positions */
-            $PlayerPositions = array('Captain' => '(C)', 'ViceCaptain' => '(VC)', 'Player' => '');
-
-            /* Create PDF HTML */
-            $PDFHtml = '<html lang="en" data-ng-app="fxi"><body style ="font-family: Montserrat, sans-serif;">';
-            $PDFHtml .= '<div style="width:100%; max-width:1500px;">';
-            $PDFHtml .= '<table style="background:#ffa100; width:100%;" width="100%" cellpadding="0"  cellspacing="0">';
-            $PDFHtml .= '<tr>';
-            $PDFHtml .= '<td style="padding:10px 0;">';
-            $PDFHtml .= '<span>' . SITE_NAME . '</span>';
-            $PDFHtml .= '</td>';
-            $PDFHtml .= '<td style="padding:10px 0;font-size:15px; color:#fff;">';
-            $PDFHtml .= $ContestsData['TeamNameLocal'] . ' V/S ' . $ContestsData['TeamNameVisitor'];
-            $PDFHtml .= '</td>';
-            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
-            $PDFHtml .= 'Entry Fee: ' . DEFAULT_CURRENCY . $ContestsData['EntryFee'];
-            $PDFHtml .= '</td>';
-            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
-            $PDFHtml .= 'Contest Size: ' . $ContestsData['ContestSize'];
-            $PDFHtml .= '</td>';
-            $PDFHtml .= '<td style="padding:10px 0; font-size:15px; color:#fff;">';
-            $PDFHtml .= 'Invite Code: ' . $ContestsData['UserInvitationCode'];
-            $PDFHtml .= '</td>';
-            $PDFHtml .= '</tr>';
-            $PDFHtml .= '</table>';
-            $PDFHtml .= '<table style="width:100%; border:1px solid #000" cellpadding="0"  cellspacing="0">';
-            $PDFHtml .= '<thead>';
-            $PDFHtml .= '<tr>';
-            $PDFHtml .= '<th style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">User Team Name</th>';
-            for ($I = 1; $I <= 11; $I++) {
-                $PDFHtml .= '<th style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">Player' . ' ' . $I . '</th>';
-            }
-            $PDFHtml .= '</tr>';
-            $PDFHtml .= '</thead>';
-            $PDFHtml .= '<tbody>';
-            foreach ($UserTeams as $TeamValue) {
-                $PDFHtml .= '<tr>';
-                $PDFHtml .= '<td style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">' . $TeamValue['UserTeamName'] . '</td>';
-                foreach ($TeamValue['UserTeamPlayers'] as $PlayerValue) {
-                    $PDFHtml .= '<td style="font-size:13px; font-weight:600;border:1px solid #000; text-align:center;">' . $PlayerValue['PlayerName'] . ' ' . $PlayerPositions[$PlayerValue['PlayerPosition']] . '</td>';
-                }
-                $PDFHtml .= '</tr>';
-            }
-            $PDFHtml .= '</tbody>';
-            $PDFHtml .= '</table>';
-            $PDFHtml .= '</div></body></html>';
-
-            /* MPDF Object */
-            $MPDF = new \Mpdf\Mpdf();
-            ini_set("pcre.backtrack_limit", "500000000");
-            $PDFFilePath = getcwd() . '/uploads/Contests/' . $FileName;
-            $MPDF->WriteHTML($PDFHtml);
-            $output = $MPDF->output($PDFFilePath, \Mpdf\Output\Destination::FILE);
-            ob_clean();
-            return array('TeamsPdfFileURL' => BASE_URL . 'uploads/Contests/' . $FileName);
-        }
-    }
-
-    /*
-      Description: To Download Contest Teams (MPDF)
-     */
-
+    */
     function downloadTeams($Input = array()) {
 
         /* Teams File Name */
@@ -1574,6 +896,494 @@ class Contest_model extends CI_Model {
         }
     }
 
+    /*
+      Description: Join contest
+     */
+    function joinContest($Input = array(), $SessionUserID, $ContestID, $MatchID, $UserTeamID) {
+
+        $this->db->trans_start();
+
+        /* Add entry to join contest table . */
+        $InsertData = array(
+            "UserID"     => $SessionUserID,
+            "ContestID"  => $ContestID,
+            "MatchID"    => $MatchID,
+            "UserTeamID" => $UserTeamID,
+            "EntryDate"  => date('Y-m-d H:i:s')
+        );
+        $this->db->insert('sports_contest_join', $InsertData);
+        
+        /* Manage User Wallet */
+        if (@$Input['IsPaid'] == 'Yes') {
+
+            /* Deduct Money From User Wallet */
+            $InsertData = array(
+                "Amount"          => @$Input['EntryFee'],
+                "WalletAmount"    => $Input['WalletAmountDeduction'],
+                "WinningAmount"   => $Input['WinningAmountDeduction'],
+                "CashBonus"       => $Input['CashBonusDeduction'],
+                "TransactionType" => 'Dr',
+                "TransactionID"   => substr(hash('sha256', mt_rand() . microtime()), 0, 20),
+                "EntityID"        => $ContestID,
+                "UserTeamID"      => $UserTeamID,
+                "Narration"       => 'Join Contest',
+                "EntryDate"       => date("Y-m-d H:i:s")
+            );
+            $WalletID = $this->Users_model->addToWallet($InsertData, $SessionUserID, 5);
+            if (!$WalletID){
+                return FALSE;
+            }
+        }
+
+        /* To Check If Contest Is Auto Create (Yes) */
+        if(@$Input['IsAutoCreate'] == 'Yes' && ($Input['ContestSize'] - $Input['TotalJoined']) <= 1){
+            
+            /* Get Contests Details */
+            $ContestData = $this->db->query('SELECT * FROM sports_contest WHERE ContestID = '.$ContestID.' LIMIT 1')->result_array()[0];
+
+            /* Create Contest */
+            $Contest = array();
+            $Contest['ContestName']           = $ContestData['ContestName'];
+            $Contest['ContestFormat']         = $ContestData['ContestFormat'];
+            $Contest['ContestType']           = $ContestData['ContestType'];
+            $Contest['GameTimeLive']          = $ContestData['GameTimeLive'];
+            $Contest['GameType']              = $ContestData['GameType'];
+            $Contest['AdminPercent']          = $ContestData['AdminPercent'];
+            $Contest['Privacy']               = $ContestData['Privacy'];
+            $Contest['IsPaid']                = $ContestData['IsPaid'];
+            $Contest['IsConfirm']             = $ContestData['IsConfirm'];
+            $Contest['IsAutoCreate']          = $ContestData['IsAutoCreate'];
+            $Contest['ShowJoinedContest']     = $ContestData['ShowJoinedContest'];
+            $Contest['WinningAmount']         = $ContestData['WinningAmount'];
+            $Contest['UnfilledWinningPercent']= $ContestData['UnfilledWinningPercent'];
+            $Contest['ContestSize']           = $ContestData['ContestSize'];
+            $Contest['EntryFee']              = $ContestData['EntryFee'];
+            $Contest['NoOfWinners']           = $ContestData['NoOfWinners'];
+            $Contest['EntryType']             = $ContestData['EntryType'];
+            $Contest['UserJoinLimit']         = $ContestData['UserJoinLimit'];
+            $Contest['CashBonusContribution'] = $ContestData['CashBonusContribution'];
+            $Contest['IsPrivacyNameDisplay']  = $ContestData['IsPrivacyNameDisplay'];
+            $Contest['CustomizeWinning']      = json_deocde($ContestData['CustomizeWinning'],TRUE);
+            $this->addContest($Contest, $ContestData['UserID'], array($ContestData['MatchID']), $ContestData['SeriesID']);
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            return FALSE;
+        }
+        return $this->Users_model->getWalletDetails($SessionUserID);
+    }
+
+    /*
+      Description: To get joined contest
+     */
+    function getJoinedContests($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
+        $Params = array();
+        if (!empty($Field)) {
+            $Params = array_map('trim', explode(',', $Field));
+            $Field = '';
+            $FieldArray = array(
+                'MatchID' => 'M.MatchID',
+                'MatchGUID' => 'M.MatchGUID',
+                'StatusID' => 'E.StatusID',
+                'MatchIDLive' => 'M.MatchIDLive',
+                'MatchTypeID' => 'M.MatchTypeID',
+                'MatchNo' => 'M.MatchNo',
+                'MatchLocation' => 'M.MatchLocation',
+                'MatchStartDateTime' => 'CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '") AS MatchStartDateTime',
+                'MatchStartDateTimeUTC' => 'M.MatchStartDateTime MatchStartDateTimeUTC',
+                'ContestID' => 'C.ContestID',
+                'Privacy' => 'C.Privacy',
+                'IsPaid' => 'C.IsPaid',
+                'IsConfirm' => 'C.IsConfirm',
+                'ShowJoinedContest' => 'C.ShowJoinedContest',
+                'CashBonusContribution' => 'C.CashBonusContribution',
+                'UserInvitationCode' => 'C.UserInvitationCode',
+                'WinningAmount' => 'C.WinningAmount',
+                'GameType' => 'C.GameType',
+                'ContestSize' => 'C.ContestSize',
+                'ContestFormat' => 'C.ContestFormat',
+                'ContestType' => 'C.ContestType',
+                'GameTimeLive' => 'C.GameTimeLive',
+                'EntryFee' => 'C.EntryFee',
+                'NoOfWinners' => 'C.NoOfWinners',
+                'EntryType' => 'C.EntryType',
+                'CustomizeWinning' => 'C.CustomizeWinning',
+                'UserID' => 'JC.UserID',
+                'UserTeamID' => 'JC.UserTeamID',
+                'JoinInning' => 'JC.JoinInning',
+                'EntryDate' => 'JC.EntryDate',
+                'TotalPoints' => 'JC.TotalPoints',
+                'UserWinningAmount' => 'JC.UserWinningAmount',
+                'SeriesID' => 'M.SeriesID',
+                'TeamNameLocal' => 'TL.TeamName AS TeamNameLocal',
+                'TeamNameVisitor' => 'TV.TeamName AS TeamNameVisitor',
+                'TeamNameShortLocal' => 'TL.TeamNameShort AS TeamNameShortLocal',
+                'TeamNameShortVisitor' => 'TV.TeamNameShort AS TeamNameShortVisitor',
+                'TeamFlagLocal' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag) as TeamFlagLocal',
+                'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
+                'SeriesName' => 'S.SeriesName AS SeriesName',
+                'TotalJoined' => '(SELECT COUNT(*) AS TotalJoined
+                                                FROM sports_contest_join
+                                                WHERE sports_contest_join.ContestID =  C.ContestID ) AS TotalJoined',
+                'UserTotalJoinedInMatch' => '(SELECT COUNT(*)
+                                                FROM sports_contest_join
+                                                WHERE sports_contest_join.MatchID =  M.MatchID AND UserID= ' . $Where['SessionUserID'] . ') AS UserTotalJoinedInMatch',
+                'UserRank' => 'JC.UserRank',
+                'StatusID' => 'E.StatusID',
+                'Status' => 'CASE E.StatusID
+                                    when "1" then "Pending"
+                                    when "2" then "Running"
+                                    when "3" then "Cancelled"
+                                    when "5" then "Completed"
+                                END as Status',
+                'MatchStartDateTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' %h:%i %p") as MatchStartDateTime',
+                'CurrentDateTime' => 'DATE_FORMAT(CONVERT_TZ(Now(),"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . ' ") as CurrentDateTime',
+                'MatchDate' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") MatchDate',
+                'MatchTime' => 'DATE_FORMAT(CONVERT_TZ(M.MatchStartDateTime,"+00:00","' . DEFAULT_TIMEZONE . '"), "%H:%i:%s") MatchTime',
+            );
+            if ($Params) {
+                foreach ($Params as $Param) {
+                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
+                }
+            }
+        }
+        $this->db->select('C.ContestGUID,C.ContestName');
+        if (!empty($Field))
+            $this->db->select($Field, FALSE);
+        $this->db->from('tbl_entity E, sports_contest C, sports_matches M,sports_contest_join JC');
+        $this->db->where("C.ContestID", "JC.ContestID", FALSE);
+        if(in_array('SeriesName', $Params)){
+            $this->db->from('sports_series S');
+            $this->db->where("S.SeriesID", "C.SeriesID", FALSE);
+        }
+        if (array_keys_exist($Params, array('TeamNameLocal','TeamNameVisitor','TeamNameShortLocal','TeamNameShortVisitor','TeamFlagLocal','TeamFlagVisitor'))) {
+            $this->db->from('sports_teams TL, sports_teams TV');
+            $this->db->where("M.TeamIDLocal", "TL.TeamID", FALSE);
+            $this->db->where("M.TeamIDVisitor", "TV.TeamID", FALSE);
+        }
+        if(in_array('UserTeamName', $Params)){
+            $this->db->from('sports_users_teams UT');
+            $this->db->where("JC.UserTeamID", "UT.UserTeamID", false);
+        }
+        $this->db->where("C.ContestID", "E.EntityID", FALSE);
+        $this->db->where("M.MatchID", "C.MatchID", FALSE);
+        if (!empty($Where['Keyword'])) {
+            $Where['Keyword'] = $Where['Keyword'];
+            $this->db->group_start();
+            $this->db->like("C.ContestName", $Where['Keyword']);
+            $this->db->or_like("M.MatchLocation", $Where['Keyword']);
+            $this->db->or_like("M.MatchNo", $Where['Keyword']);
+            $this->db->group_end();
+        }
+        if (!empty($Where['ContestID'])) {
+            $this->db->where("C.ContestID", $Where['ContestID']);
+        }
+        if (!empty($Where['SessionUserID'])) {
+            $this->db->where("JC.UserID", $Where['SessionUserID']);
+        }
+        if (!empty($Where['UserTeamID'])) {
+            $this->db->where("JC.UserTeamID", $Where['UserTeamID']);
+        }
+        if (!empty($Where['Privacy'])) {
+            $this->db->where("C.Privacy", $Where['Privacy']);
+        }
+        if (!empty($Where['GameType'])) {
+            $this->db->where("C.GameType", $Where['GameType']);
+        }
+        if (!empty($Where['IsPaid'])) {
+            $this->db->where("C.IsPaid", $Where['IsPaid']);
+        }
+        if (!empty($Where['LeagueType'])) {
+            $this->db->where("C.LeagueType", $Where['LeagueType']);
+        }
+        if (!empty($Where['WinningAmount'])) {
+            $this->db->where("C.WinningAmount >=", $Where['WinningAmount']);
+        }
+        if (!empty($Where['ContestSize'])) {
+            $this->db->where("C.ContestSize", $Where['ContestSize']);
+        }
+        if (!empty($Where['EntryFee'])) {
+            $this->db->where("C.EntryFee", $Where['EntryFee']);
+        }
+        if (!empty($Where['NoOfWinners'])) {
+            $this->db->where("C.NoOfWinners", $Where['NoOfWinners']);
+        }
+        if (!empty($Where['EntryType'])) {
+            $this->db->where("C.EntryType", $Where['EntryType']);
+        }
+        if (!empty($Where['MatchID'])) {
+            $this->db->where("C.MatchID", $Where['MatchID']);
+        }
+        if (!empty($Where['StatusID'])) {
+            $this->db->where_in("E.StatusID", $Where['StatusID']);
+        }
+
+        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
+            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        }else{
+            $this->db->order_by('M.MatchStartDateTime', 'ASC');
+        }
+        /* Total records count only if want to get multiple records */
+        if ($multiRecords) {
+            $TempOBJ = clone $this->db;
+            $TempQ = $TempOBJ->get();
+            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
+            if ($PageNo != 0) {
+                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
+            }
+        } else {
+            $this->db->limit(1);
+        }
+        $Query = $this->db->get();
+        if ($Query->num_rows() > 0) {
+            if ($multiRecords) {
+                $Records = array();
+                foreach ($Query->result_array() as $key => $Record) {
+                    $Records[] = $Record;
+                    if(in_array('CustomizeWinning', $Params)){
+                        $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], TRUE) : array();
+                    }
+                }
+                $Return['Data']['Records'] = $Records;
+            } else {
+                $Record = $Query->row_array();
+                if(in_array('CustomizeWinning', $Params)){
+                    $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], TRUE) : array();
+                }
+                return $Record;
+            }
+        } else {
+            $Return['Data']['Records'] = array();
+        }
+        if (in_array('Statics', $Params)) {
+            $Return['Data']['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
+        }
+        return $Return;
+    }
+
+    /*
+      Description: To get joined contest users
+     */
+
+    function getJoinedContestsUsers($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
+        $Params = array();
+        if (!empty($Field)) {
+            $Params = array_map('trim', explode(',', $Field));
+            $Field = '';
+            $FieldArray = array(
+                'TotalPoints' => 'JC.TotalPoints',
+                'UserWinningAmount' => 'JC.UserWinningAmount',
+                'FirstName' => 'U.FirstName',
+                'MiddleName' => 'U.MiddleName',
+                'LastName' => 'U.LastName',
+                'Username' => 'U.Username',
+                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
+                'Email' => 'U.Email',
+                'PhoneNumber' => 'U.PhoneNumber',
+                'UserID' => 'U.UserID',
+                'UserRank' => 'JC.UserRank',
+                'UserTeamName' => 'UT.UserTeamName',
+                'UserTeamID' => 'UT.UserTeamID',
+                'ProfilePic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/picture/","default.jpg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfilePic)) AS ProfilePic',
+                'UserRank' => 'JC.UserRank'
+            );
+            if ($Params) {
+                foreach ($Params as $Param) {
+                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
+                }
+            }
+        }
+        $this->db->select('U.UserGUID,UT.UserTeamGUID');
+        if (!empty($Field))
+            $this->db->select($Field, FALSE);
+        $this->db->from('sports_contest_join JC, tbl_users U, sports_users_teams UT');
+        $this->db->where("JC.UserTeamID", "UT.UserTeamID", FALSE);
+        $this->db->where("JC.UserID", "U.UserID", FALSE);
+        if (!empty($Where['ContestID'])) {
+            $this->db->where("JC.ContestID", $Where['ContestID']);
+        }
+        if (!empty($Where['PointFilter']) && $Where['PointFilter'] == 'TotalPoints') {
+            $this->db->where("JC.TotalPoints >",0);
+        }
+        if (!empty($Where['MatchID'])) {
+            $this->db->where("JC.MatchID", $Where['MatchID']);
+        }
+        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
+            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        } else {
+            if(!empty($Where['SessionUserID'])){
+                $this->db->order_by('JC.UserID='.$Where['SessionUserID'].' DESC',null,FALSE);
+            }
+            $this->db->order_by('JC.UserRank', 'ASC');
+        }
+        /* Total records count only if want to get multiple records */
+        if ($multiRecords) {
+            $TempOBJ = clone $this->db;
+            $TempQ = $TempOBJ->get();
+            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
+            if ($PageNo != 0) {
+                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
+            }
+        } else {
+            $this->db->limit(1);
+        }
+        $Query = $this->db->get();
+        if ($Query->num_rows() > 0) {
+            if ($multiRecords) {
+                $Return['Data']['Records'] = $Query->result_array();
+                foreach ($Return['Data']['Records'] as $key => $record) {
+                    if(in_array('UserTeamPlayers',$Params)){
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerBattingStyle,PlayerBowlingStyle,PlayerPic,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamID']));
+                        $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                    }
+                }
+                return $Return;
+            } else {
+                $result = $Query->row_array();
+                foreach ($result as $key => $record) {
+                    if(in_array('UserTeamPlayers',$Params)){
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamID']));
+                        $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                    }
+                }
+                return $Return;
+            }
+        }
+        return FALSE;
+    }
+
+    /*
+      Description: To get joined contest users (MongoDB)
+     */
+    function getJoinedContestsUsersMongoDB($Where = array(), $PageNo = 1, $PageSize = 15) {
+
+        /* Get Joined Contest Users */
+        $ContestCollection   = $this->fantasydb->{'Contest_'.$Where['ContestID']};
+        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([],['projection' => [ '_id' => 0, 'UserGUID' => 1,'UserTeamName' => 1,'Username' => 1,'FullName' => 1,'ProfilePic' => 1,'TotalPoints' => 1,'UserTeamPlayers' => 1,'UserRank' => 1,'UserWinningAmount' => 1],'skip' => paginationOffset($PageNo, $PageSize) ,'limit' => $PageSize,'sort' => ['UserRank' => 1]]));
+        if(count($JoinedContestsUsers) > 0){
+            $Return['Data']['TotalRecords'] = $ContestCollection->count();
+            $Return['Data']['Records'] = $JoinedContestsUsers;
+            return $Return;
+        }
+        return FALSE;
+    }
+
+    /*
+      Description: Invite contest
+     */
+    function inviteContest($Input = array(), $SessionUserID) {
+
+        /* Invite Users */
+        if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
+
+            /* Send invite contest Email to User with invite contest url */
+            send_mail(array(
+                    'emailTo'         => $Input['Email'],
+                    'template_id'     => 'd-21c013b7011144ac9ab7315081258881',
+                    'Subject'         => 'Contest Invitation - ' . SITE_NAME,
+                    "Name"            => $this->db->query('SELECT FirstName FROM tbl_users WHERE UserID = '.$SessionUserID.' LIMIT 1')->row()->FirstName,
+                    "InviteCode"      => $Input['InviteCode'],
+                    "TeamNameLocal"   => $Input['TeamNameShortLocal'],
+                    "TeamNameVisitor" => $Input['TeamNameShortVisitor']
+                ));
+        } else if ($Input['ReferType'] == 'Phone' && !empty($Input['PhoneNumber'])) {
+
+            /* Send invite contest SMS to User with invite contest url */
+            $this->Utility_model->sendSMS(array(
+                'PhoneNumber' => $Input['PhoneNumber'],
+                'Text' => "Put your cricket knowledge to test and play with me on ".SITE_NAME.". Click ".SITE_HOST . ROOT_FOLDER."download-app to download the ".SITE_NAME." app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $Input['TeamNameShortLocal'] . " V/S " . $Input['TeamNameShortVisitor'] . " Match."
+            ));
+        }
+    }
+
+    /*
+      Description: Get Joined contest statics
+     */
+    function contestStatics($SessionUserID,$MatchID) {
+        return $this->db->query('SELECT(
+                    SELECT COUNT(J.EntryDate) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . $SessionUserID . '" AND C.MatchID = "' . $MatchID . '" 
+                    )as JoinedContest,( 
+                    SELECT COUNT(UserTeamName) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . $SessionUserID . '" AND MatchID = "' . $MatchID . '"
+                ) as TotalTeams')->row();
+    }
+
+    /*
+      Description: To get contest winning users
+    */
+    function getContestWinningUsers($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
+        $Params = array();
+        if (!empty($Field)) {
+            $Params = array_map('trim', explode(',', $Field));
+            $Field = '';
+            $FieldArray = array(
+                'UserWinningAmount' => 'JC.UserWinningAmount',
+                'TotalPoints' => 'JC.TotalPoints',
+                'EntryFee' => 'C.EntryFee',
+                'ContestSize' => 'C.ContestSize',
+                'NoOfWinners' => 'C.NoOfWinners',
+                'UserTeamName' => 'UT.UserTeamName',
+                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
+                'UserRank' => 'JC.UserRank'
+            );
+            if ($Params) {
+                foreach ($Params as $Param) {
+                    $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
+                }
+            }
+        }
+        $this->db->select('C.ContestName');
+        if (!empty($Field))
+            $this->db->select($Field, FALSE);
+            $this->db->from('sports_contest_join JC, sports_contest C');
+        if (array_keys_exist($Params, array('UserTeamName'))) {
+            $this->db->from('sports_users_teams UT');
+            $this->db->where("JC.UserTeamID", "UT.UserTeamID", FALSE);
+        }
+        if (array_keys_exist($Params, array('FullName'))) {
+            $this->db->from('tbl_users U');
+            $this->db->where("JC.UserID", "U.UserID", FALSE);
+        }
+        $this->db->where("C.ContestID", "JC.ContestID", FALSE);
+        $this->db->where("JC.UserWinningAmount >", 0);
+        if (!empty($Where['Keyword'])) {
+            $this->db->like("C.ContestName", $Where['ContestName']);
+        }
+        if (!empty($Where['ContestID'])) {
+            $this->db->where("JC.ContestID", $Where['ContestID']);
+        }
+        if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
+            $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        }else{
+            $this->db->order_by('UserRank', 'ASC');
+        }
+
+        /* Total records count only if want to get multiple records */
+        if ($multiRecords) {
+            $TempOBJ = clone $this->db;
+            $TempQ = $TempOBJ->get();
+            $Return['Data']['TotalRecords'] = $TempQ->num_rows();
+            if ($PageNo != 0) {
+                $this->db->limit($PageSize, paginationOffset($PageNo, $PageSize)); /* for pagination */
+            }
+        } else {
+            $this->db->limit(1);
+        }
+        $Query = $this->db->get();
+        if ($Query->num_rows() > 0) {
+            if ($multiRecords) {
+                $Return['Data']['Records'] = $Query->result_array();
+                return $Return;
+            } else {
+                return $Query->row_array();
+            }
+        }
+        return FALSE;
+    }
+
+    /*
+      Description: To get contest winning breakup
+     */
     public function getWinningBreakup($Field = '', $Input = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15) {
         $dataArr = array();
         $EntryFee = $Input['EntryFee'];
@@ -1581,11 +1391,8 @@ class Contest_model extends CI_Model {
         $MatchID = $Input['MatchID'];
         $UserID = $Input['UserID'];
         $ContestSize = $Input['ContestSize'];
-
         $IsMultiEntry = $Input['EntryType'];
-
         $TotalFee = (abs($WinningAmount) * 20) / 100;
-
         if ($Input['IsPaid'] == 'Yes') {
             $MatchID = $Input['MatchID'];
             $UserID = $Input['UserID'];
@@ -2318,10 +2125,8 @@ class Contest_model extends CI_Model {
                         'To' => '10',
                         'Percent' => '5',
                         'WinningAmount' => (string) (($WinningAmount * 5) / 100));
-
                     $data[] = array('NoOfWinners' => $ContestSize - 0, 'Winners' => $result);
                 }
-
                 $Return['Data'] = $data;
             }
 
@@ -2414,9 +2219,6 @@ class Contest_model extends CI_Model {
                         'To' => '50',
                         'Percent' => '.5',
                         'WinningAmount' => (string) (($WinningAmount * .5) / 100));
-
-
-
                     $data[] = array('NoOfWinners' => $ContestSize - 0, 'Winners' => $result5);
                     $ContestSize = $ContestSize - 25;
                 }
@@ -2479,14 +2281,9 @@ class Contest_model extends CI_Model {
                         'To' => '25',
                         'Percent' => '1',
                         'WinningAmount' => (string) (($WinningAmount * 1) / 100));
-
-
                     $data[] = array('NoOfWinners' => $ContestSize - 0, 'Winners' => $result4);
                     $ContestSize = $ContestSize - 10;
                 }
-
-
-
                 $Return['Data'] = $data;
             }
         }
@@ -2494,34 +2291,8 @@ class Contest_model extends CI_Model {
     }
 
     /*
-      Description: Switch user team
-     */
-
-    function switchUserTeam($UserID, $ContestID, $UserTeamID, $OldUserTeamGUID) {
-
-        /* Switch Team */
-        $this->db->where(array('UserID' => $UserID,'ContestID' => $ContestID,'UserTeamID' => $OldUserTeamGUID));
-        $this->db->limit(1);
-        $this->db->update('sports_contest_join', array('UserTeamID' => $UserTeamID));
-    }
-
-    function findKeyValuePlayers($array, $value) {
-        if (is_array($array)) {
-            $players = array();
-            foreach ($array as $key => $rows) {
-                if ($rows['PlayerRole'] == $value) {
-                    $players[] = $array[$key];
-                }
-            }
-            return $players;
-        }
-        return false;
-    }
-
-    /*
       Description: validate Advance or safe Play.
-     */
-
+    */
     function ValidateAdvanceSafePlay($MatchID, $UserID, $UserTeamID) {
         $JoinedContest = $this->getJoinedContests("ContestID,GameType,GameTimeLive,MatchStartDateTimeUTC", array("UserTeamID" => $UserTeamID, "MatchID" => $MatchID, "SessionUserID" => $UserID, "GameType" => "Advance", "OrderBy" => "GameTimeLive", "Sequence" => "DESC"), TRUE);
         if ($JoinedContest['Data']['TotalRecords'] > 0) {
@@ -2540,12 +2311,27 @@ class Contest_model extends CI_Model {
             return true;
         }
     }
-
-    function getTotalDummyJoinedContest($ContestID) {
-        return $this->db->query("SELECT count(JC.ContestID) as DummyJoinedContest FROM sports_contest_join as JC JOIN tbl_users ON tbl_users.UserID = JC.UserID WHERE JC.ContestID = $ContestID AND tbl_users.UserTypeID = 3")->row()->DummyJoinedContest;
+    
+    /*
+      Description: Find sub arrays from multidimensional array
+    */
+    function findKeyValuePlayers($array, $value) {
+        if (is_array($array)) {
+            $players = array();
+            foreach ($array as $key => $rows) {
+                if ($rows['PlayerRole'] == $value) {
+                    $players[] = $array[$key];
+                }
+            }
+            return $players;
+        }
+        return false;
     }
 
-    function UpdateVirtualJoinContest($ContestID) {
+    /*
+      Description: update virtual join contest status.
+    */
+    function updateVirtualJoinContest($ContestID) {
         
         /* Edit user team to user team table . */
         $this->db->where('ContestID', $ContestID);
@@ -2554,7 +2340,10 @@ class Contest_model extends CI_Model {
         return true;
     }
 
-    function GetVirtualTeamPlayerMatchWise($MatchID, $DummyUserPercentage) {
+    /*
+      Description: get virtual team players (Match Wise).
+    */
+    function getVirtualTeamPlayerMatchWise($MatchID, $DummyUserPercentage) {
         $Sql = "SELECT SUT.UserTeamID, SUT.UserID, CONCAT('[',GROUP_CONCAT(distinct CONCAT('{\"PlayerID\":\"',PlayerID,'\",\"PlayerPosition\":\"',PlayerPosition,'\"}')),']') as Players "
                 . "FROM `sports_users_teams` SUT JOIN tbl_users U ON U.UserID = SUT.UserID "
                 . "JOIN sports_users_team_players UTP ON UTP.UserTeamID = SUT.UserTeamID WHERE SUT.MatchID = $MatchID "
@@ -2562,7 +2351,10 @@ class Contest_model extends CI_Model {
         return $this->db->query($Sql)->result_array();
     }
 
-    function ContestUpdateVirtualTeam($ContestID, $IsDummyJoined) {
+    /*
+      Description: contest update virtual team.
+    */
+    function contestUpdateVirtualTeam($ContestID, $IsDummyJoined) {
         /* Edit user team to user team table . */
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);
@@ -2571,5 +2363,3 @@ class Contest_model extends CI_Model {
     }
 
 }
-
-?>

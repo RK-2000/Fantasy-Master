@@ -717,7 +717,7 @@ class Utilities extends API_Controller
                 $hours = $Seconds / 60 / 60;
 
                 $dummyJoinedContest = 0;
-                $dummyJoinedContests = $this->Contest_model->getTotalDummyJoinedContest($Rows['ContestID']);
+                $dummyJoinedContests = $this->db->query("SELECT count(JC.ContestID) as DummyJoinedContest FROM sports_contest_join as JC JOIN tbl_users ON tbl_users.UserID = JC.UserID WHERE JC.ContestID = ".$Rows['ContestID']." AND tbl_users.UserTypeID = 3")->row()->DummyJoinedContest;
 
                 if ($dummyJoinedContests) {
                     $dummyJoinedContest = $dummyJoinedContests;
@@ -729,7 +729,7 @@ class Utilities extends API_Controller
                 $dummyUserPercentage = round(($contestSize * $joinDummyUser) / 100);
 
                 if ($dummyJoinedContest >= $dummyUserPercentage) {
-                    $this->Contest_model->UpdateVirtualJoinContest($Rows['ContestID']);
+                    $this->Contest_model->updateVirtualJoinContest($Rows['ContestID']);
                     // continue;
                 }
 
@@ -759,7 +759,7 @@ class Utilities extends API_Controller
                     $dummyUserPercentage = $contestSize - $totalJoined - 5;
                 }
 
-                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
+                $VitruelTeamPlayer = $this->Contest_model->getVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
                 if (!empty($VitruelTeamPlayer)) {
                     foreach ($VitruelTeamPlayer as $usersTeam) {
                         $userTeamPlayers = json_decode($usersTeam['Players']);
@@ -788,7 +788,7 @@ class Utilities extends API_Controller
                             }
                         }
                     }
-                    $this->Contest_model->ContestUpdateVirtualTeam($Rows['ContestID'], $Rows['IsDummyJoined']);
+                    $this->Contest_model->contestUpdateVirtualTeam($Rows['ContestID'], $Rows['IsDummyJoined']);
                 }
             }
         }
