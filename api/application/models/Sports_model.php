@@ -511,7 +511,9 @@ class Sports_model extends CI_Model
                 'LastUpdateDiff' => 'IF(P.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", P.LastUpdatedOn))) LastUpdateDiff',
                 'MatchTypeID' => 'SSM.MatchTypeID',
                 'MatchType' => 'SSM.MatchTypeName MatchType',
-                'TotalPointCredits' => '(SELECT SUM(`TotalPoints`) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits'
+                'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = '.$Where['MatchID'].' AND JC.UserID = '.$Where['SessionUserID'].' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
+                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].') > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = '.$Where['MatchID'].')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].')),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -519,7 +521,7 @@ class Sports_model extends CI_Model
                 }
             }
         }
-        $this->db->select('P.PlayerGUID,P.PlayerName,P.PlayerID PlayerIDAsUse');
+        $this->db->select('P.PlayerGUID,P.PlayerName');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         $this->db->from('tbl_entity E, sports_players P');
@@ -634,28 +636,6 @@ class Sports_model extends CI_Model
                     if (in_array('PointCredits', $Params)) {
                         $Records[$key]['PointCredits'] = (in_array($MatchStatus, array(2, 5, 10))) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
                     }
-                    if (in_array('MyTeamPlayer', $Params)) {
-                        $this->db->select('DISTINCT(SUTP.PlayerID)');
-                        $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
-                        $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
-                        $this->db->where('SUT.MatchID', $Where['MatchID']);
-                        $this->db->where('SUT.UserID', $Where['SessionUserID']);
-                        $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
-                        $MyPlayers = $this->db->get()->result_array();
-                        $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers, 'PlayerID') : array();
-                        $Records[$key]['MyPlayer'] = (in_array($Record['PlayerIDAsUse'], $MyPlayersIds)) ? 'Yes' : 'No';
-                    }
-                    if (in_array('PlayerSelectedPercent', $Params)) {
-                        $TotalTeams = $this->db->query('Select count(UserTeamID) TotalTeams from sports_users_teams WHERE MatchID="' . $Where['MatchID'] . '"')->row()->TotalTeams;
-                        $this->db->select('count(SUTP.PlayerID) TotalPlayer');
-                        $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
-                        $this->db->where("SUTP.PlayerID", $Record['PlayerID']);
-                        $this->db->where("SUTP.MatchID", $Where['MatchID']);
-                        $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                        $Players = $this->db->get()->row();
-                        $Records[$key]['PlayerSelectedPercent']  = ($TotalTeams > 0) ? strval(round((($Players->TotalPlayer * 100) / $TotalTeams), 2) > 100 ? 100 : round((($Players->TotalPlayer * 100) / $TotalTeams), 2)) : "0";
-                    }
-                    unset($Records[$key]['PlayerIDAsUse']);
                 }
 
                 /* Custom Sorting */
@@ -689,18 +669,6 @@ class Sports_model extends CI_Model
                 if (in_array('PointCredits', $Params)) {
                     $Record['PointCredits'] = (in_array($MatchStatus, array(2, 5, 10))) ? @$Record['TotalPoints'] : @$Record['TotalPointCredits'];
                 }
-                if (in_array('MyTeamPlayer', $Params)) {
-                    $this->db->select('DISTINCT(SUTP.PlayerID)');
-                    $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
-                    $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
-                    $this->db->where('SUT.MatchID', $Where['MatchID']);
-                    $this->db->where('SUT.UserID', $Where['SessionUserID']);
-                    $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
-                    $MyPlayers = $this->db->get()->result_array();
-                    $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers, 'PlayerID') : array();
-                    $Record['MyPlayer'] = (in_array($Record['PlayerIDAsUse'], $MyPlayersIds)) ? 'Yes' : 'No';
-                }
-                unset($Record['PlayerIDAsUse']);
                 return $Record;
             }
         }

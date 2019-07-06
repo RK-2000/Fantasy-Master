@@ -191,7 +191,10 @@ class Contest_model extends CI_Model {
                 'UserTeamName' => 'UT.UserTeamName',
                 'UserWinningAmount' => 'JC.UserWinningAmount',
                 'TotalPoints' => 'JC.TotalPoints',
-                'UserRank' => 'JC.UserRank'
+                'UserRank' => 'JC.UserRank',
+                'TotalAmountReceived' => '(SELECT IFNULL(SUM(SC.EntryFee),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalAmountReceived',
+                'TotalWinningAmount'  => '(SELECT IFNULL(SUM(SJC.UserWinningAmount),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalWinningAmount',
+                'UserTeamDetails' => "(SELECT CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'UserTeamGUID', SUT.UserTeamGUID, 'UserTeamName', SUT.UserTeamName, 'UserTeamType', SUT.UserTeamType, 'TotalPoints', SJC.TotalPoints FROM sports_contest_join SJC, sports_users_teams SUT WHERE SJC.UserTeamID = SUT.UserTeamID AND SJC.ContestID = C.ContestID AND SJC.UserID = ".$Where['SessionUserID']." ORDER BY SUT.UserTeamID DESC) UserTeamDetails"
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -297,9 +300,6 @@ class Contest_model extends CI_Model {
         if (!empty($Where['IsRefund'])) {
             $this->db->where("C.IsRefund", $Where['IsRefund']);
         }
-        if (!empty($Where['IsWinningDistributeAmount'])) {
-            $this->db->where("C.IsWinningDistributeAmount", $Where['IsWinningDistributeAmount']);
-        }
         if (!empty($Where['ContestFormat'])) {
             $this->db->where("C.ContestFormat", $Where['ContestFormat']);
         }
@@ -353,13 +353,11 @@ class Contest_model extends CI_Model {
         }
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
+        }else if (!empty($Where['OrderByToday']) && $Where['OrderByToday'] == 'Yes') {
+            $this->db->order_by('DATE(M.MatchStartDateTime)="' . date('Y-m-d') . '" DESC', null, FALSE);
+            $this->db->order_by('E.StatusID=1 DESC', null, FALSE);
         }else{
-            if (!empty($Where['OrderByToday']) && $Where['OrderByToday'] == 'Yes') {
-                $this->db->order_by('DATE(M.MatchStartDateTime)="' . date('Y-m-d') . '" DESC', null, FALSE);
-                $this->db->order_by('E.StatusID=1 DESC', null, FALSE);
-            }else{
-                $this->db->order_by('M.MatchStartDateTime', 'ASC');
-            }
+            $this->db->order_by('M.MatchStartDateTime', 'ASC');
         }
 
         /* Total records count only if want to get multiple records */
@@ -385,18 +383,11 @@ class Contest_model extends CI_Model {
                     if(in_array('MatchScoreDetails',$Params)){
                         $Records[$key]['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
                     }
-                    if(in_array('TotalAmountReceived',$Params)){
-                        $Records[$key]['TotalAmountReceived'] = $this->db->query('SELECT IFNULL(SUM(C.EntryFee),0) TotalAmountReceived FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalAmountReceived;
-                    }
-                    if(in_array('TotalWinningAmount',$Params)){
-                        $Records[$key]['TotalWinningAmount'] = $this->db->query('SELECT IFNULL(SUM(J.UserWinningAmount),0) TotalWinningAmount FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalWinningAmount;
-                    }
                     if(in_array('NoOfWinners',$Params)){
                         $Records[$key]['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
                     }
-                    if (in_array('IsJoined', $Params)) {
-                        $Records[$key]['UserTeamDetails'] = ($Record['IsJoined'] == 'Yes') ? $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestIDAsUse'],'UserID' => $Where['SessionUserID']), true, 0)['Data']['Records'] : array();
-                        unset($Records[$key]['ContestIDAsUse']);
+                    if (in_array('UserTeamDetails', $Params)) {
+                        $Records[$key]['UserTeamDetails'] = (!empty($Record['UserTeamDetails'])) ? json_decode($Record['UserTeamDetails'], true) : array();
                     }
                 }
                 $Return['Data']['Records'] = $Records;
@@ -408,15 +399,11 @@ class Contest_model extends CI_Model {
                 if(in_array('MatchScoreDetails',$Params)){
                     $Record['MatchScoreDetails'] = (!empty($Record['MatchScoreDetails'])) ? json_decode($Record['MatchScoreDetails'], TRUE) : new stdClass();
                 }
-                if(in_array('TotalAmountReceived',$Params)){
-                    $Record['TotalAmountReceived'] = $this->db->query('SELECT IFNULL(SUM(C.EntryFee),0) TotalAmountReceived FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalAmountReceived;
+                if(in_array('NoOfWinners',$Params)){
+                    $Record['NoOfWinners'] = ($Record['NoOfWinners'] == 0 ) ? 1 : $Record['NoOfWinners'];
                 }
-                if(in_array('TotalWinningAmount',$Params)){
-                    $Record['TotalWinningAmount'] = $this->db->query('SELECT IFNULL(SUM(J.UserWinningAmount),0) TotalWinningAmount FROM sports_contest C join sports_contest_join J on C.ContestID = J.ContestID WHERE C.ContestID = "' . $Record['ContestIDAsUse'] . '"')->row()->TotalWinningAmount;
-                }
-                if (in_array('IsJoined', $Params)) {
-                    $Record['UserTeamDetails'] = ($Record['IsJoined'] == 'Yes') ? $this->getUserTeams('TotalPoints', array('ContestID' => $Record['ContestIDAsUse'],'UserID' => $Where['SessionUserID']), true, 0)['Data']['Records'] : array();
-                    unset($Record['ContestIDAsUse']);
+                if (in_array('UserTeamDetails', $Params)) {
+                    $Record['UserTeamDetails'] = (!empty($Record['UserTeamDetails'])) ? json_decode($Record['UserTeamDetails'], true) : array();
                 }
                 if (in_array('Statics', $Params)) {
                     $Record['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
@@ -561,10 +548,10 @@ class Contest_model extends CI_Model {
                 'MatchID' => 'UT.MatchID',
                 'MatchInning' => 'UT.MatchInning',
                 'TotalPoints' => 'JC.TotalPoints',
-                'TotalJoinedContests' => '(SELECT COUNT(ContestID) FROM sports_contest_join WHERE UserTeamID = UT.UserTeamID) TotalJoinedContests',
+                'TotalJoinedContests' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE UserTeamID = UT.UserTeamID) TotalJoinedContests',
                 'IsTeamJoined' => '(SELECT IF( EXISTS(
                                     SELECT sports_contest_join.ContestID FROM sports_contest_join
-                                    WHERE sports_contest_join.UserTeamID =  UT.UserTeamID AND sports_contest_join.ContestID = ' . @$Where['TeamsContestID'] . ' LIMIT 1), "Yes", "No")) AS IsTeamJoined'
+                                    WHERE sports_contest_join.UserTeamID =  UT.UserTeamID AND sports_contest_join.ContestID = ' . @$Where['TeamsContestID'] . ' LIMIT 1), "Yes", "No")) IsTeamJoined'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -572,7 +559,7 @@ class Contest_model extends CI_Model {
                 }
             }
         }
-        $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType,UT.UserTeamID,UT.MatchID,UT.UserID');
+        $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         if(in_array('TotalPoints',$Params)){
@@ -613,7 +600,6 @@ class Contest_model extends CI_Model {
         }else{
             $this->db->order_by('UT.UserTeamID', 'DESC');
         }
-        $this->db->order_by('UT.UserTeamID', 'DESC');
         if (in_array('Statics', $Params)) {
             $Return['Data']['Statics'] = $this->contestStatics(@$Where['SessionUserID'],$Where['MatchID']);
         }
