@@ -1688,7 +1688,7 @@ class Sports_model extends CI_Model
     function refundAmountCancelContest($CronID)
     {
         /* Get Contest Data */
-        $ContestData = $this->db->query('SELECT C.ContestID,C.EntryFee FROM sports_contest C, tbl_entity E WHERE E.EntityID = C.ContestID AND C.IsRefund = "No" AND C.LeagueType = "Dfs" AND E.StatusID = 3');
+        $ContestData = $this->db->query('SELECT C.ContestID,C.EntryFee FROM sports_contest C, tbl_entity E WHERE E.EntityID = C.ContestID AND C.IsRefund = "No" AND C.LeagueType = "Dfs" AND E.StatusID = 3 AND C.EntryFee > 0');
         if ($ContestData->num_rows() > 0) {
             foreach ($ContestData->result_array() as $Value) {
 

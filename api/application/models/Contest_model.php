@@ -551,7 +551,8 @@ class Contest_model extends CI_Model {
                 'TotalJoinedContests' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE UserTeamID = UT.UserTeamID) TotalJoinedContests',
                 'IsTeamJoined' => '(SELECT IF( EXISTS(
                                     SELECT sports_contest_join.ContestID FROM sports_contest_join
-                                    WHERE sports_contest_join.UserTeamID =  UT.UserTeamID AND sports_contest_join.ContestID = ' . @$Where['TeamsContestID'] . ' LIMIT 1), "Yes", "No")) IsTeamJoined'
+                                    WHERE sports_contest_join.UserTeamID =  UT.UserTeamID AND sports_contest_join.ContestID = ' . @$Where['TeamsContestID'] . ' LIMIT 1), "Yes", "No")) IsTeamJoined',
+                'UserTeamPlayers' => "(SELECT CONCAT('[', GROUP_CONCAT( JSON_OBJECT('MatchGUID', SM.MatchGUID, 'TeamGUID', ST.TeamGUID, 'PlayerGUID', SP.PlayerGUID, 'PlayerName', SP.PlayerName, 'PlayerCountry', SP.PlayerCountry, 'PlayerPic', IF(SP.PlayerPic IS NULL,CONCAT('" . BASE_URL . "','uploads/PlayerPic/','player.png'),CONCAT('" . BASE_URL . "','uploads/PlayerPic/',SP.PlayerPic)) PlayerPic, 'PlayerBattingStyle', SP.PlayerBattingStyle, 'PlayerBowlingStyle', SP.PlayerBowlingStyle, 'PlayerRole', STP.PlayerRole, 'PlayerSalary', STP.PlayerSalary,'TotalPoints', STP.TotalPoints, 'PlayerPosition', SUTP.PlayerPosition, 'Points', SUTP.Points,'TotalPointCredits', (SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = STP.PlayerID AND `SeriesID` = STP.SeriesID) TotalPointCredits FROM sports_matches SM, sports_teams ST, sports_players SP, sports_team_players STP, sports_users_team_players SUTP WHERE AND ST.TeamID = STP.TeamID AND SUTP.PlayerID = SP.PlayerID AND SUTP.PlayerID = STP.PlayerID AND SUTP.MatchID = STP.MatchID AND SM.MatchID = STP.MatchID AND SUTP.UserTeamID = UT.UserTeamID ORDER BY SP.PlayerName ASC) UserTeamPlayers"                                    
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -559,7 +560,7 @@ class Contest_model extends CI_Model {
                 }
             }
         }
-        $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType');
+        $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType,UT.UserTeamID UserTeamIDAsUse,UT.MatchID MatchIDAsUse,UT.UserID UserIDAsUse');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         if(in_array('TotalPoints',$Params)){
@@ -618,33 +619,27 @@ class Contest_model extends CI_Model {
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             if ($multiRecords) {
-                $Return['Data']['Records'] = $Query->result_array();
-                if (in_array('UserTeamPlayers', $Params)) {
-                    foreach ($Return['Data']['Records'] as $key => $value) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerID,PlayerSalary,PlayerSalaryCredit,PlayerPosition,PlayerBattingStyle,PlayerBowlingStyle,PlayerName,PlayerPic,PlayerCountry,PlayerRole,Points,TeamGUID,TotalPoints,TotalPointCredits', array('UserTeamID' => $value['UserTeamID']));
-                        $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                $Records = array();
+                foreach ($Query->result_array() as $key => $Record) {
+                    $Records[] = $Record;
+                    if (in_array('UserTeamPlayers', $Params)) {
+                        $Records[$key]['UserTeamPlayers'] = (!empty($Record['UserTeamPlayers'])) ? json_decode($Record['UserTeamPlayers'], true) : array();
                     }
-                }
-                if ($Where['ValidateAdvanceSafe'] == "Yes") {
-                    foreach ($Return['Data']['Records'] as $key => $value) {
-                        $Return['Data']['Records'][$key]['IsEditUserTeam'] = "Yes";
-                        $isvalidate = $this->ValidateAdvanceSafePlay($value['MatchID'], $value['UserID'], $value['UserTeamID']);
-                        if (!$isvalidate) {
-                            $Return['Data']['Records'][$key]['IsEditUserTeam'] = "No";
-                        }
+                    if ($Where['ValidateAdvanceSafe'] == "Yes") {
+                        $Records[$key]['IsEditUserTeam'] = (!$this->validateAdvanceSafePlay($Record['MatchIDAsUse'], $Record['UserIDAsUse'], $Record['UserTeamIDAsUse'])) ? "No" : "Yes";
                     }
+                    unset($Records[$key]['MatchIDAsUse'],$Records[$key]['UserIDAsUse'],$Records[$key]['UserTeamIDAsUse']);
                 }
+                $Return['Data']['Records'] = $Records;
                 return $Return;
             } else {
                 $Record = $Query->row_array();
                 if (in_array('UserTeamPlayers', $Params)) {
-                    $UserTeamPlayers = $this->getUserTeamPlayers('PlayerID,PlayerSalary,PlayerSalaryCredit,TeamGUID,PlayerPosition,PlayerBattingStyle,PlayerBowlingStyle,PlayerName,PlayerPic,PlayerCountry,PlayerRole,Points,TotalPoints,TotalPointCredits', array('UserTeamID' => $Where['UserTeamID']));
-                    $Record['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                    $Record['UserTeamPlayers'] = (!empty($Record['UserTeamPlayers'])) ? json_decode($Record['UserTeamPlayers'], true) : array();
                 }
                 return $Record;
             }
         }
-
         return FALSE;
     }
 
@@ -671,7 +666,9 @@ class Contest_model extends CI_Model {
                 'PointsData' => 'TP.PointsData',
                 'TeamGUID' => 'T.TeamGUID',
                 'MatchType' => 'SM.MatchTypeName as MatchType',
-                'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits'
+                'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = '.$Where['MatchID'].' AND JC.UserID = '.$Where['UserID'].' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
+                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].') > 0,ROUND((((SELECT COUNT(SUTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players SUTP WHERE UT.UserTeamID = SUTP.UserTeamID AND SUTP.PlayerID = P.PlayerID AND UT.MatchID = '.$Where['MatchID'].')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].')),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -726,6 +723,12 @@ class Contest_model extends CI_Model {
         }
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
+            if (in_array('TopPlayer', $Params)) {
+                $BestPlayers = $this->Sports_model->getMatchBestPlayers(array('MatchID' => $Where['MatchID']));
+                if (!empty($BestPlayers)) {
+                    $BestXIPlayers = array_column($BestPlayers['Data']['Records'], 'PlayerGUID');
+                }
+            }
             $Records = array();
             $MatchStatus = 0;
             foreach ($Query->result_array() as $key => $Record) {
@@ -735,67 +738,15 @@ class Contest_model extends CI_Model {
                     $MatchStatus = ($Query->num_rows() > 0) ? $Query->row()->StatusID : 0;
                 }
                 $Records[] = $Record;
-                $Records[$key]['PointCredits'] = ($MatchStatus == 2 || $MatchStatus == 5) ? $Record['Points'] : $Record['PlayerSalary'];
-                    if (in_array('MyTeamPlayer', $Params)) {
-                        $this->db->select('DISTINCT(SUTP.PlayerID)');
-                        $this->db->where("JC.UserTeamID", "SUTP.UserTeamID", FALSE);
-                        $this->db->where("SUT.UserTeamID", "SUTP.UserTeamID", FALSE);
-                        $this->db->where('SUT.MatchID', $Where['MatchID']);
-                        $this->db->where('SUT.UserID', $Where['UserID']);
-                        $this->db->from('sports_contest_join JC,sports_users_teams SUT,sports_users_team_players SUTP');
-                        $MyPlayers = $this->db->get()->result_array();
-                        $MyPlayersIds = (!empty($MyPlayers)) ? array_column($MyPlayers, 'PlayerID') : array();
-                        $Records[$key]['MyPlayer'] = (in_array($Record['PlayerID'], $MyPlayersIds)) ? 'Yes' : 'No';
-                    }
-
-                    if (in_array('PlayerSelectedPercent', $Params)) {
-                        $TotalTeams = $this->db->query('Select count(*) as TotalTeams from sports_users_teams WHERE MatchID="' . $Where['MatchID'] . '"')->row()->TotalTeams;
-                        $this->db->select('count(SUTP.PlayerID) as TotalPlayer');
-                        $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
-                        $this->db->where("SUTP.PlayerID", $Record['PlayerID']);
-                        $this->db->where("SUTP.MatchID", $Where['MatchID']);
-                        $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                        $Players = $this->db->get()->row();
-                        $Records[$key]['PlayerSelectedPercent'] = ($TotalTeams > 0 ) ? round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) > 100 ? 100 : round((($Players->TotalPlayer * 100 ) / $TotalTeams), 2) : 0;
-                    }
-                    if (in_array('TopPlayer', $Params)) {
-                        $Wicketkipper = $this->findKeyValuePlayers($Records, "WicketKeeper");
-                        $Batsman = $this->findKeyValuePlayers($Records, "Batsman");
-                        $Bowler = $this->findKeyValuePlayers($Records, "Bowler");
-                        $Allrounder = $this->findKeyValuePlayers($Records, "AllRounder");
-                        usort($Batsman, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Bowler, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Wicketkipper, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                        usort($Allrounder, function ($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-
-                        $TopBatsman = array_slice($Batsman, 0, 4);
-                        $TopBowler = array_slice($Bowler, 0, 3);
-                        $TopWicketkipper = array_slice($Wicketkipper, 0, 1);
-                        $TopAllrounder = array_slice($Allrounder, 0, 3);
-
-                        $AllPlayers = array();
-                        $AllPlayers = array_merge($TopBatsman, $TopBowler);
-                        $AllPlayers = array_merge($AllPlayers, $TopAllrounder);
-                        $AllPlayers = array_merge($AllPlayers, $TopWicketkipper);
-
-                        rsort($AllPlayers, function($a, $b) {
-                            return $b['TotalPoints'] - $a['TotalPoints'];
-                        });
-                    }
-                    if (in_array($Record['PlayerID'], array_column($AllPlayers, 'PlayerID'))) {
-                        $Records[$key]['TopPlayer'] = 'Yes';
-                    } else {
-                        $Records[$key]['TopPlayer'] = 'No';
-                    }
-                    $Records[$key]['PointsData'] = ($Record['PointsData'] != '' ? json_decode($Record['PointsData']) : array());
+                if (in_array('PointCredits', $Params)) {
+                    $Records[$key]['PointCredits'] = ($MatchStatus == 2 || $MatchStatus == 5) ? $Record['Points'] : $Record['PlayerSalary'];
+                }
+                if (in_array('PointsData', $Params)) {
+                    $Records[$key]['PointsData'] = (!empty($Record['PointsData'])) ? json_decode($Record['PointsData'], TRUE) : array();
+                }
+                if (in_array('TopPlayer', $Params)) {
+                    $Records[$key]['TopPlayer'] = (in_array($Record['PlayerGUID'], $BestXIPlayers)) ? 'Yes' : 'No';
+                }
             }
             return $Records;
         }
@@ -1180,7 +1131,7 @@ class Contest_model extends CI_Model {
                 }
             }
         }
-        $this->db->select('U.UserGUID,UT.UserTeamGUID');
+        $this->db->select('U.UserGUID,UT.UserTeamGUID,UT.UserTeamID UserTeamIDAsUse');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         $this->db->from('sports_contest_join JC, tbl_users U, sports_users_teams UT');
@@ -1217,23 +1168,27 @@ class Contest_model extends CI_Model {
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             if ($multiRecords) {
-                $Return['Data']['Records'] = $Query->result_array();
-                foreach ($Return['Data']['Records'] as $key => $record) {
-                    if(in_array('UserTeamPlayers',$Params)){
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerBattingStyle,PlayerBowlingStyle,PlayerPic,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamID']));
-                        $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                $Records = array();
+                foreach ($Query->result_array() as $key => $Record) {
+                    $Records[] = $Record;
+                    if (in_array('UserTeamPlayers', $Params)) {
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse']));
+                        $Records[$key]['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
+                    unset($Records[$key]['UserTeamIDAsUse']);
                 }
+                $Return['Data']['Records'] = $Records;
                 return $Return;
             } else {
-                $result = $Query->row_array();
-                foreach ($result as $key => $record) {
-                    if(in_array('UserTeamPlayers',$Params)){
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PointsData,PlayerSelectedPercent,TopPlayer,MyTeamPlayer,PlayerPosition,SeriesGUID,PlayerName,PlayerRole,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,TeamGUID,PlayerSalary,MatchType,PointCredits', array('UserTeamID' => $record['UserTeamID']));
-                        $Return['Data']['Records'][$key]['UserTeamPlayers'] = ($UserTeamPlayers) ? $UserTeamPlayers : array();
+                $Record = $Query->row_array();
+                if (in_array('UserTeamPlayers', $Params)) {
+                    if (in_array('UserTeamPlayers', $Params)) {
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse']));
+                        $Record['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
+                    unset($Record['UserTeamIDAsUse']);
                 }
-                return $Return;
+                return $Record;
             }
         }
         return FALSE;
@@ -2279,39 +2234,14 @@ class Contest_model extends CI_Model {
     /*
       Description: validate Advance or safe Play.
     */
-    function ValidateAdvanceSafePlay($MatchID, $UserID, $UserTeamID) {
-        $JoinedContest = $this->getJoinedContests("ContestID,GameType,GameTimeLive,MatchStartDateTimeUTC", array("UserTeamID" => $UserTeamID, "MatchID" => $MatchID, "SessionUserID" => $UserID, "GameType" => "Advance", "OrderBy" => "GameTimeLive", "Sequence" => "DESC"), TRUE);
-        if ($JoinedContest['Data']['TotalRecords'] > 0) {
-            $CurrentDateTime = strtotime(date('Y-m-d H:i:s')); // UTC 
-            if ($JoinedContest['Data']['Records'][0]["GameTimeLive"] > 0) {
-                $MatchStartDateTime = strtotime($JoinedContest['Data']['Records'][0]['MatchStartDateTimeUTC']) - $JoinedContest['Data']['Records'][0]["GameTimeLive"] * 60;
-                if ($MatchStartDateTime > $CurrentDateTime) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return true;
+    function validateAdvanceSafePlay($MatchID, $UserID, $UserTeamID) {
+        $JoinedContest = $this->db->query('SELECT C.GameTimeLive,M.MatchStartDateTime FROM sports_contest C,sports_contest_join JC,sports_matches M WHERE C.ContestID = JC.ContestID AND JC.MatchID = M.MatchID AND JC.UserTeamID ='.$UserTeamID.' AND JC.MatchID='.$MatchID.' AND JC.UserID='.$UserID.' AND C.GameType="Advance" LIMIT 1');
+        if ($JoinedContest->num_rows() > 0 && $JoinedContest->row()->GameTimeLive > 0) {
+            if ((strtotime($JoinedContest->row()->MatchStartDateTime) - ($JoinedContest->row()->GameTimeLive * 60)) < strtotime(date('Y-m-d H:i:s'))) {
+                return FALSE;
             }
-        } else {
-            return true;
         }
-    }
-    
-    /*
-      Description: Find sub arrays from multidimensional array
-    */
-    function findKeyValuePlayers($array, $value) {
-        if (is_array($array)) {
-            $players = array();
-            foreach ($array as $key => $rows) {
-                if ($rows['PlayerRole'] == $value) {
-                    $players[] = $array[$key];
-                }
-            }
-            return $players;
-        }
-        return false;
+        return TRUE;
     }
 
     /*
