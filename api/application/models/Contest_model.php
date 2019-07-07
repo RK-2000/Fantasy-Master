@@ -960,10 +960,9 @@ class Contest_model extends CI_Model {
                 'TeamFlagLocal' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag) as TeamFlagLocal',
                 'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
                 'SeriesName' => 'S.SeriesName AS SeriesName',
-                'TotalJoined' => '(SELECT COUNT(*) AS TotalJoined
-                                                FROM sports_contest_join
-                                                WHERE sports_contest_join.ContestID =  C.ContestID ) AS TotalJoined',
-                'UserTotalJoinedInMatch' => '(SELECT COUNT(*)
+                'TotalJoined' => '(SELECT COUNT(EntryDate) FROM sports_contest_join
+                                                WHERE sports_contest_join.ContestID =  C.ContestID ) TotalJoined',
+                'UserTotalJoinedInMatch' => '(SELECT COUNT(EntryDate)
                                                 FROM sports_contest_join
                                                 WHERE sports_contest_join.MatchID =  M.MatchID AND UserID= ' . $Where['SessionUserID'] . ') AS UserTotalJoinedInMatch',
                 'UserRank' => 'JC.UserRank',

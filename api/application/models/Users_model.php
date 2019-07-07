@@ -94,21 +94,14 @@ class Users_model extends CI_Model {
         if (!empty($UpdateArray['Email'])) {
             if ($UserData['Email'] != $UpdateArray['Email']) {
                 $UpdateArray['EmailForChange'] = $UpdateArray['Email'];
+
                 /* Genrate a Token for Email verification and save to tokens table. */
-                $this->load->model('Recovery_model');
-                $Token = $this->Recovery_model->generateToken($UserID, 2);
-                /* Send welcome Email to User with Token. */
-                // sendMail(array(
-                //     'emailTo' => $UpdateArray['EmailForChange'],
-                //     'emailSubject' => SITE_NAME . ", OTP for change of email address.",
-                //     'emailMessage' => emailTemplate($this->load->view('emailer/change_email', array("Name" => $UserData['FirstName'], 'Token' => $Token), TRUE))
-                // ));
                 send_mail(array(
                     'emailTo' => $UpdateArray['EmailForChange'],
                     'template_id' => 'd-c9a4320dc3f740799d1d5861e032df59',
                     'Subject' => SITE_NAME . ", OTP for change of email address",
                     "Name" => $UserData['FirstName'],
-                    'Token' => $Token
+                    'Token' => $this->Recovery_model->generateToken($UserID, 2)
                 ));
                 unset($UpdateArray['Email']);
             }
@@ -120,14 +113,11 @@ class Users_model extends CI_Model {
             if ($UserData['PhoneNumber'] != $UpdateArray['PhoneNumber']) {
 
                 $UpdateArray['PhoneNumberForChange'] = $UpdateArray['PhoneNumber'];
-                /* Genrate a Token for PhoneNumber verification and save to tokens table. */
-                $this->load->model('Recovery_model');
-                $Token = $this->Recovery_model->generateToken($UserID, 3);
 
                 /* Send change phonenumber SMS to User with Token. */
                 $this->Utility_model->sendMobileSMS(array(
                     'PhoneNumber' => $UpdateArray['PhoneNumberForChange'],
-                    'Text' => $Token
+                    'Text' => $this->Recovery_model->generateToken($UserID, 3)
                 ));
                 unset($UpdateArray['PhoneNumber']);
             }
@@ -153,6 +143,7 @@ class Users_model extends CI_Model {
             $Caption->RejectReason = $Input['Comments'];
             $UpdateCaption['MediaCaption'] = json_encode($Caption);
 
+            /* Update Verification Comment */
             $this->db->where('MediaGUID', $MediaGUID);
             $this->db->limit(1);
             $this->db->update('tbl_media', $UpdateCaption);
@@ -164,14 +155,13 @@ class Users_model extends CI_Model {
             $MediaData = $this->Media_model->getMedia('MediaGUID, M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $UserID), FALSE);
             
             $Caption = json_decode($MediaData['MediaCaption']);
-
             $Caption->FullName      = $Input['Name'];
             $Caption->Bank          = $Input['Bank'];
             $Caption->AccountNumber = $Input['AccountNumber'];
             $Caption->IFSCCode      = $Input['IFSCCode'];
-
             $UpdateCaption['MediaCaption'] = json_encode($Caption);
             
+            /* Update Bank Info */
             $this->db->where('MediaGUID', $MediaData['MediaGUID']);
             $this->db->limit(1);
             $this->db->update('tbl_media', $UpdateCaption);
@@ -245,25 +235,18 @@ class Users_model extends CI_Model {
         ));
 
         /* Update User Login details */
-        $this->db->where('UserID', $UserID);
-        $this->db->where('SourceID', $SourceID);
+        $this->db->where(array('UserID' => $UserID,'SourceID' => $SourceID));
         $this->db->limit(1);
         $this->db->update('tbl_users_login', $UpdateArray);
 
         if (!empty($Input['Password'])) {
             /* Send Password Assistance Email to User with Token (If user is not Pending or Email-Confirmed then email send without Token). */
-            $UserData = $this->Users_model->getUsers('FirstName,Email', array('UserID' => $UserID));
-            // $SendMail = sendMail(array(
-            //     'emailTo' => $UserData['Email'],
-            //     'emailSubject' => SITE_NAME . " Password Assistance",
-            //     'emailMessage' => emailTemplate($this->load->view('emailer/change_password', array("Name" => $UserData['FirstName']), TRUE))
-            // ));
-
-            $SendMail = send_mail(array(
-                'emailTo' => $UserData['Email'],
+            $UserData = $this->db->query('SELECT FirstName,Email FROM tbl_users WHERE UserID = '.$UserID.' LIMIT 1');
+            send_mail(array(
+                'emailTo' => $UserData->row()->Email,
                 'template_id' => 'd-574034ab7ba64733bdfbd7edcde56a7c',
                 'Subject' => SITE_NAME . " Password Assistance",
-                "Name" => $UserData['FirstName']
+                "Name" => $UserData->row()->FirstName
             ));
         }
         return TRUE;
@@ -278,7 +261,6 @@ class Users_model extends CI_Model {
       4. Genrate a Token for Email verification and save to tokens table.
       5. Send welcome Email to User with Token.
      */
-
     function addUser($Input = array(), $UserTypeID, $SourceID, $StatusID = 1) {
         $this->db->trans_start();
         $EntityGUID = get_guid();
@@ -413,32 +395,32 @@ class Users_model extends CI_Model {
                 'ReferredByUserID' => 'U.ReferredByUserID',
                 'ModifiedDate' => 'E.ModifiedDate',
                 'Status' => 'CASE E.StatusID
-												when "1" then "Pending"
-												when "2" then "Verified"
-												when "3" then "Deleted"
-												when "4" then "Blocked"
-												when "8" then "Hidden"		
-											END as Status',
+										when "1" then "Pending"
+										when "2" then "Verified"
+										when "3" then "Deleted"
+										when "4" then "Blocked"
+										when "8" then "Hidden"		
+									END as Status',
                 'PanStatus' => 'CASE U.PanStatus
-												when "1" then "Pending"
-												when "2" then "Verified"
-                                                when "3" then "Rejected"    
-												when "9" then "Not Submitted"   
-											END as PanStatus',
+										when "1" then "Pending"
+										when "2" then "Verified"
+                                        when "3" then "Rejected"    
+										when "9" then "Not Submitted"   
+									END as PanStatus',
                 'BankStatus' => 'CASE U.BankStatus
-												when "1" then "Pending"
-												when "2" then "Verified"
-												when "3" then "Rejected"	
-                                                when "9" then "Not Submitted"   
-											END as BankStatus',
-                'ReferredCount' => '(SELECT COUNT(*) FROM `tbl_users` WHERE `ReferredByUserID` = U.UserID) AS ReferredCount',
+    										when "1" then "Pending"
+    										when "2" then "Verified"
+    										when "3" then "Rejected"	
+                                            when "9" then "Not Submitted"   
+    									END as BankStatus',
+                'ReferredCount' => '(SELECT COUNT(UserGUID) FROM `tbl_users` WHERE `ReferredByUserID` = U.UserID) AS ReferredCount',
                 'StatusID' => 'E.StatusID',
                 'PanStatusID' => 'U.PanStatus',
                 'BankStatusID' => 'U.BankStatus',
                 'IsPrivacyNameDisplay' => 'U.IsPrivacyNameDisplay',
                 'PushNotification' => 'US.PushNotification',
-                'PhoneStatus' => 'if(U.PhoneNumber is null, "Pending", "Verified") as PhoneStatus',
-                'EmailStatus' => 'if(U.Email is null, "Pending", "Verified") as EmailStatus'
+                'PhoneStatus' => 'IF(U.PhoneNumber IS NULL, "Pending", "Verified") as PhoneStatus',
+                'EmailStatus' => 'IF(U.Email IS NULL, "Pending", "Verified") as EmailStatus'
             );
             foreach ($Params as $Param) {
                 $Field .= (!empty($FieldArray[$Param]) ? ',' . $FieldArray[$Param] : '');
@@ -581,27 +563,13 @@ class Users_model extends CI_Model {
 
                 /* get attached media */
                 if (in_array('MediaPAN', $Params)) {
-                    $Media['PAN'] = array(
-                        'EntryDate' => '',
-                        'MediaGUID' => '',
-                        'MediaURL' => '',
-                        'MediaThumbURL' => '',
-                        'MediaCaption' => ''
-                    );
                     $MediaData = $this->Media_model->getMedia('MediaGUID,DATE_FORMAT(CONVERT_TZ(EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'PAN', "EntityID" => $Record['UserID']), FALSE);
-                    $Record['MediaPAN'] = ($MediaData ? $MediaData : $Media['PAN']);
+                    $Record['MediaPAN'] = ($MediaData ? $MediaData : array('EntryDate' => '','MediaGUID' => '','MediaURL' => '','MediaThumbURL' => '','MediaCaption' => ''));
                 }
 
                 if (in_array('MediaBANK', $Params)) {
-                    $Media['BANK'] = array(
-                        'EntryDate' => '',
-                        'MediaGUID' => '',
-                        'MediaURL' => '',
-                        'MediaThumbURL' => '',
-                        'MediaCaption' => ''
-                    );
                     $MediaData = $this->Media_model->getMedia('MediaGUID,DATE_FORMAT(CONVERT_TZ(EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
-                    $Record['MediaBANK'] = ($MediaData ? $MediaData : $Media['BANK']);
+                    $Record['MediaBANK'] = ($MediaData ? $MediaData : $array('EntryDate' => '','MediaGUID' => '','MediaURL' => '','MediaThumbURL' => '','MediaCaption' => ''));
                 }
 
                 /* Get Wallet Data */
@@ -612,22 +580,18 @@ class Users_model extends CI_Model {
 
                 /* Get Playing History Data */
                 if (in_array('PlayingHistory', $Params)) {
-
-                    $PlayingHistory = $this->db->query('SELECT (
-                                                            select COUNT(DISTINCT MatchID) as TotalJoinedMatches from sports_contest_join where UserID = 341505
-                                                        )as TotalJoinedMatches,
-                                                        (select COUNT(DISTINCT S.SeriesID) as TotalJoinedSeries from sports_contest_join CJ, sports_matches M,sports_series S where S.SeriesID = M.SeriesID AND CJ.MatchID = M.MatchID AND CJ.UserID = 341505 ) TotalJoinedSeries,
-                                                        (select COUNT(ContestID) as TotalJoinedContest from sports_contest_join where UserID = 341505 ) TotalJoinedContest,
-                                                        (select COUNT(ContestID) as TotalJoinedContestWinning from sports_contest_join where UserID = 341505 AND UserWinningAmount > 0 ) TotalJoinedContestWinning')->row();
-                    $Record['PlayingHistory'] = ($PlayingHistory) ? $PlayingHistory : array();
+                    $Record['PlayingHistory'] = $this->db->query('SELECT (
+                                                        SELECT COUNT(DISTINCT JC.MatchID) FROM sports_contest_join JC, tbl_entity E  WHERE JC.ContestID = E.EntityID AND E.StatusID != 3 AND JC.UserID = "'.$Where['UserID'].'"
+                                                        ) TotalJoinedMatches,
+                                                        (SELECT COUNT(DISTINCT S.SeriesID) FROM sports_contest_join CJ, sports_matches M,sports_series S,tbl_entity E WHERE E.EntityID = CJ.ContestID AND E.StatusID != 3 AND S.SeriesID = M.SeriesID AND CJ.MatchID = M.MatchID AND CJ.UserID = "'.$Where['UserID'].'" ) TotalJoinedSeries,
+                                                        (SELECT COUNT(JC.ContestID) FROM sports_contest_join JC,tbl_entity E WHERE JC.ContestID = E.EntityID AND E.StatusID != 3 AND JC.UserID = "'.$Where['UserID'].'" ) TotalJoinedContest,
+                                                        (SELECT COUNT(JC.ContestID) FROM sports_contest_join JC,tbl_entity E WHERE JC.ContestID = E.EntityID AND E.StatusID != 3 AND JC.UserID = "'.$Where['UserID'].'" AND JC.UserWinningAmount > 0 ) TotalJoinedContestWinning')->row();
                 }
-
                 if (!$multiRecords) {
                     return $Record;
                 }
                 $Records[] = $Record;
             }
-
             $Return['Data']['Records'] = $Records;
             return $Return;
         }
@@ -685,7 +649,6 @@ class Users_model extends CI_Model {
     /*
       Description: 	Use to delete Session.
      */
-
     function deleteSession($SessionKey) {
         $this->db->limit(1);
         $this->db->delete('tbl_users_session', array('SessionKey' => $SessionKey));
@@ -698,9 +661,9 @@ class Users_model extends CI_Model {
 
     function updateEmail($UserID, $Email) {
         /* check new email address is not in use */
-        $UserData = $this->Users_model->getUsers('', array('Email' => $Email,));
-        if (!$UserData) {
+        if ($this->db->query('SELECT UserID FROM tbl_users WHERE Email = "'.$Email.'" LIMIT 1')->num_rows() == 0) {
             $this->db->trans_start();
+
             /* update profile table */
             $this->db->where('UserID', $UserID);
             $this->db->limit(1);
@@ -710,6 +673,7 @@ class Users_model extends CI_Model {
             $this->db->limit(1);
             $this->db->delete('tbl_users_session', array('UserID' => $UserID));
             /* Delete session - ends */
+            
             $this->db->trans_complete();
             if ($this->db->trans_status() === FALSE) {
                 return FALSE;
@@ -1103,7 +1067,7 @@ class Users_model extends CI_Model {
                 }
                 $this->Notification_model->addNotification('AddCash', 'Cash Added', $UserID, $UserID, '', 'Deposit of ' . DEFAULT_CURRENCY . @$Amount . ' is Successful.');
                 /* Manage First Deposit & Referral Bonus */
-                $TotalDeposits = $this->db->query('SELECT COUNT(*) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
+                $TotalDeposits = $this->db->query('SELECT COUNT(EntryDate) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
                 if ($TotalDeposits == 1) { // On First Successful Transaction
 
                     /* Get Deposit Bonus Data */
@@ -1292,7 +1256,7 @@ class Users_model extends CI_Model {
             }
             $this->Notification_model->addNotification('AddCash', 'Cash Added', $UserID, $UserID, '', 'Deposit of ' . DEFAULT_CURRENCY . @$Input['Amount'] . ' is Successful.');
             /* Manage First Deposit & Referral Bonus */
-            $TotalDeposits = $this->db->query('SELECT COUNT(*) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
+            $TotalDeposits = $this->db->query('SELECT COUNT(EntryDate) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
             if ($TotalDeposits == 1) { // On First Successful Transaction
 
                 /* Get Deposit Bonus Data */

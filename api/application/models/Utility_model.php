@@ -754,7 +754,7 @@ class Utility_model extends CI_Model
                 continue;
 
             /* To check if any team is created */
-            $TotalJoinedTeams = $this->db->query("SELECT COUNT(*) TotalJoinedTeams FROM `sports_users_teams` WHERE `MatchID` = " . $MatchID)->row()->TotalJoinedTeams;
+            $TotalJoinedTeams = $this->db->query("SELECT COUNT(UserTeamName) TotalJoinedTeams FROM `sports_users_teams` WHERE `MatchID` = " . $MatchID)->row()->TotalJoinedTeams;
             foreach ($Response['response']['squads'] as $SquadsValue) {
                 $TeamID = $SquadsValue['team_id'];
                 $Players = $SquadsValue['players'];

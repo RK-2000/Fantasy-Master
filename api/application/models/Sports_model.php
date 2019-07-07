@@ -205,8 +205,8 @@ class Sports_model extends CI_Model
                         END as Status',
                 'MatchType' => 'MT.MatchTypeName AS MatchType',
                 'LastUpdateDiff' => 'IF(M.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", M.LastUpdatedOn))) LastUpdateDiff',
-                'TotalUserWinning' => '(select SUM(UserWinningAmount) from sports_contest_join where MatchID = M.MatchID AND UserID=' . @$Where['SessionUserID'] . ') TotalUserWinning',
-                'isJoinedContest' => '(select count(EntryDate) from sports_contest_join where MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . @$Where['StatusID'] . ') JoinedContests'
+                'TotalUserWinning' => '(SELECT IFNULL(SUM(UserWinningAmount),0) FROM sports_contest_join WHERE MatchID = M.MatchID AND UserID=' . @$Where['SessionUserID'] . ') TotalUserWinning',
+                'isJoinedContest' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . @$Where['StatusID'] . ') JoinedContests'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
