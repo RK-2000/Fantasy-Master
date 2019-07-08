@@ -861,6 +861,10 @@ class Sports_model extends CI_Model
                     'PointsODI' . $PointsCategory => $Input['PointsODI'][$i]
                 );
             }
+
+            /* Clear Cache */
+            $this->cache->memcached->delete('CricketPoints');
+            
             /* Update points details to sports_setting_points table. */
             $this->db->update_batch('sports_setting_points', $updateArray, 'PointsTypeGUID');
         }
@@ -1180,13 +1184,17 @@ class Sports_model extends CI_Model
         if (!empty($LiveMatches)) {
 
             /* Get Points Data */
-            $PointsDataArr             = $this->getPoints(array("StatusID" => 1));
-            $StatringXIArr             = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'StatringXI');
-            $CaptainPointMPArr         = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'CaptainPointMP');
-            $ViceCaptainPointMPArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'ViceCaptainPointMP');
-            $BattingMinimumRunsArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'BattingMinimumRuns');
-            $MinimumRunScoreStrikeRate = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumRunScoreStrikeRate');
-            $MinimumOverEconomyRate    = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumOverEconomyRate');
+            $PointsDataArr = $this->cache->memcached->get('CricketPoints');
+            if(empty($PointsDataArr)){
+                $PointsDataArr   = $this->getPoints(array("StatusID" => 1))['Data']['Records'];
+                $this->cache->memcached->save('CricketPoints', $PointsDataArr, 3600 * 12); // Expire in every 12 hours
+            }
+            $StatringXIArr             = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'StatringXI');
+            $CaptainPointMPArr         = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'CaptainPointMP');
+            $ViceCaptainPointMPArr     = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'ViceCaptainPointMP');
+            $BattingMinimumRunsArr     = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'BattingMinimumRuns');
+            $MinimumRunScoreStrikeRate = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'MinimumRunScoreStrikeRate');
+            $MinimumOverEconomyRate    = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'MinimumOverEconomyRate');
             $MatchTypes = array('ODI' => 'PointsODI', 'List A' => 'PointsODI', 'T20' => 'PointsT20', 'T20I' => 'PointsT20', 'Test' => 'PointsTEST', 'Woman ODI' => 'PointsODI', 'Woman T20' => 'PointsT20');
 
             /* Sorting Keys */
@@ -1268,7 +1276,7 @@ class Sports_model extends CI_Model
 
                     /* To Check Player Is Played Or Not */
                     if (in_array($PlayerValue['PlayerIDLive'], $AllPlayersLiveIds) && !empty($ScoreData)) {
-                        foreach ($PointsDataArr['Data']['Records'] as $PointValue) {
+                        foreach ($PointsDataArr as $PointValue) {
                             if (IS_VICECAPTAIN) {
                                 if (in_array($PointValue['PointsTypeGUID'], array('BattingMinimumRuns', 'CaptainPointMP', 'StatringXI', 'ViceCaptainPointMP')))
                                     continue;
@@ -1308,7 +1316,7 @@ class Sports_model extends CI_Model
                         }
                     } else {
                         $PointsData['SB'] = array('PointsTypeGUID' => 'StatringXI', 'PointsTypeShortDescription' => 'SB', 'DefinedPoints' => $StatringXIPoints, 'ScoreValue' => "1", 'CalculatedPoints' => $StatringXIPoints);
-                        foreach ($PointsDataArr['Data']['Records'] as $PointValue) {
+                        foreach ($PointsDataArr as $PointValue) {
                             if (IS_VICECAPTAIN) {
                                 if (in_array($PointValue['PointsTypeGUID'], array('BattingMinimumRuns', 'CaptainPointMP', 'StatringXI', 'ViceCaptainPointMP')))
                                     continue;
@@ -1372,7 +1380,6 @@ class Sports_model extends CI_Model
     */
     function getJoinedContestPlayerPointsCricket($CronID, $StatusArr = array(2), $MatchID = "")
     {
-
         ini_set('memory_limit', '512M');
 
         /* Get Live Contests */

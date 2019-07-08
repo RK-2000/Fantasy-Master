@@ -971,7 +971,7 @@ class Utility_model extends CI_Model
                $Response = $this->callSportsAPI(SPORTS_API_URL_CRICKETAPI . '/rest/v3/fantasy-match-credits/' . $Value['MatchIDLive'] . '/?access_token=');
                if (!empty($Response['data']['fantasy_points'])) {
                    foreach ($Response['data']['fantasy_points'] as $PlayerValue) {
-                       $this->db->update('sports_team_players', array('PlayerSalary' => $PlayerValue['credit_value']), array('MatchID' => $Value['MatchID'],'PlayerID' => $PlayersData[$PlayerValue['player']]));
+                       $this->db->update('sports_team_players', array('PlayerSalary' => $PlayerValue['credit_value']), array('IsAdminUpdate' => 'No', 'MatchID' => $Value['MatchID'],'PlayerID' => $PlayersData[$PlayerValue['player']]));
                    }
                }
            }
