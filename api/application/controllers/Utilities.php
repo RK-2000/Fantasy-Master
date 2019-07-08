@@ -149,14 +149,14 @@ class Utilities extends API_Controller
      */
     public function getSeriesLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getSeriesLiveCricket');
+        $CronID = $this->Common_model->insertCronLogs('getSeriesLiveCricket');
         if (CRICKET_SPORT_API_NAME == 'ENTITY') {
             $SeriesData = $this->Utility_model->getSeriesLive_Cricket_Entity($CronID);
         }
         if (!empty($SeriesData)) {
             $this->Return['Data'] = $SeriesData;
         }
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -165,7 +165,7 @@ class Utilities extends API_Controller
      */
     public function getMatchesLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getMatchesLiveCricket');
+        $CronID = $this->Common_model->insertCronLogs('getMatchesLiveCricket');
         if (CRICKET_SPORT_API_NAME == 'ENTITY') {
             $MatchesData = $this->Utility_model->getMatchesLive_Cricket_Entity($CronID);
         }
@@ -175,7 +175,7 @@ class Utilities extends API_Controller
         if (!empty($MatchesData)) {
             $this->Return['Data'] = $MatchesData;
         }
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -184,7 +184,7 @@ class Utilities extends API_Controller
      */
     public function getPlayersLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayersLiveCricket');
+        $CronID = $this->Common_model->insertCronLogs('getPlayersLiveCricket');
         if (CRICKET_SPORT_API_NAME == 'ENTITY') {
             $PlayersData = $this->Utility_model->getPlayersLive_Cricket_Entity($CronID);
         }
@@ -194,7 +194,7 @@ class Utilities extends API_Controller
         if (!empty($PlayersData)) {
             $this->Return['Data'] = $PlayersData;
         }
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -203,7 +203,7 @@ class Utilities extends API_Controller
      */
     public function getPlayerStatsLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayerStatsLiveCricket');
+        $CronID = $this->Common_model->insertCronLogs('getPlayerStatsLiveCricket');
         if (CRICKET_SPORT_API_NAME == 'ENTITY') {
             $PlayersStatsData = $this->Utility_model->getPlayerStatsLive_Cricket_Entity($CronID);
         }
@@ -213,7 +213,7 @@ class Utilities extends API_Controller
         if (!empty($PlayersStatsData)) {
             $this->Return['Data'] = $PlayersStatsData;
         }
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -222,7 +222,7 @@ class Utilities extends API_Controller
      */
     public function getMatchScoreLiveCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getMatchScoreLiveCricket');
+        $CronID = $this->Common_model->insertCronLogs('getMatchScoreLiveCricket');
         if (CRICKET_SPORT_API_NAME == 'ENTITY') {
             $MatchScoreLiveData = $this->Utility_model->getMatchScoreLive_Cricket_Entity($CronID);
         }
@@ -232,29 +232,29 @@ class Utilities extends API_Controller
         if (!empty($MatchScoreLiveData)) {
             $this->Return['Data'] = $MatchScoreLiveData;
         }
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
-      Description: 	Cron jobs to get player points.
-      URL: 			/api/utilities/getPlayerPoints
+      Description: 	Cron jobs to get cricket player points.
+      URL: 			/api/utilities/getPlayerPointsCricket
      */
-    public function getPlayerPoints_get()
+    public function getPlayerPointsCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getPlayerPoints');
-        $this->Sports_model->getPlayerPoints($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $CronID = $this->Common_model->insertCronLogs('getPlayerPointsCricket');
+        $this->Sports_model->getPlayerPointsCricket($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
-      Description: 	Cron jobs to get joined player points.
-      URL: 			/api/utilities/getJoinedContestPlayerPoints
+      Description: 	Cron jobs to get joined cricket player points.
+      URL: 			/api/utilities/getJoinedContestPlayerPointsCricket
      */
-    public function getJoinedContestPlayerPoints_get()
+    public function getJoinedContestPlayerPointsCricket_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
-        $this->Sports_model->getJoinedContestPlayerPoints($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPointsCricket');
+        $this->Sports_model->getJoinedContestPlayerPointsCricket($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -263,9 +263,9 @@ class Utilities extends API_Controller
      */
     public function setContestWinners_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('setContestWinners');
+        $CronID = $this->Common_model->insertCronLogs('setContestWinners');
         $this->Sports_model->setContestWinners($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -274,9 +274,9 @@ class Utilities extends API_Controller
      */
     public function tranferJoinedContestData_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('tranferJoinedContestData');
+        $CronID = $this->Common_model->insertCronLogs('tranferJoinedContestData');
         $this->Sports_model->tranferJoinedContestData($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -285,9 +285,9 @@ class Utilities extends API_Controller
      */
     public function amountDistributeContestWinner_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('amountDistributeContestWinner');
+        $CronID = $this->Common_model->insertCronLogs('amountDistributeContestWinner');
         $this->Sports_model->amountDistributeContestWinner($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -296,9 +296,9 @@ class Utilities extends API_Controller
      */
     public function autoCancelContest_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('autoCancelContest');
+        $CronID = $this->Common_model->insertCronLogs('autoCancelContest');
         $this->Sports_model->autoCancelContest($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -307,9 +307,9 @@ class Utilities extends API_Controller
      */
     public function refundAmountCancelContest_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('refundAmountCancelContest');
+        $CronID = $this->Common_model->insertCronLogs('refundAmountCancelContest');
         $this->Sports_model->refundAmountCancelContest($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -318,9 +318,9 @@ class Utilities extends API_Controller
      */
     public function getAuctionJoinedUserTeamsPlayerPoints_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('getAuctionJoinedUserTeamsPlayerPoints');
+        $CronID = $this->Common_model->insertCronLogs('getAuctionJoinedUserTeamsPlayerPoints');
         $this->Sports_model->getAuctionJoinedUserTeamsPlayerPoints($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -329,10 +329,10 @@ class Utilities extends API_Controller
      */
     public function auctionLiveAddMinuteInEveryHours_get()
     {
-        $CronID = $this->Utility_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
+        $CronID = $this->Common_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
         $this->load->model('AuctionDrafts_model');
         $this->AuctionDrafts_model->auctionLiveAddMinuteInEveryHours($CronID);
-        $this->Utility_model->updateCronLogs($CronID);
+        $this->Common_model->updateCronLogs($CronID);
     }
 
     /*
@@ -717,7 +717,7 @@ class Utilities extends API_Controller
                 $hours = $Seconds / 60 / 60;
 
                 $dummyJoinedContest = 0;
-                $dummyJoinedContests = $this->Contest_model->getTotalDummyJoinedContest($Rows['ContestID']);
+                $dummyJoinedContests = $this->db->query("SELECT count(JC.ContestID) as DummyJoinedContest FROM sports_contest_join as JC JOIN tbl_users ON tbl_users.UserID = JC.UserID WHERE JC.ContestID = ".$Rows['ContestID']." AND tbl_users.UserTypeID = 3")->row()->DummyJoinedContest;
 
                 if ($dummyJoinedContests) {
                     $dummyJoinedContest = $dummyJoinedContests;
@@ -729,7 +729,7 @@ class Utilities extends API_Controller
                 $dummyUserPercentage = round(($contestSize * $joinDummyUser) / 100);
 
                 if ($dummyJoinedContest >= $dummyUserPercentage) {
-                    $this->Contest_model->UpdateVirtualJoinContest($Rows['ContestID']);
+                    $this->Contest_model->updateVirtualJoinContest($Rows['ContestID']);
                     // continue;
                 }
 
@@ -759,7 +759,7 @@ class Utilities extends API_Controller
                     $dummyUserPercentage = $contestSize - $totalJoined - 5;
                 }
 
-                $VitruelTeamPlayer = $this->Contest_model->GetVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
+                $VitruelTeamPlayer = $this->Contest_model->getVirtualTeamPlayerMatchWise($Rows['MatchID'], 21000);
                 if (!empty($VitruelTeamPlayer)) {
                     foreach ($VitruelTeamPlayer as $usersTeam) {
                         $userTeamPlayers = json_decode($usersTeam['Players']);
@@ -788,7 +788,7 @@ class Utilities extends API_Controller
                             }
                         }
                     }
-                    $this->Contest_model->ContestUpdateVirtualTeam($Rows['ContestID'], $Rows['IsDummyJoined']);
+                    $this->Contest_model->contestUpdateVirtualTeam($Rows['ContestID'], $Rows['IsDummyJoined']);
                 }
             }
         }

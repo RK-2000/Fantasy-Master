@@ -149,14 +149,9 @@ class Contest extends API_Controller_Secure
             $ContestData[$key]['Key'] = $Contests['Key'];
             $ContestData[$key]['TagLine'] = $Contests['TagLine'];
         }
-        $Statics = $this->db->query('SELECT(
-                    SELECT COUNT(J.EntryDate) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . $this->SessionUserID . '" AND C.MatchID = "' . $this->MatchID . '" 
-                    )as JoinedContest,( 
-                    SELECT COUNT(UserTeamName) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . $this->SessionUserID . '" AND MatchID = "' . $this->MatchID . '"
-                ) as TotalTeams')->row();
         if (!empty($ContestData)) {
             $this->Return['Data']['Results'] = $ContestData;
-            $this->Return['Data']['Statics'] = $Statics;
+            $this->Return['Data']['Statics'] = $this->Contest_model->contestStatics($this->SessionUserID,$this->MatchID);
         }
     }
 
@@ -490,7 +485,7 @@ class Contest extends API_Controller_Secure
      */
     public function validateUserJoinContest($ContestGUID)
     {
-        $ContestData = $this->Contest_model->getContests('MatchID,ContestSize,Privacy,IsPaid,EntryType,EntryFee,UserInvitationCode,ContestID,UserJoinLimit,CashBonusContribution,MatchStartDateTimeUTC,GameTimeLive', array('ContestID' => $this->ContestID));
+        $ContestData = $this->Contest_model->getContests('MatchID,ContestSize,Privacy,IsPaid,EntryType,EntryFee,UserInvitationCode,ContestID,UserJoinLimit,CashBonusContribution,MatchStartDateTimeUTC,GameTimeLive,IsAutoCreate,TotalJoined', array('ContestID' => $this->ContestID));
         if (!empty($ContestData)) {
 
             /* To Check Match Start Date Time */
@@ -587,8 +582,11 @@ class Contest extends API_Controller_Secure
                 $this->Post['WinningAmountDeduction'] = $WinningAmountDeduction;
                 $this->Post['WalletAmountDeduction']  = $WalletAmountDeduction;
             }
-            $this->Post['IsPaid'] = $ContestData['IsPaid'];
-            $this->Post['EntryFee'] = $ContestData['EntryFee'];
+            $this->Post['IsPaid']       = $ContestData['IsPaid'];
+            $this->Post['EntryFee']     = $ContestData['EntryFee'];
+            $this->Post['IsAutoCreate'] = $ContestData['IsAutoCreate'];
+            $this->Post['ContestSize']  = $ContestData['ContestSize'];
+            $this->Post['TotalJoined']  = $ContestData['TotalJoined'];
             $this->Post['CashBonusContribution'] = $ContestData['CashBonusContribution'];
         } else {
             $this->form_validation->set_message('validateUserJoinContest', 'Invalid ContestGUID.');

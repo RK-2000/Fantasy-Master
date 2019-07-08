@@ -7,12 +7,9 @@ class Store_model extends CI_Model
 		parent::__construct();
 	}
 
-
-
-
 	/*
-Description: 	Use to get single coupon or list of coupons.
-*/
+		Description: 	Use to get single coupon or list of coupons.
+	*/
 	function getCoupons($Field, $Where = array(), $multiRecords = FALSE,  $PageNo = 1, $PageSize = 15)
 	{
 		/* Define section  */
@@ -77,8 +74,8 @@ Description: 	Use to get single coupon or list of coupons.
 		$this->updateCoupon($CouponID, $Input, $UserID);
 		$this->db->trans_complete();
 		if ($this->db->trans_status() === FALSE) {
-				return FALSE;
-			}
+			return FALSE;
+		}
 		return array('CouponID' => $CouponID, 'CouponGUID' => $EntityGUID);
 	}
 
@@ -118,8 +115,8 @@ Description: 	Use to get single coupon or list of coupons.
 	}
 
 	/*
-Description: 	Use to add new order
-*/
+		Description: 	Use to add new order
+	*/
 	function addOrder($Input = array(), $UserID, $CouponID = '', $StatusID = 1)
 	{
 
@@ -135,7 +132,6 @@ Description: 	Use to add new order
 		if (!empty($Input['FromDateTime']) && !empty($Input['ToDateTime'])) {
 			$BookedDuration = diffInHours($Input['FromDateTime'], $Input['ToDateTime']);
 		}
-
 
 		/* Add order to orders table */
 		$OrderData = array_filter(array(
@@ -213,8 +209,8 @@ Description: 	Use to add new order
 
 		$this->db->trans_complete();
 		if ($this->db->trans_status() === FALSE) {
-				return FALSE;
-			}
+			return FALSE;
+		}
 		return array("OrderGUID" => $OrderGUID, "OrderID" => $OrderID);
 	}
 }
