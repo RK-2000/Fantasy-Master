@@ -101,7 +101,6 @@ define('IS_AUCTION', true);
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy */
 define('SPORTS_FILE_PATH', FCPATH.'uploads/sports.txt');
 define('CRICKET_SPORT_API_NAME', 'CRICKETAPI');
-
 define('DEFAULT_SOURCE_ID', 1);
 define('DEFAULT_DEVICE_TYPE_ID', 1);
 define('DEFAULT_CURRENCY', 'Rs.');
