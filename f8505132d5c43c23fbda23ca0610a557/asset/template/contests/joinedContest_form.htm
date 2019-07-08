@@ -11,94 +11,29 @@
 
 			<hr>
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Series:</b> {{contestData.SeriesName}}</label>
+						<label>Contest Size : {{contestData.ContestSize}}</label>
 					</div>
 				</div>
-
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Match:</b> {{contestData.TeamNameLocal}} <strong>v/s</strong> {{contestData.TeamNameVisitor}}</label>
+						<label>Entry Fee : {{contestData.EntryFee}}</label>
 					</div>
 				</div>
-
-
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Is Paid Contest:</b> {{contestData.IsPaid}}</label>
+						<label>Winning Amount : {{contestData.WinningAmount}}</label>
 					</div>
 				</div>
-
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="filter-col"><b>Contest Format:</b> {{contestData.ContestFormat}}</label>
+						<label>Joined : {{contestData.TotalJoined}}</label>
 					</div>
 				</div>
-
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label class="control-label"><b>Contest Size:</b> {{contestData.ContestSize}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="control-label"><b>Admin Percentage: </b>{{contestData.AdminPercent}}%</label>
-					</div>
-				</div>
-
-				<div class="col-md-4" ng-if="contestData.IsPaid=='Yes'">
-					<div class="form-group">
-						<label class="control-label"><b>Cash Bonus Contribution: </b>{{contestData.CashBonusContribution}}%</label>
-					</div>
-				</div>
-				
-
-				<div class="col-md-4" ng-if="contestData.IsPaid=='Yes'" >
-					<div class="form-group">
-						<label class="control-label"><b>Entry Fee:</b> {{contestData.EntryFee}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label><b>Winning Amount:</b> {{contestData.WinningAmount}}</label>
-					</div>
-				</div>
-			
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Entry Type:</b> {{contestData.EntryType}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Contest Type: </b> {{contestData.ContestType}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Confirm Contest: </b> {{contestData.IsConfirm}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="filter-col" for="ParentCategory"><b>Is Auto Create: </b> {{contestData.IsAutoCreate}}</label>
-					</div>
-				</div>
-
-				<div class="col-md-4">
-					<div class="form-group">
-						<label><b>Joined: </b>{{contestData.TotalJoined}}</label>
-					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="form-group">
-						<label><b>Winning Breakout</b></label>
+						<label >Winning Breakout</label>
 					</div>
 				</div>
 				<div class="col-md-12">
@@ -128,8 +63,6 @@
 							<tr>
 								<th>Rank</th>
 								<th>Username</th>
-								<th>Email</th>
-								<th>Phone</th>
 								<th>Points</th>
 								<th>Won</th>
 							</tr>
@@ -139,8 +72,6 @@
 							<tr ng-repeat="teams in formData.Records" >
 								<td>{{teams.UserRank}}</td>
 								<td>{{teams.Username}}</td>
-								<td>{{teams.Email}}</td>
-								<td ng-if="teams.PhoneNumber !=''">{{teams.PhoneNumber}}</td>
 								<td>{{teams.TotalPoints}}</td>
 								<td>{{teams.UserWinningAmount}}</td>
 							</tr>
