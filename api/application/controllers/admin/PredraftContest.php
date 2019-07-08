@@ -16,6 +16,7 @@ class PredraftContest extends API_Controller_Secure
 	URL: 			/admin/predraftcontest/add/
 	*/
 	public function add_post() {
+      
 
         /* Validation section */
         $this->form_validation->set_rules('DraftName', 'DraftName', 'trim');
@@ -181,7 +182,7 @@ class PredraftContest extends API_Controller_Secure
     */
     public function getPredraft_post()
     {
-        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim|callback_validatePredraftContestID');
+        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim');
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|in_list[Yes,No,All]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
@@ -221,7 +222,7 @@ class PredraftContest extends API_Controller_Secure
      * Function Name: validatePredraftContestID
      * Description:   To validate predraft contest ID
      */
-    public function validateAnyUserJoinedContest($PredraftContestID) {
+    public function validatePredraftContestID($PredraftContestID) {
 		$Query = $this->db->query('SELECT Privacy FROM `sports_predraft_contest` WHERE `PredraftContestID` = '.$PredraftContestID.' LIMIT 1');
         if($Query->num_rows() == 0){
         	$this->form_validation->set_message('validatePredraftContestID', 'Invalid Predraft Contest ID.');

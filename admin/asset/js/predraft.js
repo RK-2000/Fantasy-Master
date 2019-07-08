@@ -43,17 +43,17 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         if ($scope.data.listLoading || $scope.data.noRecords)
             return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,TotalAmountReceived,TotalWinningAmount,CashBonusContribution,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm').serialize();
+        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm').serialize();
         if(Type == 'filters'){
             data += '&' + $('#filterForm1').serialize();
         }
         $http.post(API_URL + 'admin/predraftContest/getPredraft', data, contentType).then(function (response) {
             var response = response.data;
-            console.log(response.Data.Results[0].TotalRecords);
-            if (response.ResponseCode == 200 && response.Data.Results[0].Records) {
-                $scope.data.totalRecords = response.Data.Results[0].TotalRecords;
-                for (var i in response.Data.Results[0].Records) {
-                    $scope.data.dataList.push(response.Data.Results[0].Records[i]);
+            
+            if (response.ResponseCode == 200 && response.Data.Records) {
+                $scope.data.totalRecords = response.Data.TotalRecords;
+                for (var i in response.Data.Records) {
+                    $scope.data.dataList.push(response.Data.Records[i]);
                 }
                 $scope.data.pageNo++;
             } else {
@@ -121,26 +121,26 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/edit_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'predraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=unfilledWinningPercent,IsVirtualUserJoined,VirtualUserJoinedPercentage,AdminPercent,Privacy,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,CashBonusContribution,UserJoinLimit,DraftFormat,IsConfirm,ShowJoinedDraft,IsAutoCreate',contentType).then(function (response) {
+        $http.post(API_URL + 'admin/predraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=unfilledWinningPercent,IsVirtualUserJoined,VirtualUserJoinedPercentage,AdminPercent,Privacy,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,CashBonusContribution,UserJoinLimit,DraftFormat,IsConfirm,ShowJoinedDraft,IsAutoCreate',contentType).then(function (response) {
             var response = response.data;
            
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
+                $scope.formData = response.Data.Records[0]
 
 
-                $scope.custom.WinningAmount = parseInt(response.Data.WinningAmount);
-                $scope.custom.EntryFee = parseInt(response.Data.EntryFee);
+                $scope.custom.WinningAmount = parseInt(response.Data.Records[0].WinningAmount);
+                $scope.custom.EntryFee = parseInt(response.Data.Records[0].EntryFee);
 
 
                 $scope.remainingAmount = $scope.custom.WinningAmount;
-                $scope.custom.AdminPercent = parseInt(response.Data.AdminPercent);
+                $scope.custom.AdminPercent = parseInt(response.Data.Records[0].AdminPercent);
                 //$scope.EntryFee = response.Data.EntryFee;
-                $scope.IsAutoCreate = response.Data.IsAutoCreate;
-                $scope.unfilledWinningPercent = response.Data.unfilledWinningPercent;
+                $scope.IsAutoCreate = response.Data.Records[0].IsAutoCreate;
+                $scope.unfilledWinningPercent = response.Data.Records[0].unfilledWinningPercent;
 
-                $scope.custom.NoOfWinners = response.Data.NoOfWinners;
-                $scope.custom.DraftSize = response.Data.DraftSize;
+                $scope.custom.NoOfWinners = response.Data.Records[0].NoOfWinners;
+                $scope.custom.DraftSize = response.Data.Records[0].DraftSize;
                 if($scope.formData.CashBonusContribution){
                     $scope.custom.CashBonusContribution = parseInt($scope.formData.CashBonusContribution);
                 }else{
@@ -148,12 +148,11 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                 }
                 
                 
-                $scope.custom.choices = response.Data.CustomizeWinning;
-                if (response.Data.CustomizeWinning.length > 0) {
+                $scope.custom.choices = response.Data.Records[0].CustomizeWinning;
+               if (response.Data.Records[0].CustomizeWinning.length > 0) {
                     $scope.showField = true;
                 }
-
-                if (response.Data.CustomizeWinning) {
+                if (response.Data.Records[0].CustomizeWinning) {
 
                     if ($scope.numbers == '') {
                         for (var i = 1; i <= parseInt($scope.custom.NoOfWinners); i++) {
@@ -211,7 +210,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         
         if(confirm('Are you sure, want to delete this draft ?')){
             $scope.addDataLoading = true;
-            $http.post(API_URL+'predraftContest/delete', 'SessionKey='+SessionKey+'&PredraftContestID='+PredraftContestID, contentType).then(function(response) {
+            $http.post(API_URL+'admin/predraftContest/delete', 'SessionKey='+SessionKey+'&PredraftContestID='+PredraftContestID, contentType).then(function(response) {
                 var response = response.data;
                 if(response.ResponseCode==200){ /* success case */
                     window.location.reload();        
