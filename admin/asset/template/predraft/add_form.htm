@@ -13,29 +13,29 @@
 			<div class="row">
 				<div class="col-md-3">
 					<div class="form-group">
-						<label class="control-label">Contest Name</label>
-						<input name="ContestName" type="text" class="form-control" placeholder="CONTEST NAME" value="" maxlength="40">
+						<label class="control-label">Draft Name</label>
+						<input name="DraftName" type="text" class="form-control" placeholder="Draft Name" value="" maxlength="40">
 					</div>
 				</div>
 
 				
 				<div class="col-md-3">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory">Is Paid Contest?</label>
+						<label class="filter-col" for="ParentCategory">Is Paid Draft?</label>
 						<select id="IsPaid" ng-model="IsPaid" name="IsPaid" class="form-control chosen-select">
 							<option value="">Please Select</option>
 							<option value="Yes">Yes</option>
 							<option value="No">No</option>
 							
 						</select>
-						<small>Select this option notifiy that Contest is free or paid.</small>
+						<small>Select this option notifiy that draft is free or paid.</small>
 					</div>
 				</div>
 
 				<div class="col-md-3">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory">Contest Format</label>
-						<select id="ContestFormat" ng-model="ContestFormat" name="ContestFormat" class="form-control chosen-select">
+						<label class="filter-col" for="ParentCategory">Draft Format</label>
+						<select id="DraftFormat" ng-model="DraftFormat" name="DraftFormat" class="form-control chosen-select">
 							<option value="">Please Select</option>
 							<option value="Head to Head">Head to Head</option>
 							<option value="League">League</option>
@@ -44,10 +44,11 @@
 					</div>
 				</div>
 
-				<div class="col-md-3" ng-if="ContestFormat!='Head to Head'">
+				<div class="col-md-3">
 					<div class="form-group">
-						<label class="control-label">Contest Size</label>
-						<input name="ContestSize" placeholder="CONTEST SIZE" ng-model="custom.ContestSize" type="text" class="form-control integer" value="2" >
+						<label class="control-label">Winning Amount</label>
+						<input name="WinningAmount" ng-model="custom.WinningAmount" placeholder="Winning Amount" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='Yes'">
+						<input name="WinningAmount" ng-model="custom.WinningAmount" ng-init="custom.WinningAmount='0'" placeholder="Winning Amount" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='No'">
 					</div>
 				</div>
 
@@ -59,11 +60,10 @@
 					</div>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-3" ng-if="DraftFormat!='Head to Head'">
 					<div class="form-group">
-						<label class="control-label">Winning Amount</label>
-						<input name="WinningAmount" ng-model="WinningAmount" placeholder="WINNING AMOUNT" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='Yes'" readonly>
-						<input name="WinningAmount" ng-model="WinningAmount" ng-init="WinningAmount='0'" placeholder="WINNING AMOUNT" type="text" class="form-control numeric" value="0" ng-if="IsPaid=='No'" readonly>
+						<label class="control-label">Draft Size</label>
+						<input name="DraftSize" ng-model="custom.DraftSize" type="text" class="form-control integer" value="2" >
 					</div>
 				</div>
 
@@ -71,14 +71,14 @@
 				<div class="col-md-3" ng-if="IsPaid=='Yes'">
 					<div class="form-group">
 						<label class="control-label">Admin Percentage (%)</label>
-						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="ADMIN CHARGES IN PERCENTAGE"  ng-init="custom.AdminPercent='10'" type="text" class="form-control numeric" maxlength="3" ng-if="IsPaid=='Yes'">
+						<input name="AdminPercent" ng-model="custom.AdminPercent" placeholder="Admin Charges in Percentage"  ng-init="custom.AdminPercent='10'" type="text" class="form-control numeric" maxlength="3" ng-if="IsPaid=='Yes'">
 					</div>
 				</div>
 
 				<div class="col-md-3" ng-if="IsPaid=='Yes'">
 					<div class="form-group">
 						<label class="control-label">Cash Bonus Contribution (%)</label>
-						<input name="CashBonusContribution" ng-model="custom.CashBonusContribution" placeholder="CASH BONUS CONTRIBUTION IN PERCENTAGE" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="IsPaid=='Yes'">
+						<input name="CashBonusContribution" ng-model="custom.CashBonusContribution" placeholder="Cash Bonus Contribution in Percentage" type="text" class="form-control numeric" value="0" maxlength="3" ng-if="IsPaid=='Yes'">
 					</div>
 				</div>
 
@@ -92,21 +92,21 @@
 							<option value="Single">Single</option>
 							<option value="Multiple">Multiple</option>
 						</select>
-						<small>Select option to notify if Contest is single or multiple.</small>
+						<small>Select option to notify if draft is single or multiple.</small>
 					</div>
 				</div>
 				<div class="col-md-3" ng-if="EntryType=='Multiple'" ng-init="UserJoinLimit=0">
 					<div class="form-group">
 						<label class="control-label">Maximum Multiple Team Allowed</label>
-						<input name="UserJoinLimit" ng-model="UserJoinLimit" placeholder="LEAGUE JOIN LIMIT" type="text" class="form-control numeric" value="0" maxlength="5">
+						<input name="UserJoinLimit" ng-model="UserJoinLimit" placeholder="League Join Limit" type="text" class="form-control numeric" value="0" maxlength="5">
 					</div>
 				</div>
 				
-				<input ng-if="ContestFormat=='Head to Head'" type="hidden" name="ContestSize" value="2">
-				<div class="col-md-3" ng-if="ContestFormat!='Head to Head'">
+				<input ng-if="DraftFormat=='Head to Head'" type="hidden" name="DraftSize" value="2">
+				<div class="col-md-3" ng-if="DraftFormat!='Head to Head'">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory">Contest Type</label>
-						<select id="ContestType" name="ContestType" ng-model="ContestType" class="form-control chosen-select">
+						<label class="filter-col" for="ParentCategory">Draft Type</label>
+						<select id="DraftType" name="DraftType" ng-model="DraftType" class="form-control chosen-select">
 							<option value="">Please Select</option>
 							<option value="Hot">Hot</option>
 							<option value="Champion">Champion</option>
@@ -116,29 +116,29 @@
 							<option value="Winner Takes All">Winner Takes All</option>
 							<option value="Only For Beginners">Only For Beginners</option>
 						</select>
-						<small>Select option to notify Contest type.Select Contest Format as League if you are creating Head to Head Contest.</small>
+						<small>Select option to notify draft type.Select Draft Format as League if you are creating Head to Head Draft.</small>
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
-						<label class="filter-col" for="ParentCategory">Confirm Contest</label>
+						<label class="filter-col" for="ParentCategory">Confirm Draft</label>
 						<select id="IsConfirm" name="IsConfirm" ng-model="IsConfirm" class="form-control chosen-select">
 							<option value="">Please Select</option>
 							<option value="Yes">Yes</option>
 							<option value="No">No</option>
 						</select>
-						<small>Select option to notify Contest is confirm Contest or not.</small>
+						<small>Select option to notify draft is confirm draft or not.</small>
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="filter-col" for="ParentCategory">Show Joined Users</label>
-						<select id="ShowJoinedContest" name="ShowJoinedContest" ng-model="ShowJoinedContest" class="form-control chosen-select">
+						<select id="ShowJoinedDraft" name="ShowJoinedDraft" ng-model="ShowJoinedDraft" class="form-control chosen-select">
 							<option value="">Please Select</option>
 							<option value="Yes">Yes</option>
 							<option value="No">No</option>
 						</select>
-						<small>Select option to notify joined user in Contest.</small>
+						<small>Select option to notify joined user in draft.</small>
 					</div>
 				</div>
 				<div class="col-md-3">
@@ -149,7 +149,7 @@
 							<option value="Yes">Yes</option>
 							<option value="No">No</option>
 						</select>
-						<small>Select yes option to auto create same Contest, If joining limit is over.</small>
+						<small>Select yes option to auto create same draft, If joining limit is over.</small>
 					</div>
 				</div>
 				<div class="col-md-3">
@@ -175,8 +175,8 @@
 			<div class="row" >
 				<div class="col-md-10">
 					<div class="form-group">
-						<input type="text" class="form-control" ng-model="custom.NoOfWinners='1'"  name="NoOfWinners"  ng-change="changeWinners()" ng-if="ContestFormat=='Head to Head'">
-						<input type="text" class="form-control" ng-model="custom.NoOfWinners"  name="NoOfWinners"  ng-change="changeWinners()" ng-if="ContestFormat!='Head to Head'">
+						<input type="text" class="form-control" ng-model="custom.NoOfWinners='1'"  name="NoOfWinners"  ng-change="changeWinners()" ng-if="DraftFormat=='Head to Head'">
+						<input type="text" class="form-control" ng-model="custom.NoOfWinners"  name="NoOfWinners"  ng-change="changeWinners()" ng-if="DraftFormat!='Head to Head'">
 					</div>
 				</div>
 				<div class="col-md-2">
@@ -186,7 +186,7 @@
 				</div>
 				<div class="col-sm-12">
 	                <div ng-show="showField" class="creatcontast_list">
-	                	<p><b>Remaining Percent :</b> {{remainingPercentage}}</p>
+	                	<p><b>Remaining Amount :</b> {{remainingAmount}}</p>
 	                    <table style="width: 100%;">
 	                        <thead>
 	                            <tr>
@@ -212,6 +212,16 @@
 	                                            <td style="width: 50px;" >
 	                                                <label>Winners</label>
 	                                                <input type="text" value="{{(r.To - r.From) + 1}}" class="form-control" readonly="true">  
+												</td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td style="width: 100px;" >
+	                                                <label>Total Amount</label>
+	                                                <input type="text" value="{{((r.To - r.From) + 1) * r.amount }}" class="form-control" readonly="true">  
 	                                            </td>
 	                                        </tr>
 	                                    </table>
@@ -219,9 +229,9 @@
 
 	                               </td>
 	                                <td>
-	                                    <label>Percent</label> <input type="text" ng-model="r.percent" name="percent" class="form-control" ng-change="changePercent($index)" valid-number ng-click="removeChildFields($index)">
+	                                    <label>Percent</label> <input type="text" ng-model="r.percent" name="percent" class="form-control" valid-number ng-click="removeChildFields($index)" readonly="true">
 	                                </td>
-	                                <td><label>Amount</label> <input type="text" class="form-control" ng-model="r.amount"></td>
+	                                <td><label>Amount</label> <input type="text" class="form-control integer" ng-model="r.amount"  ng-change="changeCustomizeAmount($index)" ng-click="removeChildFields($index)"></td>
 	                                <td><button type="button" class="btn btn-submit" ng-click="removeField($index)">-</button></td>
 	                            </tr>
 	                           
@@ -241,7 +251,7 @@
 
 <div class="modal-footer">
 	<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-	<button type="submit" class="btn btn-success btn-sm" ng-disabled="addDataLoading" ng-click="addDataPreContest()">Save</button>
+	<button type="submit" class="btn btn-success btn-sm" ng-disabled="addDataLoading" ng-click="addDataPredraft()">Save</button>
 </div>
 
 
