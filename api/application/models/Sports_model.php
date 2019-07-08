@@ -541,7 +541,7 @@ class Sports_model extends CI_Model
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();
             $this->db->like("P.PlayerName", $Where['Keyword']);
-            $this->db->or_like("P.PlayerRole", $Where['Keyword']);
+            $this->db->or_like("TP.PlayerRole", $Where['Keyword']);
             $this->db->or_like("P.PlayerCountry", $Where['Keyword']);
             $this->db->or_like("P.PlayerBattingStyle", $Where['Keyword']);
             $this->db->or_like("P.PlayerBowlingStyle", $Where['Keyword']);

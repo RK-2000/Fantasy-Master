@@ -2,7 +2,7 @@
 application/logs/*
 api/application/cache/*
 api/application/logs/*
-admin/application/logs/*
+f8505132d5c43c23fbda23ca0610a557/application/logs/*
 !api/uploads/profile/picture/default.jpg
 !api/uploads/sports.txt
 api/uploads/*

@@ -141,19 +141,6 @@
 									</select>
 								</div>
 							</div>
-							<!-- <div class="col-md-6">
-								<div class="form-group">
-									<label class="filter-col" for="Status">Status</label>
-									<select id="Status" name="Status" class="form-control chosen-select">
-										<option value="">Please Select</option>
-										<option value="Pending">Pending</option>
-										<option value="Running">Running</option>
-										<option value="Cancelled">Cancelled</option>
-										<option value="Completed">Completed</option>
-									</select>   
-								</div>
-							</div> -->
-							
 							</div>
 
 						</div> <!-- form-area /-->
