@@ -140,7 +140,7 @@ class Upload extends API_Controller_Secure
 	public function delete_post()
 	{
 		/* Validation section */
-		$this->form_validation->set_rules('MediaGUID', 'MediaGUID', 'trim|required|callback_validateEntityGUID[Media,MediaID]');
+		$this->form_validation->set_rules('MediaGUID', 'MediaGUID', 'trim|required|callback_validateMediaGUID');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
