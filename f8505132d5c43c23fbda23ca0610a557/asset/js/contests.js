@@ -119,19 +119,19 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
+                $scope.formData = response.Data.Records[0]
 
-                $scope.custom.WinningAmount = parseInt(response.Data.WinningAmount);
+                $scope.custom.WinningAmount = parseInt(response.Data.Records[0].WinningAmount);
 
 
                 $scope.remainingAmount = $scope.custom.WinningAmount;
-                $scope.custom.AdminPercent = response.Data.AdminPercent;
-                $scope.EntryFee = response.Data.EntryFee;
-                $scope.IsAutoCreate = response.Data.IsAutoCreate;
-                $scope.unfilledWinningPercent = response.Data.unfilledWinningPercent;
+                $scope.custom.AdminPercent = response.Data.Records[0].AdminPercent;
+                $scope.EntryFee = response.Data.Records[0].EntryFee;
+                $scope.IsAutoCreate = response.Data.Records[0].IsAutoCreate;
+                $scope.unfilledWinningPercent = response.Data.Records[0].unfilledWinningPercent;
 
-                $scope.custom.NoOfWinners = response.Data.NoOfWinners;
-                $scope.custom.ContestSize = response.Data.ContestSize;
+                $scope.custom.NoOfWinners = response.Data.Records[0].NoOfWinners;
+                $scope.custom.ContestSize = response.Data.Records[0].ContestSize;
                 if ($scope.formData.CashBonusContribution) {
                     $scope.formData.CashBonusContribution = parseInt($scope.formData.CashBonusContribution);
                 } else {
@@ -139,12 +139,12 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                 }
 
 
-                $scope.custom.choices = response.Data.CustomizeWinning;
-                if (response.Data.CustomizeWinning.length > 0) {
+                $scope.custom.choices = response.Data.Records[0].CustomizeWinning;
+               /* if (response.Data.CustomizeWinning.length > 0) {
                     $scope.showField = true;
-                }
+                }*/
 
-                if (response.Data.CustomizeWinning) {
+                if (response.Data.Records[0].CustomizeWinning) {
 
                     if ($scope.numbers == '') {
                         for (var i = 1; i <= parseInt($scope.custom.NoOfWinners); i++) {
@@ -874,7 +874,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
+                $scope.formData = response.Data.Records[0]
 
                 $('#status_model').modal({ show: true });
 
@@ -924,7 +924,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     }
 
     /*edit status*/
-    $scope.editStatus = function (Status, contestGUID) {
+    $scope.editStatus = function (Status, contestGUID) { 
         if (Status == 'Cancelled') {
             if (confirm('Are you sure, want to cancel contest ?')) {
                 var req = 'SessionKey=' + SessionKey + '&ContestGUID=' + contestGUID;

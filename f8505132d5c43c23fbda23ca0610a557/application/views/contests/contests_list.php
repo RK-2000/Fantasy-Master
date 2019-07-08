@@ -10,11 +10,11 @@
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/search.svg"></button>
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>
 			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Contest</button>
 		</div>
 	</div>
-	<!-- Top container/ -->
+	<!-- Top container/ --> 
 
 
 	<!-- Data table -->
