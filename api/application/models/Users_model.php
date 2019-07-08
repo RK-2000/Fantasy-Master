@@ -647,11 +647,7 @@ class Users_model extends CI_Model
 
                 if (in_array('MediaBANK', $Params)) {
                     $MediaData = $this->Media_model->getMedia('MediaGUID,DATE_FORMAT(CONVERT_TZ(EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,"110_",M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'BankDetail', "EntityID" => $Record['UserID']), FALSE);
-<<<<<<< HEAD
                     $Record['MediaBANK'] = ($MediaData ? $MediaData : array('EntryDate' => '','MediaGUID' => '','MediaURL' => '','MediaThumbURL' => '','MediaCaption' => ''));
-=======
-                    $Record['MediaBANK'] = ($MediaData ? $MediaData : array('EntryDate' => '', 'MediaGUID' => '', 'MediaURL' => '', 'MediaThumbURL' => '', 'MediaCaption' => ''));
->>>>>>> 98f555cc1907e0849047e48ddc90c4557410a0dd
                 }
 
                 /* Get Wallet Data */
