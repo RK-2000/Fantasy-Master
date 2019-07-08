@@ -11,7 +11,7 @@
 		</span>
 		<div class="float-right">
 			<!-- <button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/search.svg"></button> -->
-			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Draft</button>
+			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Pre Draft</button>
 		</div>
 	</div>
 	<!-- Top container/ -->
