@@ -100,7 +100,6 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|in_list[Yes,No,All]');
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
-        $this->form_validation->set_rules('GUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->set_rules('UserInvitationCode', 'UserInvitationCode', 'trim' . (!empty($this->Post['Privacy']) && $this->Post['Privacy'] == 'Yes' ? '|required' : ''));
         $this->form_validation->set_rules('StatusID', 'StatusID', 'trim');
@@ -644,12 +643,10 @@ class Contest extends API_Controller_Secure
     public function validateMatchDateTime($MatchGUID, $Module)
     {
         $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
-        if ($ClosedInMinutes > 0) {
-            $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime) - ($ClosedInMinutes * 60); // convert into seconds
-            if ($MatchStartDateTime < strtotime(date('Y-m-d H:i:s'))) {
-                $this->form_validation->set_message('validateMatchDateTime', ($Module == 'Contest') ? 'You can create contest only for upcoming matches.' : 'Please wait, Match has not started yet.');
-                return FALSE;
-            }
+        $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime) - ($ClosedInMinutes * 60); // convert into seconds
+        if ($MatchStartDateTime < strtotime(date('Y-m-d H:i:s'))) {
+            $this->form_validation->set_message('validateMatchDateTime', ($Module == 'Contest') ? 'You can create contest only for upcoming matches.' : 'Please wait, Match has not started yet.');
+            return FALSE;
         }
         return TRUE;
     }
@@ -673,12 +670,10 @@ class Contest extends API_Controller_Secure
     {
         /* Validate Match Start Datetime */
         $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
-        if ($ClosedInMinutes > 0) {
-            $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime) - ($ClosedInMinutes * 60); // convert into seconds
-            if ($MatchStartDateTime < strtotime(date('Y-m-d H:i:s'))) {
-                $this->form_validation->set_message('validateUserTeamPlayers', 'You can create team only for upcoming matches.');
-                return FALSE;
-            }
+        $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime) - ($ClosedInMinutes * 60); // convert into seconds
+        if ($MatchStartDateTime < strtotime(date('Y-m-d H:i:s'))) {
+            $this->form_validation->set_message('validateUserTeamPlayers', 'You can create team only for upcoming matches.');
+            return FALSE;
         }
 
         /* Validate Players */

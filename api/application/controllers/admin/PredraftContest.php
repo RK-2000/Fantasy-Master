@@ -174,7 +174,29 @@ class PredraftContest extends API_Controller_Secure
 		$this->PredraftContest_model->updateDraft($this->Post, $this->SessionUserID, $this->PredraftContestID);
 		$this->Return['Message'] = "Pre Draft updated successfully."; 
 
-	}
+    }
+    
+    /*
+    Description: To get pre draft contest data
+    */
+    public function getPredraft_post()
+    {
+        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim|callback_validatePredraftContestID');
+        $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|in_list[Yes,No,All]');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
+        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
+        $this->form_validation->set_rules('DraftType', 'DraftType', 'trim');
+        $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal]');
+        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
+        $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
+        $this->form_validation->validation($this);  /* Run validation */
+
+        /* Get Pre Draft Contest Data */
+        $PreDraftData = $this->PredraftContest_model->getPredraftContest(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        if (!empty($PreDraftData)) {
+            $this->Return['Data'] = $PreDraftData['Data'];
+        }
+    }
 
 	/*
 	Name: 			delete

@@ -512,8 +512,8 @@ class Sports_model extends CI_Model
                 'MatchTypeID' => 'SSM.MatchTypeID',
                 'MatchType' => 'SSM.MatchTypeName MatchType',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
-                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = '.$Where['MatchID'].' AND JC.UserID = '.$Where['SessionUserID'].' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].') > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = '.$Where['MatchID'].')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= '.$Where['MatchID'].')),2),0)) PlayerSelectedPercent'
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . $Where['SessionUserID'] . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
+                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ') > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = ' . $Where['MatchID'] . ')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ')),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
