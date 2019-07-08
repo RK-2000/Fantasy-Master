@@ -20,7 +20,7 @@ class Contest extends API_Controller_Secure {
         /* Validation section */
         $this->form_validation->set_rules('ContestName', 'ContestName', 'trim');
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
-        $this->form_validation->set_rules('ContestType', 'Contest Type', 'trim|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners,Head to Head]');
+        $this->form_validation->set_rules('ContestType', 'ContestType', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners,Head to Head]' : ''));
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsPaid', 'IsPaid', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsConfirm', 'IsConfirm', 'trim|required|in_list[Yes,No]');
@@ -121,8 +121,8 @@ class Contest extends API_Controller_Secure {
         /* Validation section */
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateAnyUserJoinedContest[update]');
         $this->form_validation->set_rules('ContestName', 'ContestName', 'trim|required');
+        $this->form_validation->set_rules('ContestType', 'ContestType', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners,Head to Head]' : ''));
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
-        $this->form_validation->set_rules('ContestType', 'Contest Type', 'trim|required|in_list[Normal,Reverse,InPlay,Hot,Champion,Practice,More,Head to Head]');
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsPaid', 'IsPaid', 'trim|required|in_list[Yes,No]');
         $this->form_validation->set_rules('IsConfirm', 'IsConfirm', 'trim|required|in_list[Yes,No]');

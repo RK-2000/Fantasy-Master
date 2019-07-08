@@ -192,6 +192,11 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 	
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
@@ -240,6 +245,11 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
@@ -286,6 +296,11 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
@@ -332,6 +347,11 @@ case 'production':
 	define('PAYTM_WEBSITE_WEB', 'DEFAULT');
 	define('PAYTM_WEBSITE_APP', 'DEFAULT');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_live_lZu5DvgspmKvxH');
