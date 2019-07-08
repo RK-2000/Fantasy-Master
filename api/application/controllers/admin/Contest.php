@@ -190,6 +190,21 @@ class Contest extends API_Controller_Secure {
     }
 
     /*
+	Name: 			delete
+	Description: 	Use to delete contest to system.
+	URL: 			/admin/contest/delete/
+	*/
+	public function delete_post()
+	{
+		$this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateAnyUserJoinedContest[delete]');
+		$this->form_validation->validation($this);  /* Run validation */	
+
+		/* Delete Contests Data */
+		$this->Contest_model->deleteContest($this->SessionUserID, $this->ContestID);
+		$this->Return['Message'] =	"Contest deleted successfully."; 
+	}
+
+    /*
       Description: To get joined contests data
      */
     public function getUserJoinedContests_post() {

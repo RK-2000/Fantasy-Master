@@ -1,7 +1,7 @@
 
 
 <div class="container" ng-controller="PageController"> 
- <div id="logo" class="text-center"><img src="<?php echo API_URL;?>asset/img/emailer/logo.png"></div> 
+ <div id="logo" class="text-center"><img src="<?php echo API_URL;?>asset/img/emailer/logo2.png"></div> 
   <!-- Form -->
   <div class="col-12 col-sm-11 col-md-8 col-lg-6 col-xl-5 login-block">
     <h1 class="h3">Forgot your password?</h1>

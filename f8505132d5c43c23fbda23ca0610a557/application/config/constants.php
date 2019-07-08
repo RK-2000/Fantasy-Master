@@ -93,32 +93,32 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*Site Related Settings*/
 define('SITE_NAME', 'FSL11-Admin');
 define('PATH_TEMPLATE',"./asset/template/");
-
+define('ADMIN_FOLDER',"f8505132d5c43c23fbda23ca0610a557"); // mobiwebtech-fantasy-admin
 
 switch (ENVIRONMENT)
 {
 	case 'local':
 	/*Paths*/
 	define('SITE_HOST', 'http://localhost');
-	define('ROOT_FOLDER', '/fantasy-master/admin');
+	define('ROOT_FOLDER', '/fantasy-master/'.ADMIN_FOLDER);
 	 define('API_URL', "http://localhost/fantasy-master/api/");
 	break;
 	case 'testing':
 	/*Paths*/
 	define('SITE_HOST', 'http://dev.fantasy96.com');
-	define('ROOT_FOLDER', '/admin');
+	define('ROOT_FOLDER', '/'.ADMIN_FOLDER);
 	define('API_URL', SITE_HOST."/api/");
 	break;
 	case 'demo':
 	/*Paths*/
 	define('SITE_HOST', 'http://mwdemoserver.com');
-	define('ROOT_FOLDER', '/527-fsl11/admin');
+	define('ROOT_FOLDER', '/527-fsl11/'.ADMIN_FOLDER);
 	define('API_URL', SITE_HOST."/527-fsl11/api/");
 	break;
 	case 'production':
 	/*Paths*/
 	define('SITE_HOST', 'http://fsl11.com');
-	define('ROOT_FOLDER', '/admin');
+	define('ROOT_FOLDER', '/'.ADMIN_FOLDER);
 	define('API_URL', SITE_HOST."/api/");
 	break;
 }
