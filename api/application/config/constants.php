@@ -179,7 +179,10 @@ switch (ENVIRONMENT)
 
 	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-    define('CRON_SAVE_LOG', true);
+	define('CRON_SAVE_LOG', true);
+	
+	/* PayUmoney Details */
+	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'Pfytge92537984428170');
@@ -189,11 +192,20 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
-	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 	
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
 	define('RAZORPAY_KEY_SECRET', '6p0CmdhTRsSljuthIAmmZBFC');
+
+	/* CashFree Details */
+	define('CASHFREE_URL', 'https://test.cashfree.com/');
+	define('CASHFREE_APP_ID', '4202cce7364682b1e84ec8682024');
+	define('CASHFREE_SECRET_KEY', '643b7c8db0c91cabae8210eb8c36c137ef07dd3c');
 	
 	break;
 	case 'testing':
@@ -220,7 +232,10 @@ switch (ENVIRONMENT)
 
 	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-    define('CRON_SAVE_LOG', true);
+	define('CRON_SAVE_LOG', true);
+	
+	/* PayUmoney Details */
+	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'Pfytge92537984428170');
@@ -230,11 +245,20 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
-	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
 	define('RAZORPAY_KEY_SECRET', '6p0CmdhTRsSljuthIAmmZBFC');
+
+	/* CashFree Details */
+	define('CASHFREE_URL', 'https://test.cashfree.com/');
+	define('CASHFREE_APP_ID', '4202cce7364682b1e84ec8682024');
+	define('CASHFREE_SECRET_KEY', '643b7c8db0c91cabae8210eb8c36c137ef07dd3c');
 	break;
 	case 'demo':
 	/*Paths*/
@@ -259,7 +283,10 @@ switch (ENVIRONMENT)
 
 	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-    define('CRON_SAVE_LOG', true);
+	define('CRON_SAVE_LOG', true);
+	
+	/* PayUmoney Details */
+	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', '****');
@@ -269,11 +296,20 @@ switch (ENVIRONMENT)
 	define('PAYTM_WEBSITE_WEB', 'WEBSTAGING');
 	define('PAYTM_WEBSITE_APP', 'APPSTAGING');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
-	define('PAYUMONEY_ACTION_KEY','https://test.payu.in/_payment');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_test_vlY7NbvbHCzHy3');
 	define('RAZORPAY_KEY_SECRET', '6p0CmdhTRsSljuthIAmmZBFC');
+
+	/* CashFree Details */
+	define('CASHFREE_URL', 'https://test.cashfree.com/');
+	define('CASHFREE_APP_ID', '4202cce7364682b1e84ec8682024');
+	define('CASHFREE_SECRET_KEY', '643b7c8db0c91cabae8210eb8c36c137ef07dd3c');
 	break;
 case 'production':
 	/*Paths*/
@@ -298,7 +334,10 @@ case 'production':
 
 	/*Logs Settings*/
 	define('API_SAVE_LOG', false);
-    define('CRON_SAVE_LOG', true);
+	define('CRON_SAVE_LOG', true);
+	
+	/* PayUmoney Details */
+	define('PAYUMONEY_ACTION_KEY','https://secure.payu.in/_payment');
 
 	/* Paytm Details */
 	define('PAYTM_MERCHANT_ID', 'SDsAag68559014846478');
@@ -308,13 +347,20 @@ case 'production':
 	define('PAYTM_WEBSITE_WEB', 'DEFAULT');
 	define('PAYTM_WEBSITE_APP', 'DEFAULT');
 	define('PAYTM_TXN_URL','https://' . PAYTM_DOMAIN . '/theia/processTransaction');
-	define('PAYUMONEY_ACTION_KEY','https://secure.payu.in/_payment');
-
-	define('PAYUMONEY_ACTION_KEY','https://secure.payu.in/_payment');
+	define('PAYTM_MERCHANT_GRATIFICATION_ID', 'SDsAag68559014846478');
+	define('PAYTM_MERCHANT_GUID', '24a48865-182f-4793-a5ab-6de76213b8c6');
+	define('PAYTM_SALES_WALLET_GUID', '42582edf-74b5-4ea1-b546-61b46d2b2de0');
+	define('PAYTM_MERCHANT_GRATIFICATION_KEY', 'FHHXkny2&FMBo&Av');
+	define('PAYTM_GRATIFICATION_URL', 'https://trust.paytm.in/wallet-web/salesToUserCredit');
 
 	/* Razorpay Details */
 	define('RAZORPAY_KEY_ID', 'rzp_live_lZu5DvgspmKvxH');
 	define('RAZORPAY_KEY_SECRET', '6avy2fkR79Z4JgexXkdicl18');
+
+	/* CashFree Details */
+	define('CASHFREE_URL', 'https://api.cashfree.com/');
+	define('CASHFREE_APP_ID', '11973e706836675cdfa9b1f7337911');
+	define('CASHFREE_SECRET_KEY', '430f20c80393273159143189c5b86324dd09f818');
 	break;
 }
 
