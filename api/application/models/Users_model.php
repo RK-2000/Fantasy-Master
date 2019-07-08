@@ -742,7 +742,7 @@ class Users_model extends CI_Model
     function referEarn($Input = array(), $SessionUserID)
     {
         /* Get User Details */
-        $UserData = $this->db->query('SELECT FirstName,ReferralCode FROM tbl_users WHERE UserID = '.$SessionUserID.' LIMIT 1');
+        $UserData = $this->db->query('SELECT FirstName,ReferralCode FROM tbl_users WHERE UserID = ' . $SessionUserID . ' LIMIT 1');
         $InviteURL = SITE_HOST . ROOT_FOLDER . 'authenticate?referral=' . $UserData['ReferralCode'];
         if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
             send_mail(array(
@@ -758,7 +758,7 @@ class Users_model extends CI_Model
             /* Send referral SMS to User with referral url */
             $this->Utility_model->sendSMS(array(
                 'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Your Friend " . $UserData->row()->FirstName . " just got registered with us and has referred you. Use his/her referral code: " .$UserData->row()->ReferralCode. " Use the link provided to get " . DEFAULT_CURRENCY . REFERRAL_SIGNUP_BONUS . " signup bonus. " . $InviteURL
+                'Text' => "Your Friend " . $UserData->row()->FirstName . " just got registered with us and has referred you. Use his/her referral code: " . $UserData->row()->ReferralCode . " Use the link provided to get " . DEFAULT_CURRENCY . REFERRAL_SIGNUP_BONUS . " signup bonus. " . $InviteURL
             ));
         }
     }
@@ -936,6 +936,10 @@ class Users_model extends CI_Model
             $PaymentResponse['FailedURL'] = SITE_HOST . ROOT_FOLDER . 'myAccount?status=failed';
         } elseif ($Input['PaymentGateway'] == 'Paytm') {
 
+            /* Require Paytm Library */
+            require_once  APPPATH.'/third_party/Paytm.php';
+            $PaytmObj = new Paytm();
+
             /* Generate Paytm Checksum */
             $ParamList = array();
             $PaymentResponse['MerchantID'] = $ParamList['MID'] = ($Input['RequestSource'] == 'Web') ? PAYTM_MERCHANT_ID : APP_PAYTM_MERCHANT_ID;
@@ -947,313 +951,300 @@ class Users_model extends CI_Model
             $PaymentResponse['Website'] = $ParamList['WEBSITE'] = ($Input['RequestSource'] == 'Web') ? PAYTM_WEBSITE_WEB : APP_PAYTM_WEBSITE_APP;
             $PaymentResponse['CallbackURL'] = $ParamList['CALLBACK_URL'] = ($Input['RequestSource'] == 'Web') ? SITE_HOST . ROOT_FOLDER . 'api/main/paytmResponse' : 'https://' . APP_PAYTM_DOMAIN . '/theia/paytmCallback?ORDER_ID=' . $WalletID;
             $PaymentResponse['TransactionURL'] = ($Input['RequestSource'] == 'Web') ? PAYTM_TXN_URL : APP_PAYTM_TXN_URL;
-            $PaymentResponse['CheckSumHash'] = $this->generatePaytmCheckSum($ParamList, ($Input['RequestSource'] == 'Web') ? PAYTM_MERCHANT_KEY : APP_PAYTM_MERCHANT_KEY);
+            $PaymentResponse['CheckSumHash'] = $PaytmObj->generatePaytmCheckSum($ParamList, ($Input['RequestSource'] == 'Web') ? PAYTM_MERCHANT_KEY : APP_PAYTM_MERCHANT_KEY);
         } elseif ($Input['PaymentGateway'] == 'Razorpay') {
 
             $PaymentResponse['MerchantKey'] = RAZORPAY_KEY_ID;
             $PaymentResponse['MerchantName'] = SITE_NAME;
             $PaymentResponse['Amount'] = @$Input['Amount'] * 100;
             $PaymentResponse['OrderID'] = $WalletID;
-        }
-        return $PaymentResponse;
-    }
+        }else if($Input['PaymentGateway'] == 'CashFree') {
 
-    /* -----Paytm Payment Gateway Functions----- */
-    /* ---------------------------------------- */
-
-    /*
-      Description: To Get Paytm Transaction Details
-    */
-    function getPaytmTxnDetails($OrderID)
-    {
-        $PaytmParams["MID"] = PAYTM_MERCHANT_ID;
-        $PaytmParams["ORDERID"] = $OrderID;
-        $PaytmParams['CHECKSUMHASH'] = urlencode($this->generatePaytmCheckSum($PaytmParams, PAYTM_MERCHANT_KEY));
-        $Connection = curl_init();
-        curl_setopt($Connection, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($Connection, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($Connection, CURLOPT_URL, "https://" . PAYTM_DOMAIN . "/merchant-status/getTxnStatus");
-        curl_setopt($Connection, CURLOPT_POST, true);
-        curl_setopt($Connection, CURLOPT_POSTFIELDS, "JsonData=" . json_encode($PaytmParams, JSON_UNESCAPED_SLASHES));
-        curl_setopt($Connection, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($Connection, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        return json_decode(curl_exec($Connection), true);
-    }
-
-    function generatePaytmCheckSum($arrayList, $key, $sort = 1)
-    {
-        if ($sort != 0) {
-            ksort($arrayList);
-        }
-        $str = $this->getArray2Str($arrayList);
-        $salt = $this->generateSalt_e(4);
-        $finalString = $str . "|" . $salt;
-        $hash = hash("sha256", $finalString);
-        $hashString = $hash . $salt;
-        $checksum = $this->encrypt_e($hashString, $key);
-        return $checksum;
-    }
-
-    function getArray2Str($arrayList)
-    {
-        $findme = 'REFUND';
-        $findmepipe = '|';
-        $paramStr = "";
-        $flag = 1;
-        foreach ($arrayList as $key => $value) {
-            $pos = strpos($value, $findme);
-            $pospipe = strpos($value, $findmepipe);
-            if ($pos !== false || $pospipe !== false) {
-                continue;
-            }
-
-            if ($flag) {
-                $paramStr .= $this->checkString_e($value);
-                $flag = 0;
-            } else {
-                $paramStr .= "|" . $this->checkString_e($value);
-            }
-        }
-        return $paramStr;
-    }
-
-    function checkString_e($value)
-    {
-        if ($value == 'null')
-            $value = '';
-        return $value;
-    }
-
-    function generateSalt_e($length)
-    {
-        $random = "";
-        srand((double)microtime() * 1000000);
-
-        $data = "AbcDE123IJKLMN67QRSTUVWXYZ";
-        $data .= "aBCdefghijklmn123opq45rs67tuv89wxyz";
-        $data .= "0FGH45OP89";
-
-        for ($i = 0; $i < $length; $i++) {
-            $random .= substr($data, (rand() % (strlen($data))), 1);
-        }
-
-        return $random;
-    }
-
-    function getChecksumFromString($str, $key)
-    {
-
-        $salt = $this->generateSalt_e(4);
-        $finalString = $str . "|" . $salt;
-        $hash = hash("sha256", $finalString);
-        $hashString = $hash . $salt;
-        $checksum = $this->encrypt_e($hashString, $key);
-        return $checksum;
-    }
-
-    function encrypt_e($input, $ky) {
-        $ky   = html_entity_decode($ky);
-        $iv = "@@@@&&&&####$$$$";
-        $data = openssl_encrypt ( $input , "AES-128-CBC" , $ky, 0, $iv );
-        return $data;
-    }
-
-    function decrypt_e($crypt, $ky) {
-        $ky   = html_entity_decode($ky);
-        $iv = "@@@@&&&&####$$$$";
-        $data = openssl_decrypt ( $crypt , "AES-128-CBC" , $ky, 0, $iv );
-        return $data;
-    }
-
-    function pkcs5_pad_e($text, $blocksize)
-    {
-        $pad = $blocksize - (strlen($text) % $blocksize);
-        return $text . str_repeat(chr($pad), $pad);
-    }
-
-    function pkcs5_unpad_e($text)
-    {
-        $pad = ord($text{
-            strlen($text) - 1});
-        if ($pad > strlen($text))
-            return false;
-        return substr($text, 0, -1 * $pad);
-    }
-
-    function verifychecksum_e($arrayList, $key, $checksumvalue)
-    {
-        $arrayList = $this->removeCheckSumParam($arrayList);
-        ksort($arrayList);
-        $str = $this->getArray2Str($arrayList);
-        $paytm_hash = $this->decrypt_e($checksumvalue, $key);
-        $salt = substr($paytm_hash, -4);
-        $finalString = $str . "|" . $salt;
-        $website_hash = hash("sha256", $finalString);
-        $website_hash .= $salt;
-        $validFlag = "FALSE";
-        if ($website_hash == $paytm_hash) {
-            $validFlag = "TRUE";
-        } else {
-            $validFlag = "FALSE";
-        }
-        return $validFlag;
-    }
-
-    function removeCheckSumParam($arrayList)
-    {
-        if (isset($arrayList["CHECKSUMHASH"])) {
-            unset($arrayList["CHECKSUMHASH"]);
-        }
-        return $arrayList;
-    }
-
-    /* -----Paytm Payment Gateway Functions----- */
-    /* ---------------------------------------- */
-
-    /*
-      Description: To confirm payment gateway response
-     */
-    function confirm($Input = array(), $UserID)
-    {
-        $this->db->trans_start();
-
-        /* Update Order Status */
-        $UpdataData['PaymentGatewayResponse'] = @$Input['PaymentGatewayResponse'];
-        $UpdataData['ModifiedDate'] = date("Y-m-d H:i:s");
-
-        /* Razorpay */
-        if($Input['PaymentGateway'] == 'Razorpay'){
-            return TRUE; // Manage via WebHook
-        }else if($Input['PaymentGateway'] == 'CashFree'){
+            /* Get Order Token */
+            $PaymentResponse['OrderToken'] = '';
             $CURL = curl_init();
             curl_setopt_array($CURL, array(
-            CURLOPT_URL => CASHFREE_URL."api/v1/order/info/status",
+            CURLOPT_URL => CASHFREE_URL."api/v2/cftoken/order",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "appId=".CASHFREE_APP_ID."&secretKey=".CASHFREE_SECRET_KEY."&orderId=".$Input['WalletID'],
+            CURLOPT_POSTFIELDS => json_encode(array('orderId' => $WalletID,'orderAmount' => $Input['Amount'],'orderCurrency' => DEFAULT_CURRENCY_CODE)),
             CURLOPT_HTTPHEADER => array(
-                "cache-control: no-cache",
-                "content-type: application/x-www-form-urlencoded"
-            ),
+                    "cache-control: no-cache",
+                    "content-type: application/json",
+                    "x-client-id: ".CASHFREE_APP_ID,
+                    "x-client-secret: ".CASHFREE_SECRET_KEY
+                ),
             ));
             $Response = curl_exec($CURL);
             $Error = curl_error($CURL);
             curl_close($CURL);
             if ($Error) {
-                echo "cURL Error CashFree #:" . $Error;die;
+                $PaymentResponse['ErrorMsg'] = $Error;
+            } else {
+                $Result = json_decode($Response,TRUE);
+                if($Result['status'] == 'OK'){ // SUCCESS
+                    $PaymentResponse['AppID'] = CASHFREE_APP_ID;
+                    $PaymentResponse['OrderID'] = $WalletID;
+                    $PaymentResponse['OrderToken'] = $Result['cftoken'];
+                    $PaymentResponse['Amount'] =  $Input['Amount'];
+                    $PaymentResponse['Currency'] =  DEFAULT_CURRENCY_CODE;
+                    $PaymentResponse['NotifyURL'] =  BASE_URL.'utilities/cashFreeWebHookResponse';
+                }else{ // ERROR
+                    $PaymentResponse['ErrorMsg'] = (!empty($Result['error'])) ? $Result['error'] : 'Error occured while generating payment token.';
+                }
+            }
+         }
+        return $PaymentResponse;
+    }
+
+    /*
+      Description: To confirm payment gateway response
+     */
+    function confirm($Input = array(), $UserID)
+    {
+        /* Update Order Status */
+        $UpdataData['PaymentGatewayResponse'] = @$Input['PaymentGatewayResponse'];
+        $UpdataData['ModifiedDate'] = date("Y-m-d H:i:s");
+
+        /* Razorpay */
+        if ($Input['PaymentGateway'] == 'Razorpay') {
+            return TRUE; // Manage via WebHook
+        } else if ($Input['PaymentGateway'] == 'CashFree') {
+            $CURL = curl_init();
+            curl_setopt_array($CURL, array(
+                CURLOPT_URL => CASHFREE_URL . "api/v1/order/info/status",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => "appId=" . CASHFREE_APP_ID . "&secretKey=" . CASHFREE_SECRET_KEY . "&orderId=" . $Input['WalletID'],
+                CURLOPT_HTTPHEADER => array(
+                    "cache-control: no-cache",
+                    "content-type: application/x-www-form-urlencoded"
+                ),
+            ));
+            $Response = curl_exec($CURL);
+            $Error = curl_error($CURL);
+            curl_close($CURL);
+            if ($Error) {
+                echo "cURL Error CashFree #:" . $Error;
+                die;
             } else {
                 $UpdataData['PaymentGatewayResponse'] = $Response;
-                $Response = json_decode($Response,TRUE);
-                if($Response['status'] == 'OK'){
+                $Response = json_decode($Response, TRUE);
+                if ($Response['status'] == 'OK') {
                     $Input['PaymentGatewayStatus'] = ($Response['orderStatus'] == 'PAID' && $Response['txStatus'] == 'SUCCESS') ? 'Success' : 'Failed';
-                }else{
+                } else {
                     $Input['PaymentGatewayStatus'] = 'Failed';
                 }
-            } 
+            }
         }
         $UpdataData['StatusID'] = ($Input['PaymentGatewayStatus'] == 'Failed' || $Input['PaymentGatewayStatus'] == 'Cancelled') ? 3 : 5;
-        if($UpdataData['StatusID'] == 5){
+        if ($UpdataData['StatusID'] == 5) {
             $UpdataData['ClosingWalletAmount'] = @$Input['OpeningWalletAmount'] + @$Input['Amount'];
         }
-        $this->db->where('WalletID', $Input['WalletID']);
+        $this->db->where(array('WalletID' => $Input['WalletID'], 'UserID' => $UserID, 'StatusID' => 1));
+        $this->db->limit(1);
+        $this->db->update('tbl_users_wallet', $UpdataData);
+        if ($this->db->affected_rows() <= 0) {
+            return FALSE;
+        }
+
+        /* Update user main wallet amount */
+        if ($Input['PaymentGatewayStatus'] == 'Success') {
+            $this->manageSuccessTransaction($UserID, @$Input['Amount'], @$Input['CouponDetails']);
+        }
+        return $this->getWalletDetails($UserID);
+    }
+
+    /*
+      Description: To manage success transaction
+    */
+    function manageSuccessTransaction($UserID, $Amount, $CouponDetails = array())
+    {
+        /* Update User Wallet */
+        $this->db->set('WalletAmount', 'WalletAmount+' . $Amount, FALSE);
         $this->db->where('UserID', $UserID);
-        $this->db->where('StatusID', 1);
+        $this->db->limit(1);
+        $this->db->update('tbl_users');
+
+        /* Check Coupon Details */
+        if (!empty($CouponDetails)) {
+            $WalletData = array(
+                "Amount" => $CouponDetails['DiscountedAmount'],
+                "CashBonus" => $CouponDetails['DiscountedAmount'],
+                "TransactionType" => 'Cr',
+                "Narration" => 'Coupon Discount',
+                "EntryDate" => date("Y-m-d H:i:s")
+            );
+            $this->addToWallet($WalletData, $UserID, 5);
+        }
+
+        /* Manage First Deposit & Referral Bonus */
+        $TotalDeposits = $this->db->query('SELECT COUNT(EntryDate) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
+        if ($TotalDeposits == 1) { // On First Successful Transaction
+
+            /* Get Deposit Bonus Data */
+            $DepositBonusData = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "FirstDepositBonus" LIMIT 1');
+            if ($DepositBonusData->row()->StatusID == 2) {
+
+                $MinimumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MinimumFirstTimeDepositLimit" LIMIT 1');
+                $MaximumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MaximumFirstTimeDepositLimit" LIMIT 1');
+
+                if ($MinimumFirstTimeDepositLimit->row()->ConfigTypeValue <= $Amount && $MaximumFirstTimeDepositLimit->row()->ConfigTypeValue >= $Amount) {
+                    /* Update Wallet */
+                    $FirstTimeAmount = ($Amount * $DepositBonusData->row()->ConfigTypeValue) / 100;
+                    $WalletData = array(
+                        "Amount" => $FirstTimeAmount,
+                        "CashBonus" => $FirstTimeAmount,
+                        "TransactionType" => 'Cr',
+                        "Narration" => 'First Deposit Bonus',
+                        "EntryDate" => date("Y-m-d H:i:s")
+                    );
+                    $this->addToWallet($WalletData, $UserID, 5);
+                }
+            }
+
+            /* Get User Data */
+            $UserData = $this->db->query('SELECT ReferredByUserID FROM tbl_users WHERE UserID = ' . $UserID . ' LIMIT 1');
+            if ($UserData->num_rows() > 0) {
+
+                /* Get Referral To Bonus Data */
+                $ReferralToBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" LIMIT 1');
+                if ($ReferralToBonus->row()->StatusID == 2 && $ReferralToBonus->row()->ConfigTypeValue > 0) {
+
+                    /* Update Wallet */
+                    $WalletData = array(
+                        "Amount" => $ReferralToBonus->row()->ConfigTypeValue,
+                        "CashBonus" => $ReferralToBonus->row()->ConfigTypeValue,
+                        "TransactionType" => 'Cr',
+                        "Narration" => 'Referral Bonus',
+                        "EntryDate" => date("Y-m-d H:i:s")
+                    );
+                    $this->addToWallet($WalletData, $UserID, 5);
+                }
+
+                /* Get Referral By Bonus Data */
+                $ReferralByBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" LIMIT 1');
+                if ($ReferralByBonus->row()->StatusID == 2 && $ReferralByBonus->row()->ConfigTypeValue > 0) {
+
+                    /* Update Wallet */
+                    $WalletData = array(
+                        "Amount" => $ReferralByBonus->row()->ConfigTypeValue,
+                        "CashBonus" => $ReferralByBonus->row()->ConfigTypeValue,
+                        "TransactionType" => 'Cr',
+                        "Narration" => 'Referral Bonus',
+                        "EntryDate" => date("Y-m-d H:i:s")
+                    );
+                    $this->addToWallet($WalletData, $UserData['ReferredByUserID'], 5);
+                }
+            }
+        }
+    }
+
+    /*
+        Description: Use to manage razorpay webhook response
+    */
+    function razorpayWebhook($WebhookResp)
+    {
+
+        /* Decode Response */
+        $PayResponse = json_decode($WebhookResp, TRUE);
+        $PayResponse = $PayResponse['payload']['payment']['entity'];
+        $WalletID    = $PayResponse['notes']['order_id'];
+
+        /* Get Wallet Details */
+        $WalletData = $this->Users_model->getWallet('OpeningWalletAmount,Amount,TransactionID,CouponDetails,UserID', array('WalletID' => $WalletID));
+        $UserID     = $WalletData['UserID'];
+
+        /* Update wallet details */
+        $UpdataData = array_filter(array(
+            'PaymentGatewayResponse' => $WebhookResp,
+            'ModifiedDate' => date("Y-m-d H:i:s"),
+            'StatusID' => ($PayResponse['status'] == "authorized") ? 5 : 3
+        ));
+        if ($UpdataData['StatusID'] == 5) {
+            $UpdataData['ClosingWalletAmount'] = $WalletData['OpeningWalletAmount'] + $WalletData['Amount'];
+        }
+        $this->db->where(array('WalletID' => $WalletID, 'UserID' => $UserID, 'StatusID' => 1));
         $this->db->limit(1);
         $this->db->update('tbl_users_wallet', $UpdataData);
         if ($this->db->affected_rows() <= 0)
             return FALSE;
 
         /* Update user main wallet amount */
-        if ($Input['PaymentGatewayStatus'] == 'Success') {
-
-            $this->db->set('WalletAmount', 'WalletAmount+' . @$Input['Amount'], FALSE);
-            $this->db->where('UserID', $UserID);
-            $this->db->limit(1);
-            $this->db->update('tbl_users');
-
-            /* Check Coupon Details */
-            if (!empty($Input['CouponDetails'])) {
-                $WalletData = array(
-                    "Amount" => $Input['CouponDetails']['DiscountedAmount'],
-                    "CashBonus" => $Input['CouponDetails']['DiscountedAmount'],
-                    "TransactionType" => 'Cr',
-                    "Narration" => 'Coupon Discount',
-                    "EntryDate" => date("Y-m-d H:i:s")
-                );
-                $this->addToWallet($WalletData, $UserID, 5);
-            }
-
-            /* Manage First Deposit & Referral Bonus */
-            $TotalDeposits = $this->db->query('SELECT COUNT(*) TotalDeposits FROM `tbl_users_wallet` WHERE `UserID` = ' . $UserID . ' AND Narration = "Deposit Money" AND StatusID = 5')->row()->TotalDeposits;
-            if ($TotalDeposits == 1) { // On First Successful Transaction
-
-                /* Get Deposit Bonus Data */
-                $DepositBonusData = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "FirstDepositBonus" LIMIT 1');
-                if ($DepositBonusData->row()->StatusID == 2) {
-
-                    $MinimumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MinimumFirstTimeDepositLimit" LIMIT 1');
-                    $MaximumFirstTimeDepositLimit = $this->db->query('SELECT ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID = "MaximumFirstTimeDepositLimit" LIMIT 1');
-
-                    if ($MinimumFirstTimeDepositLimit->row()->ConfigTypeValue <= $Input['Amount'] && $MaximumFirstTimeDepositLimit->row()->ConfigTypeValue >= $Input['Amount']) {
-                        /* Update Wallet */
-                        $FirstTimeAmount = ($Input['Amount'] * $DepositBonusData->row()->ConfigTypeValue) / 100;
-                        $WalletData = array(
-                            "Amount" => $FirstTimeAmount,
-                            "CashBonus" => $FirstTimeAmount,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'First Deposit Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserID, 5);
-                    }
-                }
-
-                /* Get User Data */
-                $UserData = $this->getUsers('ReferredByUserID', array("UserID" => $UserID));
-                if (!empty($UserData['ReferredByUserID'])) {
-
-                    /* Get Referral To Bonus Data */
-                    $ReferralToBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferToDepositBonus" LIMIT 1');
-                    if ($ReferralToBonus->row()->StatusID == 2 && $ReferralToBonus->row()->ConfigTypeValue > 0) {
-
-                        /* Update Wallet */
-                        $WalletData = array(
-                            "Amount" => $ReferralToBonus->row()->ConfigTypeValue,
-                            "CashBonus" => $ReferralToBonus->row()->ConfigTypeValue,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'Referral Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserID, 5);
-                    }
-
-                    /* Get Referral By Bonus Data */
-                    $ReferralByBonus = $this->db->query('SELECT ConfigTypeValue,StatusID FROM set_site_config WHERE ConfigTypeGUID = "ReferByDepositBonus" LIMIT 1');
-                    if ($ReferralByBonus->row()->StatusID == 2 && $ReferralByBonus->row()->ConfigTypeValue > 0) {
-
-                        /* Update Wallet */
-                        $WalletData = array(
-                            "Amount" => $ReferralByBonus->row()->ConfigTypeValue,
-                            "CashBonus" => $ReferralByBonus->row()->ConfigTypeValue,
-                            "TransactionType" => 'Cr',
-                            "Narration" => 'Referral Bonus',
-                            "EntryDate" => date("Y-m-d H:i:s")
-                        );
-                        $this->addToWallet($WalletData, $UserData['ReferredByUserID'], 5);
-                    }
-                }
-            }
+        if ($UpdataData['StatusID'] == 5) {
+            $this->manageSuccessTransaction($UserID, $WalletData['Amount'], $WalletData['CouponDetails']);
         }
+        return TRUE;
+    }
 
-        $this->db->trans_complete();
-        if ($this->db->trans_status() === FALSE) {
+    /*
+        Description: Use to manage cashfree webhook response
+    */
+    function cashFreeWebHookResponse($WebhookResp)
+    {
+        $WalletID  = $WebhookResp['orderId'];
+
+        /* Get Wallet Details */
+        $WalletData = $this->Users_model->getWallet('OpeningWalletAmount,Amount,TransactionID,CouponDetails,UserID', array('WalletID' => $WalletID));
+        $UserID     = $WalletData['UserID'];
+
+        /* Update wallet details */
+        $UpdataData = array_filter(array(
+            'PaymentGatewayResponse' => json_encode($WebhookResp),
+            'ModifiedDate' => date("Y-m-d H:i:s"),
+            'StatusID' => ($WebhookResp['txStatus'] == "SUCCESS") ? 5 : 3
+        ));
+        if ($UpdataData['StatusID'] == 5) {
+            $UpdataData['ClosingWalletAmount'] = $WalletData['OpeningWalletAmount'] + $WalletData['Amount'];
+        }
+        $this->db->where(array('WalletID' => $WalletID, 'UserID' => $UserID, 'StatusID' => 1));
+        $this->db->limit(1);
+        $this->db->update('tbl_users_wallet', $UpdataData);
+        if ($this->db->affected_rows() <= 0)
             return FALSE;
+
+        /* Update user main wallet amount */
+        if ($UpdataData['StatusID'] == 5) {
+            $this->manageSuccessTransaction($UserID, $WalletData['Amount'], $WalletData['CouponDetails']);
         }
-        return $this->getWalletDetails($UserID);
+        return TRUE;
+    }
+
+    /*
+        Description: Use to manage paytm response (Web)
+    */
+    function paytmResponse($Data)
+    {
+        /* Require Paytm Library */
+        require_once  APPPATH.'/third_party/Paytm.php';
+        $PaytmObj = new Paytm();
+
+        /* Get User ID */
+        $UserID = $this->db->query('SELECT `UserID` FROM `tbl_users_wallet` WHERE `WalletID` = ' . $Data["ORDERID"] . ' LIMIT 1')->row()->UserID;
+        $PaymentResponse = array();
+        $PaymentResponse['WalletID'] = $Data["ORDERID"];
+        $PaymentResponse['PaymentGatewayResponse'] = json_encode($Data);
+        if ($Data["STATUS"] == "TXN_SUCCESS" && $PaytmObj->verifychecksum_e($Data, PAYTM_MERCHANT_KEY, $Data['CHECKSUMHASH']) == "TRUE") {
+
+            /* Update Transaction (Success) */
+            $PaymentResponse['PaymentGatewayStatus']   = 'Success';
+            $PaymentResponse['Amount']                 = $Data['TXNAMOUNT'];
+            $this->confirm($PaymentResponse, $UserID);
+            redirect(SITE_HOST . ROOT_FOLDER . 'myAccount?status=success');
+        }
+
+        /* Update Transaction (Failed) */
+        $PaymentResponse['PaymentGatewayStatus'] = 'Failed';
+        $this->confirm($PaymentResponse, $UserID);
+        redirect(SITE_HOST . ROOT_FOLDER . 'myAccount?status=failed');
     }
 
     /*
