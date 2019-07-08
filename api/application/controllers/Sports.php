@@ -51,7 +51,7 @@ class Sports extends API_Controller
     /*
       Description: To get matches data
      */
-    public function getMatches_post()
+    public function getMatches_post() 
     {
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|callback_validateSession');

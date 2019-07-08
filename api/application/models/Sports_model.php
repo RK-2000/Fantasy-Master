@@ -218,7 +218,7 @@ class Sports_model extends CI_Model
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         $this->db->from('tbl_entity E, sports_matches M, sports_teams TL, sports_teams TV');
-        if (array_keys_exist($Params, array('SeriesID', 'SeriesGUID', 'SeriesIDLive', 'SeriesName', 'SeriesStartDate', 'SeriesEndDate'))) {
+        if (array_keys_exist($Params, array('SeriesID', 'SeriesGUID', 'SeriesIDLive', 'SeriesName', 'SeriesStartDate', 'SeriesEndDate')) || !empty($Where['SeriesID'])) {
             $this->db->from('sports_series S');
             $this->db->where("M.SeriesID", "S.SeriesID", FALSE);
         }
