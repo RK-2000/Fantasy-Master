@@ -11,7 +11,7 @@ class Contest extends API_Controller_Secure
         $this->load->model('Contest_model');
         $this->load->model('Sports_model');
         $this->load->model('Settings_model');
-        mongoDBConnection();
+      //  mongoDBConnection();
     }
 
     /*

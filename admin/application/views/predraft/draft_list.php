@@ -11,7 +11,7 @@
 		</span>
 		<div class="float-right">
 			<!-- <button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/search.svg"></button> -->
-			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Contest</button>
+			<button class="btn btn-success btn-sm ml-1" ng-click="loadFormAdd();">Add Draft</button>
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -27,7 +27,7 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th>Contest Name</th>
+					<th>Draft Name</th>
 					<th style="width: 100px;">Type</th>
 					<th style="width: 70px;">Is Paid?</th>
 					<th style="width: 70px;">Size</th>
@@ -36,9 +36,6 @@
 					<th style="width: 70px;" class="text-center">Entry Type</th>
 					<th style="width: 70px;" class="text-center"># Winners</th>
 					<th style="width: 100px;" class="text-center">Winning Amount</th>
-					
-					<!-- <th style="width: 100px;" class="text-center">Amount Received</th>
-					<th style="width: 100px;" class="text-center">Winning Distributed</th> -->
 					<th style="width: 100px;" class="text-center">Action</th>
 					
 					
@@ -51,55 +48,50 @@
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
 				
 					<td>
-						<div class="content float-left"><strong><a href="javascript:void(0)" >{{row.ContestName}}</a></strong>
+						<div class="content float-left"><strong><a href="javascript:void(0)" >{{row.DraftName}}</a></strong>
 						
 						</div>
 					</td>
 					<td>
-						<p>{{!row.ContestType ? '-' : row.ContestType }}</p>
+						<p>{{!row.DraftType ? '-' : row.DraftType }}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.IsPaid}}</p>
 					</td>
-					<td align="center">
-						<p>{{row.ContestSize}}</p>
+					<td>
+						<p>{{row.DraftSize}}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.Privacy}}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.EntryFee}}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.EntryType}}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.NoOfWinners}}</p>
 					</td>
-					<td align="center">
+					<td>
 						<p>{{row.WinningAmount}}</p>
 					</td>
-					
-					
-					<!-- <td class="text-center">
-						<p>{{row.TotalAmountReceived}}</p>
-					</td>
-					<td class="text-center">
-						<p>{{row.TotalWinningAmount}}</p>
-					</td> -->
-
 					<td class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.PreContestID)">Edit</a>
-								<a class="dropdown-item" href="" ng-click="deleteContest(key, row.PreContestID)">Delete</a>
+								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.PredraftContestID)">Edit</a>
+								<a class="dropdown-item" href="" ng-click="deleteDraft(key, row.PredraftContestID)">Delete</a>
+								
 							</div>
 						</div>
-						<!-- <div class="dropdown" ng-if="row.Status!='Pending'">
+						<div class="dropdown" ng-if="row.Status!='Pending'">
 							<span>-</span>
-						</div> -->
-					</td>					
+						</div>
+					</td>
+					 
+
+					
 				</tr>
 			</tbody>
 		</table>
@@ -185,7 +177,7 @@
 		<div class="modal-dialog modal-md customContestModal  modal-lg" style="max-width: 900px;" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Add Pre Contest</h3>     	
+					<h3 class="modal-title h5">Add Pre Draft</h3>     	
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLAdd"></div>
