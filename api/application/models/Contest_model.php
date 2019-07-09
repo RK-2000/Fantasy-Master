@@ -563,7 +563,7 @@ class Contest_model extends CI_Model
                 'IsTeamJoined' => '(SELECT IF( EXISTS(
                                     SELECT sports_contest_join.ContestID FROM sports_contest_join
                                     WHERE sports_contest_join.UserTeamID =  UT.UserTeamID AND sports_contest_join.ContestID = ' . @$Where['TeamsContestID'] . ' LIMIT 1), "Yes", "No")) IsTeamJoined',
-                'UserTeamPlayers' => "(SELECT CONCAT('[', GROUP_CONCAT( JSON_OBJECT('MatchGUID', SM.MatchGUID, 'TeamGUID', ST.TeamGUID, 'PlayerGUID', SP.PlayerGUID, 'PlayerName', SP.PlayerName, 'PlayerCountry', SP.PlayerCountry, 'PlayerPic', IF(SP.PlayerPic IS NULL,CONCAT('" . BASE_URL . "','uploads/PlayerPic/','player.png'),CONCAT('" . BASE_URL . "','uploads/PlayerPic/',SP.PlayerPic)) PlayerPic, 'PlayerBattingStyle', SP.PlayerBattingStyle, 'PlayerBowlingStyle', SP.PlayerBowlingStyle, 'PlayerRole', STP.PlayerRole, 'PlayerSalary', STP.PlayerSalary,'TotalPoints', STP.TotalPoints, 'PlayerPosition', SUTP.PlayerPosition, 'Points', SUTP.Points,'TotalPointCredits', (SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = STP.PlayerID AND `SeriesID` = STP.SeriesID) TotalPointCredits FROM sports_matches SM, sports_teams ST, sports_players SP, sports_team_players STP, sports_users_team_players SUTP WHERE AND ST.TeamID = STP.TeamID AND SUTP.PlayerID = SP.PlayerID AND SUTP.PlayerID = STP.PlayerID AND SUTP.MatchID = STP.MatchID AND SM.MatchID = STP.MatchID AND SUTP.UserTeamID = UT.UserTeamID ORDER BY SP.PlayerName ASC) UserTeamPlayers"
+                'UserTeamPlayers' => "(SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'MatchGUID', SM.MatchGUID, 'TeamGUID', ST.TeamGUID, 'PlayerGUID', SP.PlayerGUID, 'PlayerName', SP.PlayerName, 'PlayerCountry', SP.PlayerCountry, 'PlayerPic', IF( SP.PlayerPic IS NULL, CONCAT( '" . BASE_URL . "', 'uploads/PlayerPic/', 'player.png' ), CONCAT( '" . BASE_URL . "', 'uploads/PlayerPic/', SP.PlayerPic ) ), 'PlayerBattingStyle', SP.PlayerBattingStyle, 'PlayerBowlingStyle', SP.PlayerBowlingStyle, 'PlayerRole', STP.PlayerRole, 'PlayerSalary', STP.PlayerSalary, 'TotalPoints', STP.TotalPoints, 'PlayerPosition', SUTP.PlayerPosition, 'Points', SUTP.Points, 'TotalPointCredits', ( SELECT IFNULL(SUM(`TotalPoints`), 0) FROM `sports_team_players` WHERE `PlayerID` = STP.PlayerID AND `SeriesID` = STP.SeriesID ) ) ), ']' ) FROM sports_matches SM, sports_teams ST, sports_players SP, sports_team_players STP, sports_users_team_players SUTP WHERE ST.TeamID = STP.TeamID AND SUTP.PlayerID = SP.PlayerID AND SUTP.PlayerID = STP.PlayerID AND SUTP.MatchID = STP.MatchID AND SM.MatchID = STP.MatchID AND SUTP.UserTeamID = UT.UserTeamID ORDER BY SP.PlayerName ASC) UserTeamPlayers"
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -679,7 +679,7 @@ class Contest_model extends CI_Model
                 'TeamGUID' => 'T.TeamGUID',
                 'MatchType' => 'SM.MatchTypeName as MatchType',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
-                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . $Where['UserID'] . ' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'] . ' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
                 'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ') > 0,ROUND((((SELECT COUNT(SUTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players SUTP WHERE UT.UserTeamID = SUTP.UserTeamID AND SUTP.PlayerID = P.PlayerID AND UT.MatchID = ' . $Where['MatchID'] . ')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ')),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
@@ -736,7 +736,7 @@ class Contest_model extends CI_Model
         $Query = $this->db->get();
         if ($Query->num_rows() > 0) {
             if (in_array('TopPlayer', $Params)) {
-                $BestPlayers = $this->Sports_model->getMatchBestPlayers(array('MatchID' => $Where['MatchID']));
+                $BestPlayers = $this->Sports_model->getMatchBestPlayers(array('MatchID' => $Where['MatchID'],'UserID' => (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID']));
                 if (!empty($BestPlayers)) {
                     $BestXIPlayers = array_column($BestPlayers['Data']['Records'], 'PlayerGUID');
                 }
@@ -1146,7 +1146,7 @@ class Contest_model extends CI_Model
                 }
             }
         }
-        $this->db->select('U.UserGUID,UT.UserTeamGUID,UT.UserTeamID UserTeamIDAsUse');
+        $this->db->select('U.UserGUID,UT.UserTeamGUID,UT.UserTeamID UserTeamIDAsUse,UT.MatchID MatchIDAsUse,U.UserID UserIDAsUse');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
         $this->db->from('sports_contest_join JC, tbl_users U, sports_users_teams UT');
@@ -1187,10 +1187,10 @@ class Contest_model extends CI_Model
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Records[$key]['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
-                    unset($Records[$key]['UserTeamIDAsUse']);
+                    unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['MatchIDAsUse'],$Records[$key]['UserIDAsUse']);
                 }
                 $Return['Data']['Records'] = $Records;
                 return $Return;
@@ -1198,10 +1198,10 @@ class Contest_model extends CI_Model
                 $Record = $Query->row_array();
                 if (in_array('UserTeamPlayers', $Params)) {
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Record['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
-                    unset($Record['UserTeamIDAsUse']);
+                    unset($Record['UserTeamIDAsUse'],$Record['MatchIDAsUse'],$Record['UserIDAsUse']);
                 }
                 return $Record;
             }
