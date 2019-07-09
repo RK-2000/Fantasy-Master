@@ -16,6 +16,7 @@ class Sports extends API_Controller
     */
     public function getSeries_post()
     {
+        $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
@@ -23,9 +24,9 @@ class Sports extends API_Controller
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Matches Data */
-        $SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID)),(!empty($this->SeriesID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($SeriesData)) {
-            $this->Return['Data'] = $SeriesData['Data'];
+            $this->Return['Data'] = (!empty($this->SeriesID)) ? $SeriesData :  $SeriesData['Data'];
         }
     }
 
@@ -42,9 +43,9 @@ class Sports extends API_Controller
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
-        $TeamsData = $this->Sports_model->getTeams(@$this->Post['Params'], array_merge($this->Post, array('TeamID' => @$this->TeamID, 'SeriesID' => @$this->SeriesID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $TeamsData = $this->Sports_model->getTeams(@$this->Post['Params'], array_merge($this->Post, array('TeamID' => @$this->TeamID, 'SeriesID' => @$this->SeriesID)), (!empty($this->TeamID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($TeamsData)) {
-            $this->Return['Data'] = $TeamsData['Data'];
+            $this->Return['Data'] = (!empty($this->TeamID)) ? $TeamsData : $TeamsData['Data'];
         }
     }
 
@@ -64,9 +65,9 @@ class Sports extends API_Controller
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Matches Data */
-        $MatchesData = $this->Sports_model->getMatches(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID, 'MatchID' => @$this->MatchID, 'StatusID' => @$this->StatusID, 'SessionUserID' => @$this->SessionUserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $MatchesData = $this->Sports_model->getMatches(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID, 'MatchID' => @$this->MatchID, 'StatusID' => @$this->StatusID, 'SessionUserID' => @$this->SessionUserID)), (!empty($this->MatchID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($MatchesData)) {
-            $this->Return['Data'] = $MatchesData['Data'];
+            $this->Return['Data'] = (!empty($this->MatchID)) ? $MatchesData : $MatchesData['Data'];
         }
     }
 
@@ -87,9 +88,9 @@ class Sports extends API_Controller
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Players Data */
-        $PlayersData = $this->Sports_model->getPlayers(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID, 'TeamID' => @$this->TeamID, 'MatchID' => @$this->MatchID,'PlayerID' => @$this->PlayerID, 'SessionUserID' => @$this->SessionUserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $PlayersData = $this->Sports_model->getPlayers(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID, 'TeamID' => @$this->TeamID, 'MatchID' => @$this->MatchID,'PlayerID' => @$this->PlayerID, 'SessionUserID' => @$this->SessionUserID)), (!empty($this->PlayerID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($PlayersData)) {
-            $this->Return['Data'] = $PlayersData['Data'];
+            $this->Return['Data'] = (!empty($this->PlayerID)) ? $PlayersData : $PlayersData['Data'];
         }
     }
 

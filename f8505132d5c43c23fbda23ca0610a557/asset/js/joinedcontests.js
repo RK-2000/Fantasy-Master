@@ -46,7 +46,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + 'user/winners_list_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getContest', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=CustomWinnings', contentType).then(function(response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=CustomWinnings', contentType).then(function(response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;

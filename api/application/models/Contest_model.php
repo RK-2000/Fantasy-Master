@@ -348,7 +348,7 @@ class Contest_model extends CI_Model
             $this->db->where_in("E.StatusID", ($Where['StatusID'] == 10) ? 2 : $Where['StatusID']);
         }
         if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes") {
-            $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID=' . @$Where['SessionUserID'] . ' LIMIT 1)');
+            $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID="' . @$Where['SessionUserID'] . '" LIMIT 1)');
         }
         if (!empty($Where['UserInvitationCode'])) {
             $this->db->where("C.UserInvitationCode", $Where['UserInvitationCode']);
@@ -459,7 +459,7 @@ class Contest_model extends CI_Model
         /* Get Players */
         $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_' . $MatchID);
         if (empty($PlayersIdsData)) {
-            $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 50'); // Max 50 Players
+            $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100'); // Max 100 Players
             if ($PlayersData->num_rows() > 0) {
                 $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
                 $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours
@@ -491,7 +491,6 @@ class Contest_model extends CI_Model
      */
     function editUserTeam($Input = array(), $UserTeamID, $MatchID)
     {
-
         $this->db->trans_start();
 
         /* Delete User Team Players */
@@ -505,7 +504,7 @@ class Contest_model extends CI_Model
             /* Get Players */
             $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_' . $MatchID);
             if (empty($PlayersIdsData)) {
-                $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 50'); // Max 50 Players
+                $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100'); // Max 100 Players
                 if ($PlayersData->num_rows() > 0) {
                     $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
                     $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours

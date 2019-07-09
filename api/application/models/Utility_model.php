@@ -749,6 +749,7 @@ class Utility_model extends CI_Model
 
             $MatchID = $Value['MatchID'];
             $SeriesID = $Value['SeriesID'];
+            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
             $Response = $this->callSportsAPI(SPORTS_API_URL_ENTITY . '/v2/competitions/' . $Value['SeriesIDLive'] . '/squads/' . $Value['MatchIDLive'] . '?token=');
             if (empty($Response['response']['squads']))
                 continue;
@@ -933,6 +934,7 @@ class Utility_model extends CI_Model
                     if (!$IsNewTeam && !empty($MatchIds)) {
                         $TeamPlayersData = array();
                         foreach ($MatchIds as $MatchID) {
+                            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
                             $Query = $this->db->query('SELECT MatchID FROM sports_team_players WHERE PlayerID = ' . $PlayerID . ' AND SeriesID = ' . $Value['SeriesID'] . ' AND TeamID = ' . $TeamID . ' AND MatchID =' . $MatchID . ' LIMIT 1');
                             $IsMatchID = ($Query->num_rows() > 0) ? $Query->row()->MatchID : false;
                             if (!$IsMatchID) {

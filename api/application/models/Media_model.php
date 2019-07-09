@@ -226,8 +226,9 @@ class Media_model extends CI_Model
 	*/
 	function deleteMedia($MediaID)
 	{
+		/* Delete Media */
+		$this->db->limit(1);
 		$this->db->where(array("MediaID" => $MediaID));
 		$this->db->delete('tbl_media');
-		$this->db->limit(1);
 	}
 }
