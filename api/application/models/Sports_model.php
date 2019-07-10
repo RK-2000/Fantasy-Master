@@ -327,11 +327,11 @@ class Sports_model extends CI_Model
             if (!empty($Where['MyJoinedMatchesCount']) && $Where['MyJoinedMatchesCount'] == 'Yes') {
                 $Return['Data']['Statics'] = $this->db->query(
                     'SELECT (
-                            SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 1 AND J.UserID ="' . @$Where['UserID'] . '" 
+                            SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 1 AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                         ) UpcomingJoinedContest,
-                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID IN (2,10) AND J.UserID ="' . @$Where['UserID'] . '" 
+                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID IN (2,10) AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                         ) LiveJoinedContest,
-                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 5 AND J.UserID ="' . @$Where['UserID'] . '" 
+                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 5 AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                     ) CompletedJoinedContest'
                 )->row();
             }
@@ -681,7 +681,7 @@ class Sports_model extends CI_Model
     function getMatchBestPlayers($Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
     {
         /* Get Match Players */
-        $PlayersData = $this->Sports_model->getPlayers('PlayerID,PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent,TopPlayer', array('MatchID' => $Where['MatchID'], 'UserID' => (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
+        $PlayersData = $this->Sports_model->getPlayers('PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent', array('MatchID' => $Where['MatchID'], 'UserID' => (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
         if (!$PlayersData) {
             return false;
         }

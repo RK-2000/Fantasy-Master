@@ -641,7 +641,7 @@ class Contest extends API_Controller_Secure
      */
     public function validateMatchDateTime($MatchGUID, $Module)
     {
-        $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime);
+        $MatchStartDateTime = $this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime;
         $MatchStartDateTime = strtotime($MatchStartDateTime)  - ($this->Settings_model->getSiteSettings("MatchLiveTime") * 60); // convert into seconds
         if ($Module == 'Contest' && strtotime(date('Y-m-d H:i:s')) >= $MatchStartDateTime) {
             $this->form_validation->set_message('validateMatchDateTime', 'You can create contest only for upcoming matches.');
