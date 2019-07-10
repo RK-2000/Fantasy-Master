@@ -397,6 +397,7 @@ class Contest_model extends CI_Model
                     if (in_array('UserTeamDetails', $Params)) {
                         $Records[$key]['UserTeamDetails'] = (!empty($Record['UserTeamDetails'])) ? json_decode($Record['UserTeamDetails'], true) : array();
                     }
+                    unset($Records[$key]['ContestIDAsUse']);
                 }
                 $Return['Data']['Records'] = $Records;
             } else {
@@ -416,6 +417,7 @@ class Contest_model extends CI_Model
                 if (in_array('Statics', $Params)) {
                     $Record['Statics'] = $this->contestStatics(@$Where['SessionUserID'], $Where['MatchID']);
                 }
+                unset($Record['ContestIDAsUse']);
                 return $Record;
             }
         } else {
@@ -967,6 +969,7 @@ class Contest_model extends CI_Model
                 'EntryDate' => 'JC.EntryDate',
                 'TotalPoints' => 'JC.TotalPoints',
                 'UserWinningAmount' => 'JC.UserWinningAmount',
+                'TaxAmount' => 'JC.TaxAmount',
                 'SeriesID' => 'M.SeriesID',
                 'TeamNameLocal' => 'TL.TeamName AS TeamNameLocal',
                 'TeamNameVisitor' => 'TV.TeamName AS TeamNameVisitor',
@@ -1126,6 +1129,7 @@ class Contest_model extends CI_Model
             $FieldArray = array(
                 'TotalPoints' => 'JC.TotalPoints',
                 'UserWinningAmount' => 'JC.UserWinningAmount',
+                'TaxAmount' => 'JC.TaxAmount',
                 'FirstName' => 'U.FirstName',
                 'MiddleName' => 'U.MiddleName',
                 'LastName' => 'U.LastName',
@@ -1214,10 +1218,9 @@ class Contest_model extends CI_Model
      */
     function getJoinedContestsUsersMongoDB($Where = array(), $PageNo = 1, $PageSize = 15)
     {
-
         /* Get Joined Contest Users */
         $ContestCollection   = $this->fantasydb->{'Contest_' . $Where['ContestID']};
-        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => $PageSize, 'sort' => ['UserRank' => 1]]));
+        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => $PageSize, 'sort' => ['UserRank' => 1]]));
         if (count($JoinedContestsUsers) > 0) {
             $Return['Data']['TotalRecords'] = $ContestCollection->count();
             $Return['Data']['Records'] = $JoinedContestsUsers;
@@ -1231,7 +1234,6 @@ class Contest_model extends CI_Model
      */
     function inviteContest($Input = array(), $SessionUserID)
     {
-
         /* Invite Users */
         if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
 
@@ -1278,6 +1280,7 @@ class Contest_model extends CI_Model
             $Field = '';
             $FieldArray = array(
                 'UserWinningAmount' => 'JC.UserWinningAmount',
+                'TaxAmount' => 'JC.TaxAmount',
                 'TotalPoints' => 'JC.TotalPoints',
                 'EntryFee' => 'C.EntryFee',
                 'ContestSize' => 'C.ContestSize',

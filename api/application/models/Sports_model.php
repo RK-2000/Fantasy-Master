@@ -1531,10 +1531,17 @@ class Sports_model extends CI_Model
                 if (!empty($OptionWinner)) {
                     foreach ($OptionWinner as $WinnerValue) {
 
+                        /* Apply Tax (31.2%) */
+                        $TaxAmount = 0;
+                        if ($WinnerValue['UserWinningAmount'] >= 10000) {
+                           $TaxAmount = ($WinnerValue['UserWinningAmount'] * 31.2) / 100;
+                           $WinnerValue['UserWinningAmount'] = $WinnerValue['UserWinningAmount'] - $TaxAmount;
+                        }
+
                         /* Update User Winning Amount (MongoDB) */
                         $ContestCollection->updateOne(
                             ['_id'    => $Value['ContestID'] . $WinnerValue['UserID'] . $WinnerValue['UserTeamID']],
-                            ['$set'   => ['UserWinningAmount' => round($WinnerValue['UserWinningAmount'], 2), 'IsWinningAssigned' => 'Yes']],
+                            ['$set'   => ['UserWinningAmount' => round($WinnerValue['UserWinningAmount'], 2),'TaxAmount' => $TaxAmount, 'IsWinningAssigned' => 'Yes']],
                             ['upsert' => false]
                         );
                     }
@@ -1555,7 +1562,7 @@ class Sports_model extends CI_Model
 
                 /* Get Joined Contests */
                 $ContestCollection   = $this->fantasydb->{'Contest_' . $Value['ContestID']};
-                $JoinedContestsUsers = $ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"], ['projection' => ['ContestID' => 1, 'UserID' => 1, 'UserTeamID' => 1, 'UserTeamPlayers' => 1, 'TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1]]);
+                $JoinedContestsUsers = $ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"], ['projection' => ['ContestID' => 1, 'UserID' => 1, 'UserTeamID' => 1, 'UserTeamPlayers' => 1, 'TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1]]);
                 if ($ContestCollection->count(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"]) == 0) {
 
                     /* Update Contest Winning Assigned Status */
@@ -1578,7 +1585,7 @@ class Sports_model extends CI_Model
                     /* Update MySQL Row */
                     $this->db->where(array('UserID' => $JC['UserID'], 'ContestID' => $JC['ContestID'], 'UserTeamID' => $JC['UserTeamID']));
                     $this->db->limit(1);
-                    $this->db->update('sports_contest_join', array('TotalPoints' => $JC['TotalPoints'], 'UserRank' => $JC['UserRank'], 'UserWinningAmount' => $JC['UserWinningAmount'], 'IsWinningAssigned' => 'Yes', 'ModifiedDate' => date('Y-m-d H:i:s')));
+                    $this->db->update('sports_contest_join', array('TotalPoints' => $JC['TotalPoints'], 'UserRank' => $JC['UserRank'], 'UserWinningAmount' => $JC['UserWinningAmount'], 'TaxAmount' => $JC['TaxAmount'], 'IsWinningAssigned' => 'Yes', 'ModifiedDate' => date('Y-m-d H:i:s')));
 
                     /* Update MongoDB Row */
                     $ContestCollection->updateOne(

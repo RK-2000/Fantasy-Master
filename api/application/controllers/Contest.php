@@ -85,7 +85,7 @@ class Contest extends API_Controller_Secure
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
             $this->Return['Message'] = "Contest created successfully.";
-            $this->Return['Data']['ContestGUID'] = $this->Contest_model->getContests('CustomizeWinning,MatchScoreDetails,UserID,ContestFormat,ContestType,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,UserInvitationCode', array('ContestID' => $ContestID));
+            $this->Return['Data']['ContestGUID'] = $this->Contest_model->getContests('CustomizeWinning,MatchScoreDetails,ContestFormat,ContestType,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,UserInvitationCode', array('ContestID' => $ContestID));
         }
     }
 
