@@ -280,7 +280,7 @@ class Contest extends API_Controller_Secure
     public function getUserTeams_post()
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]' . ($this->SessionUserID != $this->UserID ? '|callback_validateMatchDateTime[UserTeams]' : ''));
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]|callback_validateMatchDateTime[UserTeams]');
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->set_rules('UserTeamGUID', 'UserTeamGUID', 'trim|callback_validateEntityGUID[User Teams,UserTeamID]');
         $this->form_validation->set_rules('UserTeamType', 'UserTeamType', 'trim|required|in_list[Normal,InPlay,All]');
@@ -646,7 +646,7 @@ class Contest extends API_Controller_Secure
         if ($Module == 'Contest' && strtotime(date('Y-m-d H:i:s')) >= $MatchStartDateTime) {
             $this->form_validation->set_message('validateMatchDateTime', 'You can create contest only for upcoming matches.');
             return FALSE;
-        }else if ($Module == 'UserTeams' && $MatchStartDateTime > strtotime(date('Y-m-d H:i:s'))) {
+        }else if ($Module == 'UserTeams' && $this->SessionUserID != $this->UserID && $MatchStartDateTime > strtotime(date('Y-m-d H:i:s'))) {
             $this->form_validation->set_message('validateMatchDateTime', 'Please wait, Match has not started yet.');
             return FALSE;
         }
