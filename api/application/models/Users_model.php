@@ -206,6 +206,7 @@ class Users_model extends CI_Model
                 $UpdateArray['PhoneNumberForChange'] = $UpdateArray['PhoneNumber'];
 
                 /* Send change phonenumber SMS to User with Token. */
+                $this->load->model('Recovery_model');
                 $this->Utility_model->sendMobileSMS(array(
                     'PhoneNumber' => $UpdateArray['PhoneNumberForChange'],
                     'Text' => $this->Recovery_model->generateToken($UserID, 3)
@@ -636,6 +637,7 @@ class Users_model extends CI_Model
         }
 
         $Query = $this->db->get();
+       
         if ($Query->num_rows() > 0) {
             foreach ($Query->result_array() as $Record) {
 

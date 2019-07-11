@@ -26,7 +26,7 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th>Picture</th>
+					<th>Banner</th>
 					<th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>

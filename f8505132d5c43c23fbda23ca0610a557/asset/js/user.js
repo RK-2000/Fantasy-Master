@@ -1,6 +1,6 @@
 app.controller('PageController', function($scope, $http, $timeout) {
 
-    var FromDate = ToDate = '';
+    var FromDate = ToDate = ''; 
     /*list*/
     $scope.applyFilter = function() {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
@@ -57,7 +57,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
 
     }
 
-    /*list append*/
+    /*list append*/ 
     $scope.getList = function() {
 
         if(getQueryStringValue('Type')){
