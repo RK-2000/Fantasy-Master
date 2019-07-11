@@ -140,7 +140,7 @@ class Upload extends API_Controller_Secure
 	public function delete_post()
 	{
 		/* Validation section */
-		$this->form_validation->set_rules('MediaGUID', 'MediaGUID', 'trim|required|callback_validateEntityGUID[Media,MediaID]');
+		$this->form_validation->set_rules('MediaGUID', 'MediaGUID', 'trim|required|callback_validateMediaGUID');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
@@ -152,19 +152,18 @@ class Upload extends API_Controller_Secure
 			return FALSE;
 		}
 
-		$SectionThumbSize = explode(',', $MediaData['SectionThumbSize']);
 		/*delete primary image*/
 		@unlink($MediaData['SectionFolderPath'] . $MediaData['MediaName']);
 
 		/*delete other images*/
-		foreach ($SectionThumbSize as $Value) {
+		foreach (explode(',', $MediaData['SectionThumbSize']) as $Value) {
 			@unlink($MediaData['SectionFolderPath'] . $Value . "_" . $MediaData['MediaName']);
 		}
 
 		/* Delete Media */
 		$this->Media_model->deleteMedia($this->MediaID);
 
-		/* Delete Media Caching */
+		/* Delete Banner Caching */
 		if($MediaData['SectionID'] == 'Banner'){
 			$this->cache->memcached->delete('Banners');
 		}

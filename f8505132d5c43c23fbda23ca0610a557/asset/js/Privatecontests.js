@@ -79,7 +79,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             }
         }); 
 
-        $http.post(API_URL + 'contest/getContest', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined', contentType).then(function (response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined', contentType).then(function (response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
@@ -102,7 +102,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + 'contests/updateStatus_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getContest', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=ContestName,ContestType,Status,StatusID', contentType).then(function (response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=ContestName,ContestType,Status,StatusID', contentType).then(function (response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;

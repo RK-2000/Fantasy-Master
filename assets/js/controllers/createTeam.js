@@ -33,7 +33,7 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
                     $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,TeamGUIDLocal,TeamGUIDVisitor,MatchLocation,SeriesGUID,Status';
                     $data.Status = 'Pending';
                     appDB
-                            .callPostForm('sports/getMatch', $data)
+                            .callPostForm('sports/getMatches', $data)
                             .then(
                                     function successCallback(data) {
                                         if (data.ResponseCode == 200) {
@@ -1367,7 +1367,7 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
                 $data.Params = 'Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,IsJoined,Status,ContestFormat,ContestType,CustomizeWinning,TotalJoined,UserInvitationCode,SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,MatchScoreDetails,ShowJoinedContest';
                 
                 appDB
-                    .callPostForm('contest/getContest', $data)
+                    .callPostForm('contest/getContests', $data)
                     .then(
                         function successCallback(data) {
                             if ($scope.checkResponseCode(data)) {

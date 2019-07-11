@@ -50,7 +50,7 @@ class Matches extends API_Controller_Secure
         /* Validation - ends */
 
         /* Update Match Details */
-        $this->Entity_model->updateMatchDetails($this->MatchID, $this->Post);
+        $this->Sports_model->updateMatchDetails($this->MatchID, $this->Post);
 
         /* Update Match Status */
         $this->Entity_model->updateEntityInfo($this->MatchID, array("StatusID" => $this->StatusID));

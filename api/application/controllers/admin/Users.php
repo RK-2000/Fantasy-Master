@@ -206,8 +206,7 @@ print_r($this->Post['Params']);die;
       Name: 		getWallet
       Description: 	To get wallet data
       URL: 			/admin/users/getWallet/
-     */
-
+    */
     public function getWallet_post()
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');

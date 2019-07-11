@@ -327,11 +327,11 @@ class Sports_model extends CI_Model
             if (!empty($Where['MyJoinedMatchesCount']) && $Where['MyJoinedMatchesCount'] == 'Yes') {
                 $Return['Data']['Statics'] = $this->db->query(
                     'SELECT (
-                            SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 1 AND J.UserID ="' . @$Where['UserID'] . '" 
+                            SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 1 AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                         ) UpcomingJoinedContest,
-                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID IN (2,10) AND J.UserID ="' . @$Where['UserID'] . '" 
+                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID IN (2,10) AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                         ) LiveJoinedContest,
-                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 5 AND J.UserID ="' . @$Where['UserID'] . '" 
+                        ( SELECT COUNT(DISTINCT J.MatchID) FROM `sports_contest_join` J,`tbl_entity` E  WHERE J.MatchID = E.EntityID AND E.StatusID = 5 AND J.UserID ="' . @$Where['SessionUserID'] . '" 
                     ) CompletedJoinedContest'
                 )->row();
             }
@@ -512,7 +512,7 @@ class Sports_model extends CI_Model
                 'MatchTypeID' => 'SSM.MatchTypeID',
                 'MatchType' => 'SSM.MatchTypeName MatchType',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
-                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . $Where['SessionUserID'] . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'] . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
                 'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ') > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = ' . $Where['MatchID'] . ')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ')),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
@@ -541,7 +541,7 @@ class Sports_model extends CI_Model
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();
             $this->db->like("P.PlayerName", $Where['Keyword']);
-            $this->db->or_like("P.PlayerRole", $Where['Keyword']);
+            $this->db->or_like("TP.PlayerRole", $Where['Keyword']);
             $this->db->or_like("P.PlayerCountry", $Where['Keyword']);
             $this->db->or_like("P.PlayerBattingStyle", $Where['Keyword']);
             $this->db->or_like("P.PlayerBowlingStyle", $Where['Keyword']);
@@ -612,7 +612,7 @@ class Sports_model extends CI_Model
         }
         if ($Query->num_rows() > 0) {
             if (in_array('TopPlayer', $Params)) {
-                $BestPlayers = $this->getMatchBestPlayers(array('MatchID' => $Where['MatchID']));
+                $BestPlayers = $this->getMatchBestPlayers(array('MatchID' => $Where['MatchID'],'UserID' => (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID']));
                 if (!empty($BestPlayers)) {
                     $BestXIPlayers = array_column($BestPlayers['Data']['Records'], 'PlayerGUID');
                 }
@@ -680,9 +680,8 @@ class Sports_model extends CI_Model
     */
     function getMatchBestPlayers($Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
     {
-
         /* Get Match Players */
-        $PlayersData = $this->Sports_model->getPlayers('PlayerID,PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent,TopPlayer', array('MatchID' => $Where['MatchID'], 'UserID' => $Where['SessionUserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
+        $PlayersData = $this->Sports_model->getPlayers('PlayerRole,PointsData,PlayerPic,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,IsPlaying,PlayerSalary,TeamNameShort,PlayerPosition,TotalPoints,TotalPointCredits,MyTeamPlayer,PlayerSelectedPercent', array('MatchID' => $Where['MatchID'], 'UserID' => (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'], 'OrderBy' => 'TotalPoints', 'Sequence' => 'DESC', 'IsPlaying' => 'Yes'), TRUE, 0);
         if (!$PlayersData) {
             return false;
         }
@@ -861,6 +860,10 @@ class Sports_model extends CI_Model
                     'PointsODI' . $PointsCategory => $Input['PointsODI'][$i]
                 );
             }
+
+            /* Clear Cache */
+            $this->cache->memcached->delete('CricketPoints');
+            
             /* Update points details to sports_setting_points table. */
             $this->db->update_batch('sports_setting_points', $updateArray, 'PointsTypeGUID');
         }
@@ -1180,13 +1183,17 @@ class Sports_model extends CI_Model
         if (!empty($LiveMatches)) {
 
             /* Get Points Data */
-            $PointsDataArr             = $this->getPoints(array("StatusID" => 1));
-            $StatringXIArr             = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'StatringXI');
-            $CaptainPointMPArr         = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'CaptainPointMP');
-            $ViceCaptainPointMPArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'ViceCaptainPointMP');
-            $BattingMinimumRunsArr     = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'BattingMinimumRuns');
-            $MinimumRunScoreStrikeRate = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumRunScoreStrikeRate');
-            $MinimumOverEconomyRate    = $this->findSubArray($PointsDataArr['Data']['Records'], 'PointsTypeGUID', 'MinimumOverEconomyRate');
+            $PointsDataArr = $this->cache->memcached->get('CricketPoints');
+            if(empty($PointsDataArr)){
+                $PointsDataArr   = $this->getPoints(array("StatusID" => 1))['Data']['Records'];
+                $this->cache->memcached->save('CricketPoints', $PointsDataArr, 3600 * 12); // Expire in every 12 hours
+            }
+            $StatringXIArr             = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'StatringXI');
+            $CaptainPointMPArr         = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'CaptainPointMP');
+            $ViceCaptainPointMPArr     = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'ViceCaptainPointMP');
+            $BattingMinimumRunsArr     = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'BattingMinimumRuns');
+            $MinimumRunScoreStrikeRate = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'MinimumRunScoreStrikeRate');
+            $MinimumOverEconomyRate    = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'MinimumOverEconomyRate');
             $MatchTypes = array('ODI' => 'PointsODI', 'List A' => 'PointsODI', 'T20' => 'PointsT20', 'T20I' => 'PointsT20', 'Test' => 'PointsTEST', 'Woman ODI' => 'PointsODI', 'Woman T20' => 'PointsT20');
 
             /* Sorting Keys */
@@ -1268,7 +1275,7 @@ class Sports_model extends CI_Model
 
                     /* To Check Player Is Played Or Not */
                     if (in_array($PlayerValue['PlayerIDLive'], $AllPlayersLiveIds) && !empty($ScoreData)) {
-                        foreach ($PointsDataArr['Data']['Records'] as $PointValue) {
+                        foreach ($PointsDataArr as $PointValue) {
                             if (IS_VICECAPTAIN) {
                                 if (in_array($PointValue['PointsTypeGUID'], array('BattingMinimumRuns', 'CaptainPointMP', 'StatringXI', 'ViceCaptainPointMP')))
                                     continue;
@@ -1308,7 +1315,7 @@ class Sports_model extends CI_Model
                         }
                     } else {
                         $PointsData['SB'] = array('PointsTypeGUID' => 'StatringXI', 'PointsTypeShortDescription' => 'SB', 'DefinedPoints' => $StatringXIPoints, 'ScoreValue' => "1", 'CalculatedPoints' => $StatringXIPoints);
-                        foreach ($PointsDataArr['Data']['Records'] as $PointValue) {
+                        foreach ($PointsDataArr as $PointValue) {
                             if (IS_VICECAPTAIN) {
                                 if (in_array($PointValue['PointsTypeGUID'], array('BattingMinimumRuns', 'CaptainPointMP', 'StatringXI', 'ViceCaptainPointMP')))
                                     continue;
@@ -1372,7 +1379,6 @@ class Sports_model extends CI_Model
     */
     function getJoinedContestPlayerPointsCricket($CronID, $StatusArr = array(2), $MatchID = "")
     {
-
         ini_set('memory_limit', '512M');
 
         /* Get Live Contests */
@@ -1525,10 +1531,17 @@ class Sports_model extends CI_Model
                 if (!empty($OptionWinner)) {
                     foreach ($OptionWinner as $WinnerValue) {
 
+                        /* Apply Tax (31.2%) */
+                        $TaxAmount = 0;
+                        if ($WinnerValue['UserWinningAmount'] >= 10000) {
+                           $TaxAmount = ($WinnerValue['UserWinningAmount'] * 31.2) / 100;
+                           $WinnerValue['UserWinningAmount'] = $WinnerValue['UserWinningAmount'] - $TaxAmount;
+                        }
+
                         /* Update User Winning Amount (MongoDB) */
                         $ContestCollection->updateOne(
                             ['_id'    => $Value['ContestID'] . $WinnerValue['UserID'] . $WinnerValue['UserTeamID']],
-                            ['$set'   => ['UserWinningAmount' => round($WinnerValue['UserWinningAmount'], 2), 'IsWinningAssigned' => 'Yes']],
+                            ['$set'   => ['UserWinningAmount' => round($WinnerValue['UserWinningAmount'], 2),'TaxAmount' => $TaxAmount, 'IsWinningAssigned' => 'Yes']],
                             ['upsert' => false]
                         );
                     }
@@ -1549,7 +1562,7 @@ class Sports_model extends CI_Model
 
                 /* Get Joined Contests */
                 $ContestCollection   = $this->fantasydb->{'Contest_' . $Value['ContestID']};
-                $JoinedContestsUsers = $ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"], ['projection' => ['ContestID' => 1, 'UserID' => 1, 'UserTeamID' => 1, 'UserTeamPlayers' => 1, 'TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1]]);
+                $JoinedContestsUsers = $ContestCollection->find(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"], ['projection' => ['ContestID' => 1, 'UserID' => 1, 'UserTeamID' => 1, 'UserTeamPlayers' => 1, 'TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1]]);
                 if ($ContestCollection->count(["ContestID" => $Value['ContestID'], "IsWinningAssigned" => "Yes"]) == 0) {
 
                     /* Update Contest Winning Assigned Status */
@@ -1572,7 +1585,7 @@ class Sports_model extends CI_Model
                     /* Update MySQL Row */
                     $this->db->where(array('UserID' => $JC['UserID'], 'ContestID' => $JC['ContestID'], 'UserTeamID' => $JC['UserTeamID']));
                     $this->db->limit(1);
-                    $this->db->update('sports_contest_join', array('TotalPoints' => $JC['TotalPoints'], 'UserRank' => $JC['UserRank'], 'UserWinningAmount' => $JC['UserWinningAmount'], 'IsWinningAssigned' => 'Yes', 'ModifiedDate' => date('Y-m-d H:i:s')));
+                    $this->db->update('sports_contest_join', array('TotalPoints' => $JC['TotalPoints'], 'UserRank' => $JC['UserRank'], 'UserWinningAmount' => $JC['UserWinningAmount'], 'TaxAmount' => $JC['TaxAmount'], 'IsWinningAssigned' => 'Yes', 'ModifiedDate' => date('Y-m-d H:i:s')));
 
                     /* Update MongoDB Row */
                     $ContestCollection->updateOne(

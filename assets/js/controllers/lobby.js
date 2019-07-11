@@ -267,7 +267,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 $data.MatchGUID = $scope.MatchGUID; //Match GUID
                 $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,TeamGUIDVisitor,TeamGUIDLocal';
                 appDB
-                        .callPostForm('sports/getMatch', $data)
+                        .callPostForm('sports/getMatches', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {

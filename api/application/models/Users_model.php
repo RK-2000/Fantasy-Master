@@ -536,7 +536,6 @@ class Users_model extends CI_Model
         if (array_keys_exist($Params, array('CountryName'))) {
             $this->db->join('set_location_country CO', 'U.CountryCode = CO.CountryCode', 'left');
         }
-
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();

@@ -376,7 +376,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $data.Keyword = $scope.Keyword;
 
                 appDB
-                        .callPostForm('contest/getContest', $data)
+                        .callPostForm('contest/getContests', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {

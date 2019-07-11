@@ -253,8 +253,6 @@ class Utility_model extends CI_Model
         ));
 
         $response = curl_exec($curl);
-        // print_r($response);exit();
-
         $err = curl_error($curl);
         curl_close($curl);
         if ($err) {
@@ -749,6 +747,7 @@ class Utility_model extends CI_Model
 
             $MatchID = $Value['MatchID'];
             $SeriesID = $Value['SeriesID'];
+            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
             $Response = $this->callSportsAPI(SPORTS_API_URL_ENTITY . '/v2/competitions/' . $Value['SeriesIDLive'] . '/squads/' . $Value['MatchIDLive'] . '?token=');
             if (empty($Response['response']['squads']))
                 continue;
@@ -933,6 +932,7 @@ class Utility_model extends CI_Model
                     if (!$IsNewTeam && !empty($MatchIds)) {
                         $TeamPlayersData = array();
                         foreach ($MatchIds as $MatchID) {
+                            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
                             $Query = $this->db->query('SELECT MatchID FROM sports_team_players WHERE PlayerID = ' . $PlayerID . ' AND SeriesID = ' . $Value['SeriesID'] . ' AND TeamID = ' . $TeamID . ' AND MatchID =' . $MatchID . ' LIMIT 1');
                             $IsMatchID = ($Query->num_rows() > 0) ? $Query->row()->MatchID : false;
                             if (!$IsMatchID) {
@@ -971,7 +971,7 @@ class Utility_model extends CI_Model
                $Response = $this->callSportsAPI(SPORTS_API_URL_CRICKETAPI . '/rest/v3/fantasy-match-credits/' . $Value['MatchIDLive'] . '/?access_token=');
                if (!empty($Response['data']['fantasy_points'])) {
                    foreach ($Response['data']['fantasy_points'] as $PlayerValue) {
-                       $this->db->update('sports_team_players', array('PlayerSalary' => $PlayerValue['credit_value']), array('MatchID' => $Value['MatchID'],'PlayerID' => $PlayersData[$PlayerValue['player']]));
+                       $this->db->update('sports_team_players', array('PlayerSalary' => $PlayerValue['credit_value']), array('IsAdminUpdate' => 'No', 'MatchID' => $Value['MatchID'],'PlayerID' => $PlayersData[$PlayerValue['player']]));
                    }
                }
            }
@@ -1447,7 +1447,7 @@ class Utility_model extends CI_Model
     function getMatchScoreLive_Cricket_CricketApi($CronID)
     {
         /* Get Live Matches Data */
-        $LiveMatches = $this->getMatches('MatchIDLive,MatchID,MatchStartDateTime,Status,IsPlayingXINotificationSent,TeamNameShortLocal,TeamNameShortVisitor', array('Filter'=> 'Yesterday','StatusID' => array(1,2,10),'SportsType' => 'Cricket'), true, 1, 10);
+        $LiveMatches = $this->Sports_model->getMatches('MatchIDLive,MatchID,MatchStartDateTime,Status,IsPlayingXINotificationSent,TeamNameShortLocal,TeamNameShortVisitor', array('Filter'=> 'Yesterday','StatusID' => array(1,2,10),'SportsType' => 'Cricket'), true, 1, 10);
         if (!$LiveMatches) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
@@ -1627,9 +1627,9 @@ class Utility_model extends CI_Model
                 if (strtolower($MatchStatusOverView) == "abandoned" || strtolower($MatchStatusOverView) == "canceled" || strtolower($MatchStatusOverView) == "play_suspended_unknown"){
 
                     /* Cancel Contest */
-                    $CronID = $this->Utility_model->insertCronLogs('autoCancelContest');
+                    $CronID = $this->Common_model->insertCronLogs('autoCancelContest');
                     $this->Sports_model->autoCancelContest($CronID,'Abonded',$Value['MatchID']);
-                    $this->Utility_model->updateCronLogs($CronID);
+                    $this->Common_model->updateCronLogs($CronID);
                     
                     /* Update Match Status */
                     $this->db->where('EntityID', $Value['MatchID']);
@@ -1639,14 +1639,14 @@ class Utility_model extends CI_Model
                 }else{
 
                     /* Update Final points before complete match */
-                    $CronID = $this->Utility_model->insertCronLogs('getPlayerPoints');
+                    $CronID = $this->Common_model->insertCronLogs('getPlayerPoints');
                     $this->Sports_model->getPlayerPointsCricket($CronID);
-                    $this->Utility_model->updateCronLogs($CronID);
+                    $this->Common_model->updateCronLogs($CronID);
 
                     /* Update Final player points before complete match */
-                    $CronID = $this->Utility_model->insertCronLogs('getJoinedContestPlayerPoints');
+                    $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPoints');
                     $this->Sports_model->getJoinedContestPlayerPointsCricket($CronID);
-                    $this->Utility_model->updateCronLogs($CronID);
+                    $this->Common_model->updateCronLogs($CronID);
 
                     /* Update Match Status */
                     $this->db->where('EntityID', $Value['MatchID']);

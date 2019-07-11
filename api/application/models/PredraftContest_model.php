@@ -231,8 +231,8 @@ class PredraftContest_model extends CI_Model {
         if ($DraftData->num_rows() > 0) {
 
             /* Get next 10 matches */ 
-            $MatchesData = $this->Sports_model->getMatches('SeriesID,MatchID', array('OrderBy' => 'MatchStartDateTime','Sequence' => 'ASC','StatusID' => 1), TRUE,1,10);
-            if($MatchesData['Data']['TotalRecords'] == 0){
+            $MatchesData = $this->db->query('SELECT M.SeriesID,M.MatchID FROM tbl_entity E, sports_matches M WHERE E.EntityID = M.MatchID AND E.StatusID = 1 ORDER BY M.MatchStartDateTime DESC LIMIT 10');
+            if($MatchesData->num_rows() == 0){
                 return FALSE;
             }
 
@@ -259,7 +259,7 @@ class PredraftContest_model extends CI_Model {
                     'NoOfWinners'            => $Value['NoOfWinners'],
                     'CustomizeWinning'       => (!empty($Value['CustomizeWinning'])) ? json_decode($Value['CustomizeWinning'], true) : NULL
                 );
-                foreach($MatchesData['Data']['Records'] as $Record)
+                foreach($MatchesData->result_array() as $Record)
                 {
                     if ($this->db->query('SELECT Privacy FROM sports_contest WHERE PredraftContestID = '.$Value['PredraftContestID'].' AND MatchID = '.$Record['MatchID'].' LIMIT 1')->num_rows() == 0) {
                         $this->Contest_model->addContest($FieldArray, ADMIN_ID, array($Record['MatchID']), $Record['SeriesID']);

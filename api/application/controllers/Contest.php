@@ -21,7 +21,6 @@ class Contest extends API_Controller_Secure
      */
     public function add_post()
     {
-
         /* Validation section */
         $this->form_validation->set_rules('ContestName', 'ContestName', 'trim');
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
@@ -86,7 +85,7 @@ class Contest extends API_Controller_Secure
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
             $this->Return['Message'] = "Contest created successfully.";
-            $this->Return['Data']['ContestGUID'] = $this->Contest_model->getContests('CustomizeWinning,MatchScoreDetails,UserID,ContestFormat,ContestType,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,UserInvitationCode', array('ContestID' => $ContestID));
+            $this->Return['Data']['ContestGUID'] = $this->Contest_model->getContests('CustomizeWinning,MatchScoreDetails,ContestFormat,ContestType,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,UserInvitationCode', array('ContestID' => $ContestID));
         }
     }
 
@@ -111,9 +110,9 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Contests Data */
-        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)),(!empty($this->ContestID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($ContestData)) {
-            $this->Return['Data'] = $ContestData['Data'];
+            $this->Return['Data'] = (!empty($this->ContestID)) ? $ContestData : $ContestData['Data'];
         }
     }
 
@@ -281,7 +280,7 @@ class Contest extends API_Controller_Secure
     public function getUserTeams_post()
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]' . ($this->SessionUserID != $this->UserID ? '|callback_validateMatchDateTime[UserTeams]' : ''));
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]|callback_validateMatchDateTime[UserTeams]');
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->set_rules('UserTeamGUID', 'UserTeamGUID', 'trim|callback_validateEntityGUID[User Teams,UserTeamID]');
         $this->form_validation->set_rules('UserTeamType', 'UserTeamType', 'trim|required|in_list[Normal,InPlay,All]');
@@ -642,10 +641,13 @@ class Contest extends API_Controller_Secure
      */
     public function validateMatchDateTime($MatchGUID, $Module)
     {
-        $ClosedInMinutes = $this->Settings_model->getSiteSettings("MatchLiveTime");
-        $MatchStartDateTime = strtotime($this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime) - ($ClosedInMinutes * 60); // convert into seconds
-        if ($MatchStartDateTime < strtotime(date('Y-m-d H:i:s'))) {
-            $this->form_validation->set_message('validateMatchDateTime', ($Module == 'Contest') ? 'You can create contest only for upcoming matches.' : 'Please wait, Match has not started yet.');
+        $MatchStartDateTime = $this->db->query('SELECT MatchStartDateTime FROM sports_matches WHERE MatchID = ' . $this->MatchID . ' LIMIT 1')->row()->MatchStartDateTime;
+        $MatchStartDateTime = strtotime($MatchStartDateTime)  - ($this->Settings_model->getSiteSettings("MatchLiveTime") * 60); // convert into seconds
+        if ($Module == 'Contest' && strtotime(date('Y-m-d H:i:s')) >= $MatchStartDateTime) {
+            $this->form_validation->set_message('validateMatchDateTime', 'You can create contest only for upcoming matches.');
+            return FALSE;
+        }else if ($Module == 'UserTeams' && $this->SessionUserID != $this->UserID && $MatchStartDateTime > strtotime(date('Y-m-d H:i:s'))) {
+            $this->form_validation->set_message('validateMatchDateTime', 'Please wait, Match has not started yet.');
             return FALSE;
         }
         return TRUE;

@@ -184,11 +184,11 @@ class Signup extends API_Controller
     }
 
     /*
-      Name: 		verifyLink
+      Name: 		verify
       Description: 	Use to verify email link (For Web)
-      URL: 			/api/signup/verifyLink
+      URL: 			/api/signup/verify
      */
-    public function verifyLink_get()
+    public function verify_get()
     {
         $OTP = @$this->input->get('otp');
         $UserID = $this->Recovery_model->verifyToken($OTP, 2);
