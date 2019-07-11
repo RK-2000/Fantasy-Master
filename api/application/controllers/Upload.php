@@ -88,10 +88,10 @@ class Upload extends API_Controller_Secure
 					/* assign media to user */
 					$this->Media_model->addMediaToEntity($MediaDetails['MediaID'], $this->SessionUserID, $this->SessionUserID);
 					if ($this->Post['Section'] == 'PAN') {
-						$this->users_model->updateUserInfo($this->SessionUserID, array('PanStatus' => '1'));
+						$this->Users_model->updateUserInfo($this->SessionUserID, array('PanStatus' => '1'));
 						$this->Notification_model->addNotification('verify', 'Pancard Uploaded', ADMIN_ID, ADMIN_ID, '', $this->SessionUserID . ', just uploaded their Pancard for Verification');
 					} else {
-						$this->users_model->updateUserInfo($this->SessionUserID, array('BankStatus' => '1'));
+						$this->Users_model->updateUserInfo($this->SessionUserID, array('BankStatus' => '1'));
 						$this->Notification_model->addNotification('verify', 'Bank Details Uploaded', ADMIN_ID, ADMIN_ID, '', $this->SessionUserID . ', just uploaded their Bank Details for Verification');
 					}
 					break;

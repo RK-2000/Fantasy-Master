@@ -1517,12 +1517,13 @@ app.controller('createContestController', ['$scope', '$rootScope', '$location', 
                 } else {
                     $scope.createContestField.ContestSize = $scope.ContestSize;
                 }
+            
                 if ($scope.winnings) {
-                    $scope.createContestField.CustomizeWinning = JSON.stringify($scope.contestPrizeParser($scope.choices));
+                    $scope.createContestField.CustomizeWinning = $scope.contestPrizeParser($scope.choices);
                 }
                 $data = $scope.createContestField;
                 appDB
-                        .callPostForm('contest/add', $data)
+                        .callPostForm('contest/add', $.param($data))
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {

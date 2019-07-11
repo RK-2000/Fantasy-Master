@@ -56,6 +56,7 @@ class Utility_model extends CI_Model
             $this->db->limit(1);
         }
         $Query = $this->db->get();
+  
         if ($Query->num_rows() > 0) {
 
             /* Get User Details */

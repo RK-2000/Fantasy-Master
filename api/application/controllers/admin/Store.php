@@ -47,7 +47,7 @@ class Store extends API_Controller
 	/*
 	Description: 	Use to update coupon.
 	URL: 			/api_admin/store/editCoupon/	
-	*/
+	*/ 
 	public function editCoupon_post()
 	{
 		/* Validation section */
@@ -83,8 +83,7 @@ class Store extends API_Controller
 			C.CouponType,
 			C.CouponValue,
 			C.CouponValueLimit,
-			C.CouponValidTillDate,
-			C.Broadcast
+			C.CouponValidTillDate
 			',
 			array("CouponID" => @$this->CouponID)
 		);
