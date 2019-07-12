@@ -20,7 +20,7 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
 
             /*get url params*/
             if (!getQueryStringValue('MatchGUID')) {
-                window.location.href = 'lobby';
+                window.location.href = 'lobby'; 
             } else {
 
                 /*Function to get mactch center details*/
@@ -281,7 +281,7 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
                     var $data = {};
                     $data.MatchGUID = getQueryStringValue('MatchGUID'); //   Match GUID
                     $data.SessionKey = $localStorage.user_details.SessionKey;
-                    $data.Params = 'PlayerID,PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,PlayerBattingStats,PlayerBowlingStats,IsPlaying,PointsData,PlayerSalary,TeamNameShort,PlayerSalaryCredit,TotalPointCredits,PlayerSelectedPercent';
+                    $data.Params = 'PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,PlayerBattingStats,PlayerBowlingStats,IsPlaying,PointsData,PlayerSalary,TeamNameShort,PlayerSalaryCredit,TotalPointCredits,PlayerSelectedPercent,PointCredits';
                     $data.OrderBy = 'PlayerSalary';
                     $data.Sequence = 'DESC';
                     $data.PlayerSalary = 'Yes';
