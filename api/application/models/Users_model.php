@@ -206,6 +206,7 @@ class Users_model extends CI_Model
                 $UpdateArray['PhoneNumberForChange'] = $UpdateArray['PhoneNumber'];
 
                 /* Send change phonenumber SMS to User with Token. */
+                $this->load->model('Recovery_model');
                 $this->Utility_model->sendMobileSMS(array(
                     'PhoneNumber' => $UpdateArray['PhoneNumberForChange'],
                     'Text' => $this->Recovery_model->generateToken($UserID, 3)
@@ -635,6 +636,7 @@ class Users_model extends CI_Model
         }
 
         $Query = $this->db->get();
+       
         if ($Query->num_rows() > 0) {
             foreach ($Query->result_array() as $Record) {
 
@@ -741,15 +743,15 @@ class Users_model extends CI_Model
     function referEarn($Input = array(), $SessionUserID)
     {
         /* Get User Details */
-        $UserData = $this->db->query('SELECT FirstName,ReferralCode FROM tbl_users WHERE UserID = ' . $SessionUserID . ' LIMIT 1');
+        $UserData = $this->Users_model->getUsers('FirstName,ReferralCode', array('UserID' => $SessionUserID));
         $InviteURL = SITE_HOST . ROOT_FOLDER . 'authenticate?referral=' . $UserData['ReferralCode'];
         if ($Input['ReferType'] == 'Email' && !empty($Input['Email'])) {
             send_mail(array(
                 'emailTo' => $Input['Email'],
                 'template_id' => 'd-e20ad55aa8fd4c59b0c314a0a0086311',
                 'Subject' => 'Refer & Earn - ' . SITE_NAME,
-                "Name" => $UserData->row()->FirstName,
-                "ReferralCode" => $UserData->row()->ReferralCode,
+                "Name" => $UserData['FirstName'],
+                "ReferralCode" => $UserData['ReferralCode'],
                 'ReferralURL' => $InviteURL
             ));
         } else if ($Input['ReferType'] == 'Phone' && !empty($Input['PhoneNumber'])) {
@@ -757,7 +759,7 @@ class Users_model extends CI_Model
             /* Send referral SMS to User with referral url */
             $this->Utility_model->sendSMS(array(
                 'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Your Friend " . $UserData->row()->FirstName . " just got registered with us and has referred you. Use his/her referral code: " . $UserData->row()->ReferralCode . " Use the link provided to get " . DEFAULT_CURRENCY . REFERRAL_SIGNUP_BONUS . " signup bonus. " . $InviteURL
+                'Text' => "Your Friend " . $UserData['FirstName'] . " just got registered with us and has referred you. Use his/her referral code: " . $UserData['ReferralCode'] . " Use the link provided to get " . DEFAULT_CURRENCY . REFERRAL_SIGNUP_BONUS . " signup bonus. " . $InviteURL
             ));
         }
     }

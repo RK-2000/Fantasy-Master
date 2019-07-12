@@ -218,7 +218,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     }
 
     /*add data*/
-    $scope.ContestFormat = 'Head to Head';
+    $scope.ContestFormat = 'Head to Head'; 
     $scope.IsPaid = 'Yes';
     $scope.addData = function () {
         $scope.addDataLoading = true;

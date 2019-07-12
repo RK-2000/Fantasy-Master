@@ -579,7 +579,7 @@ class Sports_model extends CI_Model
             $this->db->or_having("LastUpdateDiff >=", 86400); // 1 Day
         }
         if (!empty($Where['PlayerSalary']) && $Where['PlayerSalary'] == 'Yes') {
-            $this->db->where("TP.PlayerSalary >", 0);
+            // $this->db->where("TP.PlayerSalary >", 0);
         }
 
         /* Order By */

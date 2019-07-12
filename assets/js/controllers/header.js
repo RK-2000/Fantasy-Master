@@ -483,10 +483,10 @@ app.controller('headerController', ['$scope', '$rootScope', '$location', 'enviro
                 $data.PaymentGatewayResponse = JSON.stringify(transaction);
                 $data.PaymentGatewayStatus = status = (!transaction.razorpay_payment_id) ? 'Failed' : 'Success';
                 $data.WalletID = OrderID;
-                $data.Razor_payment_id = transaction.razorpay_payment_id;
+                $data.RazorPaymentId = transaction.razorpay_payment_id;
                 $data.Amount = Amount;
                 appDB
-                        .callPostForm('wallet/confirmWeb', $data)
+                        .callPostForm('wallet/confirm', $data)
                         .then(
                                 function success(data) {
                                     if (data.ResponseCode == 200) {

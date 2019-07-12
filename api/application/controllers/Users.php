@@ -158,7 +158,7 @@ class Users extends API_Controller_Secure
 
         $this->Users_model->referEarn($this->Post, $this->SessionUserID);
         $this->Return['Message'] = "User successfully invited.";
-    }
+    } 
 
     /* -----Validation Functions----- */
     /* ------------------------------ */

@@ -49,7 +49,7 @@ app.controller('LeagueCenterController', ['$scope', '$rootScope', '$location', '
                 $data.Filter = 'MyJoinedMatch';
                 // $data.getJoinedMatches = 'Yes';
                 $data.Status = $scope.Status;
-                $data.MyJoinedMatchesCount = 1;
+                $data.MyJoinedMatchesCount = 'Yes';
                 $data.OrderBy = 'MatchStartDateTime';
                 $data.Sequence = ($scope.Status != 'Pending')?'DESC':'ASC';
                 appDB

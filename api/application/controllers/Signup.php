@@ -192,6 +192,7 @@ class Signup extends API_Controller
     {
         $OTP = @$this->input->get('otp');
         $UserID = $this->Recovery_model->verifyToken($OTP, 2);
+       
         if (!$UserID) {
             $Msg = "Sorry, but this is an invalid link, or you have already verified your account.";
         } else {
@@ -265,6 +266,9 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Type', 'Type', 'trim|required|in_list[Email,Phone]');
+        $this->form_validation->set_rules('Email', 'Email', 'trim' . (($this->Post['Type'] == 'Email') ? '|valid_email|is_unique[tbl_users.Email]' : ''));
+        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (($this->Post['Type'] == 'PhoneNumber') ? '|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]' : ''));
+        $this->form_validation->set_message('is_unique', '{field} field already exist');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -275,7 +279,7 @@ class Signup extends API_Controller
 
             /* Send welcome Email to User with Token. */
             send_mail(array(
-                'emailTo'       => $UserData['EmailForChange'],
+                'emailTo'       => (!empty($this->Post['Email'])) ? $this->Post['Email'] : $UserData['EmailForChange'],
                 'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
                 'Subject'       => 'Verify your Email ' . SITE_NAME,
                 "Name"          => $UserData['FirstName'],
@@ -285,7 +289,7 @@ class Signup extends API_Controller
 
             /* Send change phonenumber SMS to User with Token. */
             $this->Utility_model->sendMobileSMS(array(
-                'PhoneNumber' => $UserData['PhoneNumberForChange'],
+                'PhoneNumber' => (!empty($this->Post['PhoneNumber'])) ? $this->Post['PhoneNumber'] : $UserData['PhoneNumberForChange'],
                 'Text' => $this->Recovery_model->generateToken($UserID, 3)
             ));
         }

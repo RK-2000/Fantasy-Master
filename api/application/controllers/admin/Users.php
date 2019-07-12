@@ -80,8 +80,9 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-
+print_r($this->Post['Params']);die;
         $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+      
         if ($UsersData) {
             $this->Return['Data'] = $UsersData['Data'];
         }

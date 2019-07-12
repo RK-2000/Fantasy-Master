@@ -49,7 +49,8 @@ class Utilities extends API_Controller
 
     public function getCountries_post()
     {
-        $CountryData = $this->Utility_model->getCountries();
+        $CountryData = $this->Utility_model->getCountries(@$this->Post['Params'],$this->Post, TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']); 
+       
         if (!empty($CountryData)) {
             $this->Return['Data'] = $CountryData['Data'];
         }
