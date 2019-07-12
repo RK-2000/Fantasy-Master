@@ -386,6 +386,19 @@ class Format {
     }
 
     /**
+     * Added by Gautam to convery all values to string.
+     */
+    function convertToString(&$value, $key)
+    {
+        if(is_numeric($value) || is_float($value)){
+            $value = (string) $value;
+        }
+        if(is_array($value)){
+            array_walk($value,array('self', 'convertToString'));
+        }   
+    }
+
+    /**
      * Encode data as json
      *
      * @param mixed|NULL $data Optional data to pass, so as to override the data passed
@@ -406,6 +419,8 @@ class Format {
 
         if (empty($callback) === TRUE)
         {
+            // Return the data as encoded json with a callback
+            array_walk($data,array('self', 'convertToString'));
             return json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
@@ -413,16 +428,20 @@ class Format {
         elseif (preg_match('/^[a-z_\$][a-z0-9\$_]*(\.[a-z_\$][a-z0-9\$_]*)*$/i', $callback))
         {
             // Return the data as encoded json with a callback
-            array_walk_recursive($data,function(&$item){$item=strval($item);}); /*Added by Gautam*/
+            array_walk($data,array('self', 'convertToString'));
             return $callback.'('.json_encode($data, JSON_UNESCAPED_UNICODE, JSON_FORCE_OBJECT).');';
         }
 
         // An invalid jsonp callback function provided.
         // Though I don't believe this should be hardcoded here
         $data['warning'] = 'INVALID JSONP CALLBACK: '.$callback;
-
+            // Return the data as encoded json with a callback
+        array_walk($data,array('self', 'convertToString'));
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
+
+
+
 
     /**
      * Encode data as a serialized array

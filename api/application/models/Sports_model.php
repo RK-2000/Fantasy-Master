@@ -688,6 +688,7 @@ class Sports_model extends CI_Model
         $FinalXIPlayers = array();
         foreach ($PlayersData['Data']['Records'] as $Key => $Value) {
             $Row = $Value;
+            $Row['TopPlayer'] = 'Yes';
             $Row['PlayerPosition'] = ($Key == 0) ? 'Captain' : (($Key == 1) ? 'ViceCaptain' : 'Player');
             $Row['TotalPoints'] = strval(($Key == 0) ? 2 * $Row['TotalPoints'] : (($Key == 1) ? 1.5 * $Row['TotalPoints'] : $Row['TotalPoints']));
             array_push($FinalXIPlayers, $Row);
