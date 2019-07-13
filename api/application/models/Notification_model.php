@@ -143,14 +143,13 @@ class Notification_model extends CI_Model
 		}
 	}
 
-
-
 	/*
 	Description: 	Use to delete notification
 	*/
 	function removeNotification($NotificationPatternGUID, $UserID = '', $ToUserID, $RefrenceID = '')
 	{
 		$NotificationPattern = $this->getNotificationPattern($NotificationPatternGUID);
+		
 		/* Delete notifcation */
 		$Where = array_filter(array(
 			"NotificationPatternID" 	=> 	$NotificationPattern['NotificationPatternID'],

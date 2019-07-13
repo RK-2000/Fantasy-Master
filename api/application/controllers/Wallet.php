@@ -8,7 +8,6 @@ class Wallet extends API_Controller_Secure
     function __construct()
     {
         parent::__construct();
-        $this->load->model('Users_model');
     }
 
     /*

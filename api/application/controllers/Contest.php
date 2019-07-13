@@ -549,7 +549,6 @@ class Contest extends API_Controller_Secure
             if ($ContestData['IsPaid'] == 'Yes') {
 
                 /* Get User Wallet Details */
-                $this->load->model('Users_model');
                 $UserData = $this->Users_model->getUsers('TotalCash,WalletAmount,WinningAmount,CashBonus', array('UserID' => $this->SessionUserID));
                 $this->Post['WalletAmount']  = $UserData['WalletAmount'];
                 $this->Post['WinningAmount'] = $UserData['WinningAmount'];

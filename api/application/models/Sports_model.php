@@ -501,6 +501,7 @@ class Sports_model extends CI_Model
                 'SeriesID' => 'TP.SeriesID',
                 'MatchID' => 'TP.MatchID',
                 'TeamID' => 'TP.TeamID',
+                'IsAdminUpdate' => 'TP.IsAdminUpdate',
                 'PlayerPic' => 'IF(P.PlayerPic IS NULL,CONCAT("' . BASE_URL . '","uploads/PlayerPic/","player.png"),CONCAT("' . BASE_URL . '","uploads/PlayerPic/",P.PlayerPic)) PlayerPic',
                 'PlayerCountry' => 'P.PlayerCountry',
                 'PlayerBattingStyle' => 'P.PlayerBattingStyle',
@@ -569,8 +570,8 @@ class Sports_model extends CI_Model
         if (!empty($Where['PlayerRole'])) {
             $this->db->where("TP.PlayerRole", $Where['PlayerRole']);
         }
-        if (!empty($Where['IsAdminSalaryUpdated'])) {
-            $this->db->where("P.IsAdminSalaryUpdated", $Where['IsAdminSalaryUpdated']);
+        if (!empty($Where['IsAdminUpdate'])) {
+            $this->db->where("TP.IsAdminUpdate", $Where['IsAdminUpdate']); // Salary (Match Wise)
         }
         if (!empty($Where['StatusID'])) {
             $this->db->where("E.StatusID", $Where['StatusID']);
@@ -788,9 +789,6 @@ class Sports_model extends CI_Model
         if (!empty($Where['PlayerID'])) {
             $this->db->where("TP.PlayerID", $Where['PlayerID']);
         }
-        if (!empty($Where['PlayerID'])) {
-            $this->db->where("TP.PlayerID", $Where['PlayerID']);
-        }
         if (!empty($Where['StatusID'])) {
             $this->db->where("E.StatusID", $Where['StatusID']);
         }
@@ -852,18 +850,8 @@ class Sports_model extends CI_Model
     */
     function getPoints($Where = array())
     {
-        switch (@$Where['PointsCategory']) {
-            case 'InPlay':
-                $this->db->select('PointsT20InPlay PointsT20, PointsODIInPlay PointsODI, PointsTESTInPlay PointsTEST');
-                break;
-            case 'Reverse':
-                $this->db->select('PointsT20Reverse PointsT20, PointsODIReverse PointsODI, PointsTESTReverse PointsTEST');
-                break;
-            default:
-                $this->db->select('PointsT20,PointsODI,PointsTEST');
-                break;
-        }
-        $this->db->select('PointsTypeGUID,PointsTypeDescprition,PointsTypeShortDescription,PointsType,PointsInningType,PointsScoringField,StatusID');
+        $PointsCategory = (!empty($Where['PointsCategory']) && $Where['PointsCategory'] != 'Normal') ? $Where['PointsCategory'] : '';
+        $this->db->select('PointsT20'.$PointsCategory.' PointsT20, PointsODI'.$PointsCategory.' PointsODI, PointsTEST'.$PointsCategory.' PointsTEST,PointsTypeGUID,PointsTypeDescprition,PointsTypeShortDescription,PointsType,PointsInningType,PointsScoringField,StatusID');
         $this->db->from('sports_setting_points');
         if (!empty($Where['StatusID'])) {
             $this->db->where("StatusID", $Where['StatusID']);
@@ -940,19 +928,12 @@ class Sports_model extends CI_Model
             case 'EveryRunScored':
             case 'Catch':
             case 'Wicket':
-                $PlayerPoints['CalculatedPoints'] = ($ScoreValue > 0) ? $Points[$MatchTypeField] * $ScoreValue : 0;
-                return $PlayerPoints;
-                break;
             case 'Maiden':
                 $PlayerPoints['CalculatedPoints'] = ($ScoreValue > 0) ? $Points[$MatchTypeField] * $ScoreValue : 0;
                 return $PlayerPoints;
                 break;
             case 'Duck':
-                if ($ScoreValue <= 0 && $PlayerRole != 'Bowler' && $HowOut != "Not out") {
-                    $PlayerPoints['CalculatedPoints'] = ($BallsFaced >= 1) ? $Points[$MatchTypeField] : 0;
-                } else {
-                    $PlayerPoints['CalculatedPoints'] = 0;
-                }
+                $PlayerPoints['CalculatedPoints'] = ($ScoreValue <= 0 && $PlayerRole != 'Bowler' && $HowOut != "Not out") ? (($BallsFaced >= 1) ? $Points[$MatchTypeField] : 0) : 0;
                 return $PlayerPoints;
                 break;
             case 'StrikeRate0N49.99':

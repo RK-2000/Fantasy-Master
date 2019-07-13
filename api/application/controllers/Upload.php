@@ -6,8 +6,6 @@ class Upload extends API_Controller_Secure
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('Media_model');
-		$this->load->model('Users_model');
 	}
 
 	/*

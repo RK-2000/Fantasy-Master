@@ -7,7 +7,6 @@ class Post extends API_Controller_Secure
 	{
 		parent::__construct();
 		$this->load->model('Post_model');
-		$this->load->model('Entity_model');
 	}
 
 	/*

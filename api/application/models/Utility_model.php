@@ -841,8 +841,7 @@ class Utility_model extends CI_Model
 
     /*
       Description: To set cricket players data (Cricket API)
-     */
-
+    */
     function getPlayersLive_Cricket_CricketApi($CronID)
     {
         /* Get matches data */

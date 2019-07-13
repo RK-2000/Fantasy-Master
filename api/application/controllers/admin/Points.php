@@ -12,7 +12,7 @@ class Points extends API_Controller_Secure
 	/*
 	Name: 			update
 	Description: 	Use to update sports point.
-	URL: 			/points/update/	
+	URL: 			/admin/points/update/	
 	*/
 	public function update_post()
 	{

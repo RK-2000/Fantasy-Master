@@ -7,7 +7,6 @@ class Teams extends API_Controller_Secure
 	{
 		parent::__construct();
 		$this->load->model('Sports_model');
-		$this->load->model('Media_model');
 	}
 
 	/*

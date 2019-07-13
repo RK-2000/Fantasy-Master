@@ -842,7 +842,6 @@ class AuctionDrafts extends API_Controller {
 
             /* To Check Wallet Amount, If Contest Is Paid */
             if ($ContestData['IsPaid'] == 'Yes') {
-                $this->load->model('Users_model');
                 $UserData = $this->Users_model->getUsers('TotalCash,WalletAmount,WinningAmount,CashBonus', array('UserID' => $this->SessionUserID));
                 $this->Post['WalletAmount'] = $UserData['WalletAmount'];
                 $this->Post['WinningAmount'] = $UserData['WinningAmount'];
