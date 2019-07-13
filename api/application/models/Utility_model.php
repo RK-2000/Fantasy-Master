@@ -196,6 +196,11 @@ class Utility_model extends CI_Model
             $this->db->where('ConfigTypeGUID', $ConfigTypeGUID);
             $this->db->limit(1);
             $this->db->update('set_site_config', array('ConfigTypeValue' => $Input['ConfigTypeValue'], 'StatusID' => $Input['StatusID']));
+
+            /* Delete Caching */
+            if(in_array($ConfigTypeGUID, array('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory'))){
+                $this->cache->memcached->delete('AndroidAppVersion');
+            }
         }
     }
 
@@ -262,49 +267,25 @@ class Utility_model extends CI_Model
             return TRUE;
         }
     }
-    /*
-      Description: Use to send emails
-     */
-
-    function sendMails($MailArray)
-    {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "http://control.msg91.com/api/sendmail.php?body=" . $MailArray['emailMessage'] . "&subject=" . $MailArray['emailSubject'] . "&to=" . $MailArray['emailTo'] . "&from=" . MSG91_FROM_EMAIL . "&authkey=" . MSG91_AUTH_KEY,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "",
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-        ));
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        curl_close($curl);
-        if ($err) {
-            return FALSE;
-        } else {
-            return TRUE;
-        }
-    }
 
     /*
       Description: 	Use to get app version details
      */
     function getAppVersionDetails()
     {
-        $Query = $this->db->query("SELECT ConfigTypeGUID,ConfigTypeDescprition,ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID IN ('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory')");
-        if ($Query->num_rows() > 0) {
-            $VersionData = array();
-            foreach ($Query->result_array() as $Value) {
-                $VersionData[$Value['ConfigTypeGUID']] = $Value['ConfigTypeValue'];
+        $VersionData = $this->cache->memcached->get('AndroidAppVersion');
+        if(empty($VersionData)){
+            $Query = $this->db->query("SELECT ConfigTypeGUID,ConfigTypeDescprition,ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID IN ('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory')");
+            if ($Query->num_rows() > 0) {
+                $VersionData = array();
+                foreach ($Query->result_array() as $Value) {
+                    $VersionData[$Value['ConfigTypeGUID']] = $Value['ConfigTypeValue'];
+                }
+                $this->cache->memcached->save('AndroidAppVersion',$VersionData, 3600 * 24); // Expire in every 24 
+                return $VersionData;
             }
-            return $VersionData;
         }
-        return FALSE;
+        return $VersionData;
     }
 
     /*
@@ -476,7 +457,11 @@ class Utility_model extends CI_Model
             exit;
         }
         /* To get All Match Types */
-        $MatchTypesData = $this->Sports_model->getMatchTypes();
+        $MatchTypesData = $this->cache->memcached->get('MatchTypes');
+        if(empty($MatchTypesData)){
+            $MatchTypesData = $this->Sports_model->getMatchTypes();
+            $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+        }
         $MatchTypeIdsData = array_column($MatchTypesData, 'MatchTypeID', 'MatchTypeName');
 
         /* Get Live Matches Data */
@@ -587,8 +572,7 @@ class Utility_model extends CI_Model
     function getMatchesLive_Cricket_CricketApi($CronID)
     {
         /* Get Live Matches Data */
-        $DatesArr = array(date('Y-m'), date('Y-m', strtotime('+1 month')));
-        foreach ($DatesArr as $DateValue) {
+        foreach (array(date('Y-m'), date('Y-m', strtotime('+1 month'))) as $DateValue) {
             $Response = $this->callSportsAPI(SPORTS_API_URL_CRICKETAPI . '/rest/v2/schedule/?date=' . $DateValue . '&access_token=');
             if (!$Response['status']) {
                 $this->db->where('CronID', $CronID);
@@ -608,14 +592,24 @@ class Utility_model extends CI_Model
             }
 
             /* To get All Match Types */
-            $MatchTypesData = $this->Sports_model->getMatchTypes();
+            $MatchTypesData = $this->cache->memcached->get('MatchTypes');
+            if(empty($MatchTypesData)){
+                $MatchTypesData = $this->Sports_model->getMatchTypes();
+                $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+            }
             $MatchTypeIdsData = array_column($MatchTypesData, 'MatchTypeID', 'MatchTypeNameCricketAPI');
             foreach ($LiveMatchesData as $key => $Value) {
                 if (empty($Value['matches']))
                     continue;
 
-                $this->db->trans_start();
                 foreach ($Value['matches'] as $MatchValue) {
+
+                    /* To check past matches */
+                    if (strtotime(date('Y-m-d H:i:s')) >= strtotime(date('Y-m-d H:i', strtotime($MatchValue['start_date']['iso'])))) {
+                        continue;
+                    }
+
+                    $this->db->trans_start();
 
                     /* Manage Series Data */
                     if (!isset($SeriesIdsData[$MatchValue['season']['key']])) {
@@ -720,12 +714,12 @@ class Utility_model extends CI_Model
                         $this->db->limit(1);
                         $this->db->update('sports_matches', $MatchesAPIData);
                     }
-                }
-
-                $this->db->trans_complete();
-                if ($this->db->trans_status() === false) {
-                    return false;
-                }
+                
+                    $this->db->trans_complete();
+                    if ($this->db->trans_status() === false) {
+                        return false;
+                    }
+                }  
             }
         }
     }
@@ -733,7 +727,6 @@ class Utility_model extends CI_Model
     /*
       Description: To set cricket players data (Entity API)
      */
-
     function getPlayersLive_Cricket_Entity($CronID, $MatchID = "")
     {
         /* Get series data */
@@ -857,7 +850,7 @@ class Utility_model extends CI_Model
         if (!$MatchesData) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));
+            $this->db->update('log_cron', array('CronStatus' => 'Exit'));
             exit;
         }
 
@@ -999,7 +992,7 @@ class Utility_model extends CI_Model
             exit;
         }
         foreach ($MatchData['Data']['Records'] as $Value) {
-            $PlayerData = $this->getPlayers('PlayerIDLive,PlayerID,MatchID', array('MatchID' => $Value['MatchID']), true, 0);
+            $PlayerData = $this->Sports_model->getPlayers('PlayerIDLive,PlayerID,MatchID', array('MatchID' => $Value['MatchID']), true, 0);
             if (empty($PlayerData))
                 continue;
 
@@ -1042,7 +1035,7 @@ class Utility_model extends CI_Model
             exit;
         }
         foreach ($MatchData['Data']['Records'] as $Value) {
-            $PlayerData = $this->getPlayers('PlayerIDLive,PlayerID,MatchID', array('MatchID' => $Value['MatchID']), true, 0);
+            $PlayerData = $this->Sports_model->getPlayers('PlayerIDLive,PlayerID,MatchID', array('MatchID' => $Value['MatchID']), true, 0);
             if (empty($PlayerData))
                 continue;
 
