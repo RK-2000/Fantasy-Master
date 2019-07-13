@@ -23,7 +23,7 @@ const VERSION = 4.7;
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css">
         <link rel="icon" type="png/jpg" href="assets/img/fav1.png"> 
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-        <link rel="stylesheet" href="index_file/custom.css?version=<?= VERSION ?>">
+        <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
         <link href="assets/css/custom.css?version=<?= VERSION ?>" rel="stylesheet">
         <link href="assets/css/draftcustom.css?version=<?= VERSION ?>" rel="stylesheet">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
@@ -40,7 +40,7 @@ const VERSION = 4.7;
 <nav class="navbar navbar-expand-lg  site_header">
             <div class="container">
                 <div class="col-sm-4 col-xs-12">
-                    <a href="index" class="site-logo navbar-brand"><img src="index_file/images/logo.png" alt="logo" width="150"></a>
+                    <a href="index" class="site-logo navbar-brand"><img src="assets/images/logo.png" alt="logo" width="150"></a>
                 </div>
                 <div class="col-sm-8 col-xs-12">
                     <ul class="nav justify-content-end login_menu d-flex">
@@ -80,7 +80,7 @@ const VERSION = 4.7;
                             <ul class="btns black_downloads mt-3">
                             <li class="mr-3">
                             <a  href="https://fsl11.com/android/FSL11.apk" download data-toggle="tooltip" title="" data-original-title="Download Now">
-                                <span class="icon"><img src="index_file/images/android.svg" alt=""> </span>
+                                <span class="icon"><img src="assets/images/android.svg" alt=""> </span>
                                 <span class="text">
                                 <span class="small">FSL11 On</span>
                                 <span class="big"> Android </span>
@@ -88,7 +88,7 @@ const VERSION = 4.7;
                             </a></li>
                             <li>
                             <a href="#" data-toggle="tooltip" title="" data-original-title="Coming Soon">
-                                <span class="icon"><img src="index_file/images/apple.svg" alt=""> </span>
+                                <span class="icon"><img src="assets/images/apple.svg" alt=""> </span>
                                 <span class="text">
                                     <span class="small">FSL11 On</span>
                                     <span class="big"> iOS </span>
@@ -100,7 +100,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-5 offset-md-1">
                         <div class="">
-                            <img src="index_file/images/mobail_app.png" class="img-fluid my-5">
+                            <img src="assets/images/mobail_app.png" class="img-fluid my-5">
                         </div>
                     </div>  
                 </div>
@@ -117,7 +117,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-4">
                         <div class="img-box2-1">
-                            <center><img src="index_file/images/step_1.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_1.png" class="img-fluid"></center>
                         </div>
                         <div class="step1 mt-4">
                             <h3 class="text-center"> Step 1 </h3>
@@ -126,7 +126,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-4">
                         <div class="img-box2-2">
-                            <center><img src="index_file/images/step_2.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_2.png" class="img-fluid"></center>
                         </div>
                         <div class="step1 mt-4">
                             <h3 class="text-center"> Step 2 </h3>
@@ -134,7 +134,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-4">
                         <div class="img-box2-3">
-                            <center><img src="index_file/images/step_3.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_3.png" class="img-fluid"></center>
                         </div>
                         <div class="step3 mt-4">
                             <h3 class="text-center"> Step 3 </h3>
@@ -145,7 +145,7 @@ const VERSION = 4.7;
                 <div class="row mt-5">
                     <div class="col-md-4">
                         <div class="img-box2-4">
-                            <center><img src="index_file/images/step_4.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_4.png" class="img-fluid"></center>
                         </div>
                         <div class="step4 mt-4">
                             <h3 class="text-center"> Step 4 </h3>
@@ -153,7 +153,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-4">
                         <div class="img-box2-2">
-                            <center><img src="index_file/images/step_5.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_5.png" class="img-fluid"></center>
                         </div>
                         <div class="step1 mt-4">
                             <h3 class="text-center"> Step 5 </h3>
@@ -161,7 +161,7 @@ const VERSION = 4.7;
                     </div>
                     <div class="col-md-4">
                         <div class="img-box2-3">
-                            <center><img src="index_file/images/step_6.png" class="img-fluid"></center>
+                            <center><img src="assets/images/step_6.png" class="img-fluid"></center>
                         </div>
                         <div class="step3 mt-4">
                             <h3 class="text-center"> Step 6 </h3>
@@ -182,7 +182,7 @@ const VERSION = 4.7;
                             therefore I have referred a lot of friends. I become a fan of FSL11 now.  </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
-                                <img src="index_file/images/team2.jpg" class="img-circle" alt="" />
+                                <img src="assets/images/team2.jpg" class="img-circle" alt="" />
                             </div>
                             <h4> Mohit Bakshi </h4>
                             <!-- <span> Freelancer </span> -->
@@ -194,7 +194,7 @@ const VERSION = 4.7;
                             was looking for from a long time.</p>
                         <div class="clientImgbox">
                             <div class="clientImg">
-                                <img src="index_file/images/client.png" class="img-circle" alt="" />
+                                <img src="assets/images/client.png" class="img-circle" alt="" />
                             </div>
                             <h4> Sneha Mishra </h4>
                             <!-- <span>Freelancer</span> -->
@@ -205,7 +205,7 @@ const VERSION = 4.7;
                             exciting. I would really like to recommend the app to everyone. </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
-                                <img src="index_file/images/team3.png" class="img-circle" alt=""/>
+                                <img src="assets/images/team3.png" class="img-circle" alt=""/>
                             </div>
                             <h4> Anjali Khare </h4>
                             <!-- <span>Freelancer</span> -->
@@ -216,7 +216,7 @@ const VERSION = 4.7;
                             Easy and quick withdrawal makes this platform more trustworthy in comparing to others. </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
-                                <img src="index_file/images/team1.jpg" class="img-circle" alt=""/>
+                                <img src="assets/images/team1.jpg" class="img-circle" alt=""/>
                             </div>
                             <h4> Vivan Pandit</h4>
                             <!-- <span>Freelancer</span> -->
@@ -228,7 +228,7 @@ const VERSION = 4.7;
                             make me and all other users feel delight in future as well. </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
-                                <img src="index_file/images/team4.jpg" class="img-circle" alt=""/>
+                                <img src="assets/images/team4.jpg" class="img-circle" alt=""/>
                             </div>
                             <h4> Rohan Patil </h4>
                             <!-- <span>Freelancer</span> -->

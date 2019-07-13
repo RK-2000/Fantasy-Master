@@ -79,7 +79,7 @@ nav.navbar.navbar-expand-lg.site_header {
     min-height: 80vh;
 }
 .home_banner{
-    background-image: url('../index_file/images/banner1.jpg');
+    background-image: url('../assets/images/banner1.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -211,7 +211,7 @@ border: 0px;
 .bottom-banner-img{
   width: 100%;
   /* height: calc(100vh - 0px); */
-  background-image: url('../index_file/images/bottom-banner.jpg');
+  background-image: url('../assets/images/bottom-banner.jpg');
   background-size: cover;
   background-position: center right ;
   background-repeat: no-repeat;
@@ -474,7 +474,7 @@ ul li {
 .clientSec .slick-slide::after {
     content: "";
     position: absolute;
-    background: url('../index_file/images/queteBtm.png');
+    background: url('../assets/images/queteBtm.png');
     width: 28px;
     height: 24px;
     top: 18px;
@@ -484,7 +484,7 @@ ul li {
   .clientSec .slick-slide::before {
     content: "";
     position: absolute;
-    background: url('../index_file/images/quateBtm.png');
+    background: url('../assets/images/quateBtm.png');
     width: 40px;
     height: 40px;
     bottom: 5px;
