@@ -174,8 +174,8 @@ class Contest_model extends CI_Model
                 'TeamNameVisitor' => 'TV.TeamName AS TeamNameVisitor',
                 'TeamNameShortLocal' => 'TL.TeamNameShort AS TeamNameShortLocal',
                 'TeamNameShortVisitor' => 'TV.TeamNameShort AS TeamNameShortVisitor',
-                'TeamFlagLocal' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag) as TeamFlagLocal',
-                'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
+                'TeamFlagLocal' => 'IF(TL.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag)) TeamFlagLocal',
+                'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'StatusID' => 'E.StatusID',
                 'SeriesName' => 'S.SeriesName',
                 'IsJoined' => '(SELECT IF( EXISTS(SELECT EntryDate FROM sports_contest_join
@@ -772,7 +772,6 @@ class Contest_model extends CI_Model
     */
     function downloadTeams($Input = array())
     {
-
         /* Teams File Name */
         $FileName = 'contest-teams-' . $Input['ContestGUID'] . '.pdf';
         if (file_exists(getcwd() . '/uploads/Contests/' . $FileName)) {
@@ -975,8 +974,8 @@ class Contest_model extends CI_Model
                 'TeamNameVisitor' => 'TV.TeamName AS TeamNameVisitor',
                 'TeamNameShortLocal' => 'TL.TeamNameShort AS TeamNameShortLocal',
                 'TeamNameShortVisitor' => 'TV.TeamNameShort AS TeamNameShortVisitor',
-                'TeamFlagLocal' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag) as TeamFlagLocal',
-                'TeamFlagVisitor' => 'CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag) as TeamFlagVisitor',
+                'TeamFlagLocal' => 'IF(TL.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag)) TeamFlagLocal',
+                'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'SeriesName' => 'S.SeriesName AS SeriesName',
                 'TotalJoined' => '(SELECT COUNT(EntryDate) FROM sports_contest_join
                                                 WHERE sports_contest_join.ContestID =  C.ContestID ) TotalJoined',
@@ -1263,10 +1262,10 @@ class Contest_model extends CI_Model
     function contestStatics($SessionUserID, $MatchID)
     {
         return $this->db->query('SELECT(
-                    SELECT COUNT(J.EntryDate) AS `JoinedContest` FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . $SessionUserID . '" AND C.MatchID = "' . $MatchID . '" 
-                    )as JoinedContest,( 
-                    SELECT COUNT(UserTeamName) AS `TotalTeams` FROM `sports_users_teams`WHERE UserID = "' . $SessionUserID . '" AND MatchID = "' . $MatchID . '"
-                ) as TotalTeams')->row();
+                    SELECT COUNT(J.EntryDate) FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . $SessionUserID . '" AND C.MatchID = "' . $MatchID . '" 
+                    ) JoinedContest,( 
+                    SELECT COUNT(UserTeamName) FROM `sports_users_teams`WHERE UserID = "' . $SessionUserID . '" AND MatchID = "' . $MatchID . '"
+                ) TotalTeams')->row();
     }
 
     /*
