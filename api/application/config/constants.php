@@ -98,7 +98,15 @@ define('IS_VICECAPTAIN', true);
 define('AUTO_WITHDRAWAL', false);
 define('OTP_WITHDRAWAL', false);
 define('IS_AUCTION', true);
-define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy */
+define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy hh:i:ss */
+
+/*Pagination*/
+define('PAGESIZE_DEFAULT', 15); /*Required*/
+define('PAGESIZE_MAX', 51); /*Required*/
+
+/*Image*/
+define('THUMBNAIL_SIZE', 110); /*Required*/
+
 define('SPORTS_FILE_PATH', FCPATH.'uploads/sports.txt');
 define('CRICKET_SPORT_API_NAME', 'CRICKETAPI');
 define('DEFAULT_SOURCE_ID', 1);

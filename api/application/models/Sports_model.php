@@ -1298,6 +1298,7 @@ class Sports_model extends CI_Model
 
                     /* Calculate Total Points */
                     if (!empty($PointsData)) {
+                        $PlayerTotalPoints = 0;
                         foreach ($PointsData as $PointValue) {
                             if ($PointValue['CalculatedPoints'] > 0) {
                                 $PlayerTotalPoints += $PointValue['CalculatedPoints'];
