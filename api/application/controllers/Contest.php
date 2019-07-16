@@ -214,65 +214,21 @@ class Contest extends API_Controller_Secure
     }
 
     /*
-      Name: 		switchUserTeam
-      Description: 	Use to  switch user team with joined contest.
-      URL: 			/contest/switchUserTeam/
-     */
-    public function switchUserTeam_post()
-    {
-        $this->form_validation->set_rules('UserTeamGUID[]', 'UserTeamGUID', 'trim');
-        $this->form_validation->set_rules('OldUserTeamGUID[]', 'OldUserTeamGUID', 'trim');
-        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateMatchLiveTime');
-        $this->form_validation->validation($this);  /* Run validation */
-        /* Validation - ends */
+	Name: 			switchUserTeam
+	Description: 	Use to  switch user team with joined contest.
+	URL: 			/contest/switchUserTeam/
+	 */
+	public function switchUserTeam_post()
+	{
+		$this->form_validation->set_rules('UserTeamGUID', 'UserTeamGUID', 'trim|required|callback_validateEntityGUID[User Teams,UserTeamID]|callback_validateMatchStatus');
+		$this->form_validation->set_rules('OldUserTeamGUID', 'OldUserTeamGUID', 'trim|required');
+		$this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]|callback_validateContestStatus');
+		$this->form_validation->validation($this);  /* Run validation */	
 
-        /* Validate User Team GUID */
-        if (!empty($this->Post['UserTeamGUID']) && is_array($this->Post['UserTeamGUID'])) {
-            foreach ($this->Post['UserTeamGUID'] as $Key => $Value) {
-                $UserTeamID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $Value, 'EntityTypeName' => "User Teams"));
-                if (!$UserTeamID) {
-                    $this->Return['ResponseCode'] = 500;
-                    $this->Return['Message'] = "Invalid UserTeamGUID.";
-                    exit;
-                }
-                $UserTeamIDs[] = $UserTeamID['EntityID'];
-            }
-        } else {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "UserTeamGUID Requuired.";
-            exit;
-        }
-
-        /* Validate Old User Team GUID */
-        if (!empty($this->Post['OldUserTeamGUID']) && is_array($this->Post['OldUserTeamGUID'])) {
-            foreach ($this->Post['OldUserTeamGUID'] as $Key => $Value) {
-                $OldUserTeamID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $Value, 'EntityTypeName' => "User Teams"));
-                if (!$OldUserTeamID) {
-                    $this->Return['ResponseCode'] = 500;
-                    $this->Return['Message'] = "Invalid OldUserTeamGUID.";
-                    exit;
-                }
-                $OldUserTeamIDs[] = $OldUserTeamID['EntityID'];
-            }
-        } else {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "OldUserTeamGUID Requuired.";
-            exit;
-        }
-
-        /* Validate User Teams & Old User Teams Count */
-        if (count($UserTeamIDs) != count($OldUserTeamIDs)) {
-            $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "New & Old Teams count should be equal.";
-            exit;
-        }
-
-        /* Switch User Team */
-        foreach ($UserTeamIDs as $Key => $UserTeam) {
-            $this->Contest_model->switchUserTeam($this->SessionUserID, $this->ContestID, $UserTeam, $OldUserTeamIDs[$Key]);
-        }
-        $this->Return['Message'] = "Team switched successfully.";
-    }
+		/* Swicth Team */
+		$this->Contest_model->switchUserTeam($this->SessionUserID, $this->ContestID, $this->UserTeamID, $this->OldUserTeamID);
+		$this->Return['Message'] = "Team switched successfully.";
+	}
 
     /*
       Description: To get user teams data
@@ -471,11 +427,48 @@ class Contest extends API_Controller_Secure
     {
         $MatchStatus = $this->db->query("SELECT E.StatusID FROM sports_users_teams UT, tbl_entity E WHERE UT.MatchID = E.EntityID AND UT.UserTeamGUID = '" . $UserTeamGUID . "' ")->row()->StatusID;
         if ($MatchStatus != 1) {
-            $this->form_validation->set_message('validateMatchStatus', 'Sorry, you can not edit team.');
+            $this->form_validation->set_message('validateMatchStatus', 'Sorry, you can not switch team.');
             return FALSE;
         }
         return TRUE;
     }
+
+    /**
+	 * Function Name: validateContestStatus
+	 * Description:   To validate contest status
+	 */
+	public function validateContestStatus($ContestGUID)
+	{
+		$ContestStatus = $this->db->query("SELECT E.StatusID FROM sports_contest C, tbl_entity E WHERE C.ContestID = E.EntityID AND C.ContestGUID = '" . $ContestGUID . "' ")->row()->StatusID;
+		if ($ContestStatus != 1) {
+			$this->form_validation->set_message('validateContestStatus', 'Sorry, you can not switch team.');
+			return FALSE;
+        }
+        
+        /* Validate Old User Team GUID */
+        $Query = $this->db->query('SELECT UserTeamID FROM sports_users_teams WHERE UserTeamGUID = "' . $this->Post['OldUserTeamGUID'] . '" LIMIT 1');
+        if($Query->num_rows() > 0){
+            $this->OldUserTeamID  = $Query->row()->UserTeamID;
+        }else{
+            $this->form_validation->set_message('validateContestStatus', 'Invalid OldUserTeamGUID.');
+            return FALSE;
+        }
+
+        /* To Check If Contest Is Joined With Old Team*/
+        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->OldUserTeamID.' LIMIT 1');
+        if ($Query->num_rows() == 0) {
+            $this->form_validation->set_message('validateContestStatus', 'You can switch team only with joined contest.');
+            return FALSE;
+        }
+
+        /* To Check If Contest Is Already Joined With New Team*/
+        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->UserTeamID.' LIMIT 1');
+        if ($Query->num_rows() > 0) {
+            $this->form_validation->set_message('validateContestStatus', 'Contest already joined with this team.');
+            return FALSE;
+        }
+        return TRUE;
+	}
 
     /**
      * Function Name: validateUserJoinContest
