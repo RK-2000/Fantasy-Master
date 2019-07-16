@@ -75,6 +75,13 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
 
     /*To get matches according to Series*/
     $scope.getMatches = function (SeriesGUID, Status = '') {
+        if (!SeriesGUID) {
+            $scope.MatchData = [];
+            $timeout(function () {
+                $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+            }, 300);
+            return;
+        }
         $scope.SeriesGUID = SeriesGUID;
         $scope.MatchData = {};
         var data = 'SeriesGUID=' + SeriesGUID + '&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status=' + Status;

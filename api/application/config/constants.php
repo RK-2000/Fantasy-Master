@@ -111,7 +111,7 @@ define('ADMIN_ID', 125);
 define('ADMIN_CONTEST_PERCENT', 10);
 define('IS_USER_TEAMS_LIMIT', true);
 define('IS_USER_TEAMS_ROLES', true);
-define('USER_TEAMS_LIMIT', 6);
+define('USER_TEAMS_LIMIT', 60);
 define('CONTEST_FILL_PERCENT_LIMIT', 80);
 
 /*Social */
@@ -177,7 +177,7 @@ switch (ENVIRONMENT)
 	define('NOREPLY_NAME', "info@expertteam.in");
 
 	/*Logs Settings*/
-	define('API_SAVE_LOG', false);
+	define('API_SAVE_LOG', true);
 	define('CRON_SAVE_LOG', true);
 	
 	/* PayUmoney Details */

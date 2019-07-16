@@ -18,6 +18,13 @@ app.controller('PageController', function ($scope, $http,$timeout){
 
     $scope.getTeamData = function (SeriesGUID,LocalTeamGUID='')
     {
+        if (!SeriesGUID) {
+            $scope.LocalTeamData = [];
+            $timeout(function () {
+                $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+            }, 300);
+            return;
+        }
         var data = 'SessionKey=' + SessionKey + '&LocalTeamGUID='+LocalTeamGUID+'&SeriesGUID='+ SeriesGUID+'&Params=TeamNameLocal,TeamNameVisitor,TeamGUID&' + $('#filterPanel form').serialize();
         $http.post(API_URL + 'admin/matches/getTeamData', data, contentType).then(function (response) {
             var response = response.data;
