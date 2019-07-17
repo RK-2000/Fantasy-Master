@@ -852,7 +852,6 @@ class Contest_model extends CI_Model
      */
     function joinContest($Input = array(), $SessionUserID, $ContestID, $MatchID, $UserTeamID)
     {
-
         $this->db->trans_start();
 
         /* Add entry to join contest table . */
@@ -866,7 +865,7 @@ class Contest_model extends CI_Model
         $this->db->insert('sports_contest_join', $InsertData);
 
         /* Manage User Wallet */
-        if (@$Input['IsPaid'] == 'Yes') {
+        if (@$Input['IsPaid'] == 'Yes' && @$Input['EntryFee'] > 0) {
 
             /* Deduct Money From User Wallet */
             $InsertData = array(
@@ -1242,7 +1241,7 @@ class Contest_model extends CI_Model
                 'template_id'     => 'd-21c013b7011144ac9ab7315081258881',
                 'Subject'         => 'Contest Invitation - ' . SITE_NAME,
                 "Name"            => $this->db->query('SELECT FirstName FROM tbl_users WHERE UserID = ' . $SessionUserID . ' LIMIT 1')->row()->FirstName,
-                "InviteCode"      => $Input['InviteCode'],
+                "InviteCode"      => $Input['UserInvitationCode'],
                 "TeamNameLocal"   => $Input['TeamNameShortLocal'],
                 "TeamNameVisitor" => $Input['TeamNameShortVisitor']
             ));
@@ -1251,7 +1250,7 @@ class Contest_model extends CI_Model
             /* Send invite contest SMS to User with invite contest url */
             $this->Utility_model->sendSMS(array(
                 'PhoneNumber' => $Input['PhoneNumber'],
-                'Text' => "Put your cricket knowledge to test and play with me on " . SITE_NAME . ". Click " . SITE_HOST . ROOT_FOLDER . "download-app to download the " . SITE_NAME . " app or login on portal and Use contest code: " . $Input['InviteCode'] . " to join my contest for " . $Input['TeamNameShortLocal'] . " V/S " . $Input['TeamNameShortVisitor'] . " Match."
+                'Text' => "Put your cricket knowledge to test and play with me on " . SITE_NAME . ". Click " . SITE_HOST . ROOT_FOLDER . "download-app to download the " . SITE_NAME . " app or login on portal and Use contest code: " . $Input['UserInvitationCode'] . " to join my contest for " . $Input['TeamNameShortLocal'] . " V/S " . $Input['TeamNameShortVisitor'] . " Match."
             ));
         }
     }
