@@ -15,10 +15,7 @@
 			</form>
 		</div>
 		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model">Filter</button>&nbsp;
-		</div>
-		<div class="float-right">
-			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="reloadPage()">Reset</button>&nbsp;
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="ExportList('WithdrawalList','WithdrawalList.csv')">Export</button>&nbsp;

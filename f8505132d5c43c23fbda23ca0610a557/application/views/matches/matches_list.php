@@ -12,7 +12,7 @@
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
-	</div>
+	</div> 
 	<!-- Top container/ -->
 
 
