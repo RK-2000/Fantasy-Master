@@ -239,7 +239,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         }
         var $data = {};
         $data.SessionKey = SessionKey;
-        $data.ContestName = $('input[name="ContestName"]').val();
+        $data.ContestName = $('input[name="ContestName"]').val(); 
         $data.ContestFormat = $('select[name="ContestFormat"]').val();
         $data.ContestType = $('select[name="ContestType"]').val();
         $data.Privacy = 'No';
@@ -821,7 +821,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     $scope.showField = false;
     $scope.numbers = [];
     $scope.Showform = function () {
-
+       
         if ($scope.custom.NoOfWinners == '' || $scope.custom.NoOfWinners == '0') {
             $scope.calculation_error = true;
             $scope.calculation_error_msg = "Please enter proper winner count!";
@@ -839,6 +839,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                     $scope.numbers.splice(i);
                 }
             }
+            
             $scope.custom.choices[0].numbers = $scope.numbers;
             if (parseInt($scope.custom.ContestSize) >= parseInt($scope.custom.NoOfWinners)) {
                 $scope.error = false;
@@ -849,6 +850,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                 return false;
             }
         } else {
+           
             $scope.error = true;
             $scope.showField = false;
             $scope.calculation_error = true;

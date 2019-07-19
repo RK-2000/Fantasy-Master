@@ -9,7 +9,7 @@
 		<span class="float-left records d-none d-sm-block">
 			<span class="h5" ng-if="!AllMatches" >Match : <b>{{matchDetail.TeamNameShortLocal}}</b> v/s <b>{{matchDetail.TeamNameShortVisitor}}</b></span><br>
 			<span class="h5" ng-if="!AllMatches" >Match Date : <b>{{matchDetail.MatchStartDateTime}}</b></span><br>
-		</span>
+		</span> 
 	
 	</div> 
 	<div class="clearfix mt-2 mb-2">
