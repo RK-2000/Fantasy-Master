@@ -556,6 +556,9 @@ class Users_model extends CI_Model
         if (!empty($Where['UserTypeID'])) {
             $this->db->where_in("U.UserTypeID", $Where['UserTypeID']);
         }
+        if (!empty($Where['UserIDIn'])) {
+            $this->db->where_in("U.UserID", $Where['UserIDIn']);
+        }
         if (!empty($Where['UserTypeIDNot']) && $Where['UserTypeIDNot'] == 'Yes') {
             $this->db->where("U.UserTypeID!=", $Where['UserTypeIDNot']);
         }

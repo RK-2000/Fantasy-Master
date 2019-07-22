@@ -102,7 +102,7 @@ define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy hh:i:ss */
 
 /*Pagination*/
 define('PAGESIZE_DEFAULT', 15); /*Required*/
-define('PAGESIZE_MAX', 51); /*Required*/
+define('PAGESIZE_MAX', 151); /*Required*/
 
 /*Image*/
 define('THUMBNAIL_SIZE', 110); /*Required*/
