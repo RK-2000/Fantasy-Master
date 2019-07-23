@@ -74,15 +74,17 @@
 								<button class="btn btn-secondary  btn-sm action" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">&#8230;</button>
 								<div class="dropdown-menu dropdown-menu-left">
 									
-									<a class="dropdown-item" href="" ng-click="loadFormAddCash(key, row.UserGUID)">Add Cash Bonus</a>
-									<a class="dropdown-item" href="" ng-click="loadFormAddCashDeposit(key, row.UserGUID)">Add Cash</a>
+									<a ng-if="row.EmailStatus == 'Verified'" class="dropdown-item" href="" ng-click="loadFormAddCash(key, row.UserGUID)">Add Cash Bonus</a>
+									<a ng-if="row.EmailStatus == 'Verified'" class="dropdown-item" href="" ng-click="loadFormAddCashDeposit(key, row.UserGUID)">Add Cash</a>
 									
 									<a class="dropdown-item" target="_blank" href="transactions?UserGUID={{row.UserGUID}}" >Transactions</a>
 									<a class="dropdown-item" target="_blank" href="joinedcontests?UserGUID={{row.UserGUID}}" >Joined Contests</a>
 									<a class="dropdown-item" target="_blank" href="privatecontests?UserGUID={{row.UserGUID}}" >Private Contests</a>
 									<a class="dropdown-item" href="javascript:void(0)" ng-click="loadFormChangePassword(key, row.UserGUID)">Change Password</a>
+									<a class="dropdown-item" target="_blank" href="referral?UserGUID={{row.UserGUID}}">Referal History</a>
 									<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.UserGUID)">Edit</a>
 									<a class="dropdown-item" href="" ng-click="loadFormDelete(key, row.UserGUID)">Delete</a>
+									
 								</div>
 							</div>
 						</td>
