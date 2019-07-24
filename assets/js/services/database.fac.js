@@ -2,9 +2,9 @@
 
 
 
-app.factory('appDB',['$http','$q','$rootScope','environment',appDB]);
+app.factory('appDB',['$http','$q','$rootScope','environment','toastr','$localStorage',appDB]);
 
-function appDB($http,$q,$rootScope,environment){
+function appDB($http,$q,$rootScope,environment,toastr,$localStorage){
 
     var serializeData = function( data ) {
 
@@ -77,7 +77,8 @@ function appDB($http,$q,$rootScope,environment){
                         data:data
 
                     }).then(function successCallback(response) {
-                        if(response.data.ResponseCode==200){
+                        
+                        if(response.data.status){
                             
                             resolve (response.data)
 
@@ -120,14 +121,19 @@ function appDB($http,$q,$rootScope,environment){
                             data: data
 
                         }).then(function successCallback(response) {
-                       
-                            if(response.data.ResponseCode==200){
+                            
+                            if(response.data.ResponseCode==502){
+                                var toast = toastr.error(response.data.Message, {
+                                    closeButton: true
+                                });
+                                toastr.refreshTimer(toast, 5000);
+                                localStorage.clear();
+                                window.location.href = environment.base_url;
+                            }else if(response.data.ResponseCode==200){
 
                                 resolve (response.data)
 
-                            }
-
-                            else{
+                            }else{
 
                                 reject (response.data)
 
@@ -165,7 +171,14 @@ function appDB($http,$q,$rootScope,environment){
                     
                                             }).then(function successCallback(response) {
                     
-                                                if(response.data.ResponseCode==200){
+                                                if(response.data.ResponseCode==502){
+                                                    var toast = toastr.error(response.data.Message, {
+                                                        closeButton: true
+                                                    });
+                                                    toastr.refreshTimer(toast, 5000);
+                                                    localStorage.clear();
+                                                    window.location.href = environment.base_url;
+                                                }else if(response.data.ResponseCode==200){
                     
                                                     resolve (response.data)
                     
