@@ -18,8 +18,8 @@
 						<option value=""></option>
 						<option value="Pending" ng-selected="formData.Status=='Pending'">Pending</option>
 						<option value="Verified" ng-selected="formData.Status=='Verified'">Verified</option>
-						<option value="Deleted" ng-selected="formData.Status=='Deleted'">Deleted</option>
-						<option value="Blocked" ng-selected="formData.Status=='Blocked'">Blocked</option>
+						<option ng-if="formData.EmailStatus == 'Verified'" value="Deleted" ng-selected="formData.Status=='Deleted'">Deleted</option>
+						<option ng-if="formData.EmailStatus == 'Verified'" value="Blocked" ng-selected="formData.Status=='Blocked'">Blocked</option>
 					</select>
 				</div>
 			</div>

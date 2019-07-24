@@ -1,5 +1,5 @@
 <header class="panel-heading">
-  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1>
+  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1> 
 </header>
 
 <div class="panel-body" ng-controller="PageController"><!-- Body -->

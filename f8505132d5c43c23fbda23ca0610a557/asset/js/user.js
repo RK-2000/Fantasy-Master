@@ -61,7 +61,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
     $scope.getList = function() {
 
         if(getQueryStringValue('Type')){
-            var ListType = getQueryStringValue('Type');
+            var ListType = getQueryStringValue('Type'); 
         }else{
             var ListType = '';
         }
