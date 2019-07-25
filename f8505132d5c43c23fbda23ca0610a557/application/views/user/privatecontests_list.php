@@ -1,6 +1,6 @@
 <header class="panel-heading">
   <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1> 
-</header>
+</header> 
 
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
@@ -48,7 +48,7 @@
 					<th style="width: 100px;" class="text-center">Winning Distributed</th>
 					<th style="width: 100px;" class="text-center">Status</th>
 					<th style="width: 100px;" class="text-center">Action</th>
-				</tr>
+				</tr> 
 			</thead>
 			<!-- table body -->
 			<tbody id="tabledivbody">
@@ -56,7 +56,7 @@
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
 
 					<td>
-						<p>{{row.GameType}}</p>
+						<p>{{row.GameType}}</p> 
 					</td>
 					<td>
 						<div class="content float-left"><strong><a href="javascript:void(0)" ng-click="loadContestJoinedUser(key,row.ContestGUID)">{{row.ContestName}}</a></strong>

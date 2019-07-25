@@ -429,8 +429,8 @@ class Users_model extends CI_Model
             $Params = array_map('trim', explode(',', $Field));
             $Field = '';
             $FieldArray = array(
-                'RegisteredOn' => 'DATE_FORMAT(E.EntryDate, "' . DATE_FORMAT . '") RegisteredOn',
-                'LastLoginDate' => 'DATE_FORMAT(UL.LastLoginDate, "' . DATE_FORMAT . '") LastLoginDate',
+                'RegisteredOn' => 'DATE_FORMAT(CONVERT_TZ(E.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") RegisteredOn',
+                'LastLoginDate' => 'DATE_FORMAT(CONVERT_TZ(UL.LastLoginDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") LastLoginDate',
                 'Rating' => 'E.Rating',
                 'UserTypeName' => 'UT.UserTypeName',
                 'IsAdmin' => 'UT.IsAdmin',
@@ -555,6 +555,9 @@ class Users_model extends CI_Model
         }
         if (!empty($Where['UserTypeID'])) {
             $this->db->where_in("U.UserTypeID", $Where['UserTypeID']);
+        }
+        if (!empty($Where['UserIDIn'])) {
+            $this->db->where_in("U.UserID", $Where['UserIDIn']);
         }
         if (!empty($Where['UserTypeIDNot']) && $Where['UserTypeIDNot'] == 'Yes') {
             $this->db->where("U.UserTypeID!=", $Where['UserTypeIDNot']);

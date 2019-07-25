@@ -17,51 +17,61 @@ class Users extends API_Controller_Secure
      */
 
     public function broadcast_post()
-    {
-        /* Validation section */
-        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
-        $this->form_validation->set_rules('Title', 'Title', 'trim|required');
-        $this->form_validation->set_rules('Message', 'Title', 'trim|required');
-        $this->form_validation->set_rules('MediaGUIDs', 'MediaGUIDs', 'trim'); /* Media GUIDs */
-        $this->form_validation->validation($this);  /* Run validation */
-        /* Validation - ends */
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+		$this->form_validation->set_rules('Title', 'Title', 'trim|required');
+		$this->form_validation->set_rules('NotificationType', 'NotificationType', 'trim|required|in_list[Email,WebsiteNotification]');
+		$this->form_validation->set_rules('EmailMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'Email' ? '|required' : ''));
+		$this->form_validation->set_rules('WebsiteMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'WebsiteNotification' ? '|required' : ''));
+		$this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
+		$this->form_validation->validation($this);  /* Run validation */
+		/* Validation - ends */
 
-        $UsersData = $this->Users_model->getUsers('
-			U.UserID,	
-			U.Username,
-            U.Email,
-            U.PhoneNumber
-			', array('AdminUsers' => 'No'), TRUE, 1, 10000000);
-        if ($UsersData) {
-            $NotificationText = $this->Post['Title'];
-            $NotificationMessage = $this->Post['Message'];
-            $InsertData = array();
-            if (!empty($this->Post['Email']) && $this->Post['Email'] == 1) {
-                $this->Return['Message'] = 'Email broadcasted.';
-            } elseif (!empty($this->Post['SMS']) && $this->Post['SMS'] == 1) {
-                $this->Return['Message'] = 'SMS broadcasted.';
-            } elseif (!empty($this->Post['Notification']) && $this->Post['Notification'] == 1) {
-                foreach ($UsersData['Data']['Records'] as $Value) {
-                    $InsertData[] = array_filter(array(
-                        "NotificationPatternID" => 2,
-                        "UserID" => $this->SessionUserID,
-                        "ToUserID" => $Value['UserID'],
-                        "RefrenceID" => "",
-                        "NotificationText" => $NotificationText,
-                        "NotificationMessage" => $NotificationMessage,
-                        "MediaID" => "",
-                        "EntryDate" => date("Y-m-d H:i:s")
-                    ));
-                }
-                if (!empty($InsertData)) {
-                    $this->db->insert_batch('tbl_notifications', $InsertData);
-                }
-                $this->Return['Message'] = 'Notification broadcasted.';
-            } else {
-                $this->Return['Message'] = 'Please Select broadcast Type.';
-            }
-        }
-    }
+		$UsersIds = array();
+		if(!isset($this->Post['AllUsers'])){
+			$TotalUsers = count($this->Post['Users']);
+			if($TotalUsers > 0){
+				for ($I = 0; $I < $TotalUsers; $I++) {
+					$UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
+					if(!$UserID){ continue; }
+					$UsersIds[] = $UserID['EntityID'];
+				}
+			}else{
+				$this->Return['ResponseCode'] = 500;
+				$this->Return['Message'] = "Please select users.";
+				exit;
+			}
+		}
+		$UsersData = $this->Users_model->getUsers('
+				U.UserID,	 
+				U.Username,
+				Email,
+				EmailStatus
+				', array('AdminUsers' => 'No','EmailStatus'=>'Verified','UserTypeID'=>2,'UserIDIn' => $UsersIds), TRUE, 1, 1000);
+		if ($UsersData) {
+
+			/* Send Email Notification */
+			if($this->Post['NotificationType'] == 'Email'){
+				sendMail(array(
+					'emailTo' => implode(',', array_column($UsersData['Data']['Records'], 'Email')),
+					'emailSubject' =>  SITE_NAME ."-".$this->Post['Title'],
+					'emailMessage' => emailTemplate($this->load->view('emailer/admin_email', array(
+						"Message" => $this->Post['EmailMessage']
+					), TRUE))
+				));
+			}
+
+			/* Send Website Notification */
+			if($this->Post['NotificationType'] == 'WebsiteNotification'){
+				foreach($UsersData['Data']['Records'] as $Value){
+					$this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['WebsiteMessage']);
+				} 
+			}
+		}
+		$this->Return['Message'] = 'Success';
+	}
+
 
     /*
       Name: 		getUsers
@@ -80,9 +90,9 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-print_r($this->Post['Params']);die;
+
         $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-      
+   
         if ($UsersData) {
             $this->Return['Data'] = $UsersData['Data'];
         }

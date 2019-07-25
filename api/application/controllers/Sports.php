@@ -23,7 +23,7 @@ class Sports extends API_Controller
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
 
-        /* Get Matches Data */
+        /* Get Series Data */
         $SeriesData = $this->Sports_model->getSeries(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => @$this->SeriesID)),(!empty($this->SeriesID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($SeriesData)) {
             $this->Return['Data'] = (!empty($this->SeriesID)) ? $SeriesData :  $SeriesData['Data'];
