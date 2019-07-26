@@ -388,33 +388,43 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
             /*Change filter*/
             $scope.filter = function () {
                 $scope.search_data = [];
-                if ($scope.contest_type) {
-                    if ($scope.search_data.length > 0) {
-                        $scope.search_data[0].ContestType = $scope.contest_type;
-                    } else {
-                        $scope.search_data.push({'ContestType': $scope.contest_type});
-                    }
+                // if ($scope.contest_type) {
+                //     if ($scope.search_data.length > 0) {
+                //         $scope.search_data[0].ContestType = $scope.contest_type;
+                //     } else {
+                //         $scope.search_data.push({'ContestType': $scope.contest_type});
+                //     }
 
+                // }
+                // if ($scope.Keyword) {
+                //     if ($scope.search_data.length > 0) {
+                //         $scope.search_data[0].ContestName = $scope.Keyword;
+                //     } else {
+                //         $scope.search_data.push({'ContestName': $scope.Keyword});
+                //     }
+                // }
+
+                if ($scope.contest_type) {
+                    $scope.ContestType = $scope.contest_type;
                 }
-                if ($scope.Keyword) {
-                    if ($scope.search_data.length > 0) {
-                        $scope.search_data[0].ContestName = $scope.Keyword;
-                    } else {
-                        $scope.search_data.push({'ContestName': $scope.Keyword});
-                    }
-                }
+
                 if ($scope.contestSizeRange) {
-                    if ($scope.search_data.length > 0) {
-                        $scope.search_data[0].ContestSize = $scope.contestSizeRange;
-                    } else {
-                        $scope.search_data.push({'ContestSize': $scope.contestSizeRange});
+                    var contestSizeRange = $scope.contestSizeRange.split('-');
+                    $scope.ContestSizeStartFrom =  contestSizeRange[0];
+                    $scope.ContestSizeEndTo = contestSizeRange[1];
+                    if($scope.contestSizeRange == 500){
+                        $scope.ContestSizeStartFrom =  500;
+                        $scope.ContestSizeEndTo = '';
                     }
+                    
                 }
-                if ($scope.entry_fee_range) {
-                    if ($scope.search_data.length > 0) {
-                        $scope.search_data[0].EntryFee = $scope.entry_fee_range;
-                    } else {
-                        $scope.search_data.push({'EntryFee': $scope.entry_fee_range});
+                 if ($scope.entry_fee_range) {
+                    var range = $scope.entry_fee_range.split('-');
+                    $scope.EntryStartFrom =  range[0];
+                    $scope.EntryEndTo = range[1];
+                    if($scope.entry_fee_range == 500){
+                        $scope.EntryStartFrom =  500;
+                        $scope.EntryEndTo = '';
                     }
                 }
 
@@ -444,13 +454,19 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 }
                 
                 $scope.data.listLoading = true;
-                var SearchJSON = JSON.stringify($scope.search_data[0]);
+                //var SearchJSON = JSON.stringify($scope.search_data[0]);
                 $data.MatchGUID = $scope.MatchGUID; // Selected MatchGUID
                 $data.SessionKey = $localStorage.user_details.SessionKey; // User SessionKey
                 $data.PageNo = $scope.data.pageNo; // Page Number
                 $data.PageSize = $scope.data.pageSize; // Page Size
                 $data.Params = 'MatchStartDateTime,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,IsJoined,Status,ContestFormat,ContestType,CustomizeWinning,TotalJoined,UserInvitationCode,TeamNameLocal,TeamNameVisitor,IsConfirm,CashBonusContribution';
-                $data.Keyword = (SearchJSON != '' || SearchJSON != undefined) ? SearchJSON : $scope.Keyword;
+                //$data.Keyword = (SearchJSON != '' || SearchJSON != undefined) ? SearchJSON : $scope.Keyword;
+                $data.ContestType = $scope.ContestType;
+                $data.EntryStartFrom = $scope.EntryStartFrom;
+                $data.EntryEndTo = $scope.EntryEndTo;
+                $data.ContestSizeStartFrom = $scope.ContestSizeStartFrom;
+                $data.ContestSizeEndTo = $scope.ContestSizeEndTo;
+                $data.Keyword = $scope.Keyword;
                 $data.ContestFull = 'No';
                 $data.Status = 'Pending';
                 $data.StatusID = 1;
