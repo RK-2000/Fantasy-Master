@@ -131,8 +131,8 @@ function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = arra
     $obj = &get_instance();
     /*Save Log*/
     if (API_SAVE_LOG) {
-        $PushData = array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s"));
-        @$obj->db->insert('log_pushdata', $PushData);
+        mongoDBConnection();
+        $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s")));
     }
     if ($Result === FALSE) {
         die('FCM Send Error: ' . curl_error($Ch));
@@ -169,8 +169,10 @@ function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $
         try {
             $obj = &get_instance();
             /*Save Log*/
-            $PushData = array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s"),);
-            @$obj->db->insert('log_pushdata', $PushData);
+            if (API_SAVE_LOG) {
+                mongoDBConnection();
+                $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s")));
+            }
             $Payload = @json_encode($Body, JSON_NUMERIC_CHECK);
             $Msg = @chr(0) . @pack("n", 32) . @pack('H*', @str_replace(' ', '', $DeviceToken)) . @pack("n", @strlen($Payload)) . $Payload;
             @fwrite($Fp, $Msg);
