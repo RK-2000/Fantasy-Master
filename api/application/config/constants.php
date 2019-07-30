@@ -156,9 +156,9 @@ define('SENDINBLUE_SMS_SENDER', 'EXACT11');
 define('SENDINBLUE_SMS_API_KEY', 'xkeysib-******-72qcrDmbQ0HpGExS');
 
 /* MSG91 SMS API Details */
-define('MSG91_AUTH_KEY', '273511AObV1jwyud5cc067fd');
-define('MSG91_SENDER_ID', 'MFSL11');
-define('MSG91_FROM_EMAIL', 'info@fsl11.com');
+define('MSG91_AUTH_KEY', '273511AObV1jwyuds43f33dds');
+define('MSG91_SENDER_ID', 'DEMO');
+define('MSG91_FROM_EMAIL', 'info@demo.com');
 
 define('POST_PICTURE_URL', BASE_URL . 'uploads/Post/');
 switch (ENVIRONMENT)

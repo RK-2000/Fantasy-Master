@@ -1691,7 +1691,7 @@ class Sports_model extends CI_Model
                     }
 
                     /* Get Join Contest Wallet Details */
-                    $WalletDetails = $this->db->query('SELECT WalletAmount,WinningAmount,CashBonus FROM tbl_users_wallet WHERE Narration = "Join Contest" AND UserTeamID = ' . $JoinValue['UserTeamID'] . ' AND EntityID = ' . $Value['ContestID'] . ' AND UserID = ' . $JoinValue['UserID'] . ' LIMIT 1');
+                    $WalletDetails = $this->db->query('SELECT WalletAmount,WinningAmount,CashBonus FROM tbl_users_wallet WHERE Narration = "Join Contest" AND UserTeamID = ' . $JoinValue['UserTeamID'] . ' AND EntityID = ' . $Value['ContestID'] . ' AND UserID = ' . $JoinValue['UserID'] . ' LIMIT 1')->row_array();
 
                     /* Refund User Amount */
                     $InsertData = array(

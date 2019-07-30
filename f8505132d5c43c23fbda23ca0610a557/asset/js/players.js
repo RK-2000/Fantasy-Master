@@ -102,10 +102,11 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'sports/getPlayers', 'PlayerGUID=' + PlayerGUID + '&MatchGUID=' + MatchGUID + '&Params=PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,PlayerSalary&SessionKey=' + SessionKey, contentType).then(function (response) {
             var response = response.data;
+            console.log(response);
             if (response.ResponseCode == 200) {
                 /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data.Records[0]
+                $scope.formData = response.Data
                 $('#edit_model').modal({show: true});
                 $timeout(function () {
                     $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");

@@ -58,7 +58,7 @@ function send_mail($emailData = array())
                 ]
             }');
     // sending email 
-    $apiKey = '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';
+    $apiKey = 'SG.utLwQDhwSfik_-oxahrViQ.xu7v9zxwv5u_FM0c506ro6oPf-M8qKvI9djQ_0yt5SU_$#1234154d5s8';
     $sg = new \SendGrid($apiKey);
     $response = $sg->client->mail()->send()->post($request_body);
     $response->statusCode();
