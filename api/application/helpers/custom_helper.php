@@ -255,7 +255,7 @@ function paginationOffset($PageNo, $PageSize)
         $PageNo = 1;
     }
     $Offset = ($PageNo - 1) * $PageSize;
-    return $Offset;
+    return (int) $Offset;
 }
 /*------------------------------*/
 /*------------------------------*/

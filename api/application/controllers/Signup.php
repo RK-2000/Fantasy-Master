@@ -161,13 +161,15 @@ class Signup extends API_Controller
     {
         /* Validation section */
         $this->form_validation->set_rules('OTP', 'OTP', 'trim|required|callback_validateToken[3]');
+        $this->form_validation->set_rules('Source', 'Source', 'trim|callback_validateSource');
+        $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|callback_validateDeviceType');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
         
         $UserID = $this->Recovery_model->verifyToken($this->Post['OTP'], 3);
 
         /* check for PhoneNo. update */
-        $UserData = $this->Users_model->getUsers('PhoneNumberForChange', array(
+        $UserData = $this->Users_model->getUsers('UserTypeID,UserID,FirstName,MiddleName,LastName,Email,StatusID,ProfilePic,PhoneNumber,WalletAmount,ReferralCode,TotalCash,PhoneNumberForChange', array(
             'UserID' => $UserID
         ));
 
@@ -181,6 +183,18 @@ class Signup extends API_Controller
             }
         }
         $this->Recovery_model->deleteToken($this->Post['OTP'], 3); /* delete token in any case */
+
+        /* Create Session */
+        $UserData['SessionKey'] = $this->Users_model->createSession($UserID, array(
+            "IPAddress" => @$this->Post['IPAddress'],
+            "SourceID" => @$this->SourceID,
+            "DeviceTypeID" => @$this->DeviceTypeID,
+            "DeviceGUID" => @$this->Post['DeviceGUID'],
+            "DeviceToken" => @$this->Post['DeviceToken'],
+            "Latitude" => @$this->Post['Latitude'],
+            "Longitude" => @$this->Post['Longitude']
+        ));
+        $this->Return['Data'] = $UserData;
     }
 
     /*
