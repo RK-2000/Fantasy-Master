@@ -455,8 +455,9 @@ class Contest extends API_Controller_Secure
         }
 
         /* To Check If Contest Is Joined With Old Team*/
-        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->OldUserTeamID.' LIMIT 1');
-        if ($Query->num_rows() == 0) {
+        $Where = array('SessionUserID' => $this->SessionUserID, 'ContestID' => $this->ContestID, 'UserTeamID' => $this->OldUserTeamID);
+            $Response = $this->Contest_model->getJoinedContests('', $Where, TRUE, 1, 1);
+        if (empty($Response['Data']['TotalRecords'])) {
             $this->form_validation->set_message('validateContestStatus', 'You can switch team only with joined contest.');
             return FALSE;
         }

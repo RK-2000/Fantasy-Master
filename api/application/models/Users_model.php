@@ -601,6 +601,18 @@ class Users_model extends CI_Model
         if (!empty($Where['Email'])) {
             $this->db->where("U.Email", $Where['Email']);
         }
+         if (!empty($Where['EmailStatus']) && $Where['EmailStatus'] == 'Pending') {
+            $this->db->where("U.Email",NULL);
+        }
+        if (!empty($Where['EmailStatus']) && $Where['EmailStatus'] == 'Verified') {
+            $this->db->where("U.Email!=",NULL);
+        }
+        if (!empty($Where['PhoneStatus']) && $Where['PhoneStatus'] == 'Pending') {
+            $this->db->where("U.PhoneNumber",NULL);
+        }
+        if (!empty($Where['PhoneStatus']) && $Where['PhoneStatus'] == 'Verified') {
+            $this->db->where("U.PhoneNumber!=",NULL);
+        }
         if (!empty($Where['PhoneNumber'])) {
             $this->db->where("U.PhoneNumber", $Where['PhoneNumber']);
         }
