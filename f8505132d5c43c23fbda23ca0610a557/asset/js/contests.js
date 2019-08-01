@@ -1,5 +1,5 @@
 app.controller('PageController', function ($scope, $http, $timeout, $rootScope) {
-    $scope.data.pageSize = 100;
+    $scope.data.pageSize = 15;
     $scope.data.ParentCategoryGUID = ParentCategoryGUID;
 
     /*----------------*/
@@ -113,8 +113,9 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
 
     /*load edit form*/
 
-    $scope.loadFormEdit = function (Position, ContestGUID, TotalJoined) {
-        if (parseInt(TotalJoined) > 0) {
+    $scope.loadFormEdit = function (Position, ContestGUID,TotalJoined)
+    {
+        if(parseInt(TotalJoined) > 0){
             $scope.editDataLoading = false;
             alertify.error('You can not update joined contest');
             return false;
@@ -126,32 +127,32 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data.Records[0]
+                $scope.formData = response.Data
 
-                $scope.custom.WinningAmount = parseInt(response.Data.Records[0].WinningAmount);
+                $scope.custom.WinningAmount = parseInt(response.Data.WinningAmount);
 
 
                 $scope.remainingAmount = $scope.custom.WinningAmount;
-                $scope.custom.AdminPercent = response.Data.Records[0].AdminPercent;
-                $scope.EntryFee = response.Data.Records[0].EntryFee;
-                $scope.IsAutoCreate = response.Data.Records[0].IsAutoCreate;
-                $scope.unfilledWinningPercent = response.Data.Records[0].unfilledWinningPercent;
+                $scope.custom.AdminPercent = response.Data.AdminPercent;
+                $scope.EntryFee = response.Data.EntryFee;
+                $scope.IsAutoCreate = response.Data.IsAutoCreate;
+                $scope.unfilledWinningPercent = response.Data.unfilledWinningPercent;
 
-                $scope.custom.NoOfWinners = response.Data.Records[0].NoOfWinners;
-                $scope.custom.ContestSize = response.Data.Records[0].ContestSize;
-                if ($scope.formData.CashBonusContribution) {
+                $scope.custom.NoOfWinners = response.Data.NoOfWinners;
+                $scope.custom.ContestSize = response.Data.ContestSize;
+                if($scope.formData.CashBonusContribution){
                     $scope.formData.CashBonusContribution = parseInt($scope.formData.CashBonusContribution);
-                } else {
+                }else{
                     $scope.formData.CashBonusContribution = 0;
                 }
-
-
-                $scope.custom.choices = response.Data.Records[0].CustomizeWinning;
-               /* if (response.Data.CustomizeWinning.length > 0) {
+                
+                
+                $scope.custom.choices = response.Data.CustomizeWinning;
+                if (response.Data.CustomizeWinning.length > 0) {
                     $scope.showField = true;
-                }*/
+                }
 
-                if (response.Data.Records[0].CustomizeWinning) {
+                if (response.Data.CustomizeWinning) {
 
                     if ($scope.numbers == '') {
                         for (var i = 1; i <= parseInt($scope.custom.NoOfWinners); i++) {
@@ -173,12 +174,12 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                         $scope.remainingAmount = $scope.remainingAmount - value.amount;
                     });
                 }
-                $('#edit_model').modal({ show: true });
+                $('#edit_model').modal({show: true});
                 $scope.editForm = true;
 
                 $timeout(function () {
 
-                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                    $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                 }, 200);
             }
         });

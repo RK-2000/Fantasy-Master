@@ -11,7 +11,7 @@ class Utilities extends API_Controller
         $this->load->model('Utility_model');
         $this->load->model('Sports_model');
         $this->load->model('Contest_model');
-        //mongoDBConnection();
+        mongoDBConnection();
     }
 
     /*

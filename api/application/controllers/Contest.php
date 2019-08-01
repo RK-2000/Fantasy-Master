@@ -11,7 +11,7 @@ class Contest extends API_Controller_Secure
         $this->load->model('Contest_model');
         $this->load->model('Sports_model');
         $this->load->model('Settings_model');
-      //  mongoDBConnection();
+        mongoDBConnection();
     }
 
     /*
@@ -798,8 +798,8 @@ class Contest extends API_Controller_Secure
         }
 
         /* To check same players teams */
-        $AllPlayersIds  = sort(array_column($this->Post['UserTeamPlayers'], 'PlayerID')); // Sort Players ID In Ascending Order
-        $AllPlayerRoles = array_column($this->Post['UserTeamPlayers'], 'PlayerRole');
+        $AllPlayersIds  = array_column($this->Post['UserTeamPlayers'], 'PlayerID'); // Sort Players ID In Ascending Order
+        $AllPlayerRoles = array_column($this->Post['UserTeamPlayers'], 'PlayerPosition');
         $PlayerString   = '';
         for ($I = 0; $I < 11; $I++) {
             $PlayerString .= $AllPlayersIds[$I] . $AllPlayerRoles[$I];

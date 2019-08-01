@@ -914,7 +914,7 @@ class Contest_model extends CI_Model
             $Contest['UserJoinLimit']         = $ContestData['UserJoinLimit'];
             $Contest['CashBonusContribution'] = $ContestData['CashBonusContribution'];
             $Contest['IsPrivacyNameDisplay']  = $ContestData['IsPrivacyNameDisplay'];
-            $Contest['CustomizeWinning']      = json_deocde($ContestData['CustomizeWinning'], TRUE);
+            $Contest['CustomizeWinning']      = json_decode($ContestData['CustomizeWinning'], TRUE);
             $this->addContest($Contest, $ContestData['UserID'], array($ContestData['MatchID']), $ContestData['SeriesID']);
         }
 
@@ -1218,7 +1218,7 @@ class Contest_model extends CI_Model
     {
         /* Get Joined Contest Users */
         $ContestCollection   = $this->fantasydb->{'Contest_' . $Where['ContestID']};
-        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => $PageSize, 'sort' => ['UserRank' => 1]]));
+        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['UserRank' => 1]]));
         if (count($JoinedContestsUsers) > 0) {
             $Return['Data']['TotalRecords'] = $ContestCollection->count();
             $Return['Data']['Records'] = $JoinedContestsUsers;

@@ -128,8 +128,8 @@
                             </ul>
                         </div>  
 
-                        <div class="text-right search-form col-md-3">
-                            <input class="form-control" type="search" placeholder="Search By Name" ng-model="search_contest" aria-label="Search">
+                         <div class="text-right search-form col-md-3 mt-2">
+                            <input class="form-control" type="search" placeholder="Search By Name" ng-model="search_contest" aria-label="Search" ng-keypress="searchContest(search_contest)">
                             <button class="btn btn-outline-success my-2 my-sm-0" type="submit" ng-click="searchContest(search_contest)"><i class="fa fa-search"></i></button>
                         </div>
                     </div>

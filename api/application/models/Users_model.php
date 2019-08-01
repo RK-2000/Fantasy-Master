@@ -44,8 +44,6 @@ class Users_model extends CI_Model
             "About" => @$Input['About'],
             "ProfilePic" => @$Input['ProfilePic'],
             "ProfileCoverPic" => @$Input['ProfileCoverPic'],
-            "Email" => ($SourceID != 1) ? @strtolower($Input['Email']) : '',
-            "EmailForChange" => ($SourceID == 1) ? @strtolower($Input['Email']) : '',
             "Username" => @strtolower($Input['Username']),
             "Gender" => @$Input['Gender'],
             "BirthDate" => @$Input['BirthDate'],
@@ -65,6 +63,11 @@ class Users_model extends CI_Model
             "TwitterURL" => @strtolower($Input['TwitterURL']),
             "ReferredByUserID" => @$Input['Referral']->UserID,
         ));
+        if($SourceID == 1 && $UserTypeID == 2){
+            $InsertData['EmailForChange'] = @strtolower($Input['Email']);
+        }else{
+            $InsertData['Email'] = @strtolower($Input['Email']);
+        }
         $this->db->insert('tbl_users', $InsertData);
 
         /* Manage Singup Bonus */
@@ -82,16 +85,26 @@ class Users_model extends CI_Model
         }
 
         /* Save login info to users_login table. */
-        $InsertData = array_filter(array(
+        $InsertLoginData = array_filter(array(
             "UserID" => $EntityID,
             "Password" => md5(($SourceID == '1' ? $Input['Password'] : $Input['SourceGUID'])),
             "SourceID" => $SourceID,
             "EntryDate" => date("Y-m-d H:i:s")
         ));
-        $this->db->insert('tbl_users_login', $InsertData);
+        $this->db->insert('tbl_users_login', $InsertLoginData);
 
         /* save user settings */
         $this->db->insert('tbl_users_settings', array("UserID" => $EntityID));
+
+        /* Add Into MongoDB */
+        mongoDBConnection();
+        $this->fantasydb->users->insertOne(array_filter(array(
+                '_id'    => (int)  $EntityID,
+                'UserGUID' => $EntityGUID,
+                'Username' => @$InsertData['Username'],
+                'FullName' => @$InsertData['FirstName'].' '.@$InsertData['LastName'],
+                'ProfilePic' => @$InsertData['ProfilePic'],
+            )));
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
@@ -312,6 +325,14 @@ class Users_model extends CI_Model
         }
 
         $this->Entity_model->updateEntityInfo($UserID, array('StatusID' => @$Input['StatusID']));
+
+        /* Edit Into MongoDB */
+        mongoDBConnection();
+        $this->fantasydb->users->updateOne(
+            ['_id'    => (int) $UserID],
+            ['$set'   => array_filter(array('UserName' => @$UpdateArray['UserName'],'FullName' => @$UpdateArray['FirstName'].' '.@$UpdateArray['LastName'],'ProfilePic' => @$UpdateArray['ProfilePic']))],
+            ['upsert' => true]
+        );
         return TRUE;
     }
 
