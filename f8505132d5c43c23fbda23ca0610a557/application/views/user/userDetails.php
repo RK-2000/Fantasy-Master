@@ -46,7 +46,7 @@
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
                             <label><b>Email : </b></label>
-                            <span>{{userData.Email}}</span>
+                            <span>{{userData.Email ? userData.Email : userData.EmailForChange }}</span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -64,7 +64,7 @@
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
                             <label><b>PhoneNumber : </b></label>
-                            <span>{{userData.PhoneNumber}}</span>
+                            <span>{{userData.PhoneNumber ? userData.PhoneNumber : userData.PhoneNumberForChange }}</span>
                         </div>
                     </div>	
                     <div class="col-sm-6">

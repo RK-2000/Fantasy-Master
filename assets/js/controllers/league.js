@@ -210,8 +210,8 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.Points,
-//                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
+                            //'Points': value.Points,
+                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
                         });
@@ -222,8 +222,8 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerGUID': value.PlayerGUID,
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
-                            'Points': value.Points,
-//                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
+                            //'Points': value.Points,
+                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
                         });
@@ -235,7 +235,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
                             'Points': value.Points,
-//                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
+                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
                         });
@@ -247,7 +247,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                             'PlayerPosition': value.PlayerPosition,
                             'PlayerName': value.PlayerName,
                             'Points': value.Points,
-//                                                    'Points': ($scope.Contest.Status == 'Pending') ? parseFloat(value.PlayerSalaryCredit) : parseFloat(value.Points),
+                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
                             'PlayerPic': value.PlayerPic,
                             'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
                         });
@@ -619,10 +619,11 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                         changedTeamGUID.push($rootScope.userTeamList[i].UserTeamGUID);
                     }
                 }
-                $data.UserTeamGUID = JSON.stringify(changedTeamGUID);
-                $data.OldUserTeamGUID = JSON.stringify($rootScope.UserContestTeams);
+                $data.UserTeamGUID = changedTeamGUID[0];
+                $data.OldUserTeamGUID = $rootScope.UserContestTeams[0];
                 $data.ContestGUID = $scope.ContestGUID;
                 $data.SessionKey = $localStorage.user_details.SessionKey;
+
                 appDB
                         .callPostForm('contest/switchUserTeam', $data)
                         .then(
