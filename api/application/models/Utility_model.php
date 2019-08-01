@@ -1536,9 +1536,15 @@ class Utility_model extends CI_Model
                 $AllPlayingXI = array();
                 if($BattingValue[0] == 'a'){
                     $MatchScoreDetails['TeamScoreLocal']['Scores'][] = array('Scores' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'].'/'.@$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'],'Overs' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['overs']);
+                    if(count($Response['data']['card']['batting_order']) == 1){
+                        $MatchScoreDetails['TeamScoreVisitor']['Scores'][] = array('Scores' => '','Overs' => '');
+                    }
                 }
                 if($BattingValue[0] == 'b'){
                     $MatchScoreDetails['TeamScoreVisitor']['Scores'][] = array('Scores' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'].'/'.@$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'],'Overs' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['overs']);
+                    if(count($Response['data']['card']['batting_order']) == 1){
+                        $MatchScoreDetails['TeamScoreLocal']['Scores'][] = array('Scores' => '','Overs' => '');
+                    }
                 }
 
                 /* Manage Team Players Details */

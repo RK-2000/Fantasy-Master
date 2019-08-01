@@ -326,6 +326,6 @@ function mongoDBConnection()
     /* Require MongoDB Library & Connection */
     $Obj = &get_instance();
     require_once getcwd() . '/vendor/autoload.php';
-    $Obj->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
+    $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:27017");
     $Obj->fantasydb = $Obj->ClientObj->fantasy;
 }
