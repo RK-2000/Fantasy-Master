@@ -13,6 +13,7 @@ class Broadcast extends Admin_Controller_Secure {
 			'asset/js/'.$this->ModuleData['ModuleName'].'.js',
 			'asset/plugins/chosen/chosen.jquery.min.js',
 			'asset/plugins/jquery.form.js',
+			'asset/js/tinymce.min.js'
 		);	
 		$this->load->view('includes/header',$load);
 		$this->load->view('includes/menu');
