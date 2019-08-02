@@ -9,7 +9,7 @@ var contentType = {
 app.controller('MainController', ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
     $scope.data = {
         dataList: [],
-        totalRecords: '0',
+        totalRecords: '0', 
         pageNo: 1,
         pageSize: 25,
         noRecords: false,
