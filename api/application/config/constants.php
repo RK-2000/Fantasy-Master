@@ -90,7 +90,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*------------------------------*/	
 
 /*Site Related Settings*/
-define('SITE_NAME', 'FSL11');
+define('SITE_NAME', 'Fantasy Master');
 define('SITE_CONTACT_EMAIL', 'mwadmin@mailinator.com');
 define('MULTISESSION', true);
 define('PHONE_NO_VERIFICATION', true);

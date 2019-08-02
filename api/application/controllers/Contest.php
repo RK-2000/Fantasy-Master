@@ -126,6 +126,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No,All]');
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal,Head to Head]');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -144,7 +145,7 @@ class Contest extends API_Controller_Secure
         $ContestTypes[] = array('Key' => 'Only For Beginners', 'TagLine' => 'Play Your First Contest Now', 'Where' => array('ContestType' => 'Only For Beginners'));
 
         foreach ($ContestTypes as $key => $Contests) {
-            array_push($ContestData, $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('MatchID' => @$this->MatchID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID), $Contests['Where']), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize'])['Data']);
+            array_push($ContestData, $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('MatchID' => @$this->MatchID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID), $Contests['Where']), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize'])['Data']);
             $ContestData[$key]['Key'] = $Contests['Key'];
             $ContestData[$key]['TagLine'] = $Contests['TagLine'];
         }
