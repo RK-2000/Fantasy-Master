@@ -1619,9 +1619,9 @@ class Sports_model extends CI_Model
 
         /* Get Contest Data */
         if (!empty($MatchID)) {
-            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = ' . $MatchID . ' AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
+            $ContestsUsers = $this->db->query('SELECT C.ContestID,C,UnfilledWinningPercent,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,C.CustomizeWinning,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = ' . $MatchID . ' AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
         } else {
-            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
+            $ContestsUsers = $this->db->query('SELECT C.ContestID,C,UnfilledWinningPercent,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,C.CustomizeWinning,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
         }
         if ($ContestsUsers->num_rows() == 0) {
             return FALSE;
@@ -1629,6 +1629,36 @@ class Sports_model extends CI_Model
 
         foreach ($ContestsUsers->result_array() as $Value) {
             if ($CancelType == "Cancelled") {
+
+                /* To Check Unfilled Contest */
+                if(($Value['UnfilledWinningPercent'] == 'GuranteedPool' || $Value['UnfilledWinningPercent'] == 'Yes') && $Value['ContestSize'] != $Value['TotalJoined']){
+                    if($Value['TotalJoined'] == 0){
+    
+                        /* Update Contest Status */
+                        $this->db->where('EntityID', $Value['ContestID']);
+                        $this->db->limit(1);
+                        $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
+                    }else{
+                        $TotalCollection = $Value['EntryFee'] * $Value['TotalJoined'];
+                        foreach(json_decode($Value['CustomizeWinning'],TRUE) as $WinningValue){
+                            $NewCustomizeWinning[] = array(
+                                            'From'    => $WinningValue['From'],
+                                            'To'      => $WinningValue['To'],
+                                            'Percent' => $WinningValue['Percent'],
+                                            'WinningAmount' => round(($TotalCollection*$WinningValue['Percent'])/100,2)
+                                        );
+                        }
+    
+                        /* Update Contest New Customize Winning */
+                        if(!empty($NewCustomizeWinning)){
+                            $this->db->where('ContestID', $Value['ContestID']);
+                            $this->db->limit(1);
+                            $this->db->update('sports_contest', array('CustomizeWinning' => json_encode($NewCustomizeWinning)));    
+                        }
+                    }
+                    continue;
+                }
+
                 if (((strtotime($Value['MatchStartDateTime']) - 19800) - strtotime(date('Y-m-d H:i:s'))) > 0) {
                     continue;
                 }
