@@ -54,6 +54,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey + '&Status=1&PageNo=1&PageSize=15';
         $http.post(API_URL + 'notifications', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.notificationList = response.Data.Records;
                 $scope.data.notificationCount = 0;
@@ -391,7 +392,7 @@ function manageSession(responseCode){
     if(parseInt(responseCode) === 502){
         alertify.error('Session disconnected !!');
         setTimeout(function(){
-            window.location.href = BASE_URL;
+            window.location.href = $('a.logout-btn').attr('href') ;
         },2000);
     }
 }
