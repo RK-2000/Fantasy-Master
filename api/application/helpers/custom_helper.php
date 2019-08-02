@@ -45,7 +45,7 @@ function send_mail($emailData = array())
             }
             ],
             "from": {
-                "email": "info@fsl11.com"
+                "email": "info@example.com"
                 },
 
                 "template_id"   : "' . $emailData['template_id'] . '",

@@ -172,6 +172,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
 
 /*jquery*/
 $(document).ready(function() {
+
     /*Used to display menu active*/
     $('.navbar-nav ul li a.active').closest('ul').addClass('show');
     $('.navbar-nav ul li a.active').closest('ul').parent().closest('li').addClass('show');
@@ -383,6 +384,16 @@ function getQueryStringValue(key)
     vars[hash[0]] = hash[1];
 }
 return (!vars[key]) ? '' : vars[key];
+}
+
+/* Manage Admin Session */
+function manageSession(responseCode){
+    if(parseInt(responseCode) === 502){
+        alertify.error('Session disconnected !!');
+        setTimeout(function(){
+            window.location.href = BASE_URL;
+        },2000);
+    }
 }
 
 app.filter('myDateFormat', function myDateFormat($filter){

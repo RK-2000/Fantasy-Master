@@ -1189,7 +1189,7 @@ class Contest_model extends CI_Model
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Records[$key]['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['MatchIDAsUse'],$Records[$key]['UserIDAsUse']);
@@ -1200,7 +1200,7 @@ class Contest_model extends CI_Model
                 $Record = $Query->row_array();
                 if (in_array('UserTeamPlayers', $Params)) {
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Record['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Record['UserTeamIDAsUse'],$Record['MatchIDAsUse'],$Record['UserIDAsUse']);
