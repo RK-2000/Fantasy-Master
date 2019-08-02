@@ -46,12 +46,17 @@ class Matches extends API_Controller_Secure
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->set_rules('MatchClosedInMinutes', 'MatchClosedInMinutes', 'trim|integer');
+        $this->form_validation->set_rules('CancelContest', 'CancelContest', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         /* Update Match Details */
         $this->Sports_model->updateMatchDetails($this->MatchID, $this->Post);
-
+        
+        /* Cancel All Contests */
+        if(@$this->Post['CancelContest'] == 'Yes'){
+            $this->db->query('update `tbl_entity` E, sports_contest C SET E.StatusID = 3 WHERE  E.EntityID = C.ContestID AND C.MatchID = '.$this->MatchID.' AND E.`StatusID` = 1');
+        }
         /* Update Match Status */
         $this->Entity_model->updateEntityInfo($this->MatchID, array("StatusID" => $this->StatusID));
         $this->Return['Data'] = $this->Sports_model->getMatches('SeriesName,MatchType,MatchNo,MatchClosedInMinutes,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status', array('MatchID' => $this->MatchID), FALSE, 0);
