@@ -32,7 +32,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]|callback_validateMatchDateTime[Contest]');
-        if ($this->Post['WinningAmount'] > 0 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -72,7 +72,7 @@ class Contest extends API_Controller_Secure
                 exit;
             }
         }
-        if ($this->Post['WinningAmount'] > 0 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
             $this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "Customize winning data is required.";
 			exit;

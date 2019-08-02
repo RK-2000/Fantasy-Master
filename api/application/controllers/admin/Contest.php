@@ -136,7 +136,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
-        if ($this->Post['WinningAmount'] > 0 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -176,7 +176,7 @@ class Contest extends API_Controller_Secure {
                 exit;
             }
         }
-        if ($this->Post['WinningAmount'] > 0 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
             $this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "Customize winning data is required.";
 			exit;
