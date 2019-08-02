@@ -91,7 +91,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*------------------------------*/	
 
 /*Site Related Settings*/
-define('SITE_NAME', 'FSL11-Admin');
+define('SITE_NAME', 'Fantasy Master-Admin');
 define('PATH_TEMPLATE',"./asset/template/");
 define('ADMIN_FOLDER',"f8505132d5c43c23fbda23ca0610a557"); // mobiwebtech-fantasy-admin
 
