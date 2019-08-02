@@ -47,7 +47,7 @@ class Contest_model extends CI_Model
                 "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
                 "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
                 "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-                "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+                "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
                 "EntryType" => @$Input['EntryType'],
                 "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
                 "CashBonusContribution" => @$Input['CashBonusContribution'],
@@ -56,7 +56,7 @@ class Contest_model extends CI_Model
                 "MatchID" => @$Match,
                 "UserInvitationCode" => random_string('alnum', 6)
             ));
-            $InsertData['CustomizeWinning'] = ($InsertData['IsPaid'] == 'Yes') ? (($InsertData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $InsertData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
+            $InsertData['CustomizeWinning'] = ($InsertData['WinningAmount'] > 0) ? (($InsertData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $InsertData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
             $this->db->insert('sports_contest', $InsertData);
 
             $this->db->trans_complete();
@@ -88,13 +88,13 @@ class Contest_model extends CI_Model
             "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
             "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-            "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+            "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
             "EntryType" => @$Input['EntryType'],
             "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
             "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay']
         ));
-        $UpdateData['CustomizeWinning'] = ($UpdateData['IsPaid'] == 'Yes') ? (($UpdateData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $UpdateData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
+        $UpdateData['CustomizeWinning'] = ($UpdateData['WinningAmount'] > 0) ? (($UpdateData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $UpdateData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);
         $this->db->update('sports_contest', $UpdateData);

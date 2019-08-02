@@ -392,7 +392,7 @@ function manageSession(responseCode){
     if(parseInt(responseCode) === 502){
         alertify.error('Session disconnected !!');
         setTimeout(function(){
-            window.location.href = $('a.logout-btn').attr('href') ;
+            window.location.href = $('a.logout-btn').attr('href');
         },2000);
     }
 }
