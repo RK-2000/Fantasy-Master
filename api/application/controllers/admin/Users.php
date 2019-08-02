@@ -9,6 +9,7 @@ class Users extends API_Controller_Secure
     {
         parent::__construct();
         $this->load->model('Recovery_model');
+        $this->load->model('Utility_model');
     }
 
     /*
@@ -20,54 +21,65 @@ class Users extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+        $this->form_validation->set_rules('NotificationType[]', 'NotificationType', 'trim|required');
+        $this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
 		$this->form_validation->set_rules('Title', 'Title', 'trim|required');
-		$this->form_validation->set_rules('NotificationType', 'NotificationType', 'trim|required|in_list[Email,WebsiteNotification]');
-		$this->form_validation->set_rules('EmailMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'Email' ? '|required' : ''));
-		$this->form_validation->set_rules('WebsiteMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'WebsiteNotification' ? '|required' : ''));
-		$this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
+		$this->form_validation->set_rules('Message', 'Message', 'trim|required');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-
-		$UsersIds = array();
-		if(!isset($this->Post['AllUsers'])){
-			$TotalUsers = count($this->Post['Users']);
-			if($TotalUsers > 0){
-				for ($I = 0; $I < $TotalUsers; $I++) {
-					$UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
-					if(!$UserID){ continue; }
-					$UsersIds[] = $UserID['EntityID'];
-				}
-			}else{
-				$this->Return['ResponseCode'] = 500;
-				$this->Return['Message'] = "Please select users.";
-				exit;
-			}
-		}
-		$UsersData = $this->Users_model->getUsers('
-				U.UserID,	 
-				U.Username,
-				Email,
-				EmailStatus
-				', array('AdminUsers' => 'No','EmailStatus'=>'Verified','UserTypeID'=>2,'UserIDIn' => $UsersIds), TRUE, 1, 1000);
+        
+        if(@$this->Post['AllUsers'] == 'Yes'){
+            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserTypeID = 2');
+            $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
+        }else{
+            $UsersIds = array();
+            if(!isset($this->Post['AllUsers'])){
+                $TotalUsers = count($this->Post['Users']);
+                if($TotalUsers > 0){
+                    for ($I = 0; $I < $TotalUsers; $I++) {
+                        $UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
+                        if(!$UserID){ continue; }
+                        $UsersIds[] = $UserID['EntityID'];
+                    }
+                }else{
+                    $this->Return['ResponseCode'] = 500;
+                    $this->Return['Message'] = "Please select users.";
+                    exit;
+                }
+            }
+            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserID IN ('.implode(",", $UsersIds).')');
+            $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
+        }
 		if ($UsersData) {
 
+            /* Send Website Notification */
+            if(in_array('Website', $this->Post['NotificationType'])){
+                foreach($UsersData as $Value){
+                    $this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['Message']);
+                } 
+            }
+
 			/* Send Email Notification */
-			if($this->Post['NotificationType'] == 'Email'){
+			if(in_array('Email', $this->Post['NotificationType'])){
 				sendMail(array(
-					'emailTo' => implode(',', array_column($UsersData['Data']['Records'], 'Email')),
+					'emailTo' => implode(',', array_filter(array_column($UsersData, 'Email'))),
 					'emailSubject' =>  SITE_NAME ."-".$this->Post['Title'],
 					'emailMessage' => emailTemplate($this->load->view('emailer/admin_email', array(
-						"Message" => $this->Post['EmailMessage']
+						"Message" => $this->Post['Message']
 					), TRUE))
 				));
 			}
 
-			/* Send Website Notification */
-			if($this->Post['NotificationType'] == 'WebsiteNotification'){
-				foreach($UsersData['Data']['Records'] as $Value){
-					$this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['WebsiteMessage']);
-				} 
-			}
+            /* Send SMS Notification */
+            if(in_array('SMS', $this->Post['NotificationType'])){
+                foreach($UsersData as $Value){
+                    if(empty($Value['PhoneNumber'])){ continue; }
+                    $this->Utility_model->sendMobileSMS(array(
+                                'PhoneNumber' => $Value['PhoneNumber'],
+                                'Text' =>  $this->Post['Message']
+                            ));
+                } 
+            }
 		}
 		$this->Return['Message'] = 'Success';
 	}

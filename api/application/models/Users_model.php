@@ -604,6 +604,9 @@ class Users_model extends CI_Model
         if (!empty($Where['PhoneNumber'])) {
             $this->db->where("U.PhoneNumber", $Where['PhoneNumber']);
         }
+        if (!empty($Where['Status'])) {
+            $this->db->having("Status", $Where['Status']);
+        }
         if (!empty($Where['EmailStatus'])) {
             $this->db->having("EmailStatus", $Where['EmailStatus']);
         }

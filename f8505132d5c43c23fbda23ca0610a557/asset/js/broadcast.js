@@ -1,13 +1,18 @@
 app.controller('PageController', function ($scope, $http, $timeout) {
 
+  var FromDate = ToDate = ''; 
+
   $timeout(function () {
-      $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 4, }).trigger("chosen:updated");
+      $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, }).trigger("chosen:updated");
   }, 300);
 
   /*add data*/
   $scope.addData = function () {
       $scope.addDataLoading = true;
-      var data = 'SessionKey=' + SessionKey + '&' + $("form[name='add_form']").serialize() + '&EmailMessage=' + tinyMCE.get('editor').getContent();
+      var data = 'SessionKey=' + SessionKey + '&' + $("form[name='add_form']").serialize();
+      if ($('input[name="AllUsers"]').is(":checked")) {
+        data += '&AllUsers=Yes';
+      }
       $http.post(API_URL + 'admin/users/broadcast', data, contentType).then(function (response) {
           var response = response.data;
           manageSession(response.ResponseCode);
@@ -21,70 +26,60 @@ app.controller('PageController', function ($scope, $http, $timeout) {
       });
   }
 
-  $scope.NotificationType = 'Email';
-  $scope.changeNotificationType = function (NotificationType) {
-      $scope.NotificationType = NotificationType;
-      if (NotificationType == 'Email') {
-          window.location.reload();
-      }
+  /* Reset form */
+  $scope.resetUserForm = function(){
+      $('#filterForm1').trigger('reset'); 
+      $('.chosen-select').trigger('chosen:updated');
+      $('#dateRange span').html('Select Date Range');
+      FromDate = ToDate = '';
   }
-  $scope.getUsers = function () {
-      var data = 'SessionKey=' + SessionKey + '&IsAdmin=No&EmailStatus=Verified&OrderBy=FirstName&Sequence=ASC&Params=Email,EmailStatus';
-      $http.post(API_URL + 'admin/users', data, contentType).then(function (response) {
-          var response = response.data;
-          manageSession(response.ResponseCode);
-          $scope.userData = response.Data.Records    
+
+  /* Add Date Range Picker */
+  $scope.initDateRangePicker = function (){
+      $('#dateRange').daterangepicker({
+          startDate: moment().subtract(29, 'days'),
+          endDate: moment(),
+          locale: {
+              cancelLabel: 'Clear'
+          },
+          ranges: {
+             'Today': [moment(), moment()],
+             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+             'This Month': [moment().startOf('month'), moment().endOf('month')],
+             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          }
       });
+      $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+          FromDate = picker.startDate.format('YYYY-MM-DD');
+          ToDate   = picker.endDate.format('YYYY-MM-DD');
+          $('#dateRange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+      });
+      $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+          $('#dateRange span').html('Select Date Range');
+          FromDate = ToDate = '';
+      });
+  }
+
+  /* Get Users */
+  $scope.getUsers = function () {
+      $scope.data.listLoading = true;
+      $scope.IsUsers = false;
+        var data = 'SessionKey=' + SessionKey +'&IsAdmin=No&Status=Verified&OrderBy=FirstName&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=ASC&' +'Params=Status,Email,EmailStatus,PhoneNumber,PhoneStatus&'+$('#filterForm1').serialize();
+        $http.post(API_URL + 'admin/users', data, contentType).then(function(response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            $scope.userData = response.Data.Records
+            $scope.data.listLoading = false;
+            $scope.IsUsers = true;
+            $timeout(function () {
+                $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+            }, 300);
+        });
   };
 
 });
-
-
-$(document).ready(function () {
-  tinymce.init({
-      selector: '#editor',
-      font_size_classes: "fontSize1, fontSize2, fontSize3, fontSize4, fontSize5, fontSize6",
-      plugins: [
-          "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-          "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-          "save table contextmenu directionality template paste textcolor code"
-      ],
-      toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons | sizeselect | fontselect | fontsize | fontsizeselect",
-      style_formats: [{
-          title: 'Bold text',
-          inline: 'b'
-      }, {
-          title: 'Red text',
-          inline: 'span',
-          styles: {
-              color: '#ff0000'
-          }
-      }, {
-          title: 'Red header',
-          block: 'h1',
-          styles: {
-              color: '#ff0000'
-          }
-      }, {
-          title: 'Example 1',
-          inline: 'span',
-          classes: 'example1'
-      }, {
-          title: 'Example 2',
-          inline: 'span',
-          classes: 'example2'
-      }, {
-          title: 'Table styles'
-      }, {
-          title: 'Table row 1',
-          selector: 'tr',
-          classes: 'tablerow1'
-      }],
-      image_title: true,
-      automatic_uploads: true
-  });
-
-})
 
 
 
