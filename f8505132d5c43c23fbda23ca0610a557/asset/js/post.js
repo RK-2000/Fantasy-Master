@@ -7,6 +7,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&ParentCategoryGUID='+ParentCategoryGUID+'&'+$('#filterPanel form').serialize();
         $http.post(API_URL+'admin/category/getFilterData', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data){ /* success case */
              $scope.filterData =  response.Data;
              $timeout(function(){
@@ -34,6 +35,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         +'&PostType=Testimonial'+$('#filterForm').serialize();
         $http.post(API_URL+'utilities/getPosts', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -67,6 +69,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'post/getPost', 'SessionKey='+SessionKey+'&PostGUID='+PostGUID, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -91,6 +94,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'post/getPost', 'SessionKey=' + SessionKey + '&PostGUID=' + PostGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -115,6 +119,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'post/add', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.applyFilter();
@@ -133,6 +138,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey=' + SessionKey + '&' + $('#edit_form').serialize();
         $http.post(API_URL + 'post/edit', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;

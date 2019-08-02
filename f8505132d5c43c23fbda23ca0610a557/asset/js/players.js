@@ -7,6 +7,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&SeriesGUID='+ SeriesGUID+'&Params=TeamName,TeamGUID&' + $('#filterPanel form').serialize();
         $http.post(API_URL + 'admin/matches/getTeamData', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data) {
                 /* success case */
                 $scope.filterData = response.Data;
@@ -35,6 +36,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         }
         $http.post(API_URL + 'admin/matches/getMatches', 'MatchGUID=' + MatchGUID + '&Params=SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation&SessionKey=' + SessionKey, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 
                 $scope.matchDetail = response.Data.Records[0]
@@ -62,6 +64,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&SeriesGUID='+ SeriesGUID+ '&MatchGUID=' + MatchGUID + '&Params=' + PlayerRole + ',PlayerPic,&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize +'&'+ $('#filterForm').serialize() +'&'+ $('#filterForm1').serialize();
         $http.post(API_URL + 'sports/getPlayers', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -102,6 +105,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'sports/getPlayers', 'PlayerGUID=' + PlayerGUID + '&MatchGUID=' + MatchGUID + '&Params=PlayerRole,PlayerPic,PlayerCountry,PlayerBornPlace,PlayerBattingStyle,PlayerBowlingStyle,MatchType,MatchNo,MatchDateTime,SeriesName,TeamGUID,PlayerSalary&SessionKey=' + SessionKey, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             console.log(response);
             if (response.ResponseCode == 200) {
                 /* success case */
@@ -123,6 +127,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'category/getCategory', 'SessionKey=' + SessionKey + '&CategoryGUID=' + CategoryGUID, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -148,6 +153,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&SeriesGUID=' + getQueryStringValue('SeriesGUID') + '&MatchGUID=' + getQueryStringValue('MatchGUID') + '&' + $("form[name='edit_form']").serialize();
         $http.post(API_URL + 'admin/matches/updatePlayerInfo', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position] = response.Data;
@@ -183,6 +189,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&PlayerGUID=' + PlayerGUID + '&MatchGUID=' + MatchGUID + concatString;
         $http.post(API_URL + 'admin/matches/updatePlayerSalary', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position] = response.Data;

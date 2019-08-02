@@ -10,6 +10,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'pageNo&StatusID=1&PointsCategory='+$scope.PointsCategory;
         $http.post(API_URL+'sports/getPoints', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -48,6 +49,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&PointsTypeGUID='+PointsTypeGUID+'&PointsMatchType='+PointsMatchType+'&PointsValue='+PointsValue+'&PointsCategory='+$scope.PointsCategory;
         $http.post(API_URL+'admin/points/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                // alertify.success(response.Message);
             }else{
@@ -63,6 +65,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'PointsCategory='+$scope.PointsCategory+'&SessionKey='+SessionKey+'&'+$('#generalPoint_form').serialize();
         $http.post(API_URL+'admin/points/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                alertify.success(response.Message);
             }else{
@@ -76,6 +79,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'PointsCategory='+$scope.PointsCategory+'&SessionKey='+SessionKey+'&'+$('#bonusPoint_form').serialize();
         $http.post(API_URL+'admin/points/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                alertify.success(response.Message);
             }else{
@@ -89,6 +93,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'PointsCategory='+$scope.PointsCategory+'&SessionKey='+SessionKey+'&'+$('#economyRate_form').serialize();
         $http.post(API_URL+'admin/points/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                alertify.success(response.Message);
             }else{
@@ -102,6 +107,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'PointsCategory='+$scope.PointsCategory+'&SessionKey='+SessionKey+'&'+$('#strikeRate_form').serialize();
         $http.post(API_URL+'admin/points/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                alertify.success(response.Message);
             }else{

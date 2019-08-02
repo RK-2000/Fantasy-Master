@@ -9,6 +9,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
 
         $http.post(API_URL+'admin/matches/getFilterData', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data){ 
                 /* success case */
              $scope.filterData =  response.Data;
@@ -34,6 +35,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize+'&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameVisitor,Status,CustomizeWinning,ContestType,MatchStartDateTime,TotalJoined&Privacy=All&OrderByToday=Yes&' + $('#filterForm').serialize() + '&' + $('#filterForm1').serialize();
         $http.post(API_URL+'contest/getContests', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -58,7 +60,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = false;
         $http.post(API_URL+'admin/contest/getContestWinningUsers', 'SessionKey='+SessionKey+'&ContestGUID='+ContestGUID+'&Params=UserWinningAmount,TotalPoints,EntryFee,ContestSize,NoOfWinners,UserTeamName,FullName,UserRank', contentType).then(function(response) {
             var response = response.data;
-            console.log(response);
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ 
                 $scope.formData = response.Data;
                 $scope.data.pageNo++;               
@@ -91,6 +93,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SeriesGUID=' + SeriesGUID + '&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status='+Status;
         $http.post(API_URL + 'sports/getMatches', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data) { /* success case */
                 $scope.MatchData = response.Data.Records;
                 $timeout(function () {

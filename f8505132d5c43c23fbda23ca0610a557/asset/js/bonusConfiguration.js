@@ -11,6 +11,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey;
         $http.post(API_URL+'admin/config/getConfigs', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -34,6 +35,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+'ConfigTypeGUID='+ConfigTypeGUID+'&ConfigTypeValue='+ConfigValue+'&Status='+ConfigStatus;
         $http.post(API_URL+'admin/config/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.applyFilter();

@@ -9,6 +9,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $http.post(module, data, contentType).then(function(Response) {
             //console.log(Response);
             var response = Response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $('#login_form')[0].reset();
                 window.location.href = 'dashboard';               

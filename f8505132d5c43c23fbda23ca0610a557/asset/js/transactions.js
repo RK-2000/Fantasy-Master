@@ -52,6 +52,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var UserGUID = getQueryStringValue('UserGUID');
         $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.userData = response.Data;
             }
@@ -68,6 +69,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' + $('#filterForm').serialize();
         $http.post(API_URL+'admin/users/getWallet', data, contentType).then(function(response) {
         var response = response.data;
+        manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -86,6 +88,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&' + $('#filterForm').serialize();
         $http.post(API_URL + 'admin/users/exportTransactions', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 var encodedUri = encodeURI(response.Data);
                 var link = document.createElement("a");

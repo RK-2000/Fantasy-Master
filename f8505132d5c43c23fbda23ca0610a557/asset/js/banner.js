@@ -11,6 +11,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/config/bannerList', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                  $scope.data.dataList = response.Data.Records;
@@ -34,6 +35,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+'ConfigTypeGUID='+ConfigTypeGUID+'&ConfigTypeValue='+ConfigValue+'&Status='+ConfigStatus;
         $http.post(API_URL+'admin/config/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.applyFilter();
@@ -63,6 +65,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&Section=Banner&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'admin/config/addBanner', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 window.location.reload();
@@ -82,6 +85,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.addDataLoading = true;
             $http.post(API_URL+'upload/delete', 'SessionKey='+SessionKey+'&MediaGUID='+MediaGUID, contentType).then(function(response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if(response.ResponseCode==200){ /* success case */
                     $scope.getList();        
                     alertify.success(response.Message);
