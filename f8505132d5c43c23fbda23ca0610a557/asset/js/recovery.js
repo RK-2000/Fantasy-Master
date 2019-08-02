@@ -6,6 +6,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = $('#recovery_form').serialize();
         $http.post(API_URL+'recovery', data, contentType).then(function(Response) {
             var response = Response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 alertify.success(response.Message);  
                 $timeout(function(){
@@ -25,6 +26,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = $('#recovery_reset_form').serialize();
         $http.post(API_URL+'recovery/setPassword', data, contentType).then(function(Response) {
             var response = Response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $('#recovery_reset_form')[0].reset();
                 alertify.success(response.Message);  

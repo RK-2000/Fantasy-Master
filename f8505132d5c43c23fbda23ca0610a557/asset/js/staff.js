@@ -15,6 +15,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&IsAdmin=Yes&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&Params=RegisteredOn,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status, StatusID&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/users', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -50,6 +51,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL+'users/getProfile', 'SessionKey='+SessionKey+'&UserGUID='+UserGUID+ '&Params=Status,ProfilePic', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -70,6 +72,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'admin/users/add', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                  $scope.applyFilter();
@@ -90,6 +93,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             var data = 'SessionKey='+SessionKey+'&'+$('#records_form').serialize();
             $http.post(API_URL+'admin/entity/deleteSelected', data, contentType).then(function(response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if(response.ResponseCode==200){ /* success case */               
                     alertify.success(response.Message);
                     $scope.applyFilter();
@@ -113,6 +117,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+$('#edit_form').serialize();
         $http.post(API_URL+'admin/users/updateUserInfo', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position] = response.Data;
@@ -133,6 +138,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL+'users/getProfile', 'SessionKey='+SessionKey+'&UserGUID='+UserGUID+'&Params=ProfilePic', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data

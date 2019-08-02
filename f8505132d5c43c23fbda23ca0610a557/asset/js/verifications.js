@@ -7,6 +7,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&Params=SeriesName,SeriesGUID&'+$('#filterPanel form').serialize();
         $http.post(API_URL+'admin/matches/getFilterData', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data){ 
                 /* success case */
              $scope.filterData =  response.Data;
@@ -73,6 +74,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&ForVerify=Yes&UserGUID='+UserGUID+'&EntryFrom=' + FromDate + '&EntryTo=' + ToDate +'&Params=FullName, Email, Username, ProfilePic, PhoneNumber,MediaPAN,MediaBANK,PanStatus,ModifiedDate,BankStatus&OrderBy=ModifiedDate&Sequence=DESC&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize +'&'+ $('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/users', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -123,6 +125,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey=' + SessionKey + '&MediaGUID='+MediaGUID+'&Comments='+person+'&UserGUID=' +UserGUID+'&VetificationType='+VetificationType+Params ;
         $http.post(API_URL + 'admin/users/changeVerificationStatus', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 
@@ -144,6 +147,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params='+Mode+',UserTypeName,ProfilePic,FullName', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data;
@@ -179,6 +183,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         console.log(data);
         $http.post(API_URL+'admin/users/updateUserInfo', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $('.modal-header .close').click();

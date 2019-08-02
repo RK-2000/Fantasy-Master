@@ -10,6 +10,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
       var data = 'SessionKey=' + SessionKey + '&' + $("form[name='add_form']").serialize() + '&EmailMessage=' + tinyMCE.get('editor').getContent();
       $http.post(API_URL + 'admin/users/broadcast', data, contentType).then(function (response) {
           var response = response.data;
+          manageSession(response.ResponseCode);
           if (response.ResponseCode == 200) {
               alertify.success(response.Message);
               window.location.reload();
@@ -31,6 +32,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
       var data = 'SessionKey=' + SessionKey + '&IsAdmin=No&EmailStatus=Verified&OrderBy=FirstName&Sequence=ASC&Params=Email,EmailStatus';
       $http.post(API_URL + 'admin/users', data, contentType).then(function (response) {
           var response = response.data;
+          manageSession(response.ResponseCode);
           $scope.userData = response.Data.Records    
       });
   };

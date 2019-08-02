@@ -28,6 +28,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
             var data = 'SessionKey=' + SessionKey + '&EntityGUID=' + EntityGUID;
             $http.post(API_URL + 'admin/entity/delete', data, contentType).then(function(response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     alertify.success(response.Message);
                     $scope.data.dataList.splice($scope.data.Position, 1); /*remove row*/
@@ -71,6 +72,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/getNotificationCount', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.notificationCount = response.Data.TotalUnread;
                 $timeout(function() {
@@ -86,6 +88,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey +'&NotificationID='+ NotificationID;
         $http.post(API_URL + 'notifications/markRead', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.notificationCount = response.Data.TotalUnread;
                 $timeout(function() {
@@ -100,6 +103,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/markAllRead', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.getNotificationCount();
                 $scope.getNotifications();
@@ -111,6 +115,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/deleteAll', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.getNotificationCount();
                 $scope.getNotifications();
@@ -124,6 +129,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey + '&'+$('#changePassword_form').serialize();
         $http.post(API_URL + 'users/changePassword', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 ) { /* success case */
                 $('.modal-header .close').click();
                 alertify.success(response.Message);

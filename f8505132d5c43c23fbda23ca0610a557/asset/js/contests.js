@@ -8,6 +8,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
 
         $http.post(API_URL + 'admin/matches/getFilterData', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data) {
                 /* success case */
                 $scope.filterData = response.Data;
@@ -47,6 +48,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         }
         $http.post(API_URL + 'contest/getContests', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) {
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -87,6 +89,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         var data = 'SeriesGUID=' + SeriesGUID + '&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status=' + Status;
         $http.post(API_URL + 'sports/getMatches', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data) { /* success case */
                 $scope.MatchData = response.Data.Records;
                 $timeout(function () {
@@ -125,6 +128,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=unfilledWinningPercent,IsVirtualUserJoined,VirtualUserJoinedPercentage,AdminPercent,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,IsAutoCreate', contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -192,6 +196,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'category/getCategory', 'SessionKey=' + SessionKey + '&CategoryGUID=' + CategoryGUID, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -214,6 +219,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             $scope.addDataLoading = true;
             $http.post(API_URL + 'admin/contest/delete', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID, contentType).then(function (response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     window.location.reload();
                     alertify.success(response.Message);
@@ -263,6 +269,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         // var data = 'SessionKey=' + SessionKey + '&Privacy=No&' + $("form[name='add_form']").serialize() + '&CustomizeWinning=' + customWinings;
         $http.post(API_URL + 'admin/contest/add', $.param($data), contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.applyFilter();
@@ -330,6 +337,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         // var data = 'SessionKey=' + SessionKey + '&' + 'UserJoinLimit=' + inputData.UserJoinLimit + '&AdminPercent=' + inputData.AdminPercent + '&ContestName=' + inputData.ContestName + '&IsPaid=' + inputData.IsPaid + '&WinningAmount=' + inputData.WinningAmount + '&CashBonusContribution=' + inputData.CashBonusContribution + '&ContestFormat=' + inputData.ContestFormat + '&EntryFee=' + inputData.EntryFee + '&EntryType=' + inputData.EntryType + '&ContestSize=' + inputData.ContestSize + '&ContestType=' + inputData.ContestType + '&IsConfirm=' + inputData.IsConfirm + '&ShowJoinedContest=' + inputData.ShowJoinedContest + '&IsAutoCreate=' + inputData.IsAutoCreate + '&NoOfWinners=' + inputData.NoOfWinners + '&ContestGUID=' + inputData.ContestGUID + '&Privacy=' + inputData.Privacy + '&CustomizeWinning=' + JSON.stringify(customWinings);
         $http.post(API_URL + 'admin/contest/edit', $.param(inputData), contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position] = response.Data;
@@ -882,6 +890,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=ContestName,ContestType,Status,StatusID', contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data.Records[0]
@@ -903,6 +912,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'contest/getJoinedContestsUsers', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=UserTeamName,TotalPoints,UserWinningAmount,FirstName,Username,UserGUID,UserTeamPlayers,UserTeamID,UserRank', contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data;
@@ -918,6 +928,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
 
         $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined', contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.contestData = response.Data;
@@ -940,11 +951,13 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                 var req = 'SessionKey=' + SessionKey + '&ContestGUID=' + contestGUID;
                 $http.post(API_URL + 'admin/contest/cancel', req, contentType).then(function (response) {
                     var response = response.data;
+                    manageSession(response.ResponseCode);
                     if (response.ResponseCode == 200) { /* success case */
                         $scope.editDataLoading = true;
                         var data = 'SessionKey=' + SessionKey + '&' + $("form[name='update_form']").serialize();
                         $http.post(API_URL + 'admin/contest/changeStatus', data, contentType).then(function (response) {
                             var response = response.data;
+                            manageSession(response.ResponseCode);
                             if (response.ResponseCode == 200) { /* success case */
                                 alertify.success(response.Message);
                                 $scope.data.dataList[$scope.data.Position] = response.Data;
@@ -966,6 +979,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             var data = 'SessionKey=' + SessionKey + '&contestGUID=' + contestGUID + '&Status=' + Status;
             $http.post(API_URL + 'admin/contest/changeStatus', data, contentType).then(function (response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     alertify.success(response.Message);
                     $scope.data.dataList[$scope.data.Position] = response.Data;
