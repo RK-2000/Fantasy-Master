@@ -893,7 +893,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data.Records[0]
+                $scope.formData = response.Data;
 
                 $('#status_model').modal({ show: true });
 
