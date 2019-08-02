@@ -45,13 +45,13 @@
 						<strong>{{row.SeriesName}}</strong>
 					</td>
 					<td class="text-center">
-						<img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="70px" height="45px;">
+						<img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="80px" height="80px;">
 					</td>
 					<td>
 						<p>{{row.TeamNameLocal}} <br><small>( {{row.TeamNameShortLocal}} )</small></p>
 					</td>
 					<td class="text-center">
-						<img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="70px" height="45px;">
+						<img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="80px" height="80px;">
 					</td>
 					<td>
 						<p>{{row.TeamNameVisitor}} <br><small>( {{row.TeamNameShortVisitor}} )</small></p>
@@ -70,7 +70,7 @@
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.MatchGUID)">Edit</a>
+								<a class="dropdown-item" href=""  ng-if="row.Status=='Pending'" ng-click="loadFormEdit(key, row.MatchGUID)">Edit</a>
 								<a class="dropdown-item" target="_blank" href="players?MatchGUID={{row.MatchGUID}}" >Players</a>
 							</div>
 						</div>

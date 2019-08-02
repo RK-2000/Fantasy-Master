@@ -5,17 +5,49 @@
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
 	<!-- Top container -->
-	<div class="clearfix mt-2 mb-2" ng-if="matchDetail">
-		<span class="float-left records d-none d-sm-block">
-			<span class="h5" ng-if="!AllMatches" >Match : <b>{{matchDetail.TeamNameShortLocal}}</b> v/s <b>{{matchDetail.TeamNameShortVisitor}}</b></span><br>
-			<span class="h5" ng-if="!AllMatches" >Match Date : <b>{{matchDetail.MatchStartDateTime}}</b></span><br>
-		</span> 
-	
-	</div> 
+	<div class="row">
+		<div class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+			<div class="form-group">
+				<center><h3>{{matchDetail.SeriesName}}</h3></center>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="text-align: center;">
+		<div class="col-md-4">
+			<div class="form-group">
+				<img ng-src="{{matchDetail.TeamFlagLocal}}" width="100px" height="100px">
+			</div>
+			<div class="form-group">
+				<p><strong>{{matchDetail.TeamNameLocal}} ({{matchDetail.TeamNameShortLocal}})</strong></p>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<!-- <div class="form-group"> -->
+				<h6 class="display-4 text-muted">v/s</h6>
+			<!-- </div> -->
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<img ng-src="{{matchDetail.TeamFlagVisitor}}" width="100px" height="100px">
+			</div>
+			<div class="form-group">
+				<p><strong>{{matchDetail.TeamNameVisitor}} ({{matchDetail.TeamNameShortVisitor}})</strong></p>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" style="text-align: center; margin-bottom: 10px;">
+			<div class="form-group">
+				<center><h3>Match Datetime : <b>{{matchDetail.MatchStartDateTime}}</b></h3></center>
+			</div>
+		</div>
+	</div>
+	<hr>
 	<div class="clearfix mt-2 mb-2">
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
+		<div class="float-right mr-2"> <button class="btn btn-success btn-sm ml-1 float-right" onclick="window.location.href= BASE_URL + 'matches'">Back</button> </div>
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
@@ -62,7 +94,7 @@
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.PlayerGUID)">Edit</a>
+								<a class="dropdown-item" href="" ng-if="matchDetail.Status='Pending'" ng-click="loadFormEdit(key, row.PlayerGUID)">Edit</a>
 							</div>
 						</div>
 					</td>

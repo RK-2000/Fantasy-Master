@@ -329,12 +329,14 @@ function mongoDBConnection()
     $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
     switch (ENVIRONMENT) {
         case 'local':
+            $Obj->ClientObj = new MongoDB\Client("mongodb://127.0.0.1:27017");
+            break;
         case 'testing':
-        $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
-        break;
+            $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+            break;
         case 'demo':
-        $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
-        break;
+            $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
+            break;
     }
     $Obj->fantasydb = $Obj->ClientObj->fantasymaster;
 }
