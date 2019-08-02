@@ -323,9 +323,18 @@ function randomString($length = 6)
 /*------------------------------*/
 function mongoDBConnection()
 {
-    /* Require MongoDB Library & Connection */
+    //Require MongoDB Library & Connection 
     $Obj = &get_instance();
     require_once getcwd() . '/vendor/autoload.php';
-    $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:27017");
-    $Obj->fantasydb = $Obj->ClientObj->fantasy;
+    $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+    switch (ENVIRONMENT) {
+        case 'local':
+        case 'testing':
+        $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+        break;
+        case 'demo':
+        $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
+        break;
+    }
+    $Obj->fantasydb = $Obj->ClientObj->gameplan;
 }
