@@ -31,7 +31,7 @@
 					<th style="width: 200px;">Team Local</th>
 					<th style="width: 100px;"></th>
 					<th style="width: 200px;">Team Visitor</th>
-					<th>Match Type</th>
+					<th>Match Type & Location</th>
 					<th style="width: 170px;">Match Start On</th>
 					<th style="width: 100px;" class="text-center">Status</th>
 					<th style="width: 100px;" class="text-center">Action</th>

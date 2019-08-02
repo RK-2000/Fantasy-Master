@@ -12,13 +12,13 @@ input.chosen-search-input.default {
 
         <form id="add_form" name="add_form" autocomplete="off">
 
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="form-group form-check">
-                        <input name="AllUsers" type="checkbox" class="form-check-input" checked ng-model="chkselct"
+            <div class="row col-md-8">
+                <div class="checkbox">
+                    <input name="AllUsers" type="checkbox" class="form-check-input" checked ng-model="chkselct"
                             ng-init="chkselct=true" id="users">
-                        <label class="form-check-label" for="users">All Users</label>
-                    </div>
+                    <label for="users">
+                        All Users
+                    </label>
                 </div>
             </div>
 
