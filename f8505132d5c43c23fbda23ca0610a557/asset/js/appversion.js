@@ -22,7 +22,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.data.noRecords = true;
         }
         $scope.data.listLoading = false;
-        // setTimeout(function(){ tblsort(); }, 1000);
     });
     }
 

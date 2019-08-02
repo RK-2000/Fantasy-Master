@@ -41,7 +41,7 @@
               <a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown"> Welcome Admin </a>
               <div class="dropdown-menu dropdown-menu-right" data-display="static">
                 <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#changePassword_modal"  >Change Password</a>
-                <a class="dropdown-item" href="<?php echo base_url().'dashboard/signout/'.$this->SessionData['SessionKey'];?>">Sign Out</a>
+                <a class="dropdown-item logout-btn" href="<?php echo base_url().'dashboard/signout/'.$this->SessionData['SessionKey'];?>">Sign Out</a>
               </div>
             </li>
           </ul>
