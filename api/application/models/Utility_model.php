@@ -586,7 +586,7 @@ class Utility_model extends CI_Model
 
             /* To get All Series Data */
             $SeriesIdsData = array();
-            $SeriesData = $this->Sports_model->getSeries('SeriesIDLive,SeriesID', array('StatusID' => 2,'SportsType' => 'Cricket'), true, 0);
+            $SeriesData = $this->Sports_model->getSeries('SeriesIDLive,SeriesID', array('SportsType' => 'Cricket'), true, 0);
             if ($SeriesData) {
                 $SeriesIdsData = array_column($SeriesData['Data']['Records'], 'SeriesID', 'SeriesIDLive');
             }

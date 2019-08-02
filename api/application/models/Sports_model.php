@@ -764,7 +764,7 @@ class Sports_model extends CI_Model
                 'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'TotalPoints' => 'TP.TotalPoints',
                 'TotalTeams' => '(SELECT COUNT(UserTeamName) FROM `sports_users_teams` WHERE `MatchID` = M.MatchID) TotalTeams',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID) > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = M.MatchID)*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID)),2),0)) PlayerSelectedPercent'
+                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID) > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = TP.PlayerID AND UT.MatchID = M.MatchID)*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID)),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
