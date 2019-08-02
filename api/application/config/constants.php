@@ -166,7 +166,7 @@ switch (ENVIRONMENT)
 	case 'local':
 	/*Paths*/
 	define('SITE_HOST', 'http://localhost/');
-	define('ROOT_FOLDER', '535-mr.gameplan/');
+	define('ROOT_FOLDER', 'fantasy-master/');
 
 	/*SMTP Settings*/
 	define('SMTP_PROTOCOL', 'smtp');
@@ -218,8 +218,8 @@ switch (ENVIRONMENT)
 	case 'testing':
 	
 	/*Paths*/
-	define('SITE_HOST', 'http://192.168.1.251/');
-	define('ROOT_FOLDER', '535-mr.gameplan/');
+	define('SITE_HOST', 'http://dev.fantasy96.com/');
+	define('ROOT_FOLDER', '');
 
 	/*SMTP Settings*/
 	define('SMTP_PROTOCOL', 'smtp');
@@ -269,8 +269,8 @@ switch (ENVIRONMENT)
 	break;
 	case 'demo':
 	/*Paths*/
-	define('SITE_HOST', 'http://159.65.147.114/');
-	define('ROOT_FOLDER', '535-mr.gameplan/');
+	define('SITE_HOST', 'http://mwdemoserver.com/');
+	define('ROOT_FOLDER', '527-fsl11/');
 
 	/*SMTP Settings*/
 	define('SMTP_PROTOCOL', 'smtp');

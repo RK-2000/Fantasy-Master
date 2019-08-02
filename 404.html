@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=dewice-width, initial-scale=1.0">
+	<title>  </title>
+	<!-- <link rel="stylesheet" type="text/css" href="assets/css/custom.css"> -->
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+	<!-- <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script> -->
+
+	<style type="text/css">
+		.bgColor{
+			background-image: url("assets/img/404-bg2.png");
+			height: 100vh;
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center;
+			display: flex;
+    		align-items: center;
+		}
+		.glossy{
+		    background: rgba(255,255,255,0.2);
+			border-radius: 5px;
+			border: 1px	solid #415253;
+			margin-top: calc(100vh - 50px);
+		}
+		.oopsCloud h2, .oopsCloud h5 span{
+			color: #fac733;
+		}
+		.inputBox{
+			position: relative;
+		}
+		.inputBox input{
+			background: rgba(61,84,85,0.6);
+			border: 0px;
+			border-radius: 5px;
+			width: 300px;
+			line-height: 33px;
+    		padding-left: 10px;
+    		color: #fff;
+		}
+		.Submit{
+		    position: absolute;
+		    top: 2px;
+		    right: 36.3%;
+		}
+		.Submit .btn-submit {
+		    background: #fac733;
+		    padding: 4px 10px;
+		    border-radius: 0 3px 3px 0;
+		    font-size: 14px;
+		    color: #000;
+		}
+		.backBtn .btn-back {
+		    background: #fac733;
+		    padding: 3px 15px;
+		    color: #000;
+		}
+		.follow{
+			margin-right: 16%;
+		}
+		.socialIcons ul li{
+			display: inline-block;
+    		margin-right: 12px;
+		}
+		.socialIcons ul li a{
+			text-decoration: none;
+			display: inline-flex;
+		    width: 40px;
+		    height: 40px;
+		    font-size: 16px;
+		    align-items: center;
+		    justify-content: center;
+		    border-radius: 50%;
+		    color: #fff;
+		}
+		.socialIcons ul li a.fb{
+			background: #3b5998
+		}
+		.socialIcons ul li a.tw{
+			background: #55acee
+		}
+		.socialIcons ul li a.li{
+			background: #0073b1
+		}
+		.socialIcons ul li a.inst{
+			background: linear-gradient(to right, #f7944b 0%,#ca406d 33%,#8549a9 66%);
+		}
+		.copyright p{
+			font-size: 14px;
+		}
+
+		@media only screen and (max-width: 1024px){
+			.Submit{
+			    right: 33%;
+			}
+		}
+		@media only screen and (max-width: 768px){
+			.Submit{
+			    right: 26.7%;
+			}
+		}
+		@media only screen and (max-width: 414px){
+			.inputBox input{
+				width: 250px;
+			}
+			.Submit{
+			    right: 11.7%;
+			}
+			.copyright p {
+		    	text-align: center !important;
+			}
+		}
+		@media only screen and (max-width: 375px){
+			.Submit{
+			    right: 5.7%;
+			}
+		}
+		@media only screen and (max-width: 360px){
+			.Submit{
+			    right: 3.7%;
+			}
+			.socialIcons {
+			    margin-right: 0 !important;
+			}
+			.socialIcons ul li {
+				margin-right: 10px;
+			}
+		}
+		@media only screen and (max-width: 320px){
+			.inputBox input{
+				width: 230px;
+			}
+			.Submit{
+			    right: -1%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="bgColor">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="glossy mt-5">
+						<div class="col-md-12">
+							<div class="logo mt-4 ml-4">
+								<a href="https://fsl11.com"> <img src="assets/img/logo.png" width="120"> </a>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="oopsCloud mt-4">
+								<h2 class="text-center"> We can't find the page you are looking for. </h2>
+								<h6 class="text-center text-white mt-3"> The page you are looking for might never existed. </h6>
+							</div>
+							<div class="inputBox text-center">
+								<div class="my-5">
+								</div>
+								<div class="backBtn">
+									<a href="https://fsl11.com" class="btn btn-back"> Back to home </a>
+									<!-- <button type="button" class="btn btn-back"> Back to home </button> -->
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<h6 class="text-right follow mt-3"><a href="#" class="text-white"> Follow us on: </a></h6>
+							<div class="socialIcons text-right mr-5">
+								<ul>
+			                        <li>
+			                            <a class="fb" href="https://www.facebook.com/FSLEleven/" target="_blank">
+			                                <i class="fa fa-facebook" aria-hidden="true"></i>
+			                            </a>
+			                        </li>
+			                        <li>
+			                            <a class="tw" href="https://twitter.com/FSL_Eleven" target="_blank">
+			                                <i class="fa fa-twitter" aria-hidden="true"></i>
+			                            </a>
+			                        </li>
+			                        <li>
+			                            <a class="li" href="https://www.linkedin.com/company/fsl11" target="_blank">
+			                                <i class="fa fa-linkedin" aria-hidden="true"></i>
+			                            </a>
+			                        </li>
+			                        <li>
+			                            <a class="inst" href="https://www.instagram.com/FSL_Eleven/" target="_blank">
+			                                <i class="fa fa-instagram" aria-hidden="true"></i>
+			                            </a>
+			                        </li>
+                    			</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="copyright mt-2">
+						<p class="text-right text-white"> Copyright © Brainy Bucks Games Pvt. Ltd. All Rights Reserved. </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+</body>
+</html>
