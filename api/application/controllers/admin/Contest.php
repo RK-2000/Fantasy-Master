@@ -29,7 +29,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric' : ''));
-        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|integer' : ''));
+        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['WinningAmount']) && $this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
         $this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
@@ -37,7 +37,7 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
         $this->form_validation->set_rules('MatchGUID[]', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
-        if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['WinningAmount'] > 0 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -77,7 +77,7 @@ class Contest extends API_Controller_Secure {
                 exit;
             }
         }
-        if ($this->Post['IsPaid'] == 'Yes' && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+        if ($this->Post['WinningAmount'] > 0 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
             $this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "Customize winning data is required.";
 			exit;
@@ -130,13 +130,13 @@ class Contest extends API_Controller_Secure {
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric' : ''));
-        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|integer' : ''));
+        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['WinningAmount']) && $this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
-        if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['WinningAmount'] > 0 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -176,7 +176,7 @@ class Contest extends API_Controller_Secure {
                 exit;
             }
         }
-        if ($this->Post['IsPaid'] == 'Yes' && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
+        if ($this->Post['WinningAmount'] > 0 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
             $this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "Customize winning data is required.";
 			exit;
