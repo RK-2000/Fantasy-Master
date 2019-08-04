@@ -84,7 +84,7 @@
 						<div class="form-area">
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-12">
 									<div class="form-group">
 										<label class="filter-col" for="CategoryTypeName">Series</label>
 										<select id="SeriesGUID" name="SeriesGUID" class="form-control chosen-select">
@@ -93,22 +93,13 @@
 										</select>   
 									</div>
 								</div>
-							</div>
-
-							<!-- <div class="row">
-								<div class="col-md-8">
+								<div class="col-md-12">
 									<div class="form-group">
-										<label class="filter-col" for="Status">Status</label>
-										<select id="StatusID" name="StatusID" class="form-control chosen-select">
-											<option value="">All Status</option>
-											<option value="1">Pending</option>
-											<option value="2">Open</option>
-											<option value="5">Completed</option>
-											<option value="3">Cancelled</option>
-										</select>   
+										<label class="filter-col" for="ParentCategory">Search</label>
+										<input type="text" class="form-control" name="Keyword" placeholder="Search">
 									</div>
 								</div>
-							</div> -->
+							</div>
 
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->

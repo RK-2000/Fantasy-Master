@@ -115,7 +115,9 @@ app.controller('PageController', function ($scope, $http,$timeout){
             manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
-                $scope.data.dataList[$scope.data.Position] = response.Data;
+                $scope.data.dataList[$scope.data.Position].TeamName = response.Data.TeamName;
+                $scope.data.dataList[$scope.data.Position].TeamNameShort = response.Data.TeamNameShort;
+                $scope.data.dataList[$scope.data.Position].TeamFlag = response.Data.TeamFlag;
                 $('.modal-header .close').click();
             }else{
                 alertify.error(response.Message);
