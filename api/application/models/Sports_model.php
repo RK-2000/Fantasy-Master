@@ -17,6 +17,18 @@ class Sports_model extends CI_Model
     }
 
     /*
+      Description: Use to update series data.
+     */
+    function updateSeriesData($SeriesID, $Input = array())
+    {
+        if (!empty($Input)) {
+            $this->db->where('SeriesID', $SeriesID);
+            $this->db->limit(1);
+            $this->db->update('sports_series', $Input);
+        }
+    }
+
+    /*
       Description: To get all series
      */
     function getSeries($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
@@ -1746,18 +1758,6 @@ class Sports_model extends CI_Model
                     $this->Notification_model->addNotification('refund', 'Contest Cancelled Refund', $JoinValue['UserID'], $JoinValue['UserID'], $Value['ContestID'], 'Your ' . DEFAULT_CURRENCY . $InsertData['Amount'] . ' has been refunded.');
                 }
             }
-        }
-    }
-
-    /*
-      Description: Use to auction draft play.
-     */
-    function updateAuctionPlayStatus($SeriesID, $Input = array())
-    {
-        if (!empty($Input)) {
-            $this->db->where('SeriesID', $SeriesID);
-            $this->db->limit(1);
-            $this->db->update('sports_series', $Input);
         }
     }
 

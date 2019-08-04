@@ -1,21 +1,5 @@
 app.controller('PageController', function ($scope, $http,$timeout){
     $scope.data.pageSize = 15;
-    // $scope.data.ParentCategoryGUID = ParentCategoryGUID;
-    /*----------------*/
-    // $scope.getFilterData = function ()
-    // {
-    //     var data = 'SessionKey='+SessionKey+'&SeriesGUID='+SeriesGUID+'&'+$('#filterPanel form').serialize();
-    //     $http.post(API_URL+'admin/series/getFilterData', data, contentType).then(function(response) {
-    //         var response = response.data;
-    //         if(response.ResponseCode==200 && response.Data){ /* success case */
-    //          $scope.filterData =  response.Data;
-    //          $timeout(function(){
-    //             $("select.chosen-select").chosen({ width: '100%',"disable_search_threshold": 8}).trigger("chosen:updated");
-    //         }, 300);          
-    //      }
-    //  });
-    // }
-
 
     /*list*/
     $scope.applyFilter = function ()
@@ -30,7 +14,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&OrderByToday=Yes&Params=SeriesName,SeriesGUID,StatusID,Status,SeriesStartDate,SeriesEndDate,AuctionDraftIsPlayed,TotalMatches&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize+'&'+$('#filterForm').serialize()+'&'+$('#filterForm1').serialize();
+        var data = 'SessionKey='+SessionKey+'&OrderByToday=Yes&Params=SeriesName,SeriesGUID,StatusID,Status,SeriesStartDate,SeriesEndDate,TotalMatches&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize+'&'+$('#filterForm').serialize()+'&'+$('#filterForm1').serialize();
         $http.post(API_URL+'sports/getSeries', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -63,11 +47,10 @@ app.controller('PageController', function ($scope, $http,$timeout){
     /*load edit form*/
     $scope.loadFormEdit = function (Position, SeriesGUID)
     {
-      
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE+module+'/edit_form.htm?'+Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL+'admin/series/getSeries','SeriesGUID='+SeriesGUID+'&Params=DraftUserLimit,DraftTeamPlayerLimit,DraftPlayerSelectionCriteria,SeriesName,SeriesGUID,AuctionDraftIsPlayed,Status&SessionKey='+SessionKey, contentType).then(function(response) {
+        $http.post(API_URL+'admin/series/getSeries','SeriesGUID='+SeriesGUID+'&Params=SeriesName,SeriesGUID,Status&SessionKey='+SessionKey, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
@@ -111,6 +94,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $scope.data.dataList[$scope.data.Position].SeriesName = response.Data.SeriesName;
                 $('.modal-header .close').click();
             } else {
                 alertify.error(response.Message);
