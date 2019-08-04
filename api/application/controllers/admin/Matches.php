@@ -19,8 +19,7 @@ class Matches extends API_Controller_Secure
     public function getMatches_post()
     {
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
-        $this->form_validation->set_rules('LocalTeamGUID', 'TeamGUID', 'trim|callback_validateEntityGUID[Teams,LTeamID]');
-        $this->form_validation->set_rules('VisitorTeamGUID', 'TeamGUID', 'trim|callback_validateEntityGUID[Teams,VTeamID]');
+        $this->form_validation->set_rules('TeamGUID', 'TeamGUID', 'trim|callback_validateEntityGUID[Teams,TeamID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Today,Series]');
@@ -29,7 +28,7 @@ class Matches extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Matches Data */
-        $MatchesData = $this->Sports_model->getMatches(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => $this->SeriesID, 'TeamIDLocal' => @$this->LTeamID, 'TeamIDVisitor' => @$this->VTeamID,'MatchID' => @$this->MatchID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $MatchesData = $this->Sports_model->getMatches(@$this->Post['Params'], array_merge($this->Post, array('SeriesID' => $this->SeriesID, 'TeamID' => @$this->TeamID,'MatchID' => @$this->MatchID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
       
         if (!empty($MatchesData)) {
             $this->Return['Data'] = $MatchesData['Data'];
@@ -45,8 +44,9 @@ class Matches extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->set_rules('MatchClosedInMinutes', 'MatchClosedInMinutes', 'trim|integer');
+        $this->form_validation->set_rules('MatchClosedInMinutes', 'Match Closed In Minutes', 'trim|integer|max_length[3]');
         $this->form_validation->set_rules('CancelContest', 'CancelContest', 'trim');
+        $this->form_validation->set_message('max_length', '%s: the minimum of characters is %s');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -59,7 +59,7 @@ class Matches extends API_Controller_Secure
         }
         /* Update Match Status */
         $this->Entity_model->updateEntityInfo($this->MatchID, array("StatusID" => $this->StatusID));
-        $this->Return['Data'] = $this->Sports_model->getMatches('SeriesName,MatchType,MatchNo,MatchClosedInMinutes,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status', array('MatchID' => $this->MatchID), FALSE, 0);
+        $this->Return['Data'] = $this->Sports_model->getMatches('MatchClosedInMinutes,Status', array('MatchID' => $this->MatchID), FALSE, 0);
         $this->Return['Message'] = "Success.";
     }
 

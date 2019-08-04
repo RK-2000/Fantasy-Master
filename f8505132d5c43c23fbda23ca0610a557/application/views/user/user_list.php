@@ -101,7 +101,7 @@
 	<!-- Data table/ -->
 
 
-	<div class="modal fade" id="filter_model"   ng-init="initDateRangePicker()">
+	<div class="modal fade" id="filter_model" ng-init="initDateRangePicker()">
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">

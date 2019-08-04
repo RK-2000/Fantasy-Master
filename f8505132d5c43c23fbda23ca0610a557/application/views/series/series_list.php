@@ -96,11 +96,11 @@
 									</div>
 								</div>
 								<div class="col-md-6">
-								<div class="form-group">
-									<label class="filter-col" for="ParentCategory">Search</label>
-									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									<div class="form-group">
+										<label class="filter-col" for="ParentCategory">Search</label>
+										<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									</div>
 								</div>
-							</div>
 							</div>
 							
 						</div> <!-- form-area /-->

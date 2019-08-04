@@ -11,6 +11,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
     }
+    
     /* Reset form */
     $scope.resetUserForm = function(){
         $('#filterForm1').trigger('reset'); 

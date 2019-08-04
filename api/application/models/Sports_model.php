@@ -380,11 +380,17 @@ class Sports_model extends CI_Model
         if (!empty($Where['TeamIDLocal'])) {
             $this->db->where("M.TeamIDLocal", $Where['TeamIDLocal']);
         }
-        if (!empty($Where['IsPreSquad'])) {
-            $this->db->where("M.IsPreSquad", $Where['IsPreSquad']);
-        }
         if (!empty($Where['TeamIDVisitor'])) {
             $this->db->where("M.TeamIDVisitor", $Where['TeamIDVisitor']);
+        }
+        if (!empty($Where['TeamID'])) {
+            $this->db->group_start();
+            $this->db->where("M.TeamIDLocal", $Where['TeamID']);
+            $this->db->or_where("M.TeamIDVisitor", $Where['TeamID']);
+            $this->db->group_end();
+        }
+        if (!empty($Where['IsPreSquad'])) {
+            $this->db->where("M.IsPreSquad", $Where['IsPreSquad']);
         }
         if (!empty($Where['IsPlayerPointsUpdated'])) {
             $this->db->where("M.IsPlayerPointsUpdated", $Where['IsPlayerPointsUpdated']);
@@ -400,6 +406,12 @@ class Sports_model extends CI_Model
         }
         if (!empty($Where['Filter']) && $Where['Filter'] == 'MyJoinedMatch') {
             $this->db->where('EXISTS (select 1 from sports_contest_join J where J.MatchID = M.MatchID AND J.UserID=' . $Where['SessionUserID'] . ')');
+        }
+        if (!empty($Where['MatchStartFrom'])) {
+            $this->db->where("DATE(M.MatchStartDateTime) >=", $Where['MatchStartFrom']);
+        }
+        if (!empty($Where['MatchEndTo'])) {
+            $this->db->where("DATE(M.MatchStartDateTime) <=", $Where['MatchEndTo']);
         }
         if (!empty($Where['StatusID'])) {
             $this->db->where_in("E.StatusID", ($Where['StatusID'] == 2) ? array(2, 10) : $Where['StatusID']);
