@@ -68,7 +68,6 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.templateURLAdd = PATH_TEMPLATE + module + '/add_form.htm?' + Math.random();
         $('#add_model').modal({ show: true });
         $timeout(function () {
-            $('#MatchGUID').select2();
             $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
         }, 200);
 
@@ -98,21 +97,6 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             }
         });
     }
-
-    $(document).on('click', '#all_matches', function () {
-        $('#MatchGUID option').prop('selected', true);
-        $('#MatchGUID option[value=""]').prop('selected', false);
-        $('#MatchGUID').select2();
-    });
-
-    $(document).on('click', '#clear_all', function () {
-        $('#MatchGUID option').prop('selected', false);
-        $('#MatchGUID').select2();
-    });
-
-    $("#filter_model").on('show.bs.modal', function () {
-        $('form#filterForm1 span.select2-container').remove();
-    });
 
     /*load edit form*/
 

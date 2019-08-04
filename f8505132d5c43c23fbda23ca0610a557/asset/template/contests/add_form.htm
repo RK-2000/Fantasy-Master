@@ -11,39 +11,37 @@
 		<form id="add_form" name="add_form" autocomplete="off" >
 			
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="control-label">Contest Name</label>
 						<input name="ContestName" type="text" class="form-control" placeholder="Contest Name" value="" maxlength="40">
 					</div>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="filter-col" for="ParentCategory">Series</label>
 						<select id="Series" name="SeriesGUID" ng-model="SeriesGUID" class="form-control chosen-select" ng-change="getMatches(SeriesGUID,'Pending')">
-							<option value="">Please Select</option>
+							<option value="">Select Series</option>
 							<option ng-repeat="Series in filterData.SeiresData" value="{{Series.SeriesGUID}}">{{Series.SeriesName}}</option>
 						</select>
 					</div>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-9">
 					<div class="form-group">
 						<label class="filter-col" for="ParentCategory">Match</label>
-						<select id="MatchGUID" name="MatchGUID[]" class="form-control" multiple>
-							<option value="">Please Select</option>
+						<select data-placeholder="Select Matches" id="MatchGUID" name="MatchGUID[]" class="form-control chosen-select" multiple>
 							<option ng-repeat="match in MatchData" value="{{match.MatchGUID}}">{{match.TeamNameLocal}} Vs {{match.TeamNameVisitor}} ON {{match.MatchStartDateTime}}</option>
 						</select>
 						<small>Select this option to select match according to selected series.</small>
 					</div>
 				</div>
-
 				<div class="col-md-3">
 					<div class="form-group">
 						<label class="filter-col"></label><br>
-						<a href="javascript:void(0)" class="btn btn-secondary btn-sm" id ="all_matches">Select All</a>
-						<a href="javascript:void(0)" class="btn btn-secondary btn-sm" id ="clear_all">Clear All</a>
+						<a href="javascript:void(0)" title="Clear All Matches" class="btn btn-secondary btn-sm" id ="clear_all" onclick="$('select#MatchGUID option').removeAttr('selected').trigger('chosen:updated');">Clear All</a>
+						<a href="javascript:void(0)" title="Select All Matches" class="btn btn-success btn-sm" id ="all_matches" onclick="$('select#MatchGUID option').attr('selected','selected').prop('selected',true).trigger('chosen:updated');">Select All</a>
 					</div>
 				</div>
 
