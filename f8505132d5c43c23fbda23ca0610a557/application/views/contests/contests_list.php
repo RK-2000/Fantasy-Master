@@ -69,7 +69,7 @@
 						<p>{{row.Privacy}}</p>
 					</td>
 					<td>
-						<p>{{row.EntryFee}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.EntryFee}}</p>
 					</td>
 					<td>
 						<p>{{row.EntryType}}</p>
@@ -78,7 +78,7 @@
 						<p>{{row.NoOfWinners}}</p>
 					</td>
 					<td>
-						<p>{{row.WinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.WinningAmount}}</p>
 					</td>
 					<td>
 						<p>{{row.MatchStartDateTime}}</p>
@@ -87,10 +87,10 @@
 						<p>{{row.TotalJoined}}</p>
 					</td>
 					<td class="text-center">
-						<p>{{row.TotalAmountReceived}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.TotalAmountReceived}}</p>
 					</td>
 					<td class="text-center">
-						<p>{{row.TotalWinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.TotalWinningAmount}}</p>
 					</td>
 					<td class="text-center"><span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td>
 
@@ -303,10 +303,10 @@
 
 	<!-- contest joined user Modal -->
 	<div class="modal fade" id="contestJoinedUsers_model">
-		<div class="modal-dialog modal-md" role="document">
+		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5"><?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<h3 class="modal-title h5">Contest Details</h3>     	
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLEdit"></div>

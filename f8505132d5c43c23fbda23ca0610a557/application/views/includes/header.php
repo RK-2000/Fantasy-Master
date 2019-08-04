@@ -27,6 +27,7 @@
 		var BASE_URL = "<?php echo base_url(); ?>";
 		var API_URL = "<?php echo API_URL; ?>";
 		var PATH_TEMPLATE = "<?php echo PATH_TEMPLATE; ?>";
+		var DEFAULT_CURRENCY = "<?php echo DEFAULT_CURRENCY; ?>";
 		var UserGUID, UserTypeID, ParentCategoryGUID = '';
 
 		<?php if($this->session->userdata('UserData')){?>
