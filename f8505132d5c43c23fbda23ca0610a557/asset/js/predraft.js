@@ -1,6 +1,8 @@
 app.controller('PageController', function ($scope, $http, $timeout, $rootScope) {
     $scope.data.pageSize = 100;
     $scope.data.ParentCategoryGUID = ParentCategoryGUID;
+    $scope.data.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    
     /*----------------*/
     $scope.getFilterData = function ()
     {

@@ -95,16 +95,14 @@
 					<td class="text-center"><span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td>
 
 					<td class="text-center">
-						<div class="dropdown" ng-if="row.Status=='Pending'">
+						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.ContestGUID,row.TotalJoined)">Edit</a>
-								<a class="dropdown-item" href="" ng-click="deleteContest(key, row.ContestGUID,row.TotalJoined)">Delete</a>
-								<a class="dropdown-item" href="" ng-click="loadFormStatus(key, row.ContestGUID)">Status</a>
+								<a class="dropdown-item" href="" ng-click="loadContestJoinedUser(key,row.ContestGUID)">Details</a>
+								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.ContestGUID,row.TotalJoined)"  ng-if="row.Status=='Pending'">Edit</a>
+								<a class="dropdown-item" href="" ng-click="deleteContest(key, row.ContestGUID,row.TotalJoined)"  ng-if="row.Status=='Pending'">Delete</a>
+								<a class="dropdown-item" href="" ng-click="loadFormStatus(key, row.ContestGUID)"  ng-if="row.Status=='Pending'">Status</a>
 							</div>
-						</div>
-						<div class="dropdown" ng-if="row.Status!='Pending'">
-							<span>-</span>
 						</div>
 					</td>
 				</tr>

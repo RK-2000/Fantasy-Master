@@ -21,10 +21,10 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th >Config Type</th>
-					<th style="width: 150px;" >Config Type Value</th>
-					<th style="width: 150px;" class="text-center">Status</th>
-					<th style="width: 100px;" class="text-center">Action</th>
+					<th style="width: 250px;">Config Type</th>
+					<th style="width: 200px;">Config Type Value</th>
+					<th style="width: 150px;">Status</th>
+					<th style="width: 100px;">Action</th>
 				</tr>
 			</thead>
 			<!-- table body -->

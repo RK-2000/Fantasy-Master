@@ -30,7 +30,7 @@
 					<th style="width: 100px;">Contest Type</th>
 					<th class="text-center" style="width: 200px;">Contest Joined</th>
 					<th class="text-center" style="width: 100px;">Contest Size</th>
-					<th class="text-center" style="width: 100px;" class="text-center">Fee</th>
+					<th class="text-center" style="width: 100px;" class="text-center">Entry Fee</th>
 					<th class="text-center" style="width: 100px;" class="text-center">No. of Winners</th>
 					<th class="text-center" style="width: 100px;" class="text-center">Winning Amount</th>
 					<th style="width: 100px;" class="text-center">Match Date</th>
@@ -41,17 +41,14 @@
 			<!-- table body -->
 			<tbody id="tabledivbody">
 
-
-
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
-				
 					<td>
 						<div class="content float-left"><strong>{{row.ContestName}}</strong>
 							<div ng-if="row.TeamNameLocal">({{row.TeamNameLocal}} v/s {{row.TeamNameVisitor}})</div><div ng-if="!row.TeamNameLocal">-</div>
 						</div>
 					</td>
 					<td>
-						<p>{{!row.ContestType ? '-' : row.ContestType }}</p>
+						<p>{{row.ContestType}}</p>
 					</td>
 					
 					<td class="text-center">
@@ -63,31 +60,19 @@
 					</td>
 					
 					<td class="text-center" >
-						<p>{{row.EntryFee}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.EntryFee}}</p>
 					</td>
 					
 					<td class="text-center" >
 						<p>{{row.NoOfWinners}}</p>
 					</td>
 					<td class="text-center" >
-						<p>{{row.WinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.WinningAmount}}</p>
 					</td>
 					<td>
 						<p>{{row.MatchStartDateTime}}</p>
 					</td>
 					<td class="text-center"><span ng-class="{Pending:'text-danger', Running:'text-success',Cancelled:'text-danger',Completed:'text-success'}[row.Status]">{{row.Status}}</span></td> 
-
-					<!-- <td class="text-center" ng-if="row.TotalJoined > 0">
-						<div class="dropdown" >
-							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
-							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormList(key, row.ContestGUID)">Participated Teams</a>
-							</div>
-						</div>
-					</td>
-					<td class="text-center" ng-if="row.TotalJoined == 0">
-						-
-					</td> -->
 				</tr>
 			</tbody>
 		</table>
@@ -202,6 +187,18 @@
 										<option value="">Please Select</option>
 										<option value="Single">Single</option>
 										<option value="Multiple">Multiple</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="Status">Contest Status</label>
+									<select id="Status" name="Status" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Running">Running</option>
+										<option value="Cancelled">Cancelled</option>
+										<option value="Completed">Completed</option>
 									</select>   
 								</div>
 							</div>

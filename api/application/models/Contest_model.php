@@ -115,7 +115,6 @@ class Contest_model extends CI_Model
      */
     function cancelContest($Input = array(), $SessionUserID, $ContestID)
     {
-
         /* Update Contest Status */
         $this->db->where('EntityID', $ContestID);
         $this->db->limit(1);

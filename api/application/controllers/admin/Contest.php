@@ -284,9 +284,6 @@ class Contest extends API_Controller_Secure {
         /* Validation - ends */
 
         $this->Entity_model->updateEntityInfo($this->ContestID, array("StatusID" => $this->StatusID));
-        $this->Contest_model->updateContest($this->Post, $this->SessionUserID, $this->ContestID);
-        $this->Return['Data'] = $this->Contest_model->getContests('Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType', array_merge($this->Post, array('ContestID' => $this->ContestID, 'SessionUserID' => $this->SessionUserID)));
-        $this->Return['Message'] = "Success.";
     }
 
 

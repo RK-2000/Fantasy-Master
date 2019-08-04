@@ -923,7 +923,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                                 $('.modal-header .close').click();
                                 setTimeout(function () {
                                     window.location.reload();
-                                }, 1000);
+                                }, 500);
 
                             } else {
                                 alertify.error(response.Message);

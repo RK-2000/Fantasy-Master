@@ -65,7 +65,7 @@
 						<p>{{row.Privacy}}</p>
 					</td>
 					<td>
-						<p>{{row.EntryFee}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.EntryFee}}</p>
 					</td>
 					<td>
 						<p>{{row.EntryType}}</p>
@@ -74,7 +74,7 @@
 						<p>{{row.NoOfWinners}}</p>
 					</td>
 					<td>
-						<p>{{row.WinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}} {{row.WinningAmount}}</p>
 					</td>
 					<td class="text-center">
 						<div class="dropdown">
@@ -89,9 +89,6 @@
 							<span>-</span>
 						</div>
 					</td>
-					 
-
-					
 				</tr>
 			</tbody>
 		</table>
