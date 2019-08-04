@@ -92,7 +92,7 @@
 					<td class="text-center">
 						<p>{{row.TotalWinningAmount}}</p>
 					</td>
-					<td class="text-center"><span ng-class="{Pending:'text-danger', Running:'text-success',Cancelled:'text-danger',Completed:'text-success'}[row.StatusID]">{{row.Status}}</span></td> 
+					<td class="text-center"><span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td>
 
 					<td class="text-center">
 						<div class="dropdown" ng-if="row.Status=='Pending'">
@@ -158,7 +158,75 @@
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="filter-col" for="Status">Status</label>
+									<label class="filter-col" for="ContestFormat">Contest Format</label>
+									<select id="ContestFormat" name="ContestFormat" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Head to Head">Head to Head</option>
+										<option value="League">League</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ContestType">Contest Type</label>
+									<select id="ContestType" name="ContestType" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Normal">Normal</option>
+										<option value="Reverse">Reverse</option>
+										<option value="InPlay">InPlay</option>
+										<option value="Hot">Hot</option>
+										<option value="Champion">Champion</option>
+										<option value="Practice">Practice</option>
+										<option value="More">More</option>
+										<option value="Mega">Mega</option>
+										<option value="Winner Takes All">Winner Takes All</option>
+										<option value="Only For Beginners">Only For Beginners</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="Privacy">Privacy</label>
+									<select id="Privacy" name="Privacy" class="form-control chosen-select">
+										<option value="All">All</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="IsPaid">Is Paid</label>
+									<select id="IsPaid" name="IsPaid" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="IsConfirm">Is Confirm</label>
+									<select id="IsConfirm" name="IsConfirm" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="EntryType">Entry Type</label>
+									<select id="EntryType" name="EntryType" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Single">Single</option>
+										<option value="Multiple">Multiple</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="Status">Contest Status</label>
 									<select id="Status" name="Status" class="form-control chosen-select">
 										<option value="">Please Select</option>
 										<option value="Pending">Pending</option>
@@ -166,6 +234,12 @@
 										<option value="Cancelled">Cancelled</option>
 										<option value="Completed">Completed</option>
 									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
 								</div>
 							</div>
 							</div>
