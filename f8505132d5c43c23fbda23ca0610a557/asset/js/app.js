@@ -175,6 +175,18 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
 }]);
 
 
+$(window).load(function() {
+    setTimeout(function(){
+        $('img').each(function() {
+            if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+                this.src = BASE_URL + 'asset/img/noimagefound.jpg';
+                this.width = 100;
+                this.height = 100;
+            }
+        });
+    },200);
+});
+
 
 
 /*jquery*/
@@ -413,4 +425,4 @@ app.filter('myDateFormat', function myDateFormat($filter){
 $(".modal").modal({
     show: false,
     backdrop: 'static'
-    });
+});

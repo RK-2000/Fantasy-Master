@@ -103,7 +103,6 @@ input.chosen-search-input.default {
         <!-- Filter form/ -->
 
         <form id="add_form" name="add_form" autocomplete="off">
-            <br/>
             <div class="row" ng-if='IsUsers && !chkselct'>
                 <div class="col-md-8">
                     <hr/>
@@ -123,11 +122,10 @@ input.chosen-search-input.default {
                     <button type="button" class="btn btn-success btn-sm" onclick="$('select#users option').attr('selected','selected').prop('selected',true).trigger('chosen:updated');">Select All</button>
                 </div>
             </div>
-            <br/>
             <div class="row">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <hr/>
+                        <hr ng-hide='chkselct'/>
                     </div>
                 </div>
             </div>

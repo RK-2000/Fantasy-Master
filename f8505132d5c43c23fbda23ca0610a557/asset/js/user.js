@@ -1,6 +1,11 @@
 app.controller('PageController', function($scope, $http, $timeout) {
 
     var FromDate = ToDate = ''; 
+
+    $timeout(function(){            
+       $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+   }, 200);
+    
     /*list*/
     $scope.applyFilter = function() {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/

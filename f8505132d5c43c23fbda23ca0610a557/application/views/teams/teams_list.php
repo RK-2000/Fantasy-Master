@@ -36,7 +36,7 @@
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
 				
 					<td class="text-center">
-						<img ng-src="{{row.TeamFlag}}" width="70px" height="45px;">
+						<img ng-src="{{row.TeamFlag}}" width="80px" height="80px;">
 					</td>
 					
 					<td>
