@@ -98,7 +98,7 @@ class Users_model extends CI_Model
 
         /* Add Into MongoDB */
         mongoDBConnection();
-        $this->fantasydb->users->insertOne(array_filter(array(
+        $this->fantasydb->tbl_users->insertOne(array_filter(array(
                 '_id'    => (int)  $EntityID,
                 'UserGUID' => $EntityGUID,
                 'Username' => @$InsertData['Username'],
@@ -328,7 +328,7 @@ class Users_model extends CI_Model
 
         /* Edit Into MongoDB */
         mongoDBConnection();
-        $this->fantasydb->users->updateOne(
+        $this->fantasydb->tbl_users->updateOne(
             ['_id'    => (int) $UserID],
             ['$set'   => array_filter(array('UserName' => @$UpdateArray['UserName'],'FullName' => @$UpdateArray['FirstName'].' '.@$UpdateArray['LastName'],'ProfilePic' => @$UpdateArray['ProfilePic']))],
             ['upsert' => true]

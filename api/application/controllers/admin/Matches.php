@@ -126,8 +126,23 @@ class Matches extends API_Controller_Secure
                 if ($EntityData) {
                     $this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->PlayerID);
 
+                    /* Get Media */
+                    $MediaData = $this->Media_model->getMedia(
+                        'MediaGUID,M.MediaName',
+                        array("SectionID" => "PlayerPic", "MediaID" => $EntityData['MediaID']),
+                        FALSE
+                    );
+
                     /* Update Player Pic Media Name */
                     $this->db->query('UPDATE sports_players AS P, tbl_media AS M SET P.PlayerPic = M.MediaName WHERE M.EntityID = P.PlayerID AND M.MediaID = ' . $EntityData['MediaID']);
+
+                    /* Edit Into MongoDB */
+                    mongoDBConnection();
+                    $this->fantasydb->sports_players->updateOne(
+                        ['_id' => $this->Post['PlayerGUID']],
+                        ['$set'   => array('PlayerID' => (int) $this->PlayerID,'PlayerPic' => $MediaData['MediaName'])],
+                        ['upsert' => true]
+                    );
                 }
             }
         }

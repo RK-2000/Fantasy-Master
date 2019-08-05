@@ -9,6 +9,7 @@ class Utility_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        mongoDBConnection();
     }
 
     /*
@@ -673,6 +674,18 @@ class Utility_model extends CI_Model
                     $TeamsData = array_merge($VisitorTeamData, $LocalTeamData);
                     if (!empty($TeamsData)) {
                         $this->db->insert_batch('sports_teams', $TeamsData);
+
+                        /* Add Into MongoDB */
+                        foreach($TeamsData as $Team){
+                            $TeamsDataMongo[] = array(
+                                            '_id'           => $Team['TeamGUID'],
+                                            'TeamID'        => (int) $Team['TeamID'],
+                                            'TeamName'      => $Team['TeamName'],
+                                            'TeamNameShort' => $Team['TeamNameShort'],
+                                            'TeamFlag'      => 'team.png'
+                                        );
+                        }
+                        $this->fantasydb->sports_teams->insertMany($TeamsDataMongo);
                     }
 
                     /* To check if match is already exist */
@@ -884,6 +897,16 @@ class Utility_model extends CI_Model
                     ));
                     $IsNewTeam = true;
                     $this->db->insert('sports_teams', $TeamData);
+
+                    /* Add Into MongoDB */
+                    $TeamsDataMongo = array(
+                        '_id'           => $TeamGUID,
+                        'TeamID'        => (int) $TeamID,
+                        'TeamName'      => $Response['data']['name'],
+                        'TeamNameShort' => strtoupper($TeamKey),
+                        'TeamFlag'      => 'team.png'
+                    );
+                    $this->fantasydb->sports_teams->insertOne($TeamsDataMongo);
                 }
                 if (!$IsNewTeam) {
 
@@ -919,6 +942,15 @@ class Utility_model extends CI_Model
                             'PlayerBowlingStyle' => @$Response['data']['players'][$PlayerIDLive]['bowling_style'][0],
                         );
                         $this->db->insert('sports_players', $PlayersAPIData);
+
+                        /* Add Into MongoDB */
+                        $PlayersDataMongo = array(
+                            '_id'         => $PlayerGUID,
+                            'PlayerID'    => (int) $PlayerID,
+                            'PlayerName'  => $Response['data']['players'][$PlayerIDLive]['name'],
+                            'PlayerPic'   => 'player.png'
+                        );
+                        $this->fantasydb->sports_players->insertOne($PlayersDataMongo);
                     }
 
                     /* To check If match player is already exist */
