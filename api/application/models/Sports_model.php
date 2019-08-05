@@ -139,6 +139,14 @@ class Sports_model extends CI_Model
             $this->db->where('TeamID', $TeamID);
             $this->db->limit(1);
             $this->db->update('sports_teams', $UpdateArray);
+
+            /* Edit Into MongoDB */
+            mongoDBConnection();
+            $this->fantasydb->sports_teams->updateOne(
+                ['_id' => $Input['TeamGUID']],
+                ['$set'   => array_filter(array('TeamID' => (int) $TeamID,'TeamFlag' => @$UpdateArray['TeamFlag'],'TeamName' => @$UpdateArray['TeamName'],'TeamNameShort' => @$UpdateArray['TeamNameShort']))],
+                ['upsert' => true]
+            );
         }
         return TRUE;
     }

@@ -37,10 +37,10 @@ class Teams extends API_Controller_Secure
 					array("SectionID" => "TeamFlag", "MediaID" => $EntityData['MediaID']),
 					FALSE
 				);
-				$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamFlag'=>$MediaData['MediaName'],'TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
+				$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamGUID' => $this->Post['TeamGUID'],'TeamFlag'=>$MediaData['MediaName'],'TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
 			}
 		}else{
-			$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
+			$this->Sports_model->updateTeamDetails($this->TeamID,array('TeamGUID' => $this->Post['TeamGUID'],'TeamName' => @$this->Post['TeamName'],'TeamNameShort' => @$this->Post['TeamNameShort']));
 		}
 		/* check for media present - associate media with this Post - ends */
 
