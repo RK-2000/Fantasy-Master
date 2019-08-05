@@ -97,13 +97,9 @@ $db['default'] = array(
 );
 switch (ENVIRONMENT) {
     case 'local':
-        // $db['default']['hostname'] = '192.168.1.251';
-        // $db['default']['username'] = 'mwdemoserver';
-        // $db['default']['password'] = 'z3vG?adJM_nQ@$4DMFhvUY!eFg^@4u';
-
-        $db['default']['hostname'] = 'localhost';
-        $db['default']['username'] = 'root';
-        $db['default']['password'] = 'root';
+        $db['default']['hostname'] = '192.168.1.251';
+        $db['default']['username'] = 'mwdemoserver';
+        $db['default']['password'] = 'z3vG?adJM_nQ@$4DMFhvUY!eFg^@4u';
         break;
     case 'testing':
         $db['default']['hostname'] = 'localhost';

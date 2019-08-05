@@ -1654,6 +1654,10 @@ class Sports_model extends CI_Model
         foreach ($ContestsUsers->result_array() as $Value) {
             if ($CancelType == "Cancelled") {
 
+                if (((strtotime($Value['MatchStartDateTime']) - 19800) - strtotime(date('Y-m-d H:i:s'))) > 0) {
+                    continue;
+                }
+
                 /* To Check Unfilled Contest */
                 if(($Value['UnfilledWinningPercent'] == 'GuranteedPool' || $Value['UnfilledWinningPercent'] == 'Yes') && $Value['ContestSize'] != $Value['TotalJoined']){
                     if($Value['TotalJoined'] == 0){
@@ -1680,10 +1684,6 @@ class Sports_model extends CI_Model
                             $this->db->update('sports_contest', array('CustomizeWinning' => json_encode($NewCustomizeWinning)));    
                         }
                     }
-                    continue;
-                }
-
-                if (((strtotime($Value['MatchStartDateTime']) - 19800) - strtotime(date('Y-m-d H:i:s'))) > 0) {
                     continue;
                 }
 
