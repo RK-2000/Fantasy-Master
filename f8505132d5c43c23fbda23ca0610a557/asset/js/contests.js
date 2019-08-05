@@ -211,6 +211,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     $scope.ContestFormat = 'Head to Head'; 
     $scope.IsPaid = 'Yes';
     $scope.addData = function () {
+      
         $scope.addDataLoading = true;
         if ($scope.contestPrizeParser($scope.custom.choices)[0].WinningAmount == 0) {
             var customWinings = JSON.stringify([{ 'From': 1, 'To': $scope.custom.NoOfWinners, 'WinningAmount': $scope.custom.WinningAmount, 'Percent': 100 }]);
@@ -223,24 +224,24 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         var $data = {};
         $data.SessionKey = SessionKey;
         $data.ContestName = $('input[name="ContestName"]').val(); 
-        $data.ContestFormat = $('select[name="ContestFormat"]').val();
-        $data.ContestType = $('select[name="ContestType"]').val();
+        $data.ContestFormat = $('form#add_form select[name="ContestFormat"]').val();
+        $data.ContestType = $('form#add_form select[name="ContestType"]').val();
         $data.Privacy = 'No';
-        $data.IsPaid = $('select[name="IsPaid"]').val();
-        $data.IsConfirm = $('select[name="IsConfirm"]').val();
-        $data.IsAutoCreate = $('select[name="IsAutoCreate"]').val();
-        $data.ShowJoinedContest = $('select[name="ShowJoinedContest"]').val();
+        $data.IsPaid = $('form#add_form select[name="IsPaid"]').val();
+        $data.IsConfirm = $('form#add_form select[name="IsConfirm"]').val();
+        $data.IsAutoCreate = $('form#add_form select[name="IsAutoCreate"]').val();
+        $data.ShowJoinedContest = $('form#add_form select[name="ShowJoinedContest"]').val();
         $data.WinningAmount = $('input[name="WinningAmount"]').val();
         $data.ContestSize = $('input[name="ContestSize"]').val();
         $data.EntryFee = $('input[name="EntryFee"]').val();
         $data.NoOfWinners = $('input[name="NoOfWinners"]').val();
-        $data.EntryType = $('select[name="EntryType"]').val();
+        $data.EntryType = $('form#add_form select[name="EntryType"]').val();
         $data.UserJoinLimit = $('input[name="UserJoinLimit"]').val();
         $data.CashBonusContribution = $('input[name="CashBonusContribution"]').val();
         $data.AdminPercent = $('input[name="AdminPercent"]').val()
         $data.SeriesGUID = $scope.SeriesGUID;
-        $data.MatchGUID = $('select[name="MatchGUID[]"]').map(function () { return $(this).val(); }).get();
-        $data.IsWinnerSocialFeed = $('select[name="IsWinnerSocialFeed"]').val();
+        $data.MatchGUID = $('form#add_form select[name="MatchGUID[]"]').map(function () { return $(this).val(); }).get();
+        $data.IsWinnerSocialFeed = $('form#add_form select[name="IsWinnerSocialFeed"]').val();
         $data.CustomizeWinning = JSON.parse(customWinings);
         // var data = 'SessionKey=' + SessionKey + '&Privacy=No&' + $("form[name='add_form']").serialize() + '&CustomizeWinning=' + customWinings;
         $http.post(API_URL + 'admin/contest/add', $.param($data), contentType).then(function (response) {
@@ -895,7 +896,6 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
                 console.log($scope.contestData)
                 $('#contestJoinedUsers_model').modal({ show: true });
                 $timeout(function () {
-
                     $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                 }, 200);
             }
