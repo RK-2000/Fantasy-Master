@@ -52,6 +52,11 @@ class Users extends API_Controller_Secure
         }
 		if ($UsersData) {
 
+            /* Send Push Notification */
+            if(in_array('Push', $this->Post['NotificationType'])){
+                boradcastPushNotifications($this->Post['Title'],$this->Post['Message']);
+            }
+
             /* Send Website Notification */
             if(in_array('Website', $this->Post['NotificationType'])){
                 foreach($UsersData as $Value){

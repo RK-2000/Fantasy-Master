@@ -97,7 +97,7 @@ define('PHONE_NO_VERIFICATION', true);
 define('IS_VICECAPTAIN', true);
 define('AUTO_WITHDRAWAL', false);
 define('OTP_WITHDRAWAL', false);
-define('IS_AUCTION', true);
+define('FIREBASE_CHANNEL_NAME', 'fantasy');
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy hh:i:ss */
 
 /*Pagination*/

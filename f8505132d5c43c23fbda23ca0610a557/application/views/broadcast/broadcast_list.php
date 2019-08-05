@@ -135,9 +135,10 @@ input.chosen-search-input.default {
                         <label class="control-label">Notification Type</label>
                         <select data-placeholder="Select Notification Types" name="NotificationType[]" class="form-control chosen-select" multiple ng-model="NotificationType"
                             ng-change="changeNotificationType(NotificationType);">
-                            <option value="Email">Email</option>
-                            <option value="SMS">SMS</option>
-                            <option value="Website">Website/App</option>
+                            <option value="Email">Email Notifications</option>
+                            <option value="SMS">SMS Notifications</option>
+                            <option value="Website">Website/App Bell Notifications</option>
+                            <option value="Push">Mobile Push Notifications</option>
                         </select>
                     </div>
                 </div>

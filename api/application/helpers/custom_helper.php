@@ -182,6 +182,51 @@ function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $
         }
     }
 }
+
+function boradcastPushNotifications($Title, $Message)
+{
+    if (ENVIRONMENT == "production") {
+
+        /*Send Notifications*/
+        $PostFCM = array();
+        $PostFCM['to'] = '/topics/' . FIREBASE_CHANNEL_NAME;
+        $PostFCM['data'] = array(
+            'badges' => 1,
+            'title' => $Title,
+            'message' => $Message
+        );
+        $CURL = curl_init();
+        curl_setopt_array($CURL, array(
+            CURLOPT_URL => "https://fcm.googleapis.com/fcm/send",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($PostFCM, JSON_UNESCAPED_UNICODE),
+            CURLOPT_HTTPHEADER => array(
+                "authorization: key=AIzaSyBe5p4qjA1aID7H0gGADnnhQXspHzIgrLk",
+                "cache-control: no-cache",
+                "content-type: application/json"
+            ),
+        ));
+        $Response = curl_exec($CURL);
+        if (API_SAVE_LOG) {
+            $obj = &get_instance();
+            mongoDBConnection();
+            $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode($PostFCM, 1), 'DeviceTypeID' => '3', 'Return' => $Response, 'EntryDate' => date("Y-m-d H:i:s")));
+        }
+        $Err = curl_error($CURL);
+        curl_close($CURL);
+        if ($Err) {
+            return false;
+        } else {
+            return true;
+        }
+    } 
+}
+
 /*------------------------------*/
 /*------------------------------*/
 function sendMail($Input = array())
@@ -255,7 +300,7 @@ function paginationOffset($PageNo, $PageSize)
         $PageNo = 1;
     }
     $Offset = ($PageNo - 1) * $PageSize;
-    return (int) $Offset;
+    return (int)$Offset;
 }
 /*------------------------------*/
 /*------------------------------*/
