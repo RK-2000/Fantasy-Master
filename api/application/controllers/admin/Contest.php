@@ -299,6 +299,36 @@ class Contest extends API_Controller_Secure {
         return TRUE;
     }
 
+    /*
+      Description: To get joined contest users data
+     */
+
+    public function getJoinedContestsUsers_post()
+    {
+        $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
+        $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|required|callback_validateEntityGUID[Contest,ContestID]');
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->validation($this);  /* Run validation */
+
+        /* Get Contest Status */
+        $Contest = $this->Contest_model->getContests('Status', array('ContestID' => $this->Post['ContestID']));
+        if ($Contest['Status'] == 'Pending' || $Contest['Status'] == 'Cancelled') {
+
+            /* Get Joined Contest Users Data (MySQL) */
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => @$this->UserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        } else {
+
+            /* Get Joined Contest Users Data (MongoDB) */
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post, array('UserID' => @$this->UserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
+            if (!$JoinedContestData) {
+                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => @$this->UserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+            }
+        }
+        if (!empty($JoinedContestData)) {
+            $this->Return['Data'] = $JoinedContestData['Data'];
+        }
+    }
+
 }
 
 ?>
