@@ -143,6 +143,9 @@ class Contest extends API_Controller_Secure
         $ContestTypes[] = array('Key' => 'Mega Contest', 'TagLine' => 'Get ready for mega winnings!', 'Where' => array('ContestType' => 'Mega'));
         $ContestTypes[] = array('Key' => 'Winner Takes All', 'TagLine' => 'Everything To Play For', 'Where' => array('ContestType' => 'Winner Takes All'));
         $ContestTypes[] = array('Key' => 'Only For Beginners', 'TagLine' => 'Play Your First Contest Now', 'Where' => array('ContestType' => 'Only For Beginners'));
+        if ($this->Post['Privacy'] == 'All' || $this->Post['Privacy'] == 'Yes') {
+            $ContestTypes[] = array('Key' => 'Private Contest', 'TagLine' => 'Play with friends and Family', 'Where' => array('ContestType' => 'Normal','Privacy' => 'Yes'));
+        }
 
         foreach ($ContestTypes as $key => $Contests) {
             array_push($ContestData, $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('MatchID' => @$this->MatchID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID), $Contests['Where']), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize'])['Data']);
