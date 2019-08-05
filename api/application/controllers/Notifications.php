@@ -73,7 +73,11 @@ class Notifications extends API_Controller_Secure
 	*/
 	public function deleteAll_post()
 	{
-		$this->Notification_model->deleteAll($this->SessionUserID);
+		$this->form_validation->set_rules('NotificationIDs[]', 'Notifications', 'trim');
+		$this->form_validation->validation($this);  /* Run validation */
+		/* Validation - ends */
+
+		$this->Notification_model->deleteAll($this->SessionUserID,@$this->Post['NotificationIDs']);
 	}
 
 	/*Common Validations*/

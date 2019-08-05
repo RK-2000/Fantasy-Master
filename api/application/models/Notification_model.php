@@ -80,8 +80,11 @@ class Notification_model extends CI_Model
 	/*
 	Description: 	Use to delete all users notification.
 	*/
-	function deleteAll($UserID)
+	function deleteAll($UserID,$NotificationIDs = array())
 	{
+		if(!empty($NotificationIDs)){
+			$this->db->where_in('NotificationID', $NotificationIDs);
+		}
 		$this->db->where('ToUserID', $UserID);
 		$this->db->delete('tbl_notifications');
 	}
