@@ -1,5 +1,5 @@
 <header class="panel-heading">
-  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1>
+  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1> 
 </header>
 
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
@@ -35,6 +35,7 @@
 					<th class="text-center" style="width: 100px;" class="text-center">Winning Amount</th>
 					<th style="width: 100px;" class="text-center">Match Date</th>
 					<th style="width: 100px;" class="text-center">Status</th>
+					<th style="width: 100px;" class="text-center">Action</th>
 					<!-- <th style="width: 100px;" class="text-center">Action</th> -->
 				</tr>
 			</thead>
@@ -42,8 +43,9 @@
 			<tbody id="tabledivbody">
 
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
+					
 					<td>
-						<div class="content float-left"><strong>{{row.ContestName}}</strong>
+						<div class="content float-left"><strong><a href="javascript:void(0)" ng-click="loadContestJoinedUser(key,row.ContestGUID)">{{row.ContestName}}</a></strong>
 							<div ng-if="row.TeamNameLocal">({{row.TeamNameLocal}} v/s {{row.TeamNameVisitor}})</div><div ng-if="!row.TeamNameLocal">-</div>
 						</div>
 					</td>
@@ -73,6 +75,14 @@
 						<p>{{row.MatchStartDateTime}}</p>
 					</td>
 					<td class="text-center"><span ng-class="{Pending:'text-danger', Running:'text-success',Cancelled:'text-danger',Completed:'text-success'}[row.Status]">{{row.Status}}</span></td> 
+					<td class="text-center">
+						<div class="dropdown">
+							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
+							<div class="dropdown-menu dropdown-menu-left">
+								<a class="dropdown-item" href="" ng-click="loadContestJoinedUser(key,row.ContestGUID)">Details</a>
+							</div>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -220,6 +230,18 @@
 
 				</form>
 				<!-- Filter form/ -->
+			</div>
+		</div>
+	</div>
+	<!-- contest joined user Modal -->
+	<div class="modal fade" id="contestJoinedUsers_model">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title h5">Contest Details</h3>     	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div ng-include="templateURLEdit"></div>
 			</div>
 		</div>
 	</div>

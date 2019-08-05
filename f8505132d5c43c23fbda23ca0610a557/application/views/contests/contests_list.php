@@ -5,7 +5,7 @@
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
 	<!-- Top container -->
-	<div class="clearfix mt-2 mb-2" >
+	<div class="clearfix mt-2 mb-2" > 
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>

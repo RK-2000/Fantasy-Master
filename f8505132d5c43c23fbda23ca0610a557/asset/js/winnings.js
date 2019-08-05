@@ -105,6 +105,26 @@ app.controller('PageController', function ($scope, $http,$timeout){
         });
     }
 
+    $scope.loadContestJoinedUser = function (Position, ContestGUID) {
+
+        $scope.data.Position = Position;
+        $scope.templateURLEdit = PATH_TEMPLATE + module + '/joinedContestWinning_form.htm?' + Math.random();
+        $scope.data.pageLoading = true;
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime', contentType).then(function (response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200) { /* success case */
+                $scope.data.pageLoading = false;
+                $scope.contestData = response.Data;
+                $('#contestJoinedUsers_model').modal({ show: true });
+                $timeout(function () {
+                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                }, 200);
+            }
+        });
+        //$('.table').removeProperty('min-height');
+    }
+
 }); 
 
 /* sortable - ends */
