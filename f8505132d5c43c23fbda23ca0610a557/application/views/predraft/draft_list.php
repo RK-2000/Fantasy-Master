@@ -48,7 +48,7 @@
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
 				
 					<td>
-						<div class="content float-left"><strong><a href="javascript:void(0)" >{{row.DraftName}}</a></strong>
+						<div class="content float-left"><strong><a href="javascript:void(0)" ng-click="loadPredraftContest(key,row.PredraftContestID)">{{row.DraftName}}</a></strong>
 						
 						</div>
 					</td>
@@ -223,6 +223,19 @@
 				<form id="edit_form" name="edit_form" autocomplete="off" ng-include="templateURLDelete">
 				</form>
 				<!-- /form -->
+			</div>
+		</div>
+	</div>
+
+		<!-- Predraft Contest Modal -->
+		<div class="modal fade" id="predraftcontest_model">
+		<div class="modal-dialog modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title h5"><?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div ng-include="templateURLEdit"></div>
 			</div>
 		</div>
 	</div>
