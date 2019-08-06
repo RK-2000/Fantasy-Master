@@ -335,13 +335,13 @@ class Contest extends API_Controller_Secure
         if ($Contest['Status'] == 'Pending' || $Contest['Status'] == 'Cancelled') {
 
             /* Get Joined Contest Users Data (MySQL) */
-            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         } else {
 
             /* Get Joined Contest Users Data (MongoDB) */
-            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post, array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post, array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
             if (!$JoinedContestData) {
-                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
             }
         }
         if (!empty($JoinedContestData)) {

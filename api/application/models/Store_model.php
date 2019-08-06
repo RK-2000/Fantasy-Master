@@ -94,7 +94,7 @@ class Store_model extends CI_Model
 			"CouponValidTillDate" 	=>	@$Input['CouponValidTillDate'],
 			"Broadcast" 			=>	@$Input['Broadcast'],
 			"MiniumAmount" 			=>	@$Input['MiniumAmount'],
-			"MaximumAmount" 			=>	@$Input['MaximumAmount'],
+			"MaximumAmount" 		=>	@$Input['MaximumAmount'],
 			"NumberOfUses" 			=>	@$Input['NumberOfUses'],
 		));
 
