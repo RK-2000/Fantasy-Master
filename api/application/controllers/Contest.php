@@ -468,7 +468,7 @@ class Contest extends API_Controller_Secure
         }
 
         /* To Check If Contest Is Already Joined With New Team*/
-        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->UserTeamID.' LIMIT 1');
+        $Query = $this->db->query('SELECT ContestID FROM sports_contest_join WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->UserTeamID.' LIMIT 1');
         if ($Query->num_rows() > 0) {
             $this->form_validation->set_message('validateContestStatus', 'Contest already joined with this team.');
             return FALSE;
