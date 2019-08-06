@@ -1146,6 +1146,30 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             });
         }
     }
+
+        // load predraft contest detail
+        $scope.loadPredraftContest = function (Position, PredraftContestID) {
+
+            $scope.data.Position = Position;
+            $scope.templateURLEdit = PATH_TEMPLATE + module + '/joinedContest_form.htm?' + Math.random();
+            $scope.data.pageLoading = true;
+            $http.post(API_URL + 'admin/PredraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit,DraftFormat,DraftName,ShowJoinedDraft,UnfilledWinningPercent,IsAutoCreate,IsConfirm,MatchStartDateTime', contentType).then(function (response) {
+                var response = response.data;
+                manageSession(response.ResponseCode);
+                if (response.ResponseCode == 200) { /* success case */
+                    $scope.data.pageLoading = false;
+                    $scope.contestData = response.Data.Records[0];
+                    console.log($scope.contestData)
+                    $('#predraftcontest_model').modal({ show: true });
+                    $timeout(function () {
+    
+                        $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                    }, 200);
+                }
+            });
+            $('.table').removeProperty('min-height');
+        }
+        // End
 }); 
 
 /* sortable - ends */
