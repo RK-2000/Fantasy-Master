@@ -200,6 +200,7 @@ class Users_model extends CI_Model
                 $UpdateArray['EmailForChange'] = $UpdateArray['Email'];
 
                 /* Genrate a Token for Email verification and save to tokens table. */
+                $this->load->model('Recovery_model');
                 send_mail(array(
                     'emailTo' => $UpdateArray['EmailForChange'],
                     'template_id' => 'd-c9a4320dc3f740799d1d5861e032df59',
