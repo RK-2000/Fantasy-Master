@@ -212,9 +212,6 @@ class Utility_model extends CI_Model
 
     function sendMobileSMS($SMSArray)
     {
-        if (ENVIRONMENT == 'testing') {
-            return TRUE;
-        }
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => "http://control.msg91.com/api/sendotp.php?authkey=" . MSG91_AUTH_KEY . "&sender=" . MSG91_SENDER_ID . "&mobile=" . $SMSArray['PhoneNumber'] . "&otp=" . $SMSArray['Text'],
