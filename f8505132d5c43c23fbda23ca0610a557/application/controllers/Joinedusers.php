@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Userjoined extends Admin_Controller_Secure {
+class Joinedusers extends Admin_Controller_Secure {
 	
 	/*------------------------------*/
 	/*------------------------------*/	

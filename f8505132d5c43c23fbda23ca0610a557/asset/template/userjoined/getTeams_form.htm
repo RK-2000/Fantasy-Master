@@ -1,0 +1,35 @@
+<div class="modal-body">
+    <div class="form-area">
+        <form id="list_form" name="list_form" autocomplete="off">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                            <th>Player Pic</th>
+                            <th>Player Name</th>
+                            <th>Player Role</th>
+                            <th>Player Percent</th>
+                            <th>Points</th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="data in playerData">
+                                <td class="listed sm clearfix">
+                                    <img class="rounded-circle float-left" ng-src="{{data.PlayerPic}}">
+                                </td>
+                                <td>{{data.PlayerName}}</td>
+                                <td>{{data.PlayerRole}}</td>
+                                <td>{{data.PlayerSelectedPercent}} %</td>
+                                <td>{{data.Points}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+</div>
