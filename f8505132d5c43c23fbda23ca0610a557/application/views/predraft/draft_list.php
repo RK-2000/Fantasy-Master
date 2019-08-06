@@ -82,7 +82,8 @@
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.PredraftContestID)">Edit</a>
 								<a class="dropdown-item" href="" ng-click="deleteDraft(key, row.PredraftContestID)">Delete</a>
-								
+								<a class="dropdown-item" href="" ng-click="loadPredraftContest(key,row.PredraftContestID)"
+                                   >Detail</a>
 							</div>
 						</div>
 						<div class="dropdown" ng-if="row.Status!='Pending'">
