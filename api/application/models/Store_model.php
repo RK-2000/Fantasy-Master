@@ -69,9 +69,23 @@ class Store_model extends CI_Model
 		$EntityGUID = get_guid();
 		/* Add to entity table and get ID. */
 		$CouponID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 13, "UserID" => $UserID, "StatusID" => $StatusID));
+		
 		/* Add product to product table*/
-		$this->db->insert('ecom_coupon', array("CouponID" => $CouponID));
-		$this->updateCoupon($CouponID, $Input, $UserID);
+		$InsertArray = array_filter(array(
+			"CouponID" 				=> 	$CouponID,
+			"CouponTitle" 			=>	@$Input['CouponTitle'],
+			"CouponDescription" 	=>	@$Input['CouponDescription'],
+			"ProductRegPrice" 		=>	@$Input['ProductRegPrice'],
+			"CouponCode" 			=>	@$Input['CouponCode'],
+			"CouponType" 			=>	@$Input['CouponType'],
+			"CouponValue" 			=>	@$Input['CouponValue'],
+			"CouponValidTillDate" 	=>	@$Input['CouponValidTillDate'],
+			"Broadcast" 			=>	@$Input['Broadcast'],
+			"MiniumAmount" 			=>	@$Input['MiniumAmount'],
+			"MaximumAmount" 		=>	@$Input['MaximumAmount'],
+			"NumberOfUses" 			=>	@$Input['NumberOfUses'],
+		));
+		$this->db->insert('ecom_coupon', $InsertArray);
 		$this->db->trans_complete();
 		if ($this->db->trans_status() === FALSE) {
 			return FALSE;
