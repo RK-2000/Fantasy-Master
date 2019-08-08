@@ -111,9 +111,9 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Contests Data */
-        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)),(!empty($this->ContestID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)),(!empty($this->ContestID) || !empty($this->Post['UserInvitationCode'])) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($ContestData)) {
-            $this->Return['Data'] = (!empty($this->ContestID)) ? $ContestData : $ContestData['Data'];
+            $this->Return['Data'] = (!empty($this->ContestID) || !empty($this->Post['UserInvitationCode'])) ? $ContestData : $ContestData['Data'];
         }
     }
 
