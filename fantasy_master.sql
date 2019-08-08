@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 07, 2019 at 03:25 PM
+-- Generation Time: Aug 08, 2019 at 12:35 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -920,15 +920,16 @@ CREATE TABLE `sports_contest_join` (
   `DraftUserLive` enum('Yes','No') NOT NULL DEFAULT 'No',
   `DraftUserLiveTime` datetime DEFAULT NULL,
   `IsRefund` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `IsWinningAssigned` enum('No','Yes') NOT NULL DEFAULT 'No' COMMENT '(From MongoDB To MySQL)'
+  `IsWinningAssigned` enum('No','Yes') NOT NULL DEFAULT 'No' COMMENT '(From MongoDB To MySQL)',
+  `IsWinningDistributed` enum('No','Yes') NOT NULL DEFAULT 'No'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `sports_contest_join`
 --
 
-INSERT INTO `sports_contest_join` (`ContestID`, `UserID`, `MatchID`, `SeriesID`, `JoinInning`, `UserTeamID`, `TotalPoints`, `UserRank`, `ModifiedDate`, `UserWinningAmount`, `TaxAmount`, `EntryDate`, `AuctionTimeBank`, `AuctionBudget`, `AuctionUserStatus`, `IsHold`, `AuctionHoldDateTime`, `DraftUserPosition`, `DraftUserLive`, `DraftUserLiveTime`, `IsRefund`, `IsWinningAssigned`) VALUES
-(929, 927, 129, NULL, NULL, 928, 0.00, NULL, NULL, 0.00, 0.00, '2019-08-05 12:44:37', 180, 1000000000, 'Offline', 'No', NULL, NULL, 'No', NULL, 'No', 'No');
+INSERT INTO `sports_contest_join` (`ContestID`, `UserID`, `MatchID`, `SeriesID`, `JoinInning`, `UserTeamID`, `TotalPoints`, `UserRank`, `ModifiedDate`, `UserWinningAmount`, `TaxAmount`, `EntryDate`, `AuctionTimeBank`, `AuctionBudget`, `AuctionUserStatus`, `IsHold`, `AuctionHoldDateTime`, `DraftUserPosition`, `DraftUserLive`, `DraftUserLiveTime`, `IsRefund`, `IsWinningAssigned`, `IsWinningDistributed`) VALUES
+(929, 927, 129, NULL, NULL, 928, 0.00, NULL, NULL, 0.00, 0.00, '2019-08-05 12:44:37', 180, 1000000000, 'Offline', 'No', NULL, NULL, 'No', NULL, 'No', 'No', 'No');
 
 -- --------------------------------------------------------
 

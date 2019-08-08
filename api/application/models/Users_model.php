@@ -30,8 +30,15 @@ class Users_model extends CI_Model
         $EntityID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 1, "StatusID" => $StatusID));
         /* Add user to user table . */
         if (!empty($Input['PhoneNumber']) && PHONE_NO_VERIFICATION) {
-            $Input['PhoneNumberForChange'] = $Input['PhoneNumber'];
-            unset($Input['PhoneNumber']);
+            if($SourceID == 1 && $UserTypeID == 2){
+                $Input['PhoneNumberForChange'] = $Input['PhoneNumber'];
+                unset($Input['PhoneNumber']);
+            }
+        }
+        if($SourceID == 1 && $UserTypeID == 2){
+            $InsertData['EmailForChange'] = @strtolower($Input['Email']);
+        }else{
+            $InsertData['Email'] = @strtolower($Input['Email']);
         }
         $InsertData = array_filter(array(
             "UserID" => $EntityID,
