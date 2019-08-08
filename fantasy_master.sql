@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 05, 2019 at 07:32 PM
+-- Generation Time: Aug 07, 2019 at 03:25 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -122,7 +122,8 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (33, 'Private Contests', 'Privatecontests'),
 (34, 'Deposit History', 'depositHistory'),
 (35, 'Pre Draft Contest', 'predraft'),
-(36, 'Referral History', 'referral');
+(36, 'Referral History', 'referral'),
+(37, 'Joined Users', 'joinedusers');
 
 -- --------------------------------------------------------
 
@@ -166,7 +167,8 @@ INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
 (1, 33),
 (1, 34),
 (1, 35),
-(1, 36);
+(1, 36),
+(1, 37);
 
 -- --------------------------------------------------------
 
@@ -210,7 +212,7 @@ CREATE TABLE `ecom_coupon` (
   `CouponCode` varchar(12) NOT NULL,
   `CouponType` enum('Flat','Percentage') NOT NULL,
   `CouponValue` int(11) NOT NULL,
-  `CouponValueLimit` int(11) DEFAULT NULL,
+  `CouponValueLimit` int(11) DEFAULT '0',
   `MiniumAmount` mediumint(8) DEFAULT NULL,
   `MaximumAmount` mediumint(8) DEFAULT NULL,
   `NumberOfUses` smallint(6) DEFAULT NULL,
@@ -3568,7 +3570,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-05 12:42:17', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-06 12:39:46', '2019-06-07 10:42:15'),
 (927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL);
 
 -- --------------------------------------------------------
@@ -3599,7 +3601,11 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '31e85934-1383-678c-6bfe-ffd6b12ad85b', NULL, 1, 1, NULL, NULL, '2019-08-05 10:57:24'),
 (927, 'ddce9067-b872-3c7d-12e6-a49159590555', NULL, 1, 1, NULL, NULL, '2019-08-05 12:35:02'),
 (927, '5826aaed-d80f-24e6-ec31-3b32d1fa94fe', NULL, 1, 1, NULL, NULL, '2019-08-05 12:39:28'),
-(125, '649e75a8-f101-90e4-f9a8-3fb08eddf7a6', NULL, 1, 1, NULL, NULL, '2019-08-05 12:42:17');
+(125, '649e75a8-f101-90e4-f9a8-3fb08eddf7a6', NULL, 1, 1, NULL, NULL, '2019-08-05 12:42:17'),
+(125, '0785840d-7f86-2646-9711-89851a916c8c', NULL, 1, 1, NULL, NULL, '2019-08-05 14:15:26'),
+(125, '22725d86-bdeb-826d-829d-309bcbf1558f', NULL, 1, 1, NULL, NULL, '2019-08-06 06:02:44'),
+(125, '5995581a-70e9-6374-6912-0b3a3de887b3', NULL, 1, 1, NULL, NULL, '2019-08-06 12:35:16'),
+(125, '06d8717b-c9e5-e0c7-8cd7-9d51e7401351', NULL, 1, 1, NULL, NULL, '2019-08-06 12:39:46');
 
 -- --------------------------------------------------------
 
@@ -3663,7 +3669,7 @@ CREATE TABLE `tbl_users_wallet` (
   `ClosingWinningAmount` float(8,2) DEFAULT '0.00',
   `ClosingCashBonus` float(8,2) NOT NULL,
   `Currency` enum('INR','USD') NOT NULL DEFAULT 'INR',
-  `PaymentGateway` enum('PayUmoney','Paytm','Razorpay') DEFAULT NULL,
+  `PaymentGateway` enum('PayUmoney','Paytm','Razorpay','CashFree') DEFAULT NULL,
   `TransactionType` enum('Cr','Dr') NOT NULL,
   `TransactionID` varchar(255) DEFAULT NULL,
   `Narration` enum('Deposit Money','Join Contest','Cancel Contest','Signup Bonus','Admin Cash Bonus','Join Contest Winning','First Deposit Bonus','Verification Bonus','Referral Bonus','Coupon Discount','Withdrawal Request','Withdrawal Reject','Wrong Winning Distribution','Admin Deposit Money','Cash Bonus Expire') NOT NULL,
@@ -4137,7 +4143,7 @@ ALTER TABLE `admin_control`
 -- AUTO_INCREMENT for table `admin_modules`
 --
 ALTER TABLE `admin_modules`
-  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 --
 -- AUTO_INCREMENT for table `dummy_names`
 --

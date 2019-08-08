@@ -117,7 +117,7 @@ class Sports extends API_Controller
     public function getMatchBestPlayers_post()
     {
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
-        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|callback_validateSession');
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->validation($this);  /* Run validation */
 
         $BestPlayersData = $this->Sports_model->getMatchBestPlayers(array('MatchID' => $this->MatchID, 'SessionUserID' => $this->SessionUserID));
@@ -131,7 +131,7 @@ class Sports extends API_Controller
      */
     public function getPlayerFantasyStats_post()
     {
-        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|callback_validateSession');
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('PlayerGUID', 'PlayerGUID', 'trim|required|callback_validateEntityGUID[Players,PlayerID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
