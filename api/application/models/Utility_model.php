@@ -1,5 +1,4 @@
 <?php
-use function YoastSEO_Vendor\GuzzleHttp\json_encode;
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
