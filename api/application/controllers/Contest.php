@@ -59,9 +59,9 @@ class Contest extends API_Controller_Secure
             }
 
             /* Check Total Percent */
-            if ($TotalPercent < 90 || $TotalPercent > 100) {
+            if ($TotalPercent > 100) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winners Percent should be 90% to 100%.";
+                $this->Return['Message'] = "Customize Winners Percent should be less than or equals to 100%.";
                 exit;
             }
 
