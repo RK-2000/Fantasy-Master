@@ -1,10 +1,9 @@
 app.controller('PageController', function ($scope, $http, $timeout) {
     $scope.data.pageSize = 15;
     /*----------------*/
-    $scope.getFilterData = function ()
-    {
+    $scope.getFilterData = function () {
         var SeriesGUID = getQueryStringValue('SeriesGUID');
-        var data = 'SessionKey=' + SessionKey + '&SeriesGUID='+ SeriesGUID+'&Params=TeamName,TeamGUID&' + $('#filterPanel form').serialize();
+        var data = 'SessionKey=' + SessionKey + '&SeriesGUID=' + SeriesGUID + '&Params=TeamName,TeamGUID&' + $('#filterPanel form').serialize();
         $http.post(API_URL + 'admin/matches/getTeamData', data, contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -12,15 +11,14 @@ app.controller('PageController', function ($scope, $http, $timeout) {
                 /* success case */
                 $scope.filterData = response.Data;
                 $timeout(function () {
-                    $("select.chosen-select").chosen({width: '100%', "disable_search_threshold": 8}).trigger("chosen:updated");
+                    $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
                 }, 300);
             }
         });
     }
 
     /*list*/
-    $scope.applyFilter = function ()
-    {
+    $scope.applyFilter = function () {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
     }
@@ -44,8 +42,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     }
     $scope.SGUID = getQueryStringValue('SeriesGUID');
     /*list append*/
-    $scope.getList = function ()
-    {
+    $scope.getList = function () {
         if ($scope.data.listLoading || $scope.data.noRecords)
             return;
         $scope.data.listLoading = true;
@@ -54,12 +51,12 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             var MatchGUID = getQueryStringValue('MatchGUID');
             var PlayerRole = 'TeamName,PlayerRole,PlayerSalary,PlayerSalaryCredit';
             $scope.getMatchDetail();
-        }else {
+        } else {
             var MatchGUID = '';
             var SeriesGUID = getQueryStringValue('SeriesGUID');
             var PlayerRole = 'TeamName,PlayerSalary,PlayerRole,PlayerSalaryCredit';
         }
-        var data = 'SessionKey=' + SessionKey + '&SeriesGUID='+ SeriesGUID+ '&MatchGUID=' + MatchGUID + '&Params=' + PlayerRole + ',PlayerPic,&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize +'&'+ $('#filterForm').serialize() +'&'+ $('#filterForm1').serialize();
+        var data = 'SessionKey=' + SessionKey + '&SeriesGUID=' + SeriesGUID + '&MatchGUID=' + MatchGUID + '&Params=' + PlayerRole + ',PlayerPic,&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&' + $('#filterForm').serialize() + '&' + $('#filterForm1').serialize();
         $http.post(API_URL + 'sports/getPlayers', data, contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -78,19 +75,17 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     }
 
     /*load add form*/
-    $scope.loadFormAdd = function (Position, CategoryGUID)
-    {
+    $scope.loadFormAdd = function (Position, CategoryGUID) {
         $scope.templateURLAdd = PATH_TEMPLATE + module + '/add_form.htm?' + Math.random();
-        $('#add_model').modal({show: true});
+        $('#add_model').modal({ show: true });
         $timeout(function () {
-            $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+            $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
         }, 200);
     }
 
 
     /*load edit form*/
-    $scope.loadFormEdit = function (Position, PlayerGUID)
-    {
+    $scope.loadFormEdit = function (Position, PlayerGUID) {
         if (getQueryStringValue('MatchGUID')) {
             var MatchGUID = getQueryStringValue('MatchGUID');
             $scope.AllMatches = false;
@@ -109,17 +104,16 @@ app.controller('PageController', function ($scope, $http, $timeout) {
                 /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
-                $('#edit_model').modal({show: true});
+                $('#edit_model').modal({ show: true });
                 $timeout(function () {
-                    $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                 }, 200);
             }
         });
     }
 
     /*load delete form*/
-    $scope.loadFormDelete = function (Position, CategoryGUID)
-    {
+    $scope.loadFormDelete = function (Position, CategoryGUID) {
         $scope.data.Position = Position;
         $scope.templateURLDelete = PATH_TEMPLATE + module + '/delete_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
@@ -129,21 +123,20 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
-                $('#delete_model').modal({show: true});
+                $('#delete_model').modal({ show: true });
                 $timeout(function () {
-                    $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                 }, 200);
             }
         });
     }
 
     /*edit data*/
-    $scope.editData = function ()
-    {
+    $scope.editData = function () {
         if (getQueryStringValue('MatchGUID')) {
             var SeriesGUID = '';
             var MatchGUID = getQueryStringValue('MatchGUID');
-        }else {
+        } else {
             var MatchGUID = '';
             var SeriesGUID = getQueryStringValue('SeriesGUID');
         }
@@ -198,4 +191,83 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             $scope.editDataLoading = false;
         });
     }
+
+    /*Download Salary CSV Sample*/
+    $scope.downloadSalarySample = function () {
+        var data = 'SessionKey=' + SessionKey + '&MatchGUID=' + getQueryStringValue('MatchGUID') + '&Params=PlayerID,PlayerRole,PlayerSalary,TeamName,PlayerName';
+        $http.post(API_URL + 'admin/matches/downloadPlayerSalarySample', data, contentType).then(function (response) {
+            var response = response.data;
+            // manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200) { /* success case */
+                var encodedUri = encodeURI(response.Data);
+                var link = document.createElement("a");
+                link.href = encodedUri;
+                link.style = "visibility:hidden";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                alertify.success(response.Message);
+            } else {
+                alertify.error(response.Message);
+            }
+        });
+    }
+
+    /*import Player Salary CSV*/
+    $scope.importPlayerSalary = function () {
+
+        var csv = $('#csv_file');
+        var csvFile = csv[0].files[0];
+        var ext = csv.val().split(".").pop().toLowerCase();
+
+        if ($.inArray(ext, ["csv"]) === -1) {
+            return false;
+        }
+        if (csvFile != undefined) {
+            reader = new FileReader();
+            reader.onload = function (e) {
+
+                csvResult = e.target.result.split(/\r|\n|\r\n/);
+                $('.csv').append(csvResult);
+            }
+            reader.readAsText(csvFile);
+        }
+
+
+        //  var data = $("#ImportSalaryForm").serialize()
+
+
+        var formData = new FormData();
+        formData.append("CsvFile", csvFile);
+        formData.append("SessionKey", SessionKey);
+        formData.append("SeriesGUID", getQueryStringValue('SeriesGUID'));
+        formData.append("RoundNo", getQueryStringValue('RoundNo'));
+        $.ajax({
+            url: API_URL + 'admin/matches/importPlayerSalary',
+            type: 'POST',
+            data: formData,
+            async: false,
+            success: function (response) {
+                alertify.success(response.Message);
+                $('.modal-header .close').click();
+                location.reload();
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+
+
 });
+/* csv file validation */
+function validateFile(input, ext) {
+    var file_name = input.value;
+    var split_extension = file_name.split(".").pop();
+    var extArr = ext.split("|");
+    if ($.inArray(split_extension.toLowerCase(), extArr) == -1) {
+        $(input).val("");
+        alertify.error('You Can Upload Only .' + extArr.join(", ") + ' file !');
+        return false;
+    }
+}
