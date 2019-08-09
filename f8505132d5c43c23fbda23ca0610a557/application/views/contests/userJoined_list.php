@@ -108,7 +108,7 @@
                     </td>
                     <td style="width: 100px;">{{row.FullName}}</td>
                     <td style="width: 100px;">{{row.UserTeamName}}</td>
-                    <td style="width: 100px;">{{data.DEFAULT_CURRENCY}} {{row.TotalPoints}}</td>
+                    <td style="width: 100px;">{{row.TotalPoints}}</td>
                     <td style="width: 100px;">{{row.UserRank}}</td>
                     <td style="width: 100px;">{{data.DEFAULT_CURRENCY}} {{row.UserWinningAmount}}</td>
 
