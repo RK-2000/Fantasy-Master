@@ -1662,7 +1662,7 @@ class Sports_model extends CI_Model
         foreach ($ContestsUsers->result_array() as $Value) {
             if ($CancelType == "Cancelled") {
 
-                if (((strtotime($Value['MatchStartDateTime']) - 19800) - strtotime(date('Y-m-d H:i:s'))) > 0) {
+                if (((strtotime($Value['MatchStartDateTime'])) - strtotime(date('Y-m-d H:i:s'))) > 0) {
                     continue;
                 }
 
