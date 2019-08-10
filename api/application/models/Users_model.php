@@ -394,6 +394,11 @@ class Users_model extends CI_Model
             $this->db->delete('tbl_users_session', array('UserID' => $UserID));
             /* Delete session - ends */
 
+            /* Delete Other Unverified Entries */
+            if(!empty($Email)){
+                $this->db->query('DELETE E FROM tbl_entity E, tbl_users U WHERE E.EntityID = U.UserID AND U.EmailForChange = "'.$Email.'" AND U.UserID != '.$UserID);
+            }
+
             $this->db->trans_complete();
             if ($this->db->trans_status() === FALSE) {
                 return FALSE;
@@ -420,6 +425,11 @@ class Users_model extends CI_Model
             /* change entity status to activate */
             if ($UserData['StatusID'] == 1) {
                 $this->Entity_model->updateEntityInfo($UserID, array("StatusID" => 2));
+            }
+
+            /* Delete Other Unverified Entries */
+            if(!empty($PhoneNumber)){
+                $this->db->query('DELETE E FROM tbl_entity E, tbl_users U WHERE E.EntityID = U.UserID AND U.PhoneNumberForChange = "'.$PhoneNumber.'" AND U.UserID != '.$UserID);
             }
 
             /* Manage Verification Bonus */

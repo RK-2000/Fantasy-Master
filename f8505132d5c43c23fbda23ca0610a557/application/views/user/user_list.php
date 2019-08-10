@@ -30,12 +30,9 @@
 				<!-- table heading -->
 				<thead>
 					<tr>
-						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->	
 						<th style="width: 300px;min-width:200px;">User</th>
-						<th>Contact No.</th>
-						<th style="width: 120px;">Gender</th>
+						<th>Phone No.</th>
 						<th style="width: 120px;">Referred</th>
-						<!-- <th style="width: 200px;">Role</th> -->
 						<th style="width: 160px;">Deposit Amount</th>
 						<th style="width: 160px;">Winning Amount</th>
 						<th style="width: 160px;">Cash Bonus</th>
@@ -59,16 +56,20 @@
 
 						</td> 
 
-						<td><span ng-if="row.PhoneNumber">{{row.PhoneNumber}}</span><span ng-if="!row.PhoneNumber">-</span></td> 
-						<td><span ng-if="row.Gender">{{row.Gender}}</span><span ng-if="!row.Gender">-</span></td> 
+						<td>
+							<div ng-if="row.PhoneNumber || row.PhoneNumberForChange"><a href="javascript:void(0);">{{row.PhoneNumber == "" ? row.PhoneNumberForChange : row.PhoneNumber}}</a></div><div ng-if="!row.PhoneNumber && !row.PhoneNumberForChange">-</div>
+							<span ng-if="row.PhoneNumber || row.PhoneNumberForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PhoneStatus]">({{row.PhoneStatus}})</span><br>
+							</div>
+						</td> 
 						<td><span ng-if="row.ReferredCount"><a href="javascript:void(0)" ng-click="loadFormReferredUsersList(key, row.UserGUID)" >{{row.ReferredCount}}</span><span ng-if="!row.ReferredCount">-</span></td> 
-						<!-- <td ng-bind="row.UserTypeName"></td>  -->
 						<td><i class="fa fa-rupee"></i>{{row.WalletAmount}}</td> 
 						<td><i class="fa fa-rupee"></i>{{row.WinningAmount}}</td> 
 						<td><i class="fa fa-rupee"></i>{{row.CashBonus}}</td> 
 						<td ng-bind="row.RegisteredOn"></td>  
 						<td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 
-						<td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span><br><button class="btn btn-secondary btn-sm action" type="button" ng-if="row.EmailForChange !='' || row.Status == 'Pending'" ng-click="ResendVerificationMail(row.UserGUID)">Resend Verify</button></td> 
+						<td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span>
+							<!-- <br><button class="btn btn-secondary btn-sm action" type="button" ng-if="row.EmailForChange !='' || row.Status == 'Pending'" ng-click="ResendVerificationMail(row.UserGUID)">Resend Verify</button> -->
+						</td> 
 						<td class="text-center">
 							<div class="dropdown">
 								<button class="btn btn-secondary  btn-sm action" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">&#8230;</button>

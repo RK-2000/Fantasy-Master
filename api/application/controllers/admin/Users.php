@@ -125,8 +125,33 @@ class Users extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->set_rules('EmailStatus', 'EmailStatus', 'trim|in_list[Pending,Verified]');
+        $this->form_validation->set_rules('PhoneStatus', 'PhoneStatus', 'trim|in_list[Pending,Verified]');
+        $this->form_validation->set_rules('IsPrivacyNameDisplay', 'IsPrivacyNameDisplay', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
+        /* Get User Details */
+        $UserData = $this->Users_model->getUsers('FirstName,Email,EmailForChange,PhoneNumberForChange', array(
+            'UserID' => $this->UserID
+        ));
+
+        /* Update Email Status */
+        if(@$this->Post['EmailStatus'] == 'Verified' && !empty($UserData['EmailForChange'])){
+            if ($this->Users_model->updateEmail($this->UserID, $UserData['EmailForChange'])) {
+                send_mail(array(
+                    'emailTo'       => $UserData['Email'],
+                    'template_id'   => 'd-e82c099a9b86439a9f5990722d59d0d6',
+                    'Subject'       => 'Your' . SITE_NAME . ' email has been updated!',
+                    "Name"          => $UserData['FirstName']
+                ));
+            }
+        }
+
+        /* Update Phone Number Status */
+        if(@$this->Post['PhoneStatus'] == 'Verified' && !empty($UserData['PhoneNumberForChange'])){
+            $this->Users_model->updatePhoneNumber($this->UserID, $UserData['PhoneNumberForChange']);
+        }
 
         $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => @$this->Post['IsPrivacyNameDisplay']));
         $this->Entity_model->updateEntityInfo($this->UserID, array("StatusID" => $this->StatusID));

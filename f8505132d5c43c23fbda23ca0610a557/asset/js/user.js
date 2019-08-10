@@ -73,7 +73,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         }
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status,EmailStatus, ReferredCount,StatusID,WalletAmount,CashBonus,WinningAmount&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
+        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber,PhoneNumberForChange, Status,EmailStatus,PhoneStatus, ReferredCount,StatusID,WalletAmount,CashBonus,WinningAmount&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
 
         $http.post(API_URL + 'admin/users', data, contentType).then(function(response) {
             var response = response.data;
@@ -110,7 +110,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/edit_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=IsPrivacyNameDisplay,Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=IsPrivacyNameDisplay,Status,EmailStatus,PhoneStatus,ProfilePic', contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
@@ -293,6 +293,10 @@ app.controller('PageController', function($scope, $http, $timeout) {
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $('.modal-header .close').click();
+                $timeout(function(){            
+                   window.location.reload();
+                }, 200);
             } else {
                 alertify.error(response.Message);
             }
