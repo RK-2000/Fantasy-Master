@@ -199,14 +199,18 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
-                var encodedUri = encodeURI(response.Data);
+                var encodedUri = encodeURI(API_URL + response.Data);
                 var link = document.createElement("a");
                 link.href = encodedUri;
                 link.style = "visibility:hidden";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                alertify.success(response.Message);
+                $timeout(function () {
+                    $http.post(API_URL + 'admin/matches/deletePlayerSalaryCSV', 'SessionKey=' + SessionKey + '&CSVFile='+response.Data, contentType).then(function (response) {
+                        console.log('response',response);
+                    });
+                }, 5000); // After 5 seconds
             } else {
                 alertify.error(response.Message);
             }
@@ -219,7 +223,6 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var csv = $('#csv_file');
         var csvFile = csv[0].files[0];
         var ext = csv.val().split(".").pop().toLowerCase();
-
         if ($.inArray(ext, ["csv"]) === -1) {
             return false;
         }

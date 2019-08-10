@@ -200,13 +200,26 @@ class Matches extends API_Controller_Secure
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL .$FileName;
+            $this->Return['Data'] = $FileName;
         } else {
             $this->Return['Message'] = "Player data not found.";
         }
-     }
+    }
+
+    /*
+    Description:    Use to delete csv player salary.
+    URL:            /admin/matches/deletePlayerSalaryCSV/ 
+    */
+    public function deletePlayerSalaryCSV_post()
+    {
+        /* Validation section */
+        $this->form_validation->set_rules('CSVFile', 'CSVFile', 'trim|required');
+        $this->form_validation->validation($this);  /* Run validation */ 
+
+        @unlink(getcwd().'/'.$this->Post['CSVFile']);
+    }
      
-      	/*
+    /*
 	Description: 	Use to import csv player salary.
 	URL: 			/admin/matches/importPlayerSalary_post/	
 	*/
