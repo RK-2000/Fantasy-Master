@@ -45,7 +45,7 @@
 				</thead> 
 				<!-- table body -->
 				<tbody>
-					<tr scope="row" ng-repeat="(key, row) in data.dataList">
+					<tr scope="row" ng-repeat="(key, row) in data.dataList" style="height:100px;">
 
 						<td class="listed sm clearfix">
 						<a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
@@ -65,7 +65,7 @@
 						<td><i class="fa fa-rupee"></i>{{row.WalletAmount}}</td> 
 						<td><i class="fa fa-rupee"></i>{{row.WinningAmount}}</td> 
 						<td><i class="fa fa-rupee"></i>{{row.CashBonus}}</td> 
-						<td ng-bind="row.RegisteredOn"></td>  
+						<td><span ng-if="row.RegisteredOn">{{row.RegisteredOn}}</span><span ng-if="!row.RegisteredOn">-</span></td> 
 						<td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 
 						<td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span>
 							<!-- <br><button class="btn btn-secondary btn-sm action" type="button" ng-if="row.EmailForChange !='' || row.Status == 'Pending'" ng-click="ResendVerificationMail(row.UserGUID)">Resend Verify</button> -->

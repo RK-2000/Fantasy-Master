@@ -70,7 +70,7 @@
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
                             <label><b>Status : </b></label>
-                            <span ng-class="{Pending:'text - danger', Verified:'text - success',Deleted:'text - danger',Blocked:'text - danger'}[userData.Status]">{{userData.Status}}</span>
+                            <span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[userData.Status]">{{userData.Status}}</span>
                         </div>
                     </div>	
                 </div>
@@ -82,11 +82,11 @@
                 <div class="d-flex mt-3">
                     <div class="col-sm-4">
                         <label>PAN : </label>
-                        <span ng-class="{Pending:'text - danger', Verified:'text - success',Deleted:'text - danger',Blocked:'text - danger'}[userData.PanStatus]">{{userData.PanStatus}}</span>
+                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger',Not Submitted:'text-danger'}[userData.PanStatus]">{{userData.PanStatus}}</span>
                     </div>
                     <div class="col-sm-4">
                         <label>Bank : </label>
-                        <span ng-class="{Pending:'text - danger', Verified:'text - success',Deleted:'text - danger',Blocked:'text - danger'}[userData.BankStatus]">{{userData.BankStatus}}</span>
+                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger',Not Submitted:'text-danger'}[userData.BankStatus]">{{userData.BankStatus}}</span>
                     </div>
                     <div class="col-sm-4">
                         <label>Phone : </label>

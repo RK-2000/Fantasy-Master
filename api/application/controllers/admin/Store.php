@@ -74,15 +74,6 @@ class Store extends API_Controller
 
 		$CouponData = $this->Store_model->getCoupons(
 			'
-			E.EntityGUID AS CouponGUID,
-			E.EntryDate,
-			E.StatusID,
-			C.CouponTitle,
-			C.CouponDescription,		
-			C.CouponCode,
-			C.CouponType,
-			C.CouponValue,
-			C.CouponValueLimit,
 			C.CouponValidTillDate
 			',
 			array("CouponID" => @$this->CouponID)
