@@ -379,7 +379,7 @@ class Users extends API_Controller_Secure
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL . 'WithdrawalList.csv';
+            $this->Return['Data'] = 'WithdrawalList.csv';
         } else {
             $this->Return['Message'] = "Withdrawal history not found.";
         }
@@ -423,7 +423,7 @@ class Users extends API_Controller_Secure
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL . 'TransactionList.csv';
+            $this->Return['Data'] = 'TransactionList.csv';
         } else {
             $this->Return['Message'] = "Wallet history not found.";
         }

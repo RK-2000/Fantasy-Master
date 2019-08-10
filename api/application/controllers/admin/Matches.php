@@ -208,15 +208,15 @@ class Matches extends API_Controller_Secure
 
     /*
     Description:    Use to delete csv player salary.
-    URL:            /admin/matches/deletePlayerSalaryCSV/ 
+    URL:            /admin/matches/deleteFile/ 
     */
-    public function deletePlayerSalaryCSV_post()
+    public function deleteFile_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('CSVFile', 'CSVFile', 'trim|required');
+        $this->form_validation->set_rules('File', 'File', 'trim|required');
         $this->form_validation->validation($this);  /* Run validation */ 
 
-        @unlink(getcwd().'/'.$this->Post['CSVFile']);
+        @unlink(getcwd().'/'.$this->Post['File']);
     }
      
     /*
@@ -225,7 +225,6 @@ class Matches extends API_Controller_Secure
 	*/
 	public function importPlayerSalary_post()
 	{
-	
 		/* Validation section */
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
 		$this->form_validation->validation($this);  /* Run validation */		

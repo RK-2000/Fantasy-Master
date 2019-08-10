@@ -91,7 +91,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
-                var encodedUri = encodeURI(response.Data);
+                var encodedUri = encodeURI(API_URL + response.Data);
                 var link = document.createElement("a");
                 link.href = encodedUri;
                 link.style = "visibility:hidden";
@@ -99,6 +99,11 @@ app.controller('PageController', function ($scope, $http,$timeout){
                 link.click();
                 document.body.removeChild(link);
                 alertify.success(response.Message);
+                $timeout(function () {
+                    $http.post(API_URL + 'admin/matches/deleteFile', 'SessionKey=' + SessionKey + '&File='+response.Data, contentType).then(function (response) {
+                        console.log('response',response);
+                    });
+                }, 5000); // After 5 seconds
             } else {
                 alertify.error(response.Message);
             }

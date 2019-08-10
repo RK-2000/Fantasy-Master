@@ -207,7 +207,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
                 link.click();
                 document.body.removeChild(link);
                 $timeout(function () {
-                    $http.post(API_URL + 'admin/matches/deletePlayerSalaryCSV', 'SessionKey=' + SessionKey + '&CSVFile='+response.Data, contentType).then(function (response) {
+                    $http.post(API_URL + 'admin/matches/deleteFile', 'SessionKey=' + SessionKey + '&File='+response.Data, contentType).then(function (response) {
                         console.log('response',response);
                     });
                 }, 5000); // After 5 seconds
