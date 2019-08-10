@@ -118,7 +118,7 @@
                                 <a class="dropdown-item" href="" ng-click="loadFormStatus(key, row.ContestGUID)"
                                     ng-if="row.Status=='Pending'">Status</a>
                                 <a class="dropdown-item" target="_blank"
-                                    href="joinedusers?ContestGUID={{row.ContestGUID}}">Joined Users</a>
+                                    href="joinedusers?ContestGUID={{row.ContestGUID}}" ng-if="row.Status != 'Cancelled'">Joined Users</a>
                             </div>
                         </div>
                     </td>

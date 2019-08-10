@@ -25,35 +25,20 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     $scope.applyFilter = function ()
     {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
-        $scope.getList('filters');
+        $scope.getList();
     }
 
     /*list append*/
-    $scope.getList = function (Type = '')
+    $scope.getList = function ()
     {
-        if (getQueryStringValue('MatchGUID')) {
-            var MatchGUID = getQueryStringValue('MatchGUID');
-        } else {
-            var MatchGUID = '';
-        }
-        
-        var EntryFee = $('#EntryFee').val();
-        var DraftSize = $('#DraftSize').val();
-        
-        var obj = {"EntryFee" :EntryFee, "DraftSize":DraftSize};
-        var myJSON = (!jQuery.isEmptyObject(obj)) ? JSON.stringify(obj) : '';
-
         if ($scope.data.listLoading || $scope.data.noRecords)
             return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm').serialize();
-        if(Type == 'filters'){
-            data += '&' + $('#filterForm1').serialize();
-        }
+        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm1').serialize();
         $http.post(API_URL + 'admin/predraftContest/getPredraft', data, contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
-            if (response.ResponseCode == 200 && response.Data.Records) {
+            if (response.ResponseCode == 200 && parseInt(response.Data.TotalRecords) > 0) {
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
                     $scope.data.dataList.push(response.Data.Records[i]);

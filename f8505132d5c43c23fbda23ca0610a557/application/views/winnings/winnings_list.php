@@ -36,7 +36,6 @@
 					<th style="width: 100px;" class="text-center">Match Date</th>
 					<th style="width: 100px;" class="text-center">Status</th>
 					<th style="width: 100px;" class="text-center">Action</th>
-					<!-- <th style="width: 100px;" class="text-center">Action</th> -->
 				</tr>
 			</thead>
 			<!-- table body -->
@@ -80,6 +79,8 @@
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadContestJoinedUser(key,row.ContestGUID)">Details</a>
+								<a class="dropdown-item" target="_blank"
+                                    href="joinedusers?ContestGUID={{row.ContestGUID}}" ng-if="row.Status != 'Cancelled'">Joined Users</a>
 							</div>
 						</div>
 					</td>
