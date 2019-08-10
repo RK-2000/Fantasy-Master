@@ -47,11 +47,12 @@
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
+		
+		<div class="float-right mr-2"> <button class="btn btn-success btn-sm ml-1 float-right" onclick="window.location.href= BASE_URL + 'matches'">Back</button> </div>
 		<div class="float-right">
             <button class="btn btn-success btn-sm ml-1" data-toggle="modal" data-target="#import_salary_model"> Import
                 Salary </button>
         </div>
-		<div class="float-right mr-2"> <button class="btn btn-success btn-sm ml-1 float-right" onclick="window.location.href= BASE_URL + 'matches'">Back</button> </div>
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
@@ -206,7 +207,7 @@
                         <div class="form-area">
                             <div class="float-right">
                                 <a href="javascript:;" class="btn btn-success btn-sm"
-                                    ng-click="downloadSalarySample()">Download Sample </a>
+                                    ng-click="downloadSalarySample()" title="Click Here To Download Players CSV File">Download Sample </a>
                             </div>
                             <br><br>
                             <div class="row">
@@ -216,12 +217,8 @@
                                         <input name="csv_file" id="csv_file" type="file" class="form-control"
                                             accept=".csv" onchange="return validateFile(this,'csv')"
                                             style="width:400px">
-
-                                        <!-- <input type="file" accept=".csv" name="File" id="fileInput" class="form-control" onchange="return validateFile(this,'csv');"> -->
-                                        <input type="hidden" name="SeriesGUID" id="SeriesGUID"
-                                            value="<?php if (!empty($_GET['SeriesGUID'])) { echo $_GET['SeriesGUID']; ;}?>">
-                                        <input type="hidden" name="RoundNo" id="RoundNo"
-                                            value="<?php if (!empty($_GET['RoundNo'])) { echo $_GET['RoundNo']; ;}?>">
+                                        <input type="hidden" name="MatchGUID" id="MatchGUID"
+                                            value="<?php if (!empty($_GET['MatchGUID'])) { echo $_GET['MatchGUID']; ;}?>">
                                     </div>
                                 </div>
                             </div>
@@ -230,9 +227,10 @@
                     </div> <!-- modal-body /-->
 
                     <div class="modal-footer">
+                    	<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"
+                            >Cancel</button>
                         <button type="submit" class="btn btn-success btn-sm"
                             ng-click="importPlayerSalary()">Import</button>
-                        <!-- ng-click="importPlayerSalary()" -->
                     </div>
 
                 </form>

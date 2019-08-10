@@ -197,7 +197,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&MatchGUID=' + getQueryStringValue('MatchGUID') + '&Params=PlayerID,PlayerRole,PlayerSalary,TeamName,PlayerName';
         $http.post(API_URL + 'admin/matches/downloadPlayerSalarySample', data, contentType).then(function (response) {
             var response = response.data;
-            // manageSession(response.ResponseCode);
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 var encodedUri = encodeURI(response.Data);
                 var link = document.createElement("a");
@@ -226,35 +226,32 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         if (csvFile != undefined) {
             reader = new FileReader();
             reader.onload = function (e) {
-
                 csvResult = e.target.result.split(/\r|\n|\r\n/);
                 $('.csv').append(csvResult);
             }
             reader.readAsText(csvFile);
         }
-
-
-        //  var data = $("#ImportSalaryForm").serialize()
-
-
         var formData = new FormData();
-        formData.append("CsvFile", csvFile);
+        formData.append("CSVFile", csvFile);
         formData.append("SessionKey", SessionKey);
-        formData.append("SeriesGUID", getQueryStringValue('SeriesGUID'));
-        formData.append("RoundNo", getQueryStringValue('RoundNo'));
+        formData.append("MatchGUID", getQueryStringValue('MatchGUID'));
         $.ajax({
             url: API_URL + 'admin/matches/importPlayerSalary',
             type: 'POST',
             data: formData,
             async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
             success: function (response) {
                 alertify.success(response.Message);
                 $('.modal-header .close').click();
                 location.reload();
             },
-            cache: false,
-            contentType: false,
-            processData: false
+            error:function(error){
+                console.log('error',error);
+                alertify.error('Error occured !');
+            }
         });
     }
 

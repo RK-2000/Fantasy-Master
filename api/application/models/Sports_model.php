@@ -505,7 +505,7 @@ class Sports_model extends CI_Model
         if (!empty($Input)) {
             $this->db->where(array('MatchID' => $MatchID, 'PlayerID' => $PlayerID));
             $this->db->limit(1);
-            $this->db->update('sports_team_players', array('PlayerSalary' => $Input['PlayerSalaryCredit'], 'IsAdminUpdate' => 'Yes'));
+            $this->db->update('sports_team_players', array('PlayerSalary' => $Input['PlayerSalary'], 'IsAdminUpdate' => 'Yes'));
         }
     }
 

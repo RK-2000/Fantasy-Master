@@ -175,14 +175,12 @@ class Matches extends API_Controller_Secure
  	public function downloadPlayerSalarySample_post()
  	{
  		/* Validation section */
-         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]');
 		$this->form_validation->validation($this);  /* Run validation */		
 		/* Validation - ends */
 
         /* Get Player Data */
-        $PlayerData = $this->Sports_model->getPlayers(@$this->Post['Params'],@$this->Post, TRUE, 0);
-        
-		
+        $PlayerData = $this->Sports_model->getPlayers(@$this->Post['Params'],array('MatchID' => $this->MatchID), TRUE, 0);
 		if ($PlayerData['Data']['TotalRecords'] > 0) {
             foreach ($PlayerData['Data']['Records'] as $Key => $Value) {
                 $DataArr[] = array(
@@ -193,15 +191,16 @@ class Matches extends API_Controller_Secure
                             'PlayerSalary'  => $Value['PlayerSalary'],
                         );
             }
-            $FP = fopen('exportPlayerSalary.csv', 'w');
+            $FileName = 'match-players-salary-'.$this->Post['MatchGUID'].'.csv';
+            $FP = fopen($FileName, 'w');
             header('Content-type: application/csv');
-            header('Content-Disposition: attachment; filename=exportPlayerSalary.csv');
+            header('Content-Disposition: attachment; filename='.$FileName);
             fputcsv($FP, array('PlayerID','TeamName','PlayerName', 'PlayerRole', 'PlayerSalary'));
             foreach ($DataArr as $Row) {
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL . 'exportPlayerSalary.csv';
+            $this->Return['Data'] = BASE_URL .$FileName;
         } else {
             $this->Return['Message'] = "Player data not found.";
         }
@@ -225,30 +224,29 @@ class Matches extends API_Controller_Secure
 			$this->Return['Message'] = "File array can`t be empty.";
 			exit;
 		}
-		if($_FILES["CsvFile"]["error"] > 0)
+		if($_FILES["CSVFile"]["error"] > 0)
 		{
 			$this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "Uploaded file has error.";
 			exit;
 		}
-		if($_FILES["CsvFile"]["size"] < 0 || $_FILES["CsvFile"]["size"] == 0)
+		if($_FILES["CSVFile"]["size"] < 0 || $_FILES["CSVFile"]["size"] == 0)
 		{
 			$this->Return['ResponseCode'] = 500;
 			$this->Return['Message'] = "File can`t empty.";
 			exit;
 		}
-		$FileExtension = strtolower(end(explode('.',$_FILES["CsvFile"]["name"])));
-		$FileTempName = $_FILES["CsvFile"]["tmp_name"];
+		$FileExtension = strtolower(end(explode('.',$_FILES["CSVFile"]["name"])));
+		$FileTempName = $_FILES["CSVFile"]["tmp_name"];
 		$File = fopen($FileTempName, "r");
 		$Row  = array();
-		
 		while (($EmapData = fgetcsv($File, 10000, ",")) !== FALSE)
 		{
 		    array_push($Row, $EmapData);
 		}
 		fclose($File);
 		for($i=1; $i<=count($Row); $i++){
-			$this->Sports_model->updatePlayerSalary(array('PlayerSalary' => $Row[$i][4]),$Row[$i][0],$this->SeriesID,$this->Post['RoundNo']);
+			$this->Sports_model->updatePlayerSalaryMatch(array('PlayerSalary' => $Row[$i][4]),$Row[$i][0],$this->MatchID);
 		}
 		$this->Return['Message'] = "Player salary has been updated.";
 
