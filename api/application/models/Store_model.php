@@ -31,10 +31,26 @@ class Store_model extends CI_Model
 		if (!empty($Where['CouponCode'])) {
 			$this->db->where("C.CouponCode", $Where['CouponCode']);
 		}
+		if (!empty($Where['CouponType'])) {
+			$this->db->where("C.CouponType", $Where['CouponType']);
+		}
 		if (!empty($Where['StatusID'])) {
 			$this->db->where("E.StatusID", $Where['StatusID']);
 		}
-
+		if (!empty($Where['ValidFrom'])) {
+            $this->db->where("C.CouponValidTillDate >=", $Where['ValidFrom']);
+        }
+        if (!empty($Where['ValidTo'])) {
+            $this->db->where("C.CouponValidTillDate <=", $Where['ValidTo']);
+        }
+		if (!empty($Where['Keyword'])) {
+            $Where['Keyword'] = trim($Where['Keyword']);
+            $this->db->group_start();
+            $this->db->like("C.CouponCode", $Where['Keyword']);
+            $this->db->or_like("C.CouponTitle", $Where['Keyword']);
+            $this->db->or_like("C.CouponDescription", $Where['Keyword']);
+            $this->db->group_end();
+        }
 		$this->db->order_by('C.CouponID', 'DESC');
 		/* Total records count only if want to get multiple records */
 		if ($multiRecords) {

@@ -893,7 +893,6 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.contestData = response.Data;
-                console.log($scope.contestData)
                 $('#contestJoinedUsers_model').modal({ show: true });
                 $timeout(function () {
                     $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");

@@ -1,3 +1,7 @@
+<header class="panel-heading">
+    <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
+</header>
+
 <div class="panel-body" ng-controller="PageController" ><!-- Body -->
 
 
@@ -7,8 +11,11 @@
 		<span class="float-left records hidden-sm-down">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
-	<div class="float-right">
+		<div class="float-right">
 			<button class="btn btn-success btn-sm" ng-click="loadFormAdd();">Add Coupon</button>
+		</div>
+		<div class="float-right">
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -27,7 +34,7 @@
 				<tr>
 					<th style="width:80px;" class="text-center">Banner</th>
 					<th style="width: 100px;">Coupon Code</th>
-					<th style="width: 300px;">Title</th>
+					<th style="width: 150px;">Title</th>
 					<th>Description</th>
 					<th style="width: 120px;" class="text-center">Value</th>
 					<th style="width: 160px;" class="text-center">Created on</th>
@@ -52,11 +59,11 @@
 					<td class="text-center"><strong>{{row.CouponCode}}</strong></td>
 					<td>{{row.CouponTitle}}</td>
 					<td>{{row.CouponDescription}}</td>
-					<td class="text-center">{{row.CouponValue}}<span ng-if="row.CouponType=='Percentage'">%</span></td>
+					<td class="text-center">{{DEFAULT_CURRENCY}}{{row.CouponValue}}<span ng-if="row.CouponType=='Percentage'">%</span></td>
 					<td>{{row.EntryDate}}</td>
 					<td>{{row.CouponValidTillDate}}</td>
-					<td>{{row.MiniumAmount}}</td>
-					<td>{{row.MaximumAmount}}</td>
+					<td>{{DEFAULT_CURRENCY}}{{row.MiniumAmount}}</td>
+					<td>{{DEFAULT_CURRENCY}}{{row.MaximumAmount}}</td>
 					<td>{{row.NumberOfUses}}</td>
 					<td class="text-center"><span ng-class="{Inactive:'text-danger', Active:'text-success'}[row.Status]">{{row.Status}}</span></td> 
 					<td class="text-center">
@@ -103,6 +110,73 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLEdit"></div>
+			</div>
+		</div>
+	</div>
+
+		<div class="modal fade" id="filter_model" ng-init="initDateRangePicker()">
+		<div class="modal-dialog modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title h5">Filters</h3>     	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+
+				<!-- Filter form -->
+			
+				<!-- Filter form -->
+				<form id="filterForm1" role="form" autocomplete="off" class="ng-pristine ng-valid">
+					<div class="modal-body">
+						<div class="form-area">
+
+							<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="CouponType">Coupon Type</label>
+									<select id="CouponType" name="CouponType" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Flat">Flat</option>
+										<option value="Percentage">Percentage</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="Status">Status</label>
+									<select id="Status" name="Status" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Active">Active</option>
+										<option value="Inactive">Inactive</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6" ng-init="initDateRangePicker()">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Valid Between</label>
+									<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+										<i class="fa fa-calendar"></i>&nbsp;
+										<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+							</div>
+							</div>
+
+						</div> <!-- form-area /-->
+					</div> <!-- modal-body /-->
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary btn-sm" ng-click="resetForm()">Reset</button>
+						<button type="submit" class="btn btn-success btn-sm" data-dismiss="modal" ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
+					</div>
+
+				</form>
+				<!-- Filter form/ -->
 			</div>
 		</div>
 	</div>

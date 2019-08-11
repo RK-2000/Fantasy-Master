@@ -1,3 +1,6 @@
+<header class="panel-heading">
+    <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
+</header>
 <div class="panel-body" ng-controller="PageController" ><!-- Body -->
 
 	<!-- Top container -->
@@ -6,7 +9,7 @@
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		<div class="float-right">
-			<button class="btn btn-success btn-sm" ng-click="loadFormAdd();">Add Post</button>
+			<button class="btn btn-success btn-sm" ng-click="loadFormAdd();">Add Testimonial</button>
 		</div>
 	</div>
 	<!-- Top container/ -->
@@ -23,10 +26,9 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th style="width: 100px;">Type</th>
-					<th style="width: 300px;">Post Caption</th>
-					<th>Post Content</th>
-					<th style="width: 160px;" class="text-center">Created on</th>
+					<th style="width: 100px;">Post Caption</th>
+					<th style="width: 300px;">Post Content</th>
+					<th style="width: 160px;">Created on</th>
 					<th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>
@@ -34,7 +36,6 @@
 			<tbody>
 				<tr scope="row" ng-repeat="(key, row) in data.dataList">
 
-					<td>{{row.PostType}}</td>
 					<td class="listed sm clearfix">
 						<img class="rounded-circle float-left" src="{{row.Media.Records[0].MediaThumbURL}}">
 						<div class="content float-left"><strong>{{row.PostCaption}}</strong></div>

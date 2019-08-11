@@ -1,6 +1,11 @@
 app.controller('PageController', function ($scope, $http,$timeout){
 
+    var FromDate = ToDate = ''; 
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
 
+    $timeout(function(){            
+       $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+    }, 200);
 
     /*list*/
     $scope.applyFilter = function ()
@@ -9,13 +14,49 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.getList();
     }
 
+    /* Reset form */
+    $scope.resetForm = function(){
+        $('#filterForm1').trigger('reset'); 
+        $('.chosen-select').trigger('chosen:updated');
+        $('#dateRange span').html('Select Date Range');
+        FromDate = ToDate = '';
+    }
+
+    /* Add Date Range Picker */
+    $scope.initDateRangePicker = function (){
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+        $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+            FromDate = picker.startDate.format('YYYY-MM-DD');
+            ToDate   = picker.endDate.format('YYYY-MM-DD');
+            $('#dateRange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+        });
+        $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+            $('#dateRange span').html('Select Date Range');
+            FromDate = ToDate = '';
+        });
+    }
+
 
     /*list append*/
     $scope.getList = function ()
     {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&'+$('#filterForm').serialize();
+        var data = 'SessionKey='+SessionKey+'&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize + '&ValidFrom=' + FromDate + '&ValidTo=' + ToDate +'&'+$('#filterForm1').serialize();
         $http.post(API_URL+'store/getCoupons', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);

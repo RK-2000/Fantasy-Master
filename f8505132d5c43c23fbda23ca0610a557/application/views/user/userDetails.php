@@ -2,9 +2,14 @@
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
     <header>
-        <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
+        <h1 class="h4">User Details</h1>
     </header>
 
+
+
+    <div class="float-right">
+        <a href="user"><button class="btn btn-success btn-sm ml-1">Back</button></a>
+    </div>
     <div class="clearfix mt-2 mb-2">
         <div class="float-right">
             <a target="_blank" href="transactions?UserGUID={{UserGUID}}" class="btn btn-default btn-secondary btn-sm ng-scope">Transactions</a>
@@ -101,19 +106,19 @@
                 <div class="d-flex mt-3">
                     <div class="col-sm-3">
                         <label> Deposit : </label>
-                        <span>₹ {{userData.WalletAmount}}</span>
+                        <span>{{DEFAULT_CURRENCY}}{{userData.WalletAmount}}</span>
                     </div>
                     <div class="col-sm-3">
                         <label> Winning : </label>
-                        <span>₹ {{userData.WinningAmount}}</span>
+                        <span>{{DEFAULT_CURRENCY}}{{userData.WinningAmount}}</span>
                     </div>
                     <div class="col-sm-3">
                         <label> Cash Bonus : </label>
-                        <span>₹ {{userData.CashBonus}}</span>
+                        <span>{{DEFAULT_CURRENCY}}{{userData.CashBonus}}</span>
                     </div>
                     <div class="col-sm-3">
                         <label> Total Amount :  </label>
-                        <span>₹ {{userData.TotalCash}}</span>
+                        <span>{{DEFAULT_CURRENCY}}{{userData.TotalCash}}</span>
                     </div>
                 </div>
             </div>
@@ -161,16 +166,16 @@
                                             <td>{{transactionDetails.Narration}}</td>
                                             <td style="color:red;" ng-if="transactionDetails.Status == 'Failed'">{{transactionDetails.Status}}</td>
                                             <td style="color:green;" ng-if="transactionDetails.Status == 'Completed'">{{transactionDetails.Status}}</td>
-                                            <td ng-if="transactionDetails.Narration != 'Deposit Money'"><i class="fa fa-rupee"></i>{{transactionDetails.Amount}}</td>
+                                            <td ng-if="transactionDetails.Narration != 'Deposit Money'">{{DEFAULT_CURRENCY}}{{transactionDetails.Amount}}</td>
                                             <td ng-if="transactionDetails.Narration == 'Deposit Money'">-</td>
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.OpeningWalletAmount}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.OpeningWalletAmount}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Cr'"></i>{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.WalletAmount : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.WalletAmount : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Dr'"></i>{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.WalletAmount : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.WalletAmount : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.ClosingWalletAmount}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.ClosingWalletAmount}}</td>
                                             <td>{{transactionDetails.EntryDate | myDateFormat}}</td>
                                         </tr>
                                         <tr ng-if="!transactions.length" >
@@ -215,17 +220,17 @@
                                             <td>{{transactionDetails.Narration}}</td>
                                             <td style="color:red;" ng-if="transactionDetails.Status == 'Failed'">{{transactionDetails.Status}}</td>
                                             <td style="color:green;" ng-if="transactionDetails.Status == 'Completed'">{{transactionDetails.Status}}</td>
-                                            <td ng-if="transactionDetails.Narration == 'Join Contest' || transactionDetails.Narration == 'Cancel Contest'"><i class="fa fa-rupee"></i>{{transactionDetails.Amount}}</td>
+                                            <td ng-if="transactionDetails.Narration == 'Join Contest' || transactionDetails.Narration == 'Cancel Contest'">{{DEFAULT_CURRENCY}}{{transactionDetails.Amount}}</td>
                                             <td ng-if="transactionDetails.Narration != 'Join Contest' && transactionDetails.Narration != 'Cancel Contest'">-</td>
 
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.OpeningWinningAmount}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.OpeningWinningAmount}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Cr'"></i>{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.WinningAmount : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.WinningAmount : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Dr'"></i>{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.WinningAmount : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.WinningAmount : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.ClosingWinningAmount}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.ClosingWinningAmount}}</td>
                                             <td>{{transactionDetails.EntryDate | myDateFormat}}</td>
                                         </tr>
                                         <tr ng-if="!transactions.length" >
@@ -270,16 +275,16 @@
                                             <td>{{transactionDetails.Narration}}</td>
                                             <td style="color:red;" ng-if="transactionDetails.Status == 'Failed'">{{transactionDetails.Status}}</td>
                                             <td style="color:green;" ng-if="transactionDetails.Status == 'Completed'">{{transactionDetails.Status}}</td>
-                                            <td ng-if="transactionDetails.Narration == 'Join Contest' || transactionDetails.Narration == 'Cancel Contest'"><i class="fa fa-rupee"></i>{{transactionDetails.Amount}}</td>
+                                            <td ng-if="transactionDetails.Narration == 'Join Contest' || transactionDetails.Narration == 'Cancel Contest'">{{DEFAULT_CURRENCY}}{{transactionDetails.Amount}}</td>
                                             <td ng-if="transactionDetails.Narration != 'Join Contest' && transactionDetails.Narration != 'Cancel Contest'">-</td>
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.OpeningCashBonus}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.OpeningCashBonus}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Cr'"></i>{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.CashBonus : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Cr' ? transactionDetails.CashBonus : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee" ng-if="transactionDetails.TransactionType == 'Dr'"></i>{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.CashBonus : '0.00'}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.TransactionType=='Dr' ? transactionDetails.CashBonus : '0.00'}}</td>
                                             <td>
-                                                <i class="fa fa-rupee"></i>{{ transactionDetails.ClosingCashBonus}}</td>
+                                                {{DEFAULT_CURRENCY}}{{ transactionDetails.ClosingCashBonus}}</td>
                                             <td>{{transactionDetails.EntryDate | myDateFormat}}</td>
                                         </tr>
                                         <tr ng-if="!transactions.length" >
@@ -318,7 +323,7 @@
                                     <tbody>
                                         <tr ng-repeat="transactionDetails in WithdrawalsTransactions">
                                             <td style="word-break: break-all;">{{transactionDetails.WithdrawalID}}</td>
-                                            <td><i class="fa fa-rupee"></i>{{transactionDetails.Amount}}</td>
+                                            <td>{{DEFAULT_CURRENCY}}{{transactionDetails.Amount}}</td>
                                             <td>{{transactionDetails.PaymentGateway}}</td>
                                             <td style="color:red;" ng-if="transactionDetails.Status == 'Rejected'">{{transactionDetails.Status}}</td>
                                             <td style="color:green;" ng-if="transactionDetails.Status == 'Verified'">Completed</td>

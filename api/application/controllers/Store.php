@@ -17,6 +17,7 @@ class Store extends API_Controller
 	public function getCoupons_post()
 	{
 		/* Validation section */
+		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
 		$this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
 		$this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
 		$this->form_validation->validation($this);  /* Run validation */
@@ -38,7 +39,7 @@ class Store extends API_Controller
 			C.CouponValueLimit,
 			C.CouponValidTillDate
 			',
-			'',
+			array_merge($this->Post,array('StatusID' => @$this->StatusID)),
 			TRUE,
 			@$this->Post['PageNo'],
 			@$this->Post['PageSize']

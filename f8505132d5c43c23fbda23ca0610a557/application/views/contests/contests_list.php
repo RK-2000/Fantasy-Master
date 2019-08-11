@@ -75,7 +75,7 @@
                         <p>{{row.Privacy}}</p>
                     </td>
                     <td>
-                        <p>{{data.DEFAULT_CURRENCY}} {{row.EntryFee}}</p>
+                        <p>{{data.DEFAULT_CURRENCY}}{{row.EntryFee}}</p>
                     </td>
                     <td>
                         <p>{{row.EntryType}}</p>
@@ -84,7 +84,7 @@
                         <p>{{row.NoOfWinners}}</p>
                     </td>
                     <td>
-                        <p>{{data.DEFAULT_CURRENCY}} {{row.WinningAmount}}</p>
+                        <p>{{data.DEFAULT_CURRENCY}}{{row.WinningAmount}}</p>
                     </td>
                     <td>
                         <p>{{row.MatchStartDateTime}}</p>
@@ -93,10 +93,10 @@
                         <p>{{row.TotalJoined}}</p>
                     </td>
                     <td class="text-center">
-                        <p>{{data.DEFAULT_CURRENCY}} {{row.TotalAmountReceived}}</p>
+                        <p>{{data.DEFAULT_CURRENCY}}{{row.TotalAmountReceived}}</p>
                     </td>
                     <td class="text-center">
-                        <p>{{data.DEFAULT_CURRENCY}} {{row.TotalWinningAmount}}</p>
+                        <p>{{data.DEFAULT_CURRENCY}}{{row.TotalWinningAmount}}</p>
                     </td>
                     <td class="text-center"><span
                             ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span>

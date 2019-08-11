@@ -40,7 +40,6 @@
 						<th style="width: 160px;" class="text-center">Last Login</th>
 						<th style="width: 100px;" class="text-center">Status</th>
 						<th style="width: 100px;" class="text-center">Action</th>
-
 					</tr>
 				</thead> 
 				<!-- table body -->
@@ -62,13 +61,12 @@
 							</div>
 						</td> 
 						<td><span ng-if="row.ReferredCount"><a href="javascript:void(0)" ng-click="loadFormReferredUsersList(key, row.UserGUID)" >{{row.ReferredCount}}</span><span ng-if="!row.ReferredCount">-</span></td> 
-						<td><i class="fa fa-rupee"></i>{{row.WalletAmount}}</td> 
-						<td><i class="fa fa-rupee"></i>{{row.WinningAmount}}</td> 
-						<td><i class="fa fa-rupee"></i>{{row.CashBonus}}</td> 
+						<td>{{DEFAULT_CURRENCY}}{{row.WalletAmount}}</td> 
+						<td>{{DEFAULT_CURRENCY}}{{row.WinningAmount}}</td> 
+						<td>{{DEFAULT_CURRENCY}}{{row.CashBonus}}</td> 
 						<td><span ng-if="row.RegisteredOn">{{row.RegisteredOn}}</span><span ng-if="!row.RegisteredOn">-</span></td> 
 						<td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 
 						<td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span>
-							<!-- <br><button class="btn btn-secondary btn-sm action" type="button" ng-if="row.EmailForChange !='' || row.Status == 'Pending'" ng-click="ResendVerificationMail(row.UserGUID)">Resend Verify</button> -->
 						</td> 
 						<td class="text-center">
 							<div class="dropdown">
@@ -82,7 +80,8 @@
 									<a class="dropdown-item" target="_blank" href="joinedcontests?UserGUID={{row.UserGUID}}" >Joined Contests</a>
 									<a class="dropdown-item" target="_blank" href="privatecontests?UserGUID={{row.UserGUID}}" >Private Contests</a>
 									<a class="dropdown-item" href="javascript:void(0)" ng-click="loadFormChangePassword(key, row.UserGUID)">Change Password</a>
-									<a class="dropdown-item" target="_blank" href="referral?UserGUID={{row.UserGUID}}">Referal History</a>
+									<a class="dropdown-item" target="_blank" href="referral?UserGUID={{row.UserGUID}}" ng-if="row.ReferredCount > 0">Referal History</a>
+									<a class="dropdown-item" href="userdetails?UserGUID={{row.UserGUID}}">Details</a>
 									<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.UserGUID)">Edit</a>
 									<a class="dropdown-item" href="" ng-click="loadFormDelete(key, row.UserGUID)">Delete</a>
 									
@@ -221,9 +220,20 @@
 				<!-- Filter form -->
 				<form id="changePassword_form" role="form" name="changePassword_form" autocomplete="off" class="ng-pristine ng-valid">
 					<div class="modal-body">
+						<div class="form-group">
+							<div id="picture-box">
+								<h4 class="mt-2 text-center">{{ChangePasswordformData.Email}}</h4>
+							</div>
+						</div>
+						<div class="form-group">
+							<div id="picture-box" class="picture-box">
+								<img ng-src="{{formData.ProfilePic}}" alt="User Image" class="thumbnail rounded-circle">
+								<p class="mt-2"><strong ng-bind="formData.FullName"></strong></p>
+							</div>
+						</div>
 						<div class="form-area">
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-12">
 									<div class="form-group">
 										<input type="password" name="Password" class="form-control" placeholder="New Password">
 										<input type="hidden" name="UserGUID" class="form-control" value="{{ChangePasswordformData.UserGUID}}">
@@ -234,7 +244,8 @@
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">
-						<button type="submit" class="btn btn-success btn-sm"  ng-disabled="changeCP" ng-click="changeUserPassword()">Submit</button>
+						<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success btn-sm" ng-disabled="editDataLoading" ng-click="changeUserPassword()">Save</button>
 					</div>
 
 				</form>

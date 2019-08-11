@@ -1,0 +1,108 @@
+<div class="modal-body">
+	<div class="form-area">
+		<form id="update_form" name="update_form" autocomplete="off" >
+			
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Pre Draft Contest Name : {{predraftData.DraftName}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Pre Draft Contest Format : {{predraftData.DraftType}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.ContestFormat == 'League'">
+					<div class="form-group">
+						<label>Pre Draft Contest Type : {{predraftData.ContestType}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Contest Size : {{predraftData.DraftSize}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Is Paid : {{predraftData.IsPaid}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.IsPaid == 'Yes'">
+					<div class="form-group">
+						<label>Entry Fee : {{data.DEFAULT_CURRENCY}}{{predraftData.EntryFee}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Admin Percent : {{!predraftData.AdminPercent ? 0 : predraftData.AdminPercent}}%</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Entry Type : {{predraftData.EntryType}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.EntryType == 'Multiple'">
+					<div class="form-group">
+						<label>User Join Limit : {{predraftData.UserJoinLimit}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Is Confirm : {{predraftData.IsConfirm}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.WinningAmount > 0">
+					<div class="form-group">
+						<label>No Of Winners : {{predraftData.NoOfWinners}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.WinningAmount > 0">
+					<div class="form-group">
+						<label>Winning Amount : {{data.DEFAULT_CURRENCY}}{{predraftData.WinningAmount}}</label>
+					</div>
+				</div>
+				<div class="col-md-6" ng-if="predraftData.ContestFormat == 'League'">
+					<div class="form-group">
+						<label>Unfilled Winning : {{predraftData.UnfilledWinningPercent}}</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Cash Bonus Contribution : {{predraftData.CashBonusContribution}}%</label>
+					</div>
+				</div>
+				<div class="col-md-12" ng-if="predraftData.CustomizeWinning.length">
+					<table class="table table-striped table-condensed table-hover table-sortable">
+						<thead>
+							<tr>
+								<th style="width: 50px;">From</th>
+								<th style="width: 50px;">To</th>
+								<th style="width: 100px;">Percent (%)</th>
+								<th style="width: 100px;">Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="breakouts in predraftData.CustomizeWinning">
+								<td>{{breakouts.From}}</td>
+								<td>{{breakouts.To}}</td>
+								<td>{{breakouts.Percent}}%</td>
+								<td>{{data.DEFAULT_CURRENCY}}{{breakouts.WinningAmount}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- hidden parameters -->
+			<input type="hidden" name="ContestGUID" value="{{formData.ContestGUID}}">
+			<!-- hidden parameters /-->
+		</form>
+	</div>
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+</div>
+
+

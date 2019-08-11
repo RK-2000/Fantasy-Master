@@ -197,7 +197,6 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     /*Delete contest*/
     $scope.deleteDraft = function (Position, PredraftContestID)
     {
-        
         if(confirm('Are you sure, want to delete this draft ?')){
             $scope.addDataLoading = true;
             $http.post(API_URL+'admin/predraftContest/delete', 'SessionKey='+SessionKey+'&PredraftContestID='+PredraftContestID, contentType).then(function(response) {
@@ -273,44 +272,39 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         
         var $data = {};
             $data.SessionKey = SessionKey;
-            $data.DraftName = $('input[name="DraftName"]').val();
-            $data.DraftFormat = $('select[name="DraftFormat"]').val();
-            $data.AdminPercent = $('input[name="AdminPercent"]').val();
-            $data.DraftType = $('select[name="DraftType"]').val();
+            $data.DraftName = $('form#add_form input[name="DraftName"]').val();
+            $data.DraftFormat = $('form#add_form select[name="DraftFormat"]').val();
+            $data.AdminPercent = $('form#add_form input[name="AdminPercent"]').val();
+            $data.DraftType = $('form#add_form select[name="DraftType"]').val();
             $data.Privacy = 'No';
-            $data.IsPaid = $('select[name="IsPaid"]').val();
-            $data.IsConfirm = $('select[name="IsConfirm"]').val();
-            $data.IsAutoCreate = $('select[name="IsAutoCreate"]').val();
-            $data.ShowJoinedDraft = $('select[name="ShowJoinedDraft"]').val();
-            $data.WinningAmount = $('input[name="WinningAmount"]').val();
-            $data.DraftSize = $('input[name="DraftSize"]').val();
-            $data.EntryFee = $('input[name="EntryFee"]').val();
-            $data.NoOfWinners = $('input[name="NoOfWinners"]').val();
-            $data.EntryType = $('select[name="EntryType"]').val();
-            $data.UserJoinLimit = $('input[name="UserJoinLimit"]').val();
-            $data.CashBonusContribution = $('input[name="CashBonusContribution"]').val();
-            $data.IsWinnerSocialFeed = $('select[name="IsWinnerSocialFeed"]').val();
+            $data.IsPaid = $('form#add_form select[name="IsPaid"]').val();
+            $data.IsConfirm = $('form#add_form select[name="IsConfirm"]').val();
+            $data.IsAutoCreate = $('form#add_form select[name="IsAutoCreate"]').val();
+            $data.ShowJoinedDraft = $('form#add_form select[name="ShowJoinedDraft"]').val();
+            $data.WinningAmount = $('form#add_form input[name="WinningAmount"]').val();
+            $data.DraftSize = $('form#add_form input[name="DraftSize"]').val();
+            $data.EntryFee = $('form#add_form input[name="EntryFee"]').val();
+            $data.NoOfWinners = $('form#add_form input[name="NoOfWinners"]').val();
+            $data.EntryType = $('form#add_form select[name="EntryType"]').val();
+            $data.UserJoinLimit = $('form#add_form input[name="UserJoinLimit"]').val();
+            $data.CashBonusContribution = $('form#add_form input[name="CashBonusContribution"]').val();
+            $data.IsWinnerSocialFeed = $('form#add_form select[name="IsWinnerSocialFeed"]').val();
             $data.CustomizeWinning = JSON.parse(customWinings);
-        // var data = 'SessionKey=' + SessionKey + '&Privacy=No&' + $("form[name='add_form']").serialize() + '&CustomizeWinning=' + customWinings;
-         
-        $http.post(API_URL + 'admin/predraftContest/add', $.param($data), contentType).then(function (response) {
-            var response = response.data;
-            manageSession(response.ResponseCode);
-            if (response.ResponseCode == 200) { /* success case */
-                alertify.success(response.Message);
-                $scope.applyFilter();
-                $scope.addDataLoading = false;
-              
-                $('.modal-header .close').click();
-
+            $http.post(API_URL + 'admin/predraftContest/add', $.param($data), contentType).then(function (response) {
+                var response = response.data;
+                manageSession(response.ResponseCode);
+                if (response.ResponseCode == 200) { /* success case */
+                    alertify.success(response.Message);
+                    $scope.applyFilter();
+                    $scope.addDataLoading = false;
+                    $('.modal-header .close').click();
                     window.location.reload();
-               
-            } else {
-                $scope.addDataLoading = false;
-                alertify.error(response.Message);
-            }
-        });
-        $scope.addDataLoading = false;
+                } else {
+                    $scope.addDataLoading = false;
+                    alertify.error(response.Message);
+                }
+            });
+            $scope.addDataLoading = false;
     }
 
 
@@ -1136,18 +1130,16 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.loadPredraftContest = function (Position, PredraftContestID) {
 
             $scope.data.Position = Position;
-            $scope.templateURLEdit = PATH_TEMPLATE + module + '/joinedContest_form.htm?' + Math.random();
+            $scope.templateURLEdit = PATH_TEMPLATE + module + '/deatil_form.htm?' + Math.random();
             $scope.data.pageLoading = true;
             $http.post(API_URL + 'admin/PredraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit,DraftFormat,DraftName,ShowJoinedDraft,UnfilledWinningPercent,IsAutoCreate,IsConfirm,MatchStartDateTime', contentType).then(function (response) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     $scope.data.pageLoading = false;
-                    $scope.contestData = response.Data.Records[0];
-                    console.log($scope.contestData)
+                    $scope.predraftData = response.Data.Records[0];
                     $('#predraftcontest_model').modal({ show: true });
                     $timeout(function () {
-    
                         $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                     }, 200);
                 }

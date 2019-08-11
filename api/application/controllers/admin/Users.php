@@ -320,12 +320,14 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
+        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|less_than_equal_to[10000]');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
+        $this->form_validation->set_message('less_than_equal_to', '{field} should be less than or equals to {param}');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         $this->Users_model->addToWallet(array_merge($this->Post, array('CashBonus' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
+        $this->Return['Data'] = $this->Users_model->getUsers('CashBonus', array('UserID' => $this->UserID));
         $this->Return['Message'] = "Cash bonus added Successfully.";
     }
 
@@ -336,12 +338,14 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
+        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|less_than_equal_to[10000]');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
+        $this->form_validation->set_message('less_than_equal_to', '{field} should be less than or equals to {param}');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         $this->Users_model->addToWallet(array_merge($this->Post, array('WalletAmount' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
+        $this->Return['Data'] = $this->Users_model->getUsers('WalletAmount', array('UserID' => $this->UserID));
         $this->Return['Message'] = "Deposit added Successfully.";
     }
 

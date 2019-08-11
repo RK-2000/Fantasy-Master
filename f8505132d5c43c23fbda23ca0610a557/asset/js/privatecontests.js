@@ -1,4 +1,7 @@
 app.controller('PageController', function ($scope, $http,$timeout){
+
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    $scope.data.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
     $scope.data.pageSize = 15;
     /*----------------*/
      /*list*/
@@ -27,24 +30,26 @@ app.controller('PageController', function ($scope, $http,$timeout){
     $scope.getUserInfo = function(){
         $scope.userData = {};
         var UserGUID = getQueryStringValue('UserGUID');
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Email', contentType).then(function(response) {
             var response = response.data;
             if (response.ResponseCode == 200) { /* success case */
                 $scope.userData = response.Data;
             }
         });
     }
+
+    $scope.getUserInfo();
+
     /*list append*/
     $scope.getList = function ()
     {
-        $scope.getUserInfo();
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&Privacy=Yes&UserGUID='+getQueryStringValue('UserGUID')+'&Params=GameType,AdminPercent,TotalJoined,MatchStartDateTime,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,Status,TeamNameLocal,TeamNameVisitor,CustomizeWinning&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=EntryDate&Sequence=DESC&' + $('#filterForm1').serialize() +'&' + $('#filterForm').serialize();
+        var data = 'SessionKey='+SessionKey+'&Privacy=Yes&UserGUID='+getQueryStringValue('UserGUID')+'&Params=GameType,AdminPercent,TotalJoined,MatchStartDateTime,Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,Status,TeamNameLocal,TeamNameVisitor,CustomizeWinning,TotalAmountReceived,TotalWinningAmount&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=EntryDate&Sequence=DESC&' + $('#filterForm1').serialize() +'&' + $('#filterForm').serialize();
         $http.post(API_URL+'admin/contest/getPrivateContest', data, contentType).then(function(response) {
         var response = response.data;
         console.log(response);
-            if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
+            if (response.ResponseCode == 200 && parseInt(response.Data.TotalRecords) > 0) {/* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
                     $scope.data.dataList.push(response.Data.Records[i]);
@@ -58,38 +63,20 @@ app.controller('PageController', function ($scope, $http,$timeout){
     });
     }
 
-    $scope.loadContestJoinedUser = function (Position, ContestGUID)
-    {
+    $scope.loadContestJoinedUser = function (Position, ContestGUID) {
 
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + 'contests/joinedContest_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getJoinedContestsUsers', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=UserTeamName,TotalPoints,UserWinningAmount,Email,PhoneNumber,FirstName,Username,UserGUID,UserTeamPlayers,UserTeamID,UserRank', contentType).then(function (response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime', contentType).then(function (response) {
             var response = response.data;
-            if (response.ResponseCode == 200) { /* success case */
-                $scope.data.pageLoading = false;
-                $scope.formData = response.Data;
-                console.log($scope.contestData)
-                $('#contestJoinedUsers_model').modal({show: true});
-
-                $timeout(function () {
-
-                    $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
-                }, 200);
-            }
-        }); 
-
-        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,SeriesID,MatchID,SeriesGUID,TeamNameLocal,TeamNameVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined', contentType).then(function (response) {
-            var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.contestData = response.Data;
-                console.log($scope.contestData)
-                $('#contestJoinedUsers_model').modal({show: true});
-
+                $('#contestJoinedUsers_model').modal({ show: true });
                 $timeout(function () {
-
-                    $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
                 }, 200);
             }
         });
@@ -126,8 +113,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
             return;
         }
         $scope.MatchData = {};
-        //&StatusID=1
-        var data  = 'SeriesGUID='+SeriesGUID+'&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status='+Status;
+        var data  = 'SeriesGUID='+SeriesGUID+'&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC';
         $http.post(API_URL+'sports/getMatches', data, contentType).then(function(response) {
             var response = response.data;
             if(response.ResponseCode == 200 && response.Data){ /* success case */

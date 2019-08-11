@@ -9,12 +9,14 @@ class Coupon extends Admin_Controller_Secure {
 		$load['css']=array(
 			'asset/plugins/chosen/chosen.min.css',
 			'asset/plugins/datepicker/css/bootstrap-datetimepicker.css',
+			'asset/plugins/daterangepicker/daterangepicker.css'
 		);
 		$load['js']=array(
 			'asset/js/'.$this->ModuleData['ModuleName'].'.js',
 			'asset/plugins/chosen/chosen.jquery.min.js',
 			'asset/plugins/jquery.form.js',
-			'asset/plugins/datepicker/js/bootstrap-datetimepicker.min.js'
+			'asset/plugins/datepicker/js/bootstrap-datetimepicker.min.js',
+			'asset/plugins/daterangepicker/daterangepicker.js'
 		);	
 
 		$this->load->view('includes/header',$load);

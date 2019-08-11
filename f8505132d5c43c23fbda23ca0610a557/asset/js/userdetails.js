@@ -1,5 +1,7 @@
 app.controller('PageController', function($scope, $http, $timeout) {
 
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+
     /*list append*/
     $scope.getUserDetails = function() {
         if ($scope.data.listLoading || $scope.data.noRecords) return;

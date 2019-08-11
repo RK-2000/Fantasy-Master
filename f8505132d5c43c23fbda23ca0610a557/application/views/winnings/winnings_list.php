@@ -61,14 +61,14 @@
 					</td>
 					
 					<td class="text-center" >
-						<p>{{data.DEFAULT_CURRENCY}} {{row.EntryFee}}</p>
+						<p>{{data.DEFAULT_CURRENCY}}{{row.EntryFee}}</p>
 					</td>
 					
 					<td class="text-center" >
 						<p>{{row.NoOfWinners}}</p>
 					</td>
 					<td class="text-center" >
-						<p>{{data.DEFAULT_CURRENCY}} {{row.WinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}}{{row.WinningAmount}}</p>
 					</td>
 					<td>
 						<p>{{row.MatchStartDateTime}}</p>
