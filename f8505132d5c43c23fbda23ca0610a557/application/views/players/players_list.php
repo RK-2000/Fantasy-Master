@@ -48,7 +48,9 @@
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 		
-		<div class="float-right mr-2"> <button class="btn btn-success btn-sm ml-1 float-right" onclick="window.location.href= BASE_URL + 'matches'">Back</button> </div>
+		<div class="float-right mr-2"> 
+		<button class="btn btn-success btn-sm ml-1 float-right" onclick="window.location.href= BASE_URL + 'matches'">Back</button>
+		 </div>
 		<div class="float-right">
             <button class="btn btn-success btn-sm ml-1" data-toggle="modal" data-target="#import_salary_model"> Import
                 Salary </button>

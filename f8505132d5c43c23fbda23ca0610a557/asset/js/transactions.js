@@ -1,6 +1,10 @@
 app.controller('PageController', function ($scope, $http,$timeout){
 
     var FromDate = ToDate = '';
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    $timeout(function(){            
+        $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+     }, 200);
     $scope.data.pageSize = 15;
     /*----------------*/
      /*list*/
@@ -50,7 +54,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     $scope.getUserInfo = function(){
         $scope.userData = {};
         var UserGUID = getQueryStringValue('UserGUID');
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK,Email', contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
