@@ -571,6 +571,7 @@ class Contest extends API_Controller_Secure
                     $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WalletAmountDeduction;
                 }
                 if ($ContestEntryRemainingFees > 0) {
+                    $UserData['RemainingFee'] = $ContestEntryRemainingFees;
                     $this->Return['Data'] = $UserData;
                     $this->form_validation->set_message('validateUserJoinContest', 'Insufficient wallet amount.');
                     return FALSE;
