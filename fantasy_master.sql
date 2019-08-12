@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 08, 2019 at 05:29 PM
+-- Generation Time: Aug 12, 2019 at 08:12 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -218,6 +218,13 @@ CREATE TABLE `ecom_coupon` (
   `NumberOfUses` smallint(6) DEFAULT NULL,
   `CouponValidTillDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `ecom_coupon`
+--
+
+INSERT INTO `ecom_coupon` (`CouponID`, `CouponTitle`, `CouponDescription`, `CouponCode`, `CouponType`, `CouponValue`, `CouponValueLimit`, `MiniumAmount`, `MaximumAmount`, `NumberOfUses`, `CouponValidTillDate`) VALUES
+(931, 'j', 'jjjhjhj', 'TEST', 'Flat', 20, 0, 10, 100, 2, '2019-08-24');
 
 -- --------------------------------------------------------
 
@@ -797,6 +804,13 @@ CREATE TABLE `social_post` (
   `PostContent` mediumtext,
   `Privacy` enum('Public','Private','Friends') NOT NULL DEFAULT 'Public'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `social_post`
+--
+
+INSERT INTO `social_post` (`PostID`, `PostGUID`, `ParentPostID`, `PostType`, `EntityID`, `ToEntityID`, `PostCaption`, `PostContent`, `Privacy`) VALUES
+(930, '3aead4ed-ffbb-6119-4ffa-92d58fc8ff5c', NULL, 'Testimonial', 125, 125, 'j', 'yuyu', 'Public');
 
 -- --------------------------------------------------------
 
@@ -1799,63 +1813,63 @@ CREATE TABLE `sports_team_players` (
 --
 
 INSERT INTO `sports_team_players` (`id`, `PlayerID`, `SeriesID`, `MatchID`, `TeamID`, `PlayerRole`, `PlayerSalary`, `IsPlaying`, `TotalPoints`, `PointsData`, `IsAdminUpdate`) VALUES
-(1, 396, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(2, 397, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(3, 398, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(4, 399, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(5, 400, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(6, 401, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(7, 402, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(8, 403, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(9, 404, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(10, 405, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(11, 406, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(12, 407, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(13, 408, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(14, 409, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(15, 410, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(16, 411, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(17, 412, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(18, 413, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(19, 414, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(20, 415, 126, 129, 127, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
-(21, 416, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
+(1, 396, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
+(2, 397, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
+(3, 398, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(4, 399, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(5, 400, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(6, 401, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(7, 402, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(8, 403, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
+(9, 404, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(10, 405, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
+(11, 406, 126, 129, 127, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
+(12, 407, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(13, 408, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(14, 409, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(15, 410, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(16, 411, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(17, 412, 126, 129, 127, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
+(18, 413, 126, 129, 127, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
+(19, 414, 126, 129, 127, 'Bowler', 20.00, 'No', 0.00, NULL, 'Yes'),
+(20, 415, 126, 129, 127, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'Yes'),
+(21, 416, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
 (22, 416, 126, 164, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(23, 417, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(23, 417, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (24, 417, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(25, 418, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(25, 418, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (26, 418, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(27, 419, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(27, 419, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (28, 419, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(29, 420, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
+(29, 420, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'Yes'),
 (30, 420, 126, 164, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
-(31, 421, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
+(31, 421, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'Yes'),
 (32, 421, 126, 164, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
-(33, 422, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
+(33, 422, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
 (34, 422, 126, 164, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(35, 423, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
+(35, 423, 126, 129, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'Yes'),
 (36, 423, 126, 164, 128, 'AllRounder', 0.00, 'No', 0.00, NULL, 'No'),
-(37, 424, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(37, 424, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (38, 424, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(39, 425, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
+(39, 425, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
 (40, 425, 126, 164, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(41, 426, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(41, 426, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (42, 426, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(43, 427, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(43, 427, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (44, 427, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(45, 428, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(45, 428, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (46, 428, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(47, 429, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
+(47, 429, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
 (48, 429, 126, 164, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
-(49, 430, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(49, 430, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (50, 430, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(51, 431, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(51, 431, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'Yes'),
 (52, 431, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(53, 432, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
+(53, 432, 126, 129, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'Yes'),
 (54, 432, 126, 164, 128, 'WicketKeeper', 0.00, 'No', 0.00, NULL, 'No'),
-(55, 433, 126, 129, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
+(55, 433, 126, 129, 128, 'Bowler', 10.00, 'No', 0.00, NULL, 'Yes'),
 (56, 433, 126, 164, 128, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
-(57, 434, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
+(57, 434, 126, 129, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'Yes'),
 (58, 434, 126, 164, 128, 'Batsman', 0.00, 'No', 0.00, NULL, 'No'),
 (59, 435, 130, 133, 131, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
 (60, 435, 130, 141, 131, 'Bowler', 0.00, 'No', 0.00, NULL, 'No'),
@@ -3265,7 +3279,9 @@ INSERT INTO `tbl_entity` (`EntityID`, `EntityGUID`, `EntityTypeID`, `CreatedByUs
 (926, '6472acea-eb2b-87ca-8dd2-1b65e706d489', 11, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:04:58', NULL, NULL, 1),
 (927, '6371a8f8-9852-8447-cfef-1f6e66b2c540', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:34:56', NULL, NULL, 2),
 (928, '7930bd6f-b573-9871-0e6d-615f3e1aef49', 12, 927, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:41:03', NULL, NULL, 2),
-(929, 'dae1ec28-3046-1d2b-6d0c-217e086e0b59', 11, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:43:23', NULL, NULL, 1);
+(929, 'dae1ec28-3046-1d2b-6d0c-217e086e0b59', 11, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:43:23', NULL, NULL, 1),
+(930, '3aead4ed-ffbb-6119-4ffa-92d58fc8ff5c', 6, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-10 12:44:25', NULL, NULL, 2),
+(931, '1c130c3a-2705-6304-d1d3-392bb9ffda5e', 13, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-10 12:46:48', '2019-08-10 12:50:07', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -3357,7 +3373,11 @@ INSERT INTO `tbl_media` (`MediaID`, `MediaGUID`, `IsImage`, `UserID`, `SectionID
 (10, '79707467-587e-c33f-ca22-d0e45cd12bff', 1, 125, 'PlayerPic', NULL, 'bg_1.jpg', 'bg_1_1565003835.jpg', 35.54, '.jpg', NULL, '2019-08-05 11:17:15'),
 (11, '7a8973e6-73f6-fc85-6932-50fb244d515a', 1, 125, 'PlayerPic', NULL, 'bg1.jpg', 'bg1_1565004478.jpg', 73.98, '.jpg', NULL, '2019-08-05 11:27:58'),
 (12, '0925bc57-8161-dcdd-bd84-ed151a195e4b', 1, 125, 'PlayerPic', NULL, 'bg_21.png', 'bg_21_1565004506.png', 87.86, '.png', NULL, '2019-08-05 11:28:26'),
-(13, '17c9e097-cac8-c3c9-7e0d-a0762b8dede2', 1, 125, 'PlayerPic', NULL, 'bg.jpg', 'bg_1565004593.jpg', 25.51, '.jpg', NULL, '2019-08-05 11:29:53');
+(13, '17c9e097-cac8-c3c9-7e0d-a0762b8dede2', 1, 125, 'PlayerPic', NULL, 'bg.jpg', 'bg_1565004593.jpg', 25.51, '.jpg', NULL, '2019-08-05 11:29:53'),
+(14, '7805a1e3-a5d3-fd42-1041-b7605de12f5c', 1, 125, 'Post', NULL, 'mobail_app.png', 'mobail_app_1565441062.png', 406.97, '.png', NULL, '2019-08-10 12:44:22'),
+(15, '8a55956a-48d7-d939-3bae-09386468038e', NULL, 125, 'Coupon', NULL, 'buildOwnContest.svg', 'buildowncontest_1565441088.svg', 6.18, '.svg', NULL, '2019-08-10 12:44:48'),
+(16, 'ea36b5aa-cfe7-a8a1-a7f8-e9ef34b2f696', 1, 125, 'Coupon', NULL, 'play.png', 'play_1565441099.png', 22.81, '.png', NULL, '2019-08-10 12:44:59'),
+(17, 'd8f940e5-6245-65e7-389a-1822ae32e638', 1, 125, 'Coupon', NULL, 'matches-img2.png', 'matches-img2_1565441188.png', 2.56, '.png', NULL, '2019-08-10 12:46:28');
 
 -- --------------------------------------------------------
 
@@ -3571,7 +3591,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-06 12:39:46', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-12 13:48:03', '2019-06-07 10:42:15'),
 (927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL);
 
 -- --------------------------------------------------------
@@ -3606,7 +3626,11 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '0785840d-7f86-2646-9711-89851a916c8c', NULL, 1, 1, NULL, NULL, '2019-08-05 14:15:26'),
 (125, '22725d86-bdeb-826d-829d-309bcbf1558f', NULL, 1, 1, NULL, NULL, '2019-08-06 06:02:44'),
 (125, '5995581a-70e9-6374-6912-0b3a3de887b3', NULL, 1, 1, NULL, NULL, '2019-08-06 12:35:16'),
-(125, '06d8717b-c9e5-e0c7-8cd7-9d51e7401351', NULL, 1, 1, NULL, NULL, '2019-08-06 12:39:46');
+(125, '06d8717b-c9e5-e0c7-8cd7-9d51e7401351', NULL, 1, 1, NULL, NULL, '2019-08-06 12:39:46'),
+(125, 'a87d70f9-1573-960f-e57a-3271f45854d5', NULL, 1, 1, NULL, NULL, '2019-08-09 10:43:56'),
+(125, '9b3a21c3-c487-bd6a-6634-7118d2411a9b', NULL, 1, 1, NULL, NULL, '2019-08-09 14:09:36'),
+(125, '42960781-2ac2-3c42-7865-6679aed91834', NULL, 1, 1, NULL, NULL, '2019-08-10 12:25:56'),
+(125, '4b32489b-5b02-17d8-5739-9518d363e2a6', NULL, 1, 1, NULL, NULL, '2019-08-12 13:48:03');
 
 -- --------------------------------------------------------
 
@@ -4209,7 +4233,7 @@ ALTER TABLE `sports_team_players`
 -- AUTO_INCREMENT for table `tbl_entity`
 --
 ALTER TABLE `tbl_entity`
-  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=930;
+  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=932;
 --
 -- AUTO_INCREMENT for table `tbl_entity_type`
 --
@@ -4219,7 +4243,7 @@ ALTER TABLE `tbl_entity_type`
 -- AUTO_INCREMENT for table `tbl_media`
 --
 ALTER TABLE `tbl_media`
-  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT for table `tbl_notifications`
 --

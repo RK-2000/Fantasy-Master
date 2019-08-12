@@ -22,7 +22,8 @@
                             <a href="javascript:void(0)" ng-repeat="rows in notificationList" ng-click="readNotification(rows.NotificationID)">
                               <div class="notif-icon bg-primary"> <i class="fa fa-user-plus" ng-if="rows.NotificationPatternGUID != 'verify'"></i><i class="fa fa-file-text" ng-if="rows.NotificationPatternGUID == 'verify'"></i> </div>
                               <div class="notif-content pl-3">
-                                <p class="mb-0"> {{rows.NotificationText}} </p>
+                                <p class="mb-0" ng-if="rows.FirstName != ''"> {{rows.NotificationText}} </p>
+                                <p class="mb-0" ng-if="rows.FirstName == ''"> {{rows.Email || rows.EmailForChange + ""+ rows.NotificationText}} </p>
                                 <p class="mb-0"> {{rows.NotificationMessage}} </p>
                                 <span class="time">{{rows.EntryDate | myDateFormat}}</span>
                               </div>
