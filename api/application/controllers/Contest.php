@@ -27,7 +27,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim|required|numeric');
-        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim|required|integer');
+        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . ($this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
