@@ -49,7 +49,7 @@ class Contest_model extends CI_Model
                 "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
                 "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
                 "EntryType" => @$Input['EntryType'],
-                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
                 "CashBonusContribution" => @$Input['CashBonusContribution'],
                 "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
                 "SeriesID" => @$SeriesID,
@@ -90,7 +90,7 @@ class Contest_model extends CI_Model
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
             "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
             "EntryType" => @$Input['EntryType'],
-            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
             "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay']
         ));
