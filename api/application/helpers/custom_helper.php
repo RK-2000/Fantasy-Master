@@ -374,7 +374,7 @@ function mongoDBConnection()
     $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
     switch (ENVIRONMENT) {
         case 'local':
-            $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:27017");
+            $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
             break;
         case 'testing':
             $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
