@@ -2,7 +2,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
 
     var FromDate = ToDate = ''; 
     $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
-
+    
     $timeout(function(){            
        $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
     }, 200);
