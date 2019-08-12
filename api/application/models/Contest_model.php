@@ -49,7 +49,7 @@ class Contest_model extends CI_Model
                 "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
                 "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
                 "EntryType" => @$Input['EntryType'],
-                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
                 "CashBonusContribution" => @$Input['CashBonusContribution'],
                 "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
                 "SeriesID" => @$SeriesID,
@@ -90,7 +90,7 @@ class Contest_model extends CI_Model
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
             "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
             "EntryType" => @$Input['EntryType'],
-            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
             "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay']
         ));
@@ -1188,7 +1188,7 @@ class Contest_model extends CI_Model
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID,PlayerPosition', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Records[$key]['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['MatchIDAsUse'],$Records[$key]['UserIDAsUse']);
@@ -1199,7 +1199,7 @@ class Contest_model extends CI_Model
                 $Record = $Query->row_array();
                 if (in_array('UserTeamPlayers', $Params)) {
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID,PlayerPosition', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Record['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Record['UserTeamIDAsUse'],$Record['MatchIDAsUse'],$Record['UserIDAsUse']);
