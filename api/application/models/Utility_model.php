@@ -244,7 +244,7 @@ class Utility_model extends CI_Model
         $curl = curl_init();
         curl_setopt_array($curl, array(
 
-            CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?route=4&sender=FSLELE&mobiles=" . $SMSArray['PhoneNumber'] . "&authkey=" . MSG91_AUTH_KEY . "&message=" . $SMSArray['Text'] . "&country=91",
+            CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?route=4&sender=".MSG91_SENDER_ID."&mobiles=" . $SMSArray['PhoneNumber'] . "&authkey=" . MSG91_AUTH_KEY . "&message=" . $SMSArray['Text'] . "&country=91",
 
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
