@@ -305,7 +305,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-withdraw" role="tabpanel" aria-labelledby="nav-withdraw-tab">
                         
-                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserWithdrawalDetails();">Export</button>
+                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserWithdrawalDetails();" ng-if="WithdrawalsTransactions.length > 0">Export</button>
 
                         <div class="table-responsive block_pad_md" > 
 
@@ -339,7 +339,7 @@
                                             <td ng-if="transactionDetails.Comments ==''">-</td>
                                             <td>{{transactionDetails.EntryDate | myDateFormat}}</td>
                                         </tr>
-                                        <tr ng-if="!transactions.length" >
+                                        <tr ng-if="!WithdrawalsTransactions.length" >
                                             <td colspan="8" class="text-center">No transactions found.</td>
                                         </tr>
                                     </tbody>
