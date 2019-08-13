@@ -2,19 +2,27 @@
 	<div class="form-area">
 
 		<div class="form-group">
+			<div id="picture-box">
+				<h4 class="mt-2 text-center">{{formData.Email}}</h4>
+			</div>
+		</div>
+		<div class="form-group">
 			<div id="picture-box" class="picture-box">
 				<img ng-src="{{formData.ProfilePic}}" alt="User Image" class="thumbnail rounded-circle">
 				<p class="mt-2"><strong ng-bind="formData.FullName"></strong></p>
-				<div ng-bind="formData.UserTypeName"></div>
 			</div>
 		</div>
 
-
+		<div class="form-group">
+			<div id="picture-box">
+				<h4 class="text-center">{{DEFAULT_CURRENCY}}{{formData.CashBonus}}</h4>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="form-group">
 					<label class="control-label">Amount</label>
-					<input type="text" name="Amount" class="form-control numeric" >
+					<input type="text" name="Amount" class="form-control numeric" maxlength="5" placeholder="Amount">
 				</div>
 			</div>
 		</div>

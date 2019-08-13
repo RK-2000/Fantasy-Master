@@ -12,14 +12,14 @@
 
 			<hr>
 			<div class="row"> 
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Series Name</label>
-						<input type="text" id="SeriesName" class="form-control" placeholder="SERIES NAME" name="SeriesName" ng-model="formData.SeriesName" value="{{formData.SeriesName}}" readonly>
+						<input type="text" id="SeriesName" class="form-control" placeholder="SERIES NAME" name="SeriesName" ng-model="formData.SeriesName" value="{{formData.SeriesName}}">
 						
 					</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Status</label>
 						<select name="Status" id="Status" class="form-control chosen-select">
@@ -30,70 +30,6 @@
 					</div>
 				</div>
 			</div>
-			
-			<div class="row"> 
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Auction Draft Play</label>
-						<select name="AuctionDraftIsPlayed" id="AuctionDraftIsPlayed" class="form-control chosen-select">
-						<option value="">Please Select</option>
-							<option value="Yes" ng-selected="formData.AuctionDraftIsPlayed=='Yes'">Yes</option>
-							<option value="No" ng-selected="formData.AuctionDraftIsPlayed=='No'">No</option>
-						</select>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Draft User Limit </label>
-						<input name="DraftUserLimit" id="DraftUserLimit" placeholder="DRAFT USER LIMIT" ng-model="formData.DraftUserLimit" type="text" class="form-control numeric">
-					</div>
-				</div>
-			</div>
-		
-			<div class="row"> 
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Draft Team Player Limit</label>
-						<input name="DraftTeamPlayerLimit" id="DraftTeamPlayerLimit" placeholder="DRAFT TEAM PLAYER LIMIT" ng-model="formData.DraftTeamPlayerLimit" type="text" class="form-control numeric">
-					</div>
-				</div>
-			</div>
-			<div class="row"> 
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Draft Player Selection Criteria</label>
-					</div>
-				</div>
-			</div>
-			<div class="row"> 
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Wicket Keeper</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="WICKET KEEPER" type="text" class="form-control numeric">
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Batsman</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="BATSMAN" type="text" class="form-control numeric">
-					</div>
-				</div>
-			</div>
-			<div class="row"> 
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">All Rounder</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="ALL ROUNDER" type="text" class="form-control numeric">
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label">Bowler</label>
-						<input name="DraftPlayerSelectionCriteria[]" placeholder="BOWLER" type="text" class="form-control numeric">
-					</div>
-				</div>
-			</div>
-			
 			<input type="hidden" name="SeriesGUID" value="{{formData.SeriesGUID}}">
 			<!-- hidden parameters /-->
 		</form>

@@ -12,6 +12,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/config/bannerList', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -22,7 +23,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.data.noRecords = true;
         }
         $scope.data.listLoading = false;
-        // setTimeout(function(){ tblsort(); }, 1000);
     });
     }
 
@@ -34,6 +34,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+'ConfigTypeGUID='+ConfigTypeGUID+'&ConfigTypeValue='+ConfigValue+'&Status='+ConfigStatus;
         $http.post(API_URL+'admin/config/update', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.applyFilter();
@@ -63,6 +64,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&Section=Banner&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'admin/config/addBanner', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $scope.applyFilter();
@@ -82,6 +84,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL+'upload/delete', 'SessionKey='+SessionKey+'&MediaGUID='+MediaGUID, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data

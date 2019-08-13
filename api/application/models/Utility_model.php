@@ -9,6 +9,7 @@ class Utility_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        mongoDBConnection();
     }
 
     /*
@@ -210,9 +211,6 @@ class Utility_model extends CI_Model
 
     function sendMobileSMS($SMSArray)
     {
-        if (ENVIRONMENT == 'testing') {
-            return TRUE;
-        }
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => "http://control.msg91.com/api/sendotp.php?authkey=" . MSG91_AUTH_KEY . "&sender=" . MSG91_SENDER_ID . "&mobile=" . $SMSArray['PhoneNumber'] . "&otp=" . $SMSArray['Text'],
@@ -246,7 +244,7 @@ class Utility_model extends CI_Model
         $curl = curl_init();
         curl_setopt_array($curl, array(
 
-            CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?route=4&sender=FSLELE&mobiles=" . $SMSArray['PhoneNumber'] . "&authkey=" . MSG91_AUTH_KEY . "&message=" . $SMSArray['Text'] . "&country=91",
+            CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?route=4&sender=".MSG91_SENDER_ID."&mobiles=" . $SMSArray['PhoneNumber'] . "&authkey=" . MSG91_AUTH_KEY . "&message=" . $SMSArray['Text'] . "&country=91",
 
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -586,7 +584,7 @@ class Utility_model extends CI_Model
 
             /* To get All Series Data */
             $SeriesIdsData = array();
-            $SeriesData = $this->Sports_model->getSeries('SeriesIDLive,SeriesID', array('StatusID' => 2,'SportsType' => 'Cricket'), true, 0);
+            $SeriesData = $this->Sports_model->getSeries('SeriesIDLive,SeriesID', array('SportsType' => 'Cricket'), true, 0);
             if ($SeriesData) {
                 $SeriesIdsData = array_column($SeriesData['Data']['Records'], 'SeriesID', 'SeriesIDLive');
             }
@@ -673,6 +671,18 @@ class Utility_model extends CI_Model
                     $TeamsData = array_merge($VisitorTeamData, $LocalTeamData);
                     if (!empty($TeamsData)) {
                         $this->db->insert_batch('sports_teams', $TeamsData);
+
+                        /* Add Into MongoDB */
+                        foreach($TeamsData as $Team){
+                            $TeamsDataMongo[] = array(
+                                            '_id'           => $Team['TeamGUID'],
+                                            'TeamID'        => (int) $Team['TeamID'],
+                                            'TeamName'      => $Team['TeamName'],
+                                            'TeamNameShort' => $Team['TeamNameShort'],
+                                            'TeamFlag'      => 'team.png'
+                                        );
+                        }
+                        $this->fantasydb->sports_teams->insertMany($TeamsDataMongo);
                     }
 
                     /* To check if match is already exist */
@@ -884,6 +894,16 @@ class Utility_model extends CI_Model
                     ));
                     $IsNewTeam = true;
                     $this->db->insert('sports_teams', $TeamData);
+
+                    /* Add Into MongoDB */
+                    $TeamsDataMongo = array(
+                        '_id'           => $TeamGUID,
+                        'TeamID'        => (int) $TeamID,
+                        'TeamName'      => $Response['data']['name'],
+                        'TeamNameShort' => strtoupper($TeamKey),
+                        'TeamFlag'      => 'team.png'
+                    );
+                    $this->fantasydb->sports_teams->insertOne($TeamsDataMongo);
                 }
                 if (!$IsNewTeam) {
 
@@ -919,6 +939,15 @@ class Utility_model extends CI_Model
                             'PlayerBowlingStyle' => @$Response['data']['players'][$PlayerIDLive]['bowling_style'][0],
                         );
                         $this->db->insert('sports_players', $PlayersAPIData);
+
+                        /* Add Into MongoDB */
+                        $PlayersDataMongo = array(
+                            '_id'         => $PlayerGUID,
+                            'PlayerID'    => (int) $PlayerID,
+                            'PlayerName'  => $Response['data']['players'][$PlayerIDLive]['name'],
+                            'PlayerPic'   => 'player.png'
+                        );
+                        $this->fantasydb->sports_players->insertOne($PlayersDataMongo);
                     }
 
                     /* To check If match player is already exist */
@@ -1440,7 +1469,7 @@ class Utility_model extends CI_Model
     function getMatchScoreLive_Cricket_CricketApi($CronID)
     {
         /* Get Live Matches Data */
-        $LiveMatches = $this->Sports_model->getMatches('MatchIDLive,MatchID,MatchStartDateTime,Status,IsPlayingXINotificationSent,TeamNameShortLocal,TeamNameShortVisitor', array('Filter'=> 'Yesterday','StatusID' => array(1,2,10),'SportsType' => 'Cricket'), true, 1, 10);
+        $LiveMatches = $this->Sports_model->getMatches('MatchIDLive,MatchID,MatchStartDateTime,Status', array('Filter'=> 'Yesterday','StatusID' => array(1,2,10),'SportsType' => 'Cricket'), true, 1, 20);
         if (!$LiveMatches) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
@@ -1526,18 +1555,29 @@ class Utility_model extends CI_Model
             $MatchScoreDetails = $InningsData = array();
             $MatchScoreDetails['StatusLive'] = ($MatchStatusLive == 'started') ? 'Live' : (($MatchStatusLive == 'notstarted') ? 'Not Started' : 'Completed');
             $MatchScoreDetails['StatusNote'] = (!empty($Response['data']['card']['msgs']['result'])) ? $Response['data']['card']['msgs']['result'] : '';
-            $MatchScoreDetails['TeamScoreLocal'] = array('Name' => $Response['data']['card']['teams']['a']['name'], 'ShortName' => $Response['data']['card']['teams']['a']['short_name'], 'LogoURL' => '', 'Scores' => @$Response['data']['card']['innings']['a_1']['runs'] . '/' . @$Response['data']['card']['innings']['a_1']['wickets'], 'Overs' => @$Response['data']['card']['innings']['a_1']['overs']);
-            $MatchScoreDetails['TeamScoreVisitor'] = array('Name' => $Response['data']['card']['teams']['b']['name'], 'ShortName' => $Response['data']['card']['teams']['b']['short_name'], 'LogoURL' => '', 'Scores' => @$Response['data']['card']['innings']['b_1']['runs'] . '/' . @$Response['data']['card']['innings']['b_1']['wickets'], 'Overs' => @$Response['data']['card']['innings']['b_1']['overs']);
+            $MatchScoreDetails['TeamScoreLocal'] = array('Name' => $Response['data']['card']['teams']['a']['name'], 'ShortName' => $Response['data']['card']['teams']['a']['short_name'], 'LogoURL' => '');
+            $MatchScoreDetails['TeamScoreVisitor'] = array('Name' => $Response['data']['card']['teams']['b']['name'], 'ShortName' => $Response['data']['card']['teams']['b']['short_name'], 'LogoURL' => '');
             $MatchScoreDetails['MatchVenue'] = @$Response['data']['card']['venue'];
             $MatchScoreDetails['Result'] = (!empty($Response['data']['cards']['msgs']['result'])) ? $Response['data']['cards']['msgs']['result'] : '';
             $MatchScoreDetails['Toss'] = @$Response['data']['card']['toss']['str'];
-            $MatchScoreDetails['ManOfTheMatchPlayer'] = (!empty($LivePlayersData[@$Response['data']['card']['man_of_match']])) ? $LivePlayersData[@$Response['data']['card']['man_of_match']] : '';
             
-            foreach ($Response['data']['card']['teams'] as $TeamKey => $TeamValue) {
+            foreach ($Response['data']['card']['batting_order'] as $Key => $BattingValue) {
                 $AllPlayingXI = array();
+                if($BattingValue[0] == 'a'){
+                    $MatchScoreDetails['TeamScoreLocal']['Scores'][] = array('Scores' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'].'/'.@$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'],'Overs' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['overs']);
+                    if(count($Response['data']['card']['batting_order']) == 1){
+                        $MatchScoreDetails['TeamScoreVisitor']['Scores'][] = array('Scores' => '','Overs' => '');
+                    }
+                }
+                if($BattingValue[0] == 'b'){
+                    $MatchScoreDetails['TeamScoreVisitor']['Scores'][] = array('Scores' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'].'/'.@$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'],'Overs' =>  @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['overs']);
+                    if(count($Response['data']['card']['batting_order']) == 1){
+                        $MatchScoreDetails['TeamScoreLocal']['Scores'][] = array('Scores' => '','Overs' => '');
+                    }
+                }
 
                 /* Manage Team Players Details */
-                foreach ($Response['data']['card']['teams'][$TeamKey]['match']['playing_xi'] as $InningPlayer) {
+                foreach ($Response['data']['card']['teams'][$BattingValue[0]]['match']['playing_xi'] as $InningPlayer) {
 
                     /* Get Player Details */
                     $PlayerDetails = @$Response['data']['card']['players'][$InningPlayer];
@@ -1549,62 +1589,59 @@ class Utility_model extends CI_Model
                     $PlayerRole = ($Keeper == 1) ? 'WicketKeeper' : (($Batsman == 1 && $Bowler == 1) ? 'AllRounder' : ((empty($Batsman) && $Bowler == 1) ? 'Bowler' : ((empty($Bowler) && $Batsman == 1) ? 'Batsman' : '')));
 
                     /* Batting */
-                    if (isset($PlayerDetails['match']['innings'][1]['batting']['balls'])) {
+                    if (isset($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['balls'])) {
 
                         $AllPlayingXI[$InningPlayer]['batting'] = array(
                             'Name' => @$PlayerDetails['name'],
                             'PlayerIDLive' => @$InningPlayer,
                             'Role' => @$PlayerRole,
-                            'Runs' => (!empty($PlayerDetails['match']['innings'][1]['batting']['runs'])) ? $PlayerDetails['match']['innings'][1]['batting']['runs'] : "",
-                            'BallsFaced' => (!empty($PlayerDetails['match']['innings'][1]['batting']['balls'])) ? $PlayerDetails['match']['innings'][1]['batting']['balls'] : "",
-                            'Fours' => (!empty($PlayerDetails['match']['innings'][1]['batting']['fours'])) ? $PlayerDetails['match']['innings'][1]['batting']['fours'] : "",
-                            'Sixes' => (!empty($PlayerDetails['match']['innings'][1]['batting']['sixes'])) ? $PlayerDetails['match']['innings'][1]['batting']['sixes'] : "",
-                            'HowOut' => (!empty($PlayerDetails['match']['innings'][1]['batting']['out_str'])) ? $PlayerDetails['match']['innings'][1]['batting']['out_str'] : "",
-                            'IsPlaying' => (@$PlayerDetails['match']['innings'][1]['batting']['dismissed'] == 1) ? 'No' : ((isset($PlayerDetails['match']['innings'][1]['batting']['balls'])) ? 'Yes' : ''),
-                            'StrikeRate' => (!empty($PlayerDetails['match']['innings'][1]['batting']['strike_rate'])) ? $PlayerDetails['match']['innings'][1]['batting']['strike_rate'] : ""
+                            'Runs' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['runs'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['runs'] : "",
+                            'BallsFaced' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['balls'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['balls'] : "",
+                            'Fours' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['fours'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['fours'] : "",
+                            'Sixes' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['sixes'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['sixes'] : "",
+                            'HowOut' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['out_str'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['out_str'] : "",
+                            'IsPlaying' => (@$PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['dismissed'] == 1) ? 'No' : ((isset($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['balls'])) ? 'Yes' : ''),
+                            'StrikeRate' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['strike_rate'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['batting']['strike_rate'] : ""
                         );
                     }
 
                     /* Bowling */
-                    if (!empty(@$PlayerDetails['match']['innings'][1]['bowling'])) {
+                    if (!empty(@$PlayerDetails['match']['innings'][$BattingValue[1]]['bowling'])) {
 
                         $AllPlayingXI[$InningPlayer]['bowling'] = array(
                             'Name' => @$PlayerDetails['name'],
                             'PlayerIDLive' => $InningPlayer,
-                            'Overs' => (!empty($PlayerDetails['match']['innings'][1]['bowling']['overs'])) ? $PlayerDetails['match']['innings'][1]['bowling']['overs'] : '',
-                            'Maidens' => (!empty($PlayerDetails['match']['innings'][1]['bowling']['maiden_overs'])) ? $PlayerDetails['match']['innings'][1]['bowling']['maiden_overs'] : '',
-                            'RunsConceded' => (!empty($PlayerDetails['match']['innings'][1]['bowling']['runs'])) ? $PlayerDetails['match']['innings'][1]['bowling']['runs'] : '',
-                            'Wickets' => (!empty($PlayerDetails['match']['innings'][1]['bowling']['wickets'])) ? $PlayerDetails['match']['innings'][1]['bowling']['wickets'] : '',
-                            'NoBalls' => '',
-                            'Wides' => '',
-                            'Economy' => (!empty($PlayerDetails['match']['innings'][1]['bowling']['economy'])) ? $PlayerDetails['match']['innings'][1]['bowling']['economy'] : ''
+                            'Overs' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['overs'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['overs'] : '',
+                            'Maidens' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['maiden_overs'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['maiden_overs'] : '',
+                            'RunsConceded' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['runs'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['runs'] : '',
+                            'Wickets' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['wickets'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['wickets'] : '',
+                            'Economy' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['economy'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['bowling']['economy'] : ''
                         );
                     }
 
                     /* Fielding */
-                    if (!empty(@$PlayerDetails['match']['innings'][1]['fielding'])) {
+                    if (!empty(@$PlayerDetails['match']['innings'][$BattingValue[1]]['fielding'])) {
 
                         $AllPlayingXI[$InningPlayer]['fielding'] = array(
                             'Name' => @$PlayerDetails['name'],
                             'PlayerIDLive' => $InningPlayer,
-                            'Catches' => (!empty($PlayerDetails['match']['innings'][1]['fielding']['catches'])) ? $PlayerDetails['match']['innings'][1]['fielding']['catches'] : '',
-                            'RunOutThrower' => (!empty($PlayerDetails['match']['innings'][1]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][1]['fielding']['runouts'] : '',
-                            'RunOutCatcher' => (!empty($PlayerDetails['match']['innings'][1]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][1]['fielding']['runouts'] : '',
-                            'RunOutDirectHit' => (!empty($PlayerDetails['match']['innings'][1]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][1]['fielding']['runouts'] : '',
-                            'Stumping' => (!empty($PlayerDetails['match']['innings'][1]['fielding']['stumbeds'])) ? $PlayerDetails['match']['innings'][1]['fielding']['stumbeds'] : ''
+                            'Catches' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['catches'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['catches'] : '',
+                            'RunOutThrower' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'] : '',
+                            'RunOutCatcher' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'] : '',
+                            'RunOutDirectHit' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['runouts'] : '',
+                            'Stumping' => (!empty($PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['stumbeds'])) ? $PlayerDetails['match']['innings'][$BattingValue[1]]['fielding']['stumbeds'] : ''
                         );
                     }
                 }
 
                 /* Get Team Details */
                 $InningsData[] = array(
-                    'Name' => $Response['data']['card']['teams'][$TeamKey]['name'] . ' inning',
-                    'ShortName' => $Response['data']['card']['teams'][$TeamKey]['short_name'] . ' inn.',
-                    'Scores' => $Response['data']['card']['innings'][$TeamKey.'_1']['runs'] . "/" . $Response['data']['card']['innings'][$TeamKey.'_1']['wickets'],
-                    'Status' => '',
-                    'ScoresFull' => $Response['data']['card']['innings'][$TeamKey.'_1']['runs'] . "/" . $Response['data']['card']['innings'][$TeamKey.'_1']['wickets'] . " (" . $Response['data']['card']['innings'][$TeamKey.'_1']['overs'] . " ov)",
+                    'Name' => $Response['data']['card']['teams'][$BattingValue[0]]['name'] . ' inning',
+                    'ShortName' => $Response['data']['card']['teams'][$BattingValue[0]]['short_name'] . ' inn.',
+                    'Scores' => $Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'] . "/" . $Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'],
+                    'ScoresFull' => $Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['runs'] . "/" . $Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wickets'] . " (" . $Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['overs'] . " ov)",
                     'AllPlayingData' => $AllPlayingXI,
-                    'ExtraRuns' => array('Byes' => @$Response['data']['card']['innings'][$TeamKey.'_1']['extras'], 'LegByes' => @$Response['data']['card']['innings'][$TeamKey.'_1']['extras'], 'Wides' => @$Response['data']['card']['innings'][$TeamKey.'_1']['wide'], 'NoBalls' => @$Response['data']['card']['innings'][$TeamKey.'_1']['noball'])
+                    'ExtraRuns' => array('Byes' => @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['bye'], 'LegByes' => @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['legbye'], 'Wides' => @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['wide'], 'NoBalls' => @$Response['data']['card']['innings'][$BattingValue[0].'_'.$BattingValue[1]]['noball'])
                 );
 
             }

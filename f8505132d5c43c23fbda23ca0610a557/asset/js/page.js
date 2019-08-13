@@ -10,6 +10,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'PageGUID='+PageGUID+'&'+$("form[name='save_form']").serialize();
         $http.post(API_URL+'admin/page/savePage', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
             }else{

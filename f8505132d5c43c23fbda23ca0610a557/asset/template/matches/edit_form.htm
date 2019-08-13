@@ -13,7 +13,7 @@
 			<div class="row" style="text-align: center;">
 				<div class="col-md-4">
 					<div class="form-group">
-						<img ng-src="{{formData.TeamFlagLocal}}" width="100px" height="50px">
+						<img ng-src="{{formData.TeamFlagLocal}}" width="100px" height="100px">
 					</div>
 					<div class="form-group">
 						<p><strong>{{formData.TeamNameLocal}}</strong></p>
@@ -26,7 +26,7 @@
 				</div>
 				<div class="col-md-4">
 					<div class="form-group">
-						<img ng-src="{{formData.TeamFlagVisitor}}" width="100px" height="50px">
+						<img ng-src="{{formData.TeamFlagVisitor}}" width="100px" height="100px">
 					</div>
 					<div class="form-group">
 						<p><strong>{{formData.TeamNameVisitor}}</strong></p>
@@ -38,7 +38,7 @@
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Match Closed Time In Minutes</label>
-                                                <input type="text" class="form-control" name="MatchClosedInMinutes" placeholder="MATCH CLOSED TIME IN MINUTES" ng-model="formData.MatchClosedInMinutes" value="{{formData.MatchClosedInMinutes}}" />
+                                                <input type="text" class="form-control numeric" name="MatchClosedInMinutes" placeholder="MATCH CLOSED TIME IN MINUTES" ng-model="formData.MatchClosedInMinutes" value="{{formData.MatchClosedInMinutes}}" maxlength="3" />
 					</div>
 				</div>
 			</div> 
@@ -55,6 +55,15 @@
 						</select>
 					</div>
 				</div>
+			</div>
+			<div class="row">
+				<div class="checkbox">
+                    <input id="checkbox1" type="checkbox" id="CancelContest"
+					name="CancelContest" value="Yes">
+                    <label for="checkbox1">
+                        Want to cancel all pending contests of this match ?
+                    </label>
+            	</div>
 			</div>
 			<!-- hidden parameters -->
 			<input type="hidden" name="MatchGUID" value="{{formData.MatchGUID}}">

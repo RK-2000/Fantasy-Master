@@ -1,34 +1,8 @@
-<style>
-.show_totals span {
-    display: inline-block;
-    width: 100%;
-    white-space: nowrap;
-}
-
-.user__table .listed.sm .content {
-    position: relative !important;
-    margin-left: 2px !important;
-
-}
-
-table.user__table tbody tr>td:first-child {
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
-    display: flex;
-    justify-content: space-between;
-}
-</style>
-
 <header class="panel-heading">
     <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
 </header>
 <div class="panel-body" ng-controller="PageController">
     <!-- Body -->
-
-
-
     <!-- Top container/ -->
     <div class="float-right">
         <a href="user"><button class="btn btn-success btn-sm ml-1">Back</button></a>
@@ -37,7 +11,6 @@ table.user__table tbody tr>td:first-child {
         <span class="float-left records d-none d-sm-block">
             <span class="h5"><b>{{userData.FullName}} ({{userData.Email}})</b></span><br>
         </span>
-
     </div>
   
     <!-- Data table -->
@@ -52,50 +25,41 @@ table.user__table tbody tr>td:first-child {
                 <!-- table heading -->
                 <thead>
                     <tr>
-                        <!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->
-                        <th style="width: 400px;min-width:200px;">User</th>
+                        <th style="width: 300px;min-width:200px;">User</th>
                         <th>Phone No.</th>
-                        <th style="width: 100px;">Gender</th>
-
-                        <th style="width: 120px;">Tokens</th>
-                        <th style="width: 120px;">Points</th>
-                        <th style="width: 160px;" class="text-center sort"
-                            ng-click="applyOrderedList('E.EntryDate', 'ASC')">Registered On <span
-                                class="sort_deactive">&nbsp;</span></th>
+                        <th style="width: 160px;">Deposit Amount</th>
+                        <th style="width: 160px;">Winning Amount</th>
+                        <th style="width: 160px;">Cash Bonus</th>
+                        <th style="width: 160px;" class="text-center sort" ng-click="applyOrderedList('E.EntryDate', 'ASC')">Registered On <span class="sort_deactive">&nbsp;</span></th>
                         <th style="width: 160px;" class="text-center">Last Login</th>
                         <th style="width: 100px;" class="text-center">Status</th>
-                     
 
                     </tr>
                 </thead>
                 <!-- table body -->
                 <tbody>
-                    <tr scope="row" ng-repeat="(key, row) in data.dataList">
+                    <tr scope="row" ng-repeat="(key, row) in data.dataList" style="height:100px;">
 
                         <td class="listed sm clearfix">
-                            <a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left"
-                                    ng-src="{{row.ProfilePic}}"></a>
-                            <div class="content float-left"><strong><a
-                                        href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
-                                <div ng-if="row.Email || row.EmailForChange"><a
-                                        href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}"
-                                        target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div>
-                                <div ng-if="!row.Email && !row.EmailForChange">-</div>
-
+                        <a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
+                            <div class="content float-left"><strong><a target="_blank" href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
+                            <div ng-if="row.Email || row.EmailForChange"><a href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}" target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div><div ng-if="!row.Email && !row.EmailForChange">-</div>
+                            <span ng-if="row.Email || row.EmailForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.EmailStatus]">({{row.EmailStatus}})</span><br>
                             </div>
-                        </td>
-                        <td><span ng-if="row.PhoneNumber">{{row.PhoneNumber}}</span><span
-                                ng-if="!row.PhoneNumber">-</span></td>
-                        <td><span ng-if="row.Gender">{{row.Gender}}</span><span ng-if="!row.Gender">-</span></td>
-                        <td><span ng-if="row.Tokens">{{row.Tokens}}</span></td>
-                        <td><span ng-if="row.Tokens">{{row.Points}}</span></td>
-                        <td ng-bind="row.RegisteredOn"></td>
-                        <td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span
-                                ng-if="!row.LastLoginDate">-</span></td>
-                        <td class="text-center"><span
-                                ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger',Suspend:'text-danger'}[row.Status]">{{row.Status}}</span>
-                        </td>
-                   
+
+                        </td> 
+                        <td>
+                            <div ng-if="row.PhoneNumber || row.PhoneNumberForChange"><a href="javascript:void(0);">{{row.PhoneNumber == "" ? row.PhoneNumberForChange : row.PhoneNumber}}</a></div><div ng-if="!row.PhoneNumber && !row.PhoneNumberForChange">-</div>
+                            <span ng-if="row.PhoneNumber || row.PhoneNumberForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PhoneStatus]">({{row.PhoneStatus}})</span><br>
+                            </div>
+                        </td> 
+                        <td>{{DEFAULT_CURRENCY}}{{row.WalletAmount}}</td> 
+                        <td>{{DEFAULT_CURRENCY}}{{row.WinningAmount}}</td> 
+                        <td>{{DEFAULT_CURRENCY}}{{row.CashBonus}}</td> 
+                        <td><span ng-if="row.RegisteredOn">{{row.RegisteredOn}}</span><span ng-if="!row.RegisteredOn">-</span></td> 
+                        <td><span ng-if="row.LastLoginDate">{{row.LastLoginDate}}</span><span ng-if="!row.LastLoginDate">-</span></td> 
+                        <td class="text-center"><span ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.Status]">{{row.Status}}</span>
+                        </td> 
                     </tr>
                 </tbody>
             </table>

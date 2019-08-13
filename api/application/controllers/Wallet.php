@@ -21,7 +21,7 @@ class Wallet extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('RequestSource', 'RequestSource', 'trim|required|in_list[Web,Mobile]');
         $this->form_validation->set_rules('CouponGUID', 'CouponGUID', 'trim|callback_validateEntityGUID[Coupon,CouponID]');
-        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
+        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay,CashFree]');
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|callback_validateMinimumDepositAmount');
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim');
         $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email');
@@ -47,7 +47,7 @@ class Wallet extends API_Controller_Secure
     public function confirm_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay]');
+        $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay,CashFree]');
         $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
         $this->form_validation->set_rules('WalletID', 'WalletID', 'trim|required|numeric|callback_validateWalletID');
         $this->form_validation->set_rules('PaymentGatewayResponse', 'PaymentGatewayResponse', 'trim');

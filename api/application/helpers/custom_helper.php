@@ -45,7 +45,7 @@ function send_mail($emailData = array())
             }
             ],
             "from": {
-                "email": "info@fsl11.com"
+                "email": "info@example.com"
                 },
 
                 "template_id"   : "' . $emailData['template_id'] . '",
@@ -58,7 +58,7 @@ function send_mail($emailData = array())
                 ]
             }');
     // sending email 
-    $apiKey = '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';
+    $apiKey = 'SG.utLwQDhwSfik_-oxahrViQ.xu7v9zxwv5u_FM0c506ro6oPf-M8qKvI9djQ_0yt5SU_$#1234154d5s8';
     $sg = new \SendGrid($apiKey);
     $response = $sg->client->mail()->send()->post($request_body);
     $response->statusCode();
@@ -131,8 +131,8 @@ function pushNotificationAndroid($DeviceIDs, $UserTypeID, $Message, $Data = arra
     $obj = &get_instance();
     /*Save Log*/
     if (API_SAVE_LOG) {
-        $PushData = array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s"));
-        @$obj->db->insert('log_pushdata', $PushData);
+        mongoDBConnection();
+        $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode(array_merge($Headers, $Fields), 1), 'DeviceTypeID' => '3', 'Return' => $Result, 'EntryDate' => date("Y-m-d H:i:s")));
     }
     if ($Result === FALSE) {
         die('FCM Send Error: ' . curl_error($Ch));
@@ -169,8 +169,10 @@ function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $
         try {
             $obj = &get_instance();
             /*Save Log*/
-            $PushData = array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s"),);
-            @$obj->db->insert('log_pushdata', $PushData);
+            if (API_SAVE_LOG) {
+                mongoDBConnection();
+                $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode($Body, 1), 'DeviceTypeID' => '2', 'Return' => $Certificate, 'EntryDate' => date("Y-m-d H:i:s")));
+            }
             $Payload = @json_encode($Body, JSON_NUMERIC_CHECK);
             $Msg = @chr(0) . @pack("n", 32) . @pack('H*', @str_replace(' ', '', $DeviceToken)) . @pack("n", @strlen($Payload)) . $Payload;
             @fwrite($Fp, $Msg);
@@ -180,6 +182,51 @@ function pushNotificationIphone($DeviceToken = '', $UserTypeID, $Message = '', $
         }
     }
 }
+
+function boradcastPushNotifications($Title, $Message)
+{
+    if (ENVIRONMENT == "production") {
+
+        /*Send Notifications*/
+        $PostFCM = array();
+        $PostFCM['to'] = '/topics/' . FIREBASE_CHANNEL_NAME;
+        $PostFCM['data'] = array(
+            'badges' => 1,
+            'title' => $Title,
+            'message' => $Message
+        );
+        $CURL = curl_init();
+        curl_setopt_array($CURL, array(
+            CURLOPT_URL => "https://fcm.googleapis.com/fcm/send",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($PostFCM, JSON_UNESCAPED_UNICODE),
+            CURLOPT_HTTPHEADER => array(
+                "authorization: key=AIzaSyBe5p4qjA1aID7H0gGADnnhQXspHzIgrLk",
+                "cache-control: no-cache",
+                "content-type: application/json"
+            ),
+        ));
+        $Response = curl_exec($CURL);
+        if (API_SAVE_LOG) {
+            $obj = &get_instance();
+            mongoDBConnection();
+            $obj->fantasydb->log_pushdata->insertOne(array('Body' => json_encode($PostFCM, 1), 'DeviceTypeID' => '3', 'Return' => $Response, 'EntryDate' => date("Y-m-d H:i:s")));
+        }
+        $Err = curl_error($CURL);
+        curl_close($CURL);
+        if ($Err) {
+            return false;
+        } else {
+            return true;
+        }
+    } 
+}
+
 /*------------------------------*/
 /*------------------------------*/
 function sendMail($Input = array())
@@ -253,7 +300,7 @@ function paginationOffset($PageNo, $PageSize)
         $PageNo = 1;
     }
     $Offset = ($PageNo - 1) * $PageSize;
-    return $Offset;
+    return (int)$Offset;
 }
 /*------------------------------*/
 /*------------------------------*/
@@ -324,6 +371,17 @@ function mongoDBConnection()
     /* Require MongoDB Library & Connection */
     $Obj = &get_instance();
     require_once getcwd() . '/vendor/autoload.php';
-    $Obj->ClientObj = new MongoDB\Client("mongodb://fantasyadmin:fantasymw123@localhost:48017");
-    $Obj->fantasydb = $Obj->ClientObj->fantasy;
+    $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+    switch (ENVIRONMENT) {
+        case 'local':
+            $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+            break;
+        case 'testing':
+            $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
+            break;
+        case 'demo':
+            $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
+            break;
+    }
+    $Obj->fantasydb = $Obj->ClientObj->fantasymaster;
 }

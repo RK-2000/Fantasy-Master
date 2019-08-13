@@ -2,6 +2,11 @@
 	<div class="form-area">
 
 		<div class="form-group">
+			<div id="picture-box">
+				<h4 class="mt-2 text-center">{{formData.Email}}</h4>
+			</div>
+		</div>
+		<div class="form-group">
 			<div id="picture-box" class="picture-box">
 				<img ng-src="{{formData.ProfilePic}}" alt="User Image" class="thumbnail rounded-circle">
 				<p class="mt-2"><strong ng-bind="formData.FullName"></strong></p>
@@ -16,10 +21,30 @@
 					<label class="control-label">Status</label>
 					<select name="Status" id="Status" class="form-control chosen-select">
 						<option value=""></option>
-						<option value="Pending" ng-selected="formData.Status=='Pending'">Pending</option>
+						<option value="Pending" ng-selected="formData.Status=='Pending'" ng-if="formData.Status == 'Pending'">Pending</option>
 						<option value="Verified" ng-selected="formData.Status=='Verified'">Verified</option>
 						<option ng-if="formData.EmailStatus == 'Verified'" value="Deleted" ng-selected="formData.Status=='Deleted'">Deleted</option>
 						<option ng-if="formData.EmailStatus == 'Verified'" value="Blocked" ng-selected="formData.Status=='Blocked'">Blocked</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6" ng-if="formData.EmailStatus == 'Pending'">
+				<div class="form-group">
+					<label class="control-label">Email Status</label>
+					<select name="EmailStatus" id="EmailStatus" class="form-control chosen-select">
+						<option value=""></option>
+						<option value="Pending" ng-selected="formData.EmailStatus=='Pending'">Pending</option>
+						<option value="Verified" ng-selected="formData.EmailStatus=='Verified'">Verified</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6" ng-if="formData.PhoneStatus == 'Pending'">
+				<div class="form-group">
+					<label class="control-label">Phone Number Status</label>
+					<select name="PhoneStatus" id="PhoneStatus" class="form-control chosen-select">
+						<option value=""></option>
+						<option value="Pending" ng-selected="formData.PhoneStatus=='Pending'">Pending</option>
+						<option value="Verified" ng-selected="formData.PhoneStatus=='Verified'">Verified</option>
 					</select>
 				</div>
 			</div>

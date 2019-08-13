@@ -16,6 +16,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey;
         $http.post(API_URL+'utilities/dashboardStatics', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.dataList = response.Data;
              $scope.data.pageNo++;               
@@ -39,6 +40,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&OrderBy=MatchStartDateTime&Sequence=ASC&existingContests=2&Params=SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status&PageNo=1&PageSize=5&Status=Running';
         $http.post(API_URL+'sports/getMatches', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.matches = response.Data;
              $scope.data.pageNo++;               

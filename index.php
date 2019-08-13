@@ -30,7 +30,7 @@ const VERSION = 4.3;
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
         <link href="assets/css/custom.css?version=<?= VERSION ?>" rel="stylesheet">
         <link href="assets/css/draftcustom.css?version=<?= VERSION ?>" rel="stylesheet">
-        <link rel="stylesheet" href="index_file/custom.css?version=<?= VERSION ?>">
+        <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
     </head>
     <body ng-controller="HomeController" ng-init="getMatches()" ng-cloak>
@@ -39,7 +39,7 @@ const VERSION = 4.3;
             <div class="container d-block">
                 <div class="row align-items-center">
                     <div class="col-sm-4 col-5">
-                        <a href="index" class="site-logo navbar-brand"><img src="index_file/images/logo.png" alt="logo" width="150"></a>
+                        <a href="index" class="site-logo navbar-brand"><img src="assets/images/logo.png" alt="logo" width="150"></a>
                     </div>
                     <div class="col-sm-8 col-7">
                         <ul class="nav justify-content-end login_menu d-flex">
@@ -71,7 +71,7 @@ const VERSION = 4.3;
                     </div>
                 </div>
                 <div class="img-box">
-                    <img src="index_file/images/banner2.png" alt="" width="510" class="img-fluid">
+                    <img src="assets/images/banner2.png" alt="" width="510" class="img-fluid">
                 </div>
             </section>
             <section class="py-5 lovedByUsers">
@@ -81,13 +81,13 @@ const VERSION = 4.3;
                             <div class="row align-items-center">
                                 <div class="col-sm-6 cont1">
                                     <div class="company_info_item mb-3 d-block p-3">
-                                        <img src="index_file/images/user.svg" alt="" width="25" class="pb-3">
+                                        <img src="assets/images/user.svg" alt="" width="25" class="pb-3">
                                         <div>
                                             <h3> Loved by 10 <br> lacs Users </h3>
                                         </div>
                                     </div>
                                     <div class="company_info_item mb-3 d-block p-3">
-                                        <img src="index_file/images/dice.svg" alt="" width="25" class="pb-3">
+                                        <img src="assets/images/dice.svg" alt="" width="25" class="pb-3">
                                         <div>
                                             <h3> Multiple Drafts <br> Available </h3>
                                         </div>
@@ -95,7 +95,7 @@ const VERSION = 4.3;
                                 </div>
                                 <div class="col-sm-6 cont2">
                                     <div class="company_info_item mb-3 d-block p-3">
-                                        <img src="index_file/images/idea.svg" alt="" width="25" class="pb-3">
+                                        <img src="assets/images/idea.svg" alt="" width="25" class="pb-3">
                                         <div>
                                             <h3> Unique User <br> Experience </h3>
                                         </div>
@@ -111,7 +111,7 @@ const VERSION = 4.3;
                     </div>
                 </div>
                 <div class="dots-img">
-                    <img src="index_file/images/dots.png" alt="" width="160" class="img-fluid">
+                    <img src="assets/images/dots.png" alt="" width="160" class="img-fluid">
                 </div>
             </section>
             <section id="howToPlay" class="howToPaySec text-black burger"> <!--style="background-image:url(assets/img/play-bg.jpg);"-->
@@ -121,19 +121,19 @@ const VERSION = 4.3;
                     </div>
                     <div class="row">
                         <div class="col-sm-3 text-center">
-                            <span class="icons text-center"><img src="index_file/images/freeGame.svg" alt="" class="img-fluid pb-3"></span>
+                            <span class="icons text-center"><img src="assets/images/freeGame.svg" alt="" class="img-fluid pb-3"></span>
                             <h5 class="text-capitalize text-white mb-5">Play Free contest</h5>
                         </div>
                         <div class="col-sm-3 text-center">
-                            <span class="icons text-center"><img src="index_file/images/winCash.svg" alt="" class="img-fluid pb-3"></span>
+                            <span class="icons text-center"><img src="assets/images/winCash.svg" alt="" class="img-fluid pb-3"></span>
                             <h5 class="text-capitalize text-white mb-5"> Win Big Cash prizes in public contest</h5>
                         </div>
                         <div class="col-sm-3 text-center">
-                            <span class="icons text-center"><img src="index_file/images/privat.svg" class="img-fluid pb-3" alt=""></span>
+                            <span class="icons text-center"><img src="assets/images/privat.svg" class="img-fluid pb-3" alt=""></span>
                             <h5 class="text-capitalize text-white mb-5"> Play Private Contest and Beat your friends </h5>
                         </div>
                         <div class="col-sm-3 text-center">
-                            <span class="icons text-center"><img src="index_file/images/buildOwnContest.svg" alt="" class="img-fluid pb-3"></span>
+                            <span class="icons text-center"><img src="assets/images/buildOwnContest.svg" alt="" class="img-fluid pb-3"></span>
                             <h5 class="text-capitalize text-white"> Dont need to finish first to win </h5>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ const VERSION = 4.3;
                     <div class="row py-5">
                         <div class="col-sm-6">
                             <div class="img-box3">
-                                <img src="index_file/images/GetDailyFantasy.png" class="img-fluid">
+                                <img src="assets/images/GetDailyFantasy.png" class="img-fluid">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -183,12 +183,12 @@ const VERSION = 4.3;
 
                                 <li class="mr-1" data-toggle="tooltip" title="Download Now"><a href="https://fsl11.com/android/FSL11.apk" download>
                                         <span class="icon">
-                                            <img src="index_file/images/android.svg" alt=""></span>
+                                            <img src="assets/images/android.svg" alt=""></span>
                                         <span class="text"><span class="small">FSL11 On</span><span class="big"> Android </span></span></a>
                                 </li>
 
                                 <li data-toggle="tooltip" title="Coming Soon"><a href="#">
-                                        <span class="icon"><img src="index_file/images/apple.svg" alt=""></span>
+                                        <span class="icon"><img src="assets/images/apple.svg" alt=""></span>
                                         <span class="text"><span class="small">Download On</span><span class="big"> APPSTORE </span></span></a>
                                 </li>
                             </ul>
@@ -201,7 +201,7 @@ const VERSION = 4.3;
                     <div class="row">
                         <div class="col-sm-12 bottom-banner my-5">
                             <div class="logo-img text-center my-5">
-                                <a href="#"><img src="index_file/images/logo.png" alt="logo" width="150"></a>
+                                <a href="#"><img src="assets/images/logo.png" alt="logo" width="150"></a>
                             </div>
                             <div class="freeEntry text-center text-white text-uppercase mb-5">
                                 <h3 style="line-height: 40px;"> GET ₹50 BONUS AND FREE ENTRY TO <br> DAILY BONUS CONTEST ON YOUR FIRST LOGIN* </h3>
@@ -229,7 +229,7 @@ const VERSION = 4.3;
                              Always helped if i faced some problem ,got quick response . Please try it and recover your loss on other app.  </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/sumanbiswas.jpg" class="img-circle" alt="" />
+                                    <img src="assets/images/sumanbiswas.jpg" class="img-circle" alt="" />
                                 </div>
                                 <h4> Suman Biswas </h4>
                                 <!-- <span> Freelancer </span> -->
@@ -241,7 +241,7 @@ const VERSION = 4.3;
                                 therefore I have referred a lot of friends. I become a fan of FSL11 now.  </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/team2.jpg" class="img-circle" alt="" />
+                                    <img src="assets/images/team2.jpg" class="img-circle" alt="" />
                                 </div>
                                 <h4> Mohit Bakshi </h4>
                                 <!-- <span> Freelancer </span> -->
@@ -253,7 +253,7 @@ const VERSION = 4.3;
                                  was looking for from a long time.</p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/client.png" class="img-circle" alt="" />
+                                    <img src="assets/images/client.png" class="img-circle" alt="" />
                                 </div>
                                 <h4> Sneha Mishra </h4>
                                 <!-- <span>Freelancer</span> -->
@@ -264,7 +264,7 @@ const VERSION = 4.3;
                                 exciting. I would really like to recommend the app to everyone. </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/team3.png" class="img-circle" alt=""/>
+                                    <img src="assets/images/team3.png" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Anjali Khare </h4>
                                 <!-- <span>Freelancer</span> -->
@@ -275,7 +275,7 @@ const VERSION = 4.3;
                                 Easy and quick withdrawal makes this platform more trustworthy in comparing to others. </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/team1.jpg" class="img-circle" alt=""/>
+                                    <img src="assets/images/team1.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Vivan Pandit</h4>
                                 <!-- <span>Freelancer</span> -->
@@ -287,7 +287,7 @@ const VERSION = 4.3;
                                 make me and all other users feel delight in future as well. </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/team4.jpg" class="img-circle" alt=""/>
+                                    <img src="assets/images/team4.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Rohan Patil </h4>
                                 <!-- <span>Freelancer</span> -->
@@ -297,7 +297,7 @@ const VERSION = 4.3;
                             <p> This is the best fantasy app according To me, the app system is very fast and smooth, I play daily and win lot more money. Thanks To FSL11 app and the Team. </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="index_file/images/team5.jpg" class="img-circle" alt=""/>
+                                    <img src="assets/images/team5.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Santoo Sumit </h4>
                                 <!-- <span>Freelancer</span> -->

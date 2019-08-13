@@ -30,8 +30,15 @@ class Users_model extends CI_Model
         $EntityID = $this->Entity_model->addEntity($EntityGUID, array("EntityTypeID" => 1, "StatusID" => $StatusID));
         /* Add user to user table . */
         if (!empty($Input['PhoneNumber']) && PHONE_NO_VERIFICATION) {
-            $Input['PhoneNumberForChange'] = $Input['PhoneNumber'];
-            unset($Input['PhoneNumber']);
+            if($UserTypeID == 2){
+                $Input['PhoneNumberForChange'] = $Input['PhoneNumber'];
+                unset($Input['PhoneNumber']);
+            }
+        }
+        if($SourceID == 1 && $UserTypeID == 2){
+            $InsertData['EmailForChange'] = @strtolower($Input['Email']);
+        }else{
+            $InsertData['Email'] = @strtolower($Input['Email']);
         }
         $InsertData = array_filter(array(
             "UserID" => $EntityID,
@@ -44,8 +51,6 @@ class Users_model extends CI_Model
             "About" => @$Input['About'],
             "ProfilePic" => @$Input['ProfilePic'],
             "ProfileCoverPic" => @$Input['ProfileCoverPic'],
-            "Email" => ($SourceID != 1) ? @strtolower($Input['Email']) : '',
-            "EmailForChange" => ($SourceID == 1) ? @strtolower($Input['Email']) : '',
             "Username" => @strtolower($Input['Username']),
             "Gender" => @$Input['Gender'],
             "BirthDate" => @$Input['BirthDate'],
@@ -65,6 +70,11 @@ class Users_model extends CI_Model
             "TwitterURL" => @strtolower($Input['TwitterURL']),
             "ReferredByUserID" => @$Input['Referral']->UserID,
         ));
+        if($SourceID == 1 && $UserTypeID == 2){
+            $InsertData['EmailForChange'] = @strtolower($Input['Email']);
+        }else{
+            $InsertData['Email'] = @strtolower($Input['Email']);
+        }
         $this->db->insert('tbl_users', $InsertData);
 
         /* Manage Singup Bonus */
@@ -82,16 +92,26 @@ class Users_model extends CI_Model
         }
 
         /* Save login info to users_login table. */
-        $InsertData = array_filter(array(
+        $InsertLoginData = array_filter(array(
             "UserID" => $EntityID,
             "Password" => md5(($SourceID == '1' ? $Input['Password'] : $Input['SourceGUID'])),
             "SourceID" => $SourceID,
             "EntryDate" => date("Y-m-d H:i:s")
         ));
-        $this->db->insert('tbl_users_login', $InsertData);
+        $this->db->insert('tbl_users_login', $InsertLoginData);
 
         /* save user settings */
         $this->db->insert('tbl_users_settings', array("UserID" => $EntityID));
+
+        /* Add Into MongoDB */
+        mongoDBConnection();
+        $this->fantasydb->tbl_users->insertOne(array_filter(array(
+                '_id'    => (int)  $EntityID,
+                'UserGUID' => $EntityGUID,
+                'Username' => @$InsertData['Username'],
+                'FullName' => @$InsertData['FirstName'].' '.@$InsertData['LastName'],
+                'ProfilePic' => @$InsertData['ProfilePic'],
+            )));
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
@@ -187,6 +207,7 @@ class Users_model extends CI_Model
                 $UpdateArray['EmailForChange'] = $UpdateArray['Email'];
 
                 /* Genrate a Token for Email verification and save to tokens table. */
+                $this->load->model('Recovery_model');
                 send_mail(array(
                     'emailTo' => $UpdateArray['EmailForChange'],
                     'template_id' => 'd-c9a4320dc3f740799d1d5861e032df59',
@@ -312,6 +333,14 @@ class Users_model extends CI_Model
         }
 
         $this->Entity_model->updateEntityInfo($UserID, array('StatusID' => @$Input['StatusID']));
+
+        /* Edit Into MongoDB */
+        mongoDBConnection();
+        $this->fantasydb->tbl_users->updateOne(
+            ['_id'    => (int) $UserID],
+            ['$set'   => array_filter(array('UserName' => @$UpdateArray['UserName'],'FullName' => @$UpdateArray['FirstName'].' '.@$UpdateArray['LastName'],'ProfilePic' => @$UpdateArray['ProfilePic']))],
+            ['upsert' => true]
+        );
         return TRUE;
     }
 
@@ -365,6 +394,11 @@ class Users_model extends CI_Model
             $this->db->delete('tbl_users_session', array('UserID' => $UserID));
             /* Delete session - ends */
 
+            /* Delete Other Unverified Entries */
+            if(!empty($Email)){
+                $this->db->query('DELETE E FROM tbl_entity E, tbl_users U WHERE E.EntityID = U.UserID AND U.EmailForChange = "'.$Email.'" AND U.UserID != '.$UserID);
+            }
+
             $this->db->trans_complete();
             if ($this->db->trans_status() === FALSE) {
                 return FALSE;
@@ -391,6 +425,11 @@ class Users_model extends CI_Model
             /* change entity status to activate */
             if ($UserData['StatusID'] == 1) {
                 $this->Entity_model->updateEntityInfo($UserID, array("StatusID" => 2));
+            }
+
+            /* Delete Other Unverified Entries */
+            if(!empty($PhoneNumber)){
+                $this->db->query('DELETE E FROM tbl_entity E, tbl_users U WHERE E.EntityID = U.UserID AND U.PhoneNumberForChange = "'.$PhoneNumber.'" AND U.UserID != '.$UserID);
             }
 
             /* Manage Verification Bonus */
@@ -582,6 +621,15 @@ class Users_model extends CI_Model
         }
         if (!empty($Where['PhoneNumber'])) {
             $this->db->where("U.PhoneNumber", $Where['PhoneNumber']);
+        }
+        if (!empty($Where['Status'])) {
+            $this->db->having("Status", $Where['Status']);
+        }
+        if (!empty($Where['EmailStatus'])) {
+            $this->db->having("EmailStatus", $Where['EmailStatus']);
+        }
+        if (!empty($Where['PhoneStatus'])) {
+            $this->db->having("PhoneStatus", $Where['PhoneStatus']);
         }
         if (!empty($Where['LoginKeyword'])) {
             $this->db->group_start();

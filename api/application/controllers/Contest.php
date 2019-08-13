@@ -11,7 +11,7 @@ class Contest extends API_Controller_Secure
         $this->load->model('Contest_model');
         $this->load->model('Sports_model');
         $this->load->model('Settings_model');
-      //  mongoDBConnection();
+        mongoDBConnection();
     }
 
     /*
@@ -27,12 +27,12 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim|required|numeric');
-        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim|required|integer');
+        $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . ($this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
         $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]|callback_validateMatchDateTime[Contest]');
-        if (!empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
                 $this->form_validation->set_rules('CustomizeWinning[' . $Key . '][From]', 'From', 'trim|required|integer');
@@ -59,9 +59,9 @@ class Contest extends API_Controller_Secure
             }
 
             /* Check Total Percent */
-            if ($TotalPercent < 90 || $TotalPercent > 100) {
+            if ($TotalPercent > 100) {
                 $this->Return['ResponseCode'] = 500;
-                $this->Return['Message'] = "Customize Winners Percent should be 90% to 100%.";
+                $this->Return['Message'] = "Customize Winners Percent should be less than or equals to 100%.";
                 exit;
             }
 
@@ -71,10 +71,11 @@ class Contest extends API_Controller_Secure
                 $this->Return['Message'] = "Customize Winning Amount should be less than or equals to Winning Amount";
                 exit;
             }
-        } else {
+        }
+        if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && (empty($this->Post['CustomizeWinning']) || !is_array($this->Post['CustomizeWinning']))) {
             $this->Return['ResponseCode'] = 500;
-            $this->Return['Message'] = "Customize winning data is required.";
-            exit;
+			$this->Return['Message'] = "Customize winning data is required.";
+			exit;
         }
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
@@ -110,9 +111,9 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Contests Data */
-        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)),(!empty($this->ContestID)) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+        $ContestData = $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('ContestID' => @$this->ContestID, 'MatchID' => @$this->MatchID, 'ContestType' => @$this->Post['ContestType'], 'SeriesID' => @$this->SeriesID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID)),(!empty($this->ContestID) || !empty($this->Post['UserInvitationCode'])) ? FALSE : TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         if (!empty($ContestData)) {
-            $this->Return['Data'] = (!empty($this->ContestID)) ? $ContestData : $ContestData['Data'];
+            $this->Return['Data'] = (!empty($this->ContestID) || !empty($this->Post['UserInvitationCode'])) ? $ContestData : $ContestData['Data'];
         }
     }
 
@@ -125,6 +126,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No,All]');
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal,Head to Head]');
         $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -141,9 +143,12 @@ class Contest extends API_Controller_Secure
         $ContestTypes[] = array('Key' => 'Mega Contest', 'TagLine' => 'Get ready for mega winnings!', 'Where' => array('ContestType' => 'Mega'));
         $ContestTypes[] = array('Key' => 'Winner Takes All', 'TagLine' => 'Everything To Play For', 'Where' => array('ContestType' => 'Winner Takes All'));
         $ContestTypes[] = array('Key' => 'Only For Beginners', 'TagLine' => 'Play Your First Contest Now', 'Where' => array('ContestType' => 'Only For Beginners'));
+        if ($this->Post['Privacy'] == 'All' || $this->Post['Privacy'] == 'Yes') {
+            $ContestTypes[] = array('Key' => 'Private Contest', 'TagLine' => 'Play with friends and Family', 'Where' => array('ContestType' => 'Normal','Privacy' => 'Yes'));
+        }
 
         foreach ($ContestTypes as $key => $Contests) {
-            array_push($ContestData, $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('MatchID' => @$this->MatchID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID), $Contests['Where']), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize'])['Data']);
+            array_push($ContestData, $this->Contest_model->getContests(@$this->Post['Params'], array_merge($this->Post, array('MatchID' => @$this->MatchID, 'UserID' => @$this->UserID, 'SessionUserID' => $this->SessionUserID, 'StatusID' => @$this->StatusID), $Contests['Where']), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize'])['Data']);
             $ContestData[$key]['Key'] = $Contests['Key'];
             $ContestData[$key]['TagLine'] = $Contests['TagLine'];
         }
@@ -330,13 +335,13 @@ class Contest extends API_Controller_Secure
         if ($Contest['Status'] == 'Pending' || $Contest['Status'] == 'Cancelled') {
 
             /* Get Joined Contest Users Data (MySQL) */
-            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
         } else {
 
             /* Get Joined Contest Users Data (MongoDB) */
-            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post, array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
+            $JoinedContestData = $this->Contest_model->getJoinedContestsUsersMongoDB(array_merge($this->Post, array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID)), @$this->Post['PageNo'], @$this->Post['PageSize']);
             if (!$JoinedContestData) {
-                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => $this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+                $JoinedContestData = $this->Contest_model->getJoinedContestsUsers(@$this->Post['Params'], array('UserID' => $this->SessionUserID, 'MatchID' => @$this->MatchID, 'ContestID' => $this->ContestID), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
             }
         }
         if (!empty($JoinedContestData)) {
@@ -455,14 +460,15 @@ class Contest extends API_Controller_Secure
         }
 
         /* To Check If Contest Is Joined With Old Team*/
-        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->OldUserTeamID.' LIMIT 1');
-        if ($Query->num_rows() == 0) {
+        $Where = array('SessionUserID' => $this->SessionUserID, 'ContestID' => $this->ContestID, 'UserTeamID' => $this->OldUserTeamID);
+            $Response = $this->Contest_model->getJoinedContests('', $Where, TRUE, 1, 1);
+        if (empty($Response['Data']['TotalRecords'])) {
             $this->form_validation->set_message('validateContestStatus', 'You can switch team only with joined contest.');
             return FALSE;
         }
 
         /* To Check If Contest Is Already Joined With New Team*/
-        $Query = $this->db->query('SELECT ContestID FROM sports_contest WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->UserTeamID.' LIMIT 1');
+        $Query = $this->db->query('SELECT ContestID FROM sports_contest_join WHERE UserID = '.$this->SessionUserID.' AND ContestID = '.$this->ContestID.' AND UserTeamID = '.$this->UserTeamID.' LIMIT 1');
         if ($Query->num_rows() > 0) {
             $this->form_validation->set_message('validateContestStatus', 'Contest already joined with this team.');
             return FALSE;
@@ -565,6 +571,8 @@ class Contest extends API_Controller_Secure
                     $ContestEntryRemainingFees = $ContestEntryRemainingFees - $WalletAmountDeduction;
                 }
                 if ($ContestEntryRemainingFees > 0) {
+                    $UserData['RemainingFee'] = $ContestEntryRemainingFees;
+                    $this->Return['Data'] = $UserData;
                     $this->form_validation->set_message('validateUserJoinContest', 'Insufficient wallet amount.');
                     return FALSE;
                 }

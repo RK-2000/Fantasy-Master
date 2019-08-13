@@ -1,4 +1,7 @@
 app.controller('PageController', function ($scope, $http,$timeout){
+
+    var FromDate = ToDate = ''; 
+
     $scope.data.pageSize = 15;
     /*----------------*/
     $scope.getFilterData = function ()
@@ -6,6 +9,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&StatusID=2&Params=SeriesName,SeriesGUID&'+$('#filterPanel form').serialize();
         $http.post(API_URL+'admin/matches/getFilterData', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data){ 
                 /* success case */
              $scope.filterData =  response.Data;
@@ -15,6 +19,43 @@ app.controller('PageController', function ($scope, $http,$timeout){
          }
      });
     }
+
+    /* Reset form */
+    $scope.resetUserForm = function(){
+        $('#filterForm1').trigger('reset'); 
+        $('.chosen-select').trigger('chosen:updated');
+        $('#dateRange span').html('Select Date Range');
+        FromDate = ToDate = '';
+    }
+
+    /* Add Date Range Picker */
+    $scope.initDateRangePicker = function (){
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+        $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+            FromDate = picker.startDate.format('YYYY-MM-DD');
+            ToDate   = picker.endDate.format('YYYY-MM-DD');
+            $('#dateRange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+        });
+        $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+            $('#dateRange span').html('Select Date Range');
+            FromDate = ToDate = '';
+        });
+    }
+
 
     $scope.getTeamData = function (SeriesGUID,LocalTeamGUID='')
     {
@@ -28,6 +69,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey=' + SessionKey + '&LocalTeamGUID='+LocalTeamGUID+'&SeriesGUID='+ SeriesGUID+'&Params=TeamNameLocal,TeamNameVisitor,TeamGUID&' + $('#filterPanel form').serialize();
         $http.post(API_URL + 'admin/matches/getTeamData', data, contentType).then(function (response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data) {
                 /* success case */
                 if (LocalTeamGUID != '') {
@@ -54,9 +96,10 @@ app.controller('PageController', function ($scope, $http,$timeout){
     {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&OrderByToday=Yes&Params='+'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&'+$('#filterForm').serialize()+'&'+$('#filterForm1').serialize();
+        var data = 'SessionKey='+SessionKey+ '&MatchStartFrom=' + FromDate + '&MatchEndTo=' + ToDate +'&OrderByToday=Yes&Params='+'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&'+$('#filterForm').serialize()+'&'+$('#filterForm1').serialize();
         $http.post(API_URL+'admin/matches/getMatches', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200 && response.Data.Records){ /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -92,6 +135,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL+'admin/matches/getMatches', 'MatchGUID='+MatchGUID+'&Params=Status,MatchClosedInMinutes,SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation&SessionKey='+SessionKey, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data.Records[0]
@@ -111,6 +155,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.pageLoading = true;
         $http.post(API_URL+'category/getCategory', 'SessionKey='+SessionKey+'&CategoryGUID='+CategoryGUID, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -129,9 +174,11 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&'+$("form[name='edit_form']").serialize();
         $http.post(API_URL+'admin/matches/changeStatus', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
-                $scope.data.dataList[$scope.data.Position] = response.Data;
+                $scope.data.dataList[$scope.data.Position].MatchClosedInMinutes = response.Data.MatchClosedInMinutes;
+                $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
                 $('.modal-header .close').click();
             }else{
                 alertify.error(response.Message);

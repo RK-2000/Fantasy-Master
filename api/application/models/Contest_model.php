@@ -47,16 +47,16 @@ class Contest_model extends CI_Model
                 "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
                 "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
                 "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-                "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+                "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
                 "EntryType" => @$Input['EntryType'],
-                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+                "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
                 "CashBonusContribution" => @$Input['CashBonusContribution'],
                 "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay'],
                 "SeriesID" => @$SeriesID,
                 "MatchID" => @$Match,
                 "UserInvitationCode" => random_string('alnum', 6)
             ));
-            $InsertData['CustomizeWinning'] = ($InsertData['IsPaid'] == 'Yes') ? (($InsertData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $InsertData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
+            $InsertData['CustomizeWinning'] = ($InsertData['WinningAmount'] > 0) ? (($InsertData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $InsertData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
             $this->db->insert('sports_contest', $InsertData);
 
             $this->db->trans_complete();
@@ -88,13 +88,13 @@ class Contest_model extends CI_Model
             "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
             "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-            "NoOfWinners" => (@$Input['IsPaid'] == 'Yes') ? @$Input['NoOfWinners'] : 1,
+            "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
             "EntryType" => @$Input['EntryType'],
-            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? @$Input['UserJoinLimit'] : 1,
+            "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
             "IsPrivacyNameDisplay" => @$Input['IsPrivacyNameDisplay']
         ));
-        $UpdateData['CustomizeWinning'] = ($UpdateData['IsPaid'] == 'Yes') ? (($UpdateData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $UpdateData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
+        $UpdateData['CustomizeWinning'] = ($UpdateData['WinningAmount'] > 0) ? (($UpdateData['ContestSize'] == 2) ? json_encode(array(array('From' => 1, 'To' => 1, 'Percent' => 100, 'WinningAmount' => $UpdateData['WinningAmount']))) : json_encode(@$Input['CustomizeWinning'])) : NULL;
         $this->db->where('ContestID', $ContestID);
         $this->db->limit(1);
         $this->db->update('sports_contest', $UpdateData);
@@ -115,7 +115,6 @@ class Contest_model extends CI_Model
      */
     function cancelContest($Input = array(), $SessionUserID, $ContestID)
     {
-
         /* Update Contest Status */
         $this->db->where('EntityID', $ContestID);
         $this->db->limit(1);
@@ -202,7 +201,7 @@ class Contest_model extends CI_Model
                 'UserRank' => 'JC.UserRank',
                 'TotalAmountReceived' => '(SELECT IFNULL(SUM(SC.EntryFee),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalAmountReceived',
                 'TotalWinningAmount'  => '(SELECT IFNULL(SUM(SJC.UserWinningAmount),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalWinningAmount',
-                'UserTeamDetails' => "(SELECT CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'UserTeamGUID', SUT.UserTeamGUID, 'UserTeamName', SUT.UserTeamName, 'UserTeamType', SUT.UserTeamType, 'TotalPoints', SJC.TotalPoints FROM sports_contest_join SJC, sports_users_teams SUT WHERE SJC.UserTeamID = SUT.UserTeamID AND SJC.ContestID = C.ContestID AND SJC.UserID = " . $Where['SessionUserID'] . " ORDER BY SUT.UserTeamID DESC) UserTeamDetails"
+                'UserTeamDetails' => "( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'UserTeamGUID', SUT.UserTeamGUID, 'UserTeamName', SUT.UserTeamName,'UserTeamType',SUT.UserTeamType,'TotalPoints', SJC.TotalPoints) ), ']' ) FROM sports_contest_join SJC, sports_users_teams SUT WHERE SJC.UserTeamID = SUT.UserTeamID AND SJC.ContestID = C.ContestID AND SJC.UserID = " . $Where['SessionUserID'] . " ORDER BY SUT.UserTeamID DESC)  UserTeamDetails"
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -914,7 +913,7 @@ class Contest_model extends CI_Model
             $Contest['UserJoinLimit']         = $ContestData['UserJoinLimit'];
             $Contest['CashBonusContribution'] = $ContestData['CashBonusContribution'];
             $Contest['IsPrivacyNameDisplay']  = $ContestData['IsPrivacyNameDisplay'];
-            $Contest['CustomizeWinning']      = json_deocde($ContestData['CustomizeWinning'], TRUE);
+            $Contest['CustomizeWinning']      = json_decode($ContestData['CustomizeWinning'], TRUE);
             $this->addContest($Contest, $ContestData['UserID'], array($ContestData['MatchID']), $ContestData['SeriesID']);
         }
 
@@ -1189,7 +1188,7 @@ class Contest_model extends CI_Model
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID,PlayerPosition', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Records[$key]['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['MatchIDAsUse'],$Records[$key]['UserIDAsUse']);
@@ -1200,7 +1199,7 @@ class Contest_model extends CI_Model
                 $Record = $Query->row_array();
                 if (in_array('UserTeamPlayers', $Params)) {
                     if (in_array('UserTeamPlayers', $Params)) {
-                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
+                        $UserTeamPlayers = $this->getUserTeamPlayers('PlayerSelectedPercent,TopPlayer,MyTeamPlayer,MatchType,PointCredits,PlayerRole,TeamGUID,PlayerName,PlayerPic,SeriesGUID,PlayerPosition', array('UserTeamID' => $Record['UserTeamIDAsUse'],'MatchID' => $Record['MatchIDAsUse'],'UserID' => $Record['UserIDAsUse']));
                         $Record['UserTeamPlayers']  = ($UserTeamPlayers) ? $UserTeamPlayers : array();
                     }
                     unset($Record['UserTeamIDAsUse'],$Record['MatchIDAsUse'],$Record['UserIDAsUse']);
@@ -1218,7 +1217,7 @@ class Contest_model extends CI_Model
     {
         /* Get Joined Contest Users */
         $ContestCollection   = $this->fantasydb->{'Contest_' . $Where['ContestID']};
-        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => $PageSize, 'sort' => ['UserRank' => 1]]));
+        $JoinedContestsUsers = iterator_to_array($ContestCollection->find([], ['projection' => ['_id' => 0, 'UserGUID' => 1, 'UserTeamName' => 1, 'Username' => 1, 'FullName' => 1, 'ProfilePic' => 1, 'TotalPoints' => 1, 'UserTeamPlayers' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1,'TaxAmount' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['UserRank' => 1]]));
         if (count($JoinedContestsUsers) > 0) {
             $Return['Data']['TotalRecords'] = $ContestCollection->count();
             $Return['Data']['Records'] = $JoinedContestsUsers;

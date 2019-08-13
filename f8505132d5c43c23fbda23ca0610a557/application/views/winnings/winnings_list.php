@@ -1,5 +1,5 @@
 <header class="panel-heading">
-  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1>
+  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1> 
 </header>
 
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
@@ -30,28 +30,26 @@
 					<th style="width: 100px;">Contest Type</th>
 					<th class="text-center" style="width: 200px;">Contest Joined</th>
 					<th class="text-center" style="width: 100px;">Contest Size</th>
-					<th class="text-center" style="width: 100px;" class="text-center">Fee</th>
+					<th class="text-center" style="width: 100px;" class="text-center">Entry Fee</th>
 					<th class="text-center" style="width: 100px;" class="text-center">No. of Winners</th>
 					<th class="text-center" style="width: 100px;" class="text-center">Winning Amount</th>
 					<th style="width: 100px;" class="text-center">Match Date</th>
 					<th style="width: 100px;" class="text-center">Status</th>
-					<!-- <th style="width: 100px;" class="text-center">Action</th> -->
+					<th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>
 			<!-- table body -->
 			<tbody id="tabledivbody">
 
-
-
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
-				
+					
 					<td>
-						<div class="content float-left"><strong>{{row.ContestName}}</strong>
+						<div class="content float-left"><strong><a href="javascript:void(0)" ng-click="loadContestJoinedUser(key,row.ContestGUID)">{{row.ContestName}}</a></strong>
 							<div ng-if="row.TeamNameLocal">({{row.TeamNameLocal}} v/s {{row.TeamNameVisitor}})</div><div ng-if="!row.TeamNameLocal">-</div>
 						</div>
 					</td>
 					<td>
-						<p>{{!row.ContestType ? '-' : row.ContestType }}</p>
+						<p>{{row.ContestType}}</p>
 					</td>
 					
 					<td class="text-center">
@@ -63,31 +61,29 @@
 					</td>
 					
 					<td class="text-center" >
-						<p>{{row.EntryFee}}</p>
+						<p>{{data.DEFAULT_CURRENCY}}{{row.EntryFee}}</p>
 					</td>
 					
 					<td class="text-center" >
 						<p>{{row.NoOfWinners}}</p>
 					</td>
 					<td class="text-center" >
-						<p>{{row.WinningAmount}}</p>
+						<p>{{data.DEFAULT_CURRENCY}}{{row.WinningAmount}}</p>
 					</td>
 					<td>
 						<p>{{row.MatchStartDateTime}}</p>
 					</td>
 					<td class="text-center"><span ng-class="{Pending:'text-danger', Running:'text-success',Cancelled:'text-danger',Completed:'text-success'}[row.Status]">{{row.Status}}</span></td> 
-
-					<!-- <td class="text-center" ng-if="row.TotalJoined > 0">
-						<div class="dropdown" >
+					<td class="text-center">
+						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormList(key, row.ContestGUID)">Participated Teams</a>
+								<a class="dropdown-item" href="" ng-click="loadContestJoinedUser(key,row.ContestGUID)">Details</a>
+								<a class="dropdown-item" target="_blank"
+                                    href="joinedusers?ContestGUID={{row.ContestGUID}}" ng-if="row.Status != 'Cancelled'">Joined Users</a>
 							</div>
 						</div>
 					</td>
-					<td class="text-center" ng-if="row.TotalJoined == 0">
-						-
-					</td> -->
 				</tr>
 			</tbody>
 		</table>
@@ -207,6 +203,18 @@
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
+									<label class="filter-col" for="Status">Contest Status</label>
+									<select id="Status" name="Status" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Running">Running</option>
+										<option value="Cancelled">Cancelled</option>
+										<option value="Completed">Completed</option>
+									</select>   
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
 									<label class="filter-col" for="ParentCategory">Search</label>
 									<input type="text" class="form-control" name="Keyword" placeholder="Search">
 								</div>
@@ -223,6 +231,18 @@
 
 				</form>
 				<!-- Filter form/ -->
+			</div>
+		</div>
+	</div>
+	<!-- contest joined user Modal -->
+	<div class="modal fade" id="contestJoinedUsers_model">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title h5">Contest Details</h3>     	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div ng-include="templateURLEdit"></div>
 			</div>
 		</div>
 	</div>

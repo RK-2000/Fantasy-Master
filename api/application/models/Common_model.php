@@ -5,6 +5,7 @@ class Common_model extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
+		mongoDBConnection();
 	}
 
 	/*
@@ -15,7 +16,7 @@ class Common_model extends CI_Model
 		if (!API_SAVE_LOG) {
 			return TRUE;
 		}
-		@$this->db->insert('log_api', array(
+		$this->fantasydb->log_api->insertOne(array(
 			'URL' 		=> current_url(),
 			'RawData'	=> @file_get_contents("php://input"),
 			'DataJ'		=> json_encode(array_merge(array("API" => $this->classFirstSegment = $this->uri->segment(2)), $this->Post, $_FILES)),
@@ -31,7 +32,7 @@ class Common_model extends CI_Model
         if (!CRON_SAVE_LOG) {
             return true;
         }
-        $this->db->insert('log_cron_api', array('CronID' => $CronID, 'Response' => @json_encode($Response, JSON_UNESCAPED_UNICODE)));
+        $this->fantasydb->log_cron_api->insertOne(array('CronID' => $CronID, 'Response' => @json_encode($Response, JSON_UNESCAPED_UNICODE)));
     }
 
     /*
@@ -42,8 +43,8 @@ class Common_model extends CI_Model
         if (!CRON_SAVE_LOG) {
             return true;
         }
-        $this->db->insert('log_cron', array('CronType' => $CronType, 'EntryDate' => date('Y-m-d H:i:s')));
-        return $this->db->insert_id();
+        $Insert = $this->fantasydb->log_cron->insertOne(array('CronType' => $CronType, 'EntryDate' => date('Y-m-d H:i:s')));
+        return $Insert->getInsertedId();
     }
 
     /*
@@ -53,10 +54,11 @@ class Common_model extends CI_Model
     {
         if (!CRON_SAVE_LOG) {
             return true;
-        }
-        $this->db->where('CronID', $CronID);
-        $this->db->limit(1);
-        $this->db->update('log_cron', array('CompletionDate' => date('Y-m-d H:i:s'), 'CronStatus' => $CronStatus));
+		}
+		$this->fantasydb->log_cron->updateOne(
+            ['_id'    => $CronID],
+            ['$set'   => array('CompletionDate' => date('Y-m-d H:i:s'), 'CronStatus' => $CronStatus)]
+        );
     }
 
 

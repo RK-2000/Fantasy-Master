@@ -9,6 +9,7 @@ class Users extends API_Controller_Secure
     {
         parent::__construct();
         $this->load->model('Recovery_model');
+        $this->load->model('Utility_model');
     }
 
     /*
@@ -20,54 +21,70 @@ class Users extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+        $this->form_validation->set_rules('NotificationType[]', 'NotificationType', 'trim|required');
+        $this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
 		$this->form_validation->set_rules('Title', 'Title', 'trim|required');
-		$this->form_validation->set_rules('NotificationType', 'NotificationType', 'trim|required|in_list[Email,WebsiteNotification]');
-		$this->form_validation->set_rules('EmailMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'Email' ? '|required' : ''));
-		$this->form_validation->set_rules('WebsiteMessage', 'Message', 'trim' . ($this->Post['NotificationType'] == 'WebsiteNotification' ? '|required' : ''));
-		$this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
+		$this->form_validation->set_rules('Message', 'Message', 'trim|required');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-
-		$UsersIds = array();
-		if(!isset($this->Post['AllUsers'])){
-			$TotalUsers = count($this->Post['Users']);
-			if($TotalUsers > 0){
-				for ($I = 0; $I < $TotalUsers; $I++) {
-					$UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
-					if(!$UserID){ continue; }
-					$UsersIds[] = $UserID['EntityID'];
-				}
-			}else{
-				$this->Return['ResponseCode'] = 500;
-				$this->Return['Message'] = "Please select users.";
-				exit;
-			}
-		}
-		$UsersData = $this->Users_model->getUsers('
-				U.UserID,	 
-				U.Username,
-				Email,
-				EmailStatus
-				', array('AdminUsers' => 'No','EmailStatus'=>'Verified','UserTypeID'=>2,'UserIDIn' => $UsersIds), TRUE, 1, 1000);
+        
+        if(@$this->Post['AllUsers'] == 'Yes'){
+            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserTypeID = 2');
+            $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
+        }else{
+            $UsersIds = array();
+            if(!isset($this->Post['AllUsers'])){
+                $TotalUsers = count($this->Post['Users']);
+                if($TotalUsers > 0){
+                    for ($I = 0; $I < $TotalUsers; $I++) {
+                        $UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
+                        if(!$UserID){ continue; }
+                        $UsersIds[] = $UserID['EntityID'];
+                    }
+                }else{
+                    $this->Return['ResponseCode'] = 500;
+                    $this->Return['Message'] = "Please select users.";
+                    exit;
+                }
+            }
+            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserID IN ('.implode(",", $UsersIds).')');
+            $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
+        }
 		if ($UsersData) {
 
+            /* Send Push Notification */
+            if(in_array('Push', $this->Post['NotificationType'])){
+                boradcastPushNotifications($this->Post['Title'],$this->Post['Message']);
+            }
+
+            /* Send Website Notification */
+            if(in_array('Website', $this->Post['NotificationType'])){
+                foreach($UsersData as $Value){
+                    $this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['Message']);
+                } 
+            }
+
 			/* Send Email Notification */
-			if($this->Post['NotificationType'] == 'Email'){
+			if(in_array('Email', $this->Post['NotificationType'])){
 				sendMail(array(
-					'emailTo' => implode(',', array_column($UsersData['Data']['Records'], 'Email')),
+					'emailTo' => implode(',', array_filter(array_column($UsersData, 'Email'))),
 					'emailSubject' =>  SITE_NAME ."-".$this->Post['Title'],
 					'emailMessage' => emailTemplate($this->load->view('emailer/admin_email', array(
-						"Message" => $this->Post['EmailMessage']
+						"Message" => $this->Post['Message']
 					), TRUE))
 				));
 			}
 
-			/* Send Website Notification */
-			if($this->Post['NotificationType'] == 'WebsiteNotification'){
-				foreach($UsersData['Data']['Records'] as $Value){
-					$this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['WebsiteMessage']);
-				} 
-			}
+            /* Send SMS Notification */
+            if(in_array('SMS', $this->Post['NotificationType'])){
+                foreach($UsersData as $Value){
+                    if(empty($Value['PhoneNumber'])){ continue; }
+                    $this->Utility_model->sendMobileSMS(array(
+                                'PhoneNumber' => $Value['PhoneNumber'],
+                                'Text' =>  $this->Post['Message']
+                            ));
+                } 
+            }
 		}
 		$this->Return['Message'] = 'Success';
 	}
@@ -108,8 +125,33 @@ class Users extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->set_rules('EmailStatus', 'EmailStatus', 'trim|in_list[Pending,Verified]');
+        $this->form_validation->set_rules('PhoneStatus', 'PhoneStatus', 'trim|in_list[Pending,Verified]');
+        $this->form_validation->set_rules('IsPrivacyNameDisplay', 'IsPrivacyNameDisplay', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
+
+        /* Get User Details */
+        $UserData = $this->Users_model->getUsers('FirstName,Email,EmailForChange,PhoneNumberForChange', array(
+            'UserID' => $this->UserID
+        ));
+
+        /* Update Email Status */
+        if(@$this->Post['EmailStatus'] == 'Verified' && !empty($UserData['EmailForChange'])){
+            if ($this->Users_model->updateEmail($this->UserID, $UserData['EmailForChange'])) {
+                send_mail(array(
+                    'emailTo'       => $UserData['Email'],
+                    'template_id'   => 'd-e82c099a9b86439a9f5990722d59d0d6',
+                    'Subject'       => 'Your' . SITE_NAME . ' email has been updated!',
+                    "Name"          => $UserData['FirstName']
+                ));
+            }
+        }
+
+        /* Update Phone Number Status */
+        if(@$this->Post['PhoneStatus'] == 'Verified' && !empty($UserData['PhoneNumberForChange'])){
+            $this->Users_model->updatePhoneNumber($this->UserID, $UserData['PhoneNumberForChange']);
+        }
 
         $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => @$this->Post['IsPrivacyNameDisplay']));
         $this->Entity_model->updateEntityInfo($this->UserID, array("StatusID" => $this->StatusID));
@@ -278,12 +320,14 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
+        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|less_than_equal_to[10000]');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
+        $this->form_validation->set_message('less_than_equal_to', '{field} should be less than or equals to {param}');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         $this->Users_model->addToWallet(array_merge($this->Post, array('CashBonus' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
+        $this->Return['Data'] = $this->Users_model->getUsers('CashBonus', array('UserID' => $this->UserID));
         $this->Return['Message'] = "Cash bonus added Successfully.";
     }
 
@@ -294,12 +338,14 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric');
+        $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|less_than_equal_to[10000]');
         $this->form_validation->set_rules('Narration', 'Narration', 'trim|required');
+        $this->form_validation->set_message('less_than_equal_to', '{field} should be less than or equals to {param}');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
         $this->Users_model->addToWallet(array_merge($this->Post, array('WalletAmount' => $this->Post['Amount'], 'TransactionType' => 'Cr')), $this->UserID, $this->StatusID);
+        $this->Return['Data'] = $this->Users_model->getUsers('WalletAmount', array('UserID' => $this->UserID));
         $this->Return['Message'] = "Deposit added Successfully.";
     }
 
@@ -337,7 +383,7 @@ class Users extends API_Controller_Secure
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL . 'WithdrawalList.csv';
+            $this->Return['Data'] = 'WithdrawalList.csv';
         } else {
             $this->Return['Message'] = "Withdrawal history not found.";
         }
@@ -381,7 +427,7 @@ class Users extends API_Controller_Secure
                 fputcsv($FP, $Row);
             }
             $this->Return['ResponseCode'] = 200;
-            $this->Return['Data'] = BASE_URL . 'TransactionList.csv';
+            $this->Return['Data'] = 'TransactionList.csv';
         } else {
             $this->Return['Message'] = "Wallet history not found.";
         }

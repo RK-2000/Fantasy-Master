@@ -11,7 +11,7 @@ class Utilities extends API_Controller
         $this->load->model('Utility_model');
         $this->load->model('Sports_model');
         $this->load->model('Contest_model');
-        //mongoDBConnection();
+        mongoDBConnection();
     }
 
     /*
@@ -88,6 +88,7 @@ class Utilities extends API_Controller
         $this->load->model('Post_model');
         $Posts = $this->Post_model->getPosts('
             P.PostGUID,
+            E.EntryDate,
             P.PostContent,
             P.PostCaption,
             ', array(), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);

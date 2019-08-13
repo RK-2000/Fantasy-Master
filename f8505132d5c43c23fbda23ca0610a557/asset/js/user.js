@@ -1,11 +1,18 @@
 app.controller('PageController', function($scope, $http, $timeout) {
 
     var FromDate = ToDate = ''; 
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    
+    $timeout(function(){            
+       $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+    }, 200);
+    
     /*list*/
     $scope.applyFilter = function() {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
     }
+    
     /* Reset form */
     $scope.resetUserForm = function(){
         $('#filterForm1').trigger('reset'); 
@@ -67,10 +74,11 @@ app.controller('PageController', function($scope, $http, $timeout) {
         }
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status,EmailStatus, ReferredCount,StatusID,WalletAmount,CashBonus,WinningAmount&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
+        var data = 'SessionKey=' + SessionKey +'&ListType='+ListType+'&IsAdmin=No&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' +'Params=RegisteredOn,EmailForChange,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber,PhoneNumberForChange, Status,EmailStatus,PhoneStatus, ReferredCount,StatusID,WalletAmount,CashBonus,WinningAmount&'+$('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
 
         $http.post(API_URL + 'admin/users', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -89,6 +97,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&Type=Email&UserGUID='+ UserGUID;
         $http.post(API_URL + 'signup/resendVerification', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
             } else {
@@ -102,8 +111,9 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/edit_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=IsPrivacyNameDisplay,Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=IsPrivacyNameDisplay,Status,EmailStatus,PhoneStatus,ProfilePic,Email', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -126,8 +136,9 @@ app.controller('PageController', function($scope, $http, $timeout) {
     $scope.loadFormChangePassword = function(Position, UserGUID) {
         $scope.data.Position = Position;
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Email', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.ChangePasswordformData = response.Data
@@ -145,8 +156,9 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/addCashBonus_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Status', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Email,CashBonus', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -170,8 +182,9 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/addCashBonusDeposit_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Status', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Email,WalletAmount', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -198,6 +211,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'admin/users/getReferredUsers', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Email,Status, Gender, BirthDate, PhoneNumber', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
@@ -223,6 +237,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK,PanStatus,BankStatus', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data;
@@ -250,6 +265,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
             var data = 'SessionKey=' + SessionKey + '&' + $('#records_form').serialize();
             $http.post(API_URL + 'admin/entity/deleteSelected', data, contentType).then(function(response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     alertify.success(response.Message);
                     $scope.applyFilter();
@@ -274,9 +290,14 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&' + $('#edit_form').serialize();
         $http.post(API_URL + 'admin/users/changeStatus', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $('.modal-header .close').click();
+                $timeout(function(){            
+                   window.location.reload();
+                }, 200);
             } else {
                 alertify.error(response.Message);
             }
@@ -290,6 +311,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&'+$('#changePassword_form').serialize();
         $http.post(API_URL + 'users/changePassword', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 ) { /* success case */
                 $('.modal-header .close').click();
                 alertify.success(response.Message);
@@ -306,9 +328,10 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&Status=Completed&Narration=Admin Cash Bonus&' + $('#addCash_form').serialize();
         $http.post(API_URL + 'admin/users/addCashBonus', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
-                $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $scope.data.dataList[$scope.data.Position].CashBonus = response.Data.CashBonus;
                 $('.modal-header .close').click();
             } else {
                 alertify.error(response.Message);
@@ -322,9 +345,10 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&Status=Completed&Narration=Admin Deposit Money&' + $('#addCashDeposit_form').serialize();
         $http.post(API_URL + 'admin/users/addCashDeposit', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
-                $scope.data.dataList[$scope.data.Position].Status = response.Data.Status;
+                $scope.data.dataList[$scope.data.Position].WalletAmount = response.Data.WalletAmount;
                 $('.modal-header .close').click();
             } else {
                 alertify.error(response.Message);
@@ -345,6 +369,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey=' + SessionKey + '&UserGUID=' +UserGUID+'&VetificationType='+VetificationType+Params ;
         $http.post(API_URL + 'admin/users/changeVerificationStatus', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 alertify.success(response.Message);
                 
@@ -361,8 +386,9 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.Position = Position;
         $scope.templateURLDelete = PATH_TEMPLATE + module + '/delete_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey='+SessionKey+'&UserGUID='+UserGUID+'&Params=Status,ProfilePic', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey='+SessionKey+'&UserGUID='+UserGUID+'&Params=Email,ProfilePic', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data

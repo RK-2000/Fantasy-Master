@@ -36,7 +36,7 @@ exit;
     <link href="assets/css/draftcustom.css?version=<?= VERSION ?>" rel="stylesheet">
     <link href="assets/css/responsive.css?version=<?= VERSION ?>" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet"> 
-    <link rel="stylesheet" href="index_file/custom.css?version=<?= VERSION ?>">
+    <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
     <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.10/angular-material.css" rel="stylesheet">
     <script src="auctionDraft/node_modules/socket.io-client/dist/socket.io.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>

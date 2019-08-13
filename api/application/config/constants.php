@@ -90,19 +90,19 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*------------------------------*/	
 
 /*Site Related Settings*/
-define('SITE_NAME', 'FSL11');
+define('SITE_NAME', 'Fantasy Master');
 define('SITE_CONTACT_EMAIL', 'mwadmin@mailinator.com');
 define('MULTISESSION', true);
 define('PHONE_NO_VERIFICATION', true);
 define('IS_VICECAPTAIN', true);
 define('AUTO_WITHDRAWAL', false);
 define('OTP_WITHDRAWAL', false);
-define('IS_AUCTION', true);
+define('FIREBASE_CHANNEL_NAME', 'fantasy');
 define('DATE_FORMAT',"%Y-%m-%d %H:%i:%s"); /* dd-mm-yyyy hh:i:ss */
 
 /*Pagination*/
 define('PAGESIZE_DEFAULT', 15); /*Required*/
-define('PAGESIZE_MAX', 151); /*Required*/
+define('PAGESIZE_MAX', 150); /*Required*/
 
 /*Image*/
 define('THUMBNAIL_SIZE', 110); /*Required*/
@@ -156,9 +156,9 @@ define('SENDINBLUE_SMS_SENDER', 'EXACT11');
 define('SENDINBLUE_SMS_API_KEY', 'xkeysib-******-72qcrDmbQ0HpGExS');
 
 /* MSG91 SMS API Details */
-define('MSG91_AUTH_KEY', '273511AObV1jwyud5cc067fd');
-define('MSG91_SENDER_ID', 'MFSL11');
-define('MSG91_FROM_EMAIL', 'info@fsl11.com');
+define('MSG91_AUTH_KEY', '273511AObV1jwyuds43f33dds');
+define('MSG91_SENDER_ID', 'DEMO');
+define('MSG91_FROM_EMAIL', 'info@demo.com');
 
 define('POST_PICTURE_URL', BASE_URL . 'uploads/Post/');
 switch (ENVIRONMENT)

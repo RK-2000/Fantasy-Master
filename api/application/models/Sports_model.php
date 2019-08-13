@@ -17,6 +17,18 @@ class Sports_model extends CI_Model
     }
 
     /*
+      Description: Use to update series data.
+     */
+    function updateSeriesData($SeriesID, $Input = array())
+    {
+        if (!empty($Input)) {
+            $this->db->where('SeriesID', $SeriesID);
+            $this->db->limit(1);
+            $this->db->update('sports_series', $Input);
+        }
+    }
+
+    /*
       Description: To get all series
      */
     function getSeries($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
@@ -127,6 +139,14 @@ class Sports_model extends CI_Model
             $this->db->where('TeamID', $TeamID);
             $this->db->limit(1);
             $this->db->update('sports_teams', $UpdateArray);
+
+            /* Edit Into MongoDB */
+            mongoDBConnection();
+            $this->fantasydb->sports_teams->updateOne(
+                ['_id' => $Input['TeamGUID']],
+                ['$set'   => array_filter(array('TeamID' => (int) $TeamID,'TeamFlag' => @$UpdateArray['TeamFlag'],'TeamName' => @$UpdateArray['TeamName'],'TeamNameShort' => @$UpdateArray['TeamNameShort']))],
+                ['upsert' => true]
+            );
         }
         return TRUE;
     }
@@ -368,11 +388,17 @@ class Sports_model extends CI_Model
         if (!empty($Where['TeamIDLocal'])) {
             $this->db->where("M.TeamIDLocal", $Where['TeamIDLocal']);
         }
-        if (!empty($Where['IsPreSquad'])) {
-            $this->db->where("M.IsPreSquad", $Where['IsPreSquad']);
-        }
         if (!empty($Where['TeamIDVisitor'])) {
             $this->db->where("M.TeamIDVisitor", $Where['TeamIDVisitor']);
+        }
+        if (!empty($Where['TeamID'])) {
+            $this->db->group_start();
+            $this->db->where("M.TeamIDLocal", $Where['TeamID']);
+            $this->db->or_where("M.TeamIDVisitor", $Where['TeamID']);
+            $this->db->group_end();
+        }
+        if (!empty($Where['IsPreSquad'])) {
+            $this->db->where("M.IsPreSquad", $Where['IsPreSquad']);
         }
         if (!empty($Where['IsPlayerPointsUpdated'])) {
             $this->db->where("M.IsPlayerPointsUpdated", $Where['IsPlayerPointsUpdated']);
@@ -388,6 +414,12 @@ class Sports_model extends CI_Model
         }
         if (!empty($Where['Filter']) && $Where['Filter'] == 'MyJoinedMatch') {
             $this->db->where('EXISTS (select 1 from sports_contest_join J where J.MatchID = M.MatchID AND J.UserID=' . $Where['SessionUserID'] . ')');
+        }
+        if (!empty($Where['MatchStartFrom'])) {
+            $this->db->where("DATE(M.MatchStartDateTime) >=", $Where['MatchStartFrom']);
+        }
+        if (!empty($Where['MatchEndTo'])) {
+            $this->db->where("DATE(M.MatchStartDateTime) <=", $Where['MatchEndTo']);
         }
         if (!empty($Where['StatusID'])) {
             $this->db->where_in("E.StatusID", ($Where['StatusID'] == 2) ? array(2, 10) : $Where['StatusID']);
@@ -473,7 +505,7 @@ class Sports_model extends CI_Model
         if (!empty($Input)) {
             $this->db->where(array('MatchID' => $MatchID, 'PlayerID' => $PlayerID));
             $this->db->limit(1);
-            $this->db->update('sports_team_players', array('PlayerSalary' => $Input['PlayerSalaryCredit'], 'IsAdminUpdate' => 'Yes'));
+            $this->db->update('sports_team_players', array('PlayerSalary' => $Input['PlayerSalary'], 'IsAdminUpdate' => 'Yes'));
         }
     }
 
@@ -764,7 +796,7 @@ class Sports_model extends CI_Model
                 'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'TotalPoints' => 'TP.TotalPoints',
                 'TotalTeams' => '(SELECT COUNT(UserTeamName) FROM `sports_users_teams` WHERE `MatchID` = M.MatchID) TotalTeams',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID) > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = M.MatchID)*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID)),2),0)) PlayerSelectedPercent'
+                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID) > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = TP.PlayerID AND UT.MatchID = M.MatchID)*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID)),2),0)) PlayerSelectedPercent'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -1619,9 +1651,9 @@ class Sports_model extends CI_Model
 
         /* Get Contest Data */
         if (!empty($MatchID)) {
-            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = ' . $MatchID . ' AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
+            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.UnfilledWinningPercent,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,C.CustomizeWinning,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND C.MatchID = ' . $MatchID . ' AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
         } else {
-            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
+            $ContestsUsers = $this->db->query('SELECT C.ContestID,C.UnfilledWinningPercent,C.Privacy,C.EntryFee,C.ContestFormat,C.ContestSize,C.IsConfirm,C.CustomizeWinning,M.MatchStartDateTime,(SELECT COUNT(TotalPoints) FROM sports_contest_join WHERE ContestID =  C.ContestID ) TotalJoined FROM tbl_entity E, sports_contest C, sports_matches M WHERE E.EntityID = C.ContestID AND C.MatchID = M.MatchID AND E.StatusID IN(1,2) AND LeagueType = "Dfs" AND DATE(M.MatchStartDateTime) <= "' . date('Y-m-d') . '" ORDER BY M.MatchStartDateTime ASC');
         }
         if ($ContestsUsers->num_rows() == 0) {
             return FALSE;
@@ -1629,7 +1661,37 @@ class Sports_model extends CI_Model
 
         foreach ($ContestsUsers->result_array() as $Value) {
             if ($CancelType == "Cancelled") {
-                if (((strtotime($Value['MatchStartDateTime']) - 19800) - strtotime(date('Y-m-d H:i:s'))) > 0) {
+
+                if (((strtotime($Value['MatchStartDateTime'])) - strtotime(date('Y-m-d H:i:s'))) > 0) {
+                    continue;
+                }
+
+                /* To Check Unfilled Contest */
+                if(($Value['UnfilledWinningPercent'] == 'GuranteedPool' || $Value['UnfilledWinningPercent'] == 'Yes') && $Value['ContestSize'] != $Value['TotalJoined']){
+                    if($Value['TotalJoined'] == 0){
+    
+                        /* Update Contest Status */
+                        $this->db->where('EntityID', $Value['ContestID']);
+                        $this->db->limit(1);
+                        $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
+                    }else{
+                        $TotalCollection = $Value['EntryFee'] * $Value['TotalJoined'];
+                        foreach(json_decode($Value['CustomizeWinning'],TRUE) as $WinningValue){
+                            $NewCustomizeWinning[] = array(
+                                            'From'    => $WinningValue['From'],
+                                            'To'      => $WinningValue['To'],
+                                            'Percent' => $WinningValue['Percent'],
+                                            'WinningAmount' => round(($TotalCollection*$WinningValue['Percent'])/100,2)
+                                        );
+                        }
+    
+                        /* Update Contest New Customize Winning */
+                        if(!empty($NewCustomizeWinning)){
+                            $this->db->where('ContestID', $Value['ContestID']);
+                            $this->db->limit(1);
+                            $this->db->update('sports_contest', array('CustomizeWinning' => json_encode($NewCustomizeWinning)));    
+                        }
+                    }
                     continue;
                 }
 
@@ -1691,7 +1753,7 @@ class Sports_model extends CI_Model
                     }
 
                     /* Get Join Contest Wallet Details */
-                    $WalletDetails = $this->db->query('SELECT WalletAmount,WinningAmount,CashBonus FROM tbl_users_wallet WHERE Narration = "Join Contest" AND UserTeamID = ' . $JoinValue['UserTeamID'] . ' AND EntityID = ' . $Value['ContestID'] . ' AND UserID = ' . $JoinValue['UserID'] . ' LIMIT 1');
+                    $WalletDetails = $this->db->query('SELECT WalletAmount,WinningAmount,CashBonus FROM tbl_users_wallet WHERE Narration = "Join Contest" AND UserTeamID = ' . $JoinValue['UserTeamID'] . ' AND EntityID = ' . $Value['ContestID'] . ' AND UserID = ' . $JoinValue['UserID'] . ' LIMIT 1')->row_array();
 
                     /* Refund User Amount */
                     $InsertData = array(
@@ -1716,18 +1778,6 @@ class Sports_model extends CI_Model
                     $this->Notification_model->addNotification('refund', 'Contest Cancelled Refund', $JoinValue['UserID'], $JoinValue['UserID'], $Value['ContestID'], 'Your ' . DEFAULT_CURRENCY . $InsertData['Amount'] . ' has been refunded.');
                 }
             }
-        }
-    }
-
-    /*
-      Description: Use to auction draft play.
-     */
-    function updateAuctionPlayStatus($SeriesID, $Input = array())
-    {
-        if (!empty($Input)) {
-            $this->db->where('SeriesID', $SeriesID);
-            $this->db->limit(1);
-            $this->db->update('sports_series', $Input);
         }
     }
 

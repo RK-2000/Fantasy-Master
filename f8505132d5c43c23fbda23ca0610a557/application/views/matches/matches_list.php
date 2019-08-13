@@ -5,7 +5,7 @@
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
 	<!-- Top container -->
-	<div class="clearfix mt-2 mb-2" ng-if="data.dataList.length">
+	<div class="clearfix mt-2 mb-2">
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
@@ -31,7 +31,7 @@
 					<th style="width: 200px;">Team Local</th>
 					<th style="width: 100px;"></th>
 					<th style="width: 200px;">Team Visitor</th>
-					<th>Match Type</th>
+					<th>Match Type & Location</th>
 					<th style="width: 170px;">Match Start On</th>
 					<th style="width: 100px;" class="text-center">Status</th>
 					<th style="width: 100px;" class="text-center">Action</th>
@@ -45,13 +45,13 @@
 						<strong>{{row.SeriesName}}</strong>
 					</td>
 					<td class="text-center">
-						<img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="70px" height="45px;">
+						<img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="80px" height="80px;">
 					</td>
 					<td>
 						<p>{{row.TeamNameLocal}} <br><small>( {{row.TeamNameShortLocal}} )</small></p>
 					</td>
 					<td class="text-center">
-						<img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="70px" height="45px;">
+						<img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="80px" height="80px;">
 					</td>
 					<td>
 						<p>{{row.TeamNameVisitor}} <br><small>( {{row.TeamNameShortVisitor}} )</small></p>
@@ -70,7 +70,7 @@
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
-								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.MatchGUID)">Edit</a>
+								<a class="dropdown-item" href=""  ng-if="row.Status=='Pending'" ng-click="loadFormEdit(key, row.MatchGUID)">Edit</a>
 								<a class="dropdown-item" target="_blank" href="players?MatchGUID={{row.MatchGUID}}" >Players</a>
 							</div>
 						</div>
@@ -91,7 +91,7 @@
 
 
 	<!-- Filter Modal -->
-	<div class="modal fade" id="filter_model"  ng-init="getFilterData()">
+	<div class="modal fade" id="filter_model" ng-init="getFilterData()">
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -116,8 +116,8 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<label class="filter-col">Local Team</label>
-										<select name="LocalTeamGUID" class="form-control chosen-select" ng-model="LocalTeamGUID" ng-change="getTeamData(SeriesGUID,LocalTeamGUID)">
+										<label class="filter-col">Teams</label>
+										<select name="TeamGUID" class="form-control chosen-select" ng-model="TeamGUID" ng-change="getTeamData(SeriesGUID,TeamGUID)">
 											<option value="">Please Select</option>
 											<option ng-repeat="row in LocalTeamData.TeamData" value="{{row.TeamGUID}}">{{row.TeamName}}</option>
 										</select>   
@@ -125,15 +125,6 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label class="filter-col">Visitor Team</label>
-										<select name="VisitorTeamGUID" class="form-control chosen-select">
-											<option value="">Please Select</option>
-											<option ng-repeat="row in VisitorTeamData.TeamData" value="{{row.TeamGUID}}">{{row.TeamName}}</option>
-										</select>   
-									</div>
-								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="filter-col" for="Status">Status</label>
@@ -146,12 +137,29 @@
 										</select>   
 									</div>
 								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="filter-col" for="ParentCategory">Search</label>
+										<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									</div>
+								</div>
+							</div>
+							<div class="row" ng-init="initDateRangePicker()">
+								<div class="col-md-8">
+									<div class="form-group">
+										<label class="filter-col" for="ParentCategory">Matches Between</label>
+										<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+											<i class="fa fa-calendar"></i>&nbsp;
+											<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
+										</div>
+									</div>
+								</div>
 							</div>
                     </div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="$('#filterForm1').trigger('reset'); $('.chosen-select').trigger('chosen:updated');">Reset</button>
+						<button type="button" class="btn btn-secondary btn-sm" ng-click="resetUserForm();">Reset</button>
 						<button type="submit" class="btn btn-success btn-sm" data-dismiss="modal" ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
 					</div>
 

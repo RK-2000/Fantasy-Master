@@ -5,7 +5,7 @@
 <div class="panel-body" ng-controller="PageController"><!-- Body -->
 
 	<!-- Top container -->
-	<div class="clearfix mt-2 mb-2" ng-if="data.dataList.length"> 
+	<div class="clearfix mt-2 mb-2"> 
 		<span class="float-left records d-none d-sm-block">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
@@ -27,11 +27,9 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th>Series Name</th>
+					<th style="width: 100px;">Series Name</th>
 					<th style="width: 100px;">Matches</th>
 					<th style="width: 100px;" class="text-center">Status</th>
-					<th style="width: 100px;" class="text-center">Starts In</th>
-					<th style="width: 100px;" class="text-center">Auction Play</th>
 					<th style="width: 100px;" class="text-center">Action</th>
 				</tr>
 			</thead>
@@ -48,15 +46,12 @@
 					</td>
 					
 					<td class="text-center"><span ng-class="{Inactive:'text-danger', Active:'text-success'}[row.Status]">{{row.Status}}</span></td> 
-					<td class="text-center">(<span am-time-ago="row.SeriesStartDate" ></span>)</td> 
-					<td class="text-center">{{row.AuctionDraftIsPlayed}}</td> 
 
 					<td class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.SeriesGUID)">Edit</a>
-								<a class="dropdown-item" target="_blank" href="players?SeriesGUID={{row.SeriesGUID}}">Players</a>
 							</div>
 						</div>
 					</td>
@@ -101,11 +96,11 @@
 									</div>
 								</div>
 								<div class="col-md-6">
-								<div class="form-group">
-									<label class="filter-col" for="ParentCategory">Search</label>
-									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									<div class="form-group">
+										<label class="filter-col" for="ParentCategory">Search</label>
+										<input type="text" class="form-control" name="Keyword" placeholder="Search">
+									</div>
 								</div>
-							</div>
 							</div>
 							
 						</div> <!-- form-area /-->

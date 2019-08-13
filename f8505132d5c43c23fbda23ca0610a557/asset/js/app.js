@@ -9,7 +9,7 @@ var contentType = {
 app.controller('MainController', ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
     $scope.data = {
         dataList: [],
-        totalRecords: '0',
+        totalRecords: '0', 
         pageNo: 1,
         pageSize: 25,
         noRecords: false,
@@ -28,6 +28,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
             var data = 'SessionKey=' + SessionKey + '&EntityGUID=' + EntityGUID;
             $http.post(API_URL + 'admin/entity/delete', data, contentType).then(function(response) {
                 var response = response.data;
+                manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     alertify.success(response.Message);
                     $scope.data.dataList.splice($scope.data.Position, 1); /*remove row*/
@@ -54,6 +55,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey + '&Status=1&PageNo=1&PageSize=15';
         $http.post(API_URL + 'notifications', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.notificationList = response.Data.Records;
                 $scope.data.notificationCount = 0;
@@ -70,6 +72,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/getNotificationCount', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.notificationCount = response.Data.TotalUnread;
                 $timeout(function() {
@@ -85,6 +88,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey +'&NotificationID='+ NotificationID;
         $http.post(API_URL + 'notifications/markRead', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.notificationCount = response.Data.TotalUnread;
                 $timeout(function() {
@@ -99,6 +103,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/markAllRead', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.getNotificationCount();
                 $scope.getNotifications();
@@ -110,6 +115,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey;
         $http.post(API_URL + 'notifications/deleteAll', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.getNotificationCount();
                 $scope.getNotifications();
@@ -123,6 +129,7 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         var data = 'SessionKey=' + SessionKey + '&'+$('#changePassword_form').serialize();
         $http.post(API_URL + 'users/changePassword', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 ) { /* success case */
                 $('.modal-header .close').click();
                 alertify.success(response.Message);
@@ -168,10 +175,23 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
 }]);
 
 
+$(window).load(function() {
+    setTimeout(function(){
+        $('img').each(function() {
+            if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+                this.src = BASE_URL + 'asset/img/noimagefound.jpg';
+                this.width = 100;
+                this.height = 100;
+            }
+        });
+    },200);
+});
+
 
 
 /*jquery*/
 $(document).ready(function() {
+
     /*Used to display menu active*/
     $('.navbar-nav ul li a.active').closest('ul').addClass('show');
     $('.navbar-nav ul li a.active').closest('ul').parent().closest('li').addClass('show');
@@ -353,23 +373,6 @@ $(document).ready(function() {
     }
 
 
-
-
-    $(document).on('keypress', ".numeric", function(event) {
-        var key = window.event ? event.keyCode : event.which;
-        if (event.keyCode === 8 || event.keyCode === 46) {
-            return true;
-        } else if (key < 48 || key > 57) {
-            return false;
-        } else {
-            return true;
-        }
-    });
-
-
-
-
-
 }); /* document ready end */
 
 function getQueryStringValue(key)
@@ -385,6 +388,16 @@ function getQueryStringValue(key)
 return (!vars[key]) ? '' : vars[key];
 }
 
+/* Manage Admin Session */
+function manageSession(responseCode){
+    if(parseInt(responseCode) === 502){
+        alertify.error('Session disconnected !!');
+        setTimeout(function(){
+            window.location.href = $('a.logout-btn').attr('href');
+        },2000);
+    }
+}
+
 app.filter('myDateFormat', function myDateFormat($filter){
       return function(text){
         var  tempdate= new Date(text.replace(/-/g,"/"));
@@ -395,4 +408,4 @@ app.filter('myDateFormat', function myDateFormat($filter){
 $(".modal").modal({
     show: false,
     backdrop: 'static'
-    });
+});

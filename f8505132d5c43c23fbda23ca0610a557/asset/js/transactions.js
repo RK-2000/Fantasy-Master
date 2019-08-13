@@ -1,6 +1,10 @@
 app.controller('PageController', function ($scope, $http,$timeout){
 
     var FromDate = ToDate = '';
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    $timeout(function(){            
+        $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+     }, 200);
     $scope.data.pageSize = 15;
     /*----------------*/
      /*list*/
@@ -50,8 +54,9 @@ app.controller('PageController', function ($scope, $http,$timeout){
     $scope.getUserInfo = function(){
         $scope.userData = {};
         var UserGUID = getQueryStringValue('UserGUID');
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=Status,ProfilePic,MediaPAN,MediaBANK,Email', contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.userData = response.Data;
             }
@@ -68,6 +73,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' + $('#filterForm').serialize();
         $http.post(API_URL+'admin/users/getWallet', data, contentType).then(function(response) {
         var response = response.data;
+        manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
                 for (var i in response.Data.Records) {
@@ -86,8 +92,9 @@ app.controller('PageController', function ($scope, $http,$timeout){
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&' + $('#filterForm').serialize();
         $http.post(API_URL + 'admin/users/exportTransactions', data, contentType).then(function(response) {
             var response = response.data;
+            manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
-                var encodedUri = encodeURI(response.Data);
+                var encodedUri = encodeURI(API_URL + response.Data);
                 var link = document.createElement("a");
                 link.href = encodedUri;
                 link.style = "visibility:hidden";
@@ -95,6 +102,11 @@ app.controller('PageController', function ($scope, $http,$timeout){
                 link.click();
                 document.body.removeChild(link);
                 alertify.success(response.Message);
+                $timeout(function () {
+                    $http.post(API_URL + 'admin/matches/deleteFile', 'SessionKey=' + SessionKey + '&File='+response.Data, contentType).then(function (response) {
+                        console.log('response',response);
+                    });
+                }, 5000); // After 5 seconds
             } else {
                 alertify.error(response.Message);
             }
