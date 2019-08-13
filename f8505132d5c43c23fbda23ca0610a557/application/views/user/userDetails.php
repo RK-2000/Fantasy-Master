@@ -138,8 +138,8 @@
                 </nav>
                 <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserAmountDetails('cash-deposit');" ng-if="transactions.length > 0">Export</button>
                         <div class="table-responsive block_pad_md" > 
-
                             <!-- loading -->
                             <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
                             <form name="records_form" id="records_form">
@@ -192,8 +192,8 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserAmountDetails('winning-bonus');" ng-if="transactions.length > 0">Export</button>
                         <div class="table-responsive block_pad_md" > 
-
                             <!-- loading -->
                             <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
                             <form name="records_form" id="records_form">
@@ -247,6 +247,9 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserAmountDetails('cash-bonus');" ng-if="transactions.length > 0">Export</button>
+
                         <div class="table-responsive block_pad_md" > 
 
                             <!-- loading -->
@@ -301,7 +304,11 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-withdraw" role="tabpanel" aria-labelledby="nav-withdraw-tab">
+                        
+                        <button class="btn btn-success btn-sm ml-1 float-right" ng-click="exportUserWithdrawalDetails();">Export</button>
+
                         <div class="table-responsive block_pad_md" > 
+
 
                             <!-- loading -->
                             <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
