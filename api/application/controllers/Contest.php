@@ -331,7 +331,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
 
         /* Get Contest Status */
-        $Contest = $this->Contest_model->getContests('Status', array('ContestID' => $this->Post['ContestID']));
+        $Contest = $this->Contest_model->getContests('Status', array('ContestID' => $this->ContestID));
         if ($Contest['Status'] == 'Pending' || $Contest['Status'] == 'Cancelled') {
 
             /* Get Joined Contest Users Data (MySQL) */
