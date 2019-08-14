@@ -371,7 +371,6 @@ function mongoDBConnection()
     /* Require MongoDB Library & Connection */
     $Obj = &get_instance();
     require_once getcwd() . '/vendor/autoload.php';
-    $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
     switch (ENVIRONMENT) {
         case 'local':
             $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
@@ -382,6 +381,9 @@ function mongoDBConnection()
         case 'demo':
             $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
             break;
+        default :
+            $Obj->ClientObj = new MongoDB\Client("mongodb://fantasygameplanadminmw:fantasymw123mobiwebgameplan@localhost:27017");
+           break;
     }
     $Obj->fantasydb = $Obj->ClientObj->fantasymaster;
 }

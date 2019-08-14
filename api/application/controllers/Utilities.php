@@ -347,15 +347,6 @@ class Utilities extends API_Controller
     }
 
     /*
-        Description: Use to manage razorpay webhook response
-        URL: /api/utilities/razorpayWebhook
-    */
-    public function razorpayWebhook_post()
-    {
-        $this->Users_model->razorpayWebhook(file_get_contents("php://input"));
-    }
-
-    /*
         Description: Use to manage cashfree webhook response
         URL: /api/utilities/cashFreeWebHookResponse
     */

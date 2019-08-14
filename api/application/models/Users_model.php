@@ -1209,7 +1209,7 @@ class Users_model extends CI_Model
         /* Decode Response */
         $PayResponse = json_decode($WebhookResp, TRUE);
         $PayResponse = $PayResponse['payload']['payment']['entity'];
-        $WalletID    = $PayResponse['notes']['order_id'];
+        $WalletID    = $PayResponse['notes']['OrderID'];
 
         /* Get Wallet Details */
         $WalletData = $this->Users_model->getWallet('OpeningWalletAmount,Amount,TransactionID,CouponDetails,UserID', array('WalletID' => $WalletID));

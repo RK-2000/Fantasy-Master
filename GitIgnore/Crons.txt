@@ -1,0 +1,13 @@
+0 0 * * * wget -qO- http://128.199.166.109/api/utilities/getSeriesLiveCricket
+0 */6 * * * wget -qO- http://128.199.166.109/api/utilities/getMatchesLiveCricket
+0 */6 * * * wget -qO- http://128.199.166.109/api/utilities/getPlayersLiveCricket
+0 23 */2 * * wget -qO- http://128.199.166.109/api/utilities/getPlayerStatsLiveCricket
+*/5 * * * * wget -qO- http://128.199.166.109/api/utilities/getMatchScoreLiveCricket
+*/6 * * * * wget -qO- http://128.199.166.109/api/utilities/getPlayerPointsCricket
+*/6 * * * * wget -qO- http://128.199.166.109/api/utilities/getJoinedContestPlayerPoints
+*/15 * * * * wget -qO- http://128.199.166.109/api/utilities/autoCancelContest
+*/15 * * * * wget -qO- http://128.199.166.109/api/utilities/setContestWinners
+*/10 * * * * wget -qO- http://128.199.166.109/api/utilities/refundAmountCancelContest
+*/16 * * * * wget -qO- http://128.199.166.109/api/utilities/tranferJoinedContestData
+*/17 * * * * wget -qO- http://128.199.166.109/api/utilities/amountDistributeContestWinner
+0 0 * * * wget -qO- https://win365.live/api/utilities/createPreDraftContest
