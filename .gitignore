@@ -6,6 +6,4 @@ f8505132d5c43c23fbda23ca0610a557/application/logs/*
 !api/uploads/profile/picture/default.jpg
 !api/uploads/sports.txt
 api/uploads/*
-#.htaccess
 /nbproject/private/
-/auctionDraft/node_modules/*
