@@ -20,6 +20,18 @@ function ValidateUserAccess($PermittedModules, $Path) {
 
 /*------------------------------*/
 /*------------------------------*/	
+function CheckUserAccess($PermittedModules, $Path) {
+	if(!empty($PermittedModules)){
+	foreach($PermittedModules as $Value){
+		if($Value['ModuleName'] == $Path){
+			return TRUE;
+		}
+	}}
+	return false;
+}
+
+/*------------------------------*/
+/*------------------------------*/	
 function APICall($URL, $JSON='') {
 	$CH = curl_init();
 	$Headers = array('Accept: application/json', 'Content-Type: application/json');

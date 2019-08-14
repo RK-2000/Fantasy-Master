@@ -1,0 +1,90 @@
+'use strict';
+
+app.controller('PageController', function($scope, $http, $timeout) {
+    $scope.hrm_base_url = hrm_base_url;
+
+    function arrayColumn(array, columnName) {
+        return array.map(function(value, index) {
+            return value[columnName];
+        })
+    }
+
+    /*edit Data */
+    $scope.editData = function() {
+        $scope.editDataLoading = true;
+
+        var data = $('#editForm').serialize() + '&SessionKey=' + SessionKey;
+        $http.post(API_URL + 'setup/editGroup', data, contentType).then(function(response) {
+            var response = response.data;
+            if (response.ResponseCode == 200 && response.Data) {
+                $scope.data.dataList[$scope.data.Position] = response.Data;
+                alertify.success(response.Message);
+                $('.modal-header .close').click();
+            } else {
+                alertify.error(response.Message);
+            }
+            $scope.editDataLoading = false;
+        });
+    }
+
+
+
+
+
+    /*load edit form*/
+    $scope.loadFormEdit = function(Position, UserTypeGUID) {
+        $scope.data.loadFormEdit = true;
+        $scope.data.Position = Position;
+        var data = 'SessionKey=' + SessionKey +
+            '&UserTypeGUID=' + UserTypeGUID +
+            '&Params=UserTypeID,Modules';
+        $http.post(API_URL + 'setup/getGroup', data, contentType).then(function(response) {
+            var response = response.data;
+            if (response.ResponseCode == 200 && response.Data) {
+                $scope.formData = response.Data;
+            } else {
+                $scope.data.noRecords = true;
+            }
+            $scope.data.loadFormEdit = false;
+        });
+        $scope.loadFormAdd();
+    }
+
+
+
+
+
+
+
+    /*show listing*/
+
+    $scope.getList = function() {
+       $scope.data.listLoading = true;
+        var data = 'SessionKey=' + SessionKey + '&Params=UserTypeID,Modules';
+        $http.post(API_URL + 'setup/getGroups', data, contentType).then(function(response) {
+            var response = response.data;
+            if (response.ResponseCode == 200 && response.Data.Records) {
+                /* success case */
+                $scope.TotalRecords = response.Data.TotalRecords;
+                for (var i in response.Data.Records) {
+                    $scope.data.dataList.push(response.Data.Records[i]);
+                }
+            } else {
+                $scope.data.noRecords = true;
+            }
+            $scope.data.listLoading = false;
+        });
+    }
+
+
+    /*load add form*/
+    $scope.loadFormAdd = function() {
+
+        $('#addgroup').modal({
+            show: true
+        });
+    }
+
+
+
+});
