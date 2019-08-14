@@ -201,4 +201,140 @@ class Common_model extends CI_Model
 			return FALSE;
 		}
 	}
+
+	/*
+	Description: 	Use to get UserType
+	*/
+	function getUserTypes($Field='', $Input=array(), $multiRecords=FALSE){
+
+		$Params = array();
+		if(!empty($Field)){
+			$Params = array_map('trim',explode(',',$Field));
+		}
+
+		$this->db->select('UT.UserTypeID UserTypeIDForUse, UT.UserTypeGUID, UT.UserTypeName, (SELECT COUNT(UserID) FROM `tbl_users` WHERE UserTypeID=UT.UserTypeID) UserCount');
+		$this->db->select($Field,false);
+		$this->db->from('tbl_users_type UT');
+
+		if(!empty($Input['UserTypeID'])){
+			$this->db->where('UT.UserTypeID',$Input['UserTypeID']);
+			$this->db->limit(1);			
+		}
+
+		if(!empty($Input['UserTypeGUID'])){
+			$this->db->where("UT.UserTypeGUID",$Input['UserTypeGUID']);
+			$this->db->limit(1);
+		}
+
+		/* Total records count only if want to get multiple records */
+		if($multiRecords){ 
+			$TempOBJ = clone $this->db;
+			$TempQ = $TempOBJ->get();
+			$Return['Data']['TotalRecords'] = $TempQ->num_rows();
+		}else{
+			$this->db->limit(1);
+		}
+
+		$Query = $this->db->get();
+		//echo $this->db->last_query();	
+		if($Query->num_rows()>0){
+			foreach($Query->result_array() as $Record){
+				$ModuleData = $this->getModules("M.ModuleTitle, M.ModuleName", array("UserTypeID" => $Record['UserTypeIDForUse'], "Permitted" => (@$Input['Permitted'] ? TRUE:'')), TRUE);
+				$Record['PermittedModules'] = ($ModuleData ? $ModuleData['Data']['Records'] : new stdClass());		
+
+				unset($Record['UserTypeIDForUse']);		
+				if(!$multiRecords){
+					return $Record;
+				}
+				$Records[] = $Record;
+			}
+			$Return['Data']['Records'] = $Records;
+			return $Return;
+		}
+		return FALSE;		
+	}
+
+	/*
+	Description: 	Use to get Modules
+	*/
+	function getModules($Field='', $Input=array(), $multiRecords=FALSE){
+		$Params = array();
+		if(!empty($Field)){
+			$Params = array_map('trim',explode(',',$Field));
+		}
+		$this->db->select($Field,false);
+		$this->db->from('admin_modules M');
+
+		if(!empty($Input['UserTypeID'])){
+			if(empty($Input['Permitted'])){
+				$this->db->select("IF(UTP.UserTypeID,'Yes','No') Permission",false);
+				$this->db->join('admin_user_type_permission UTP', "M.ModuleID=UTP.ModuleID AND UTP.UserTypeID='".$Input['UserTypeID']."' ", 'left');
+			}else{
+				$this->db->from('admin_user_type_permission AUTP');
+				$this->db->where("AUTP.ModuleID","M.ModuleID", FALSE);
+				$this->db->where("AUTP.UserTypeID",$Input['UserTypeID']);		
+			}
+		}
+
+		if(!empty($Input['ModuleName'])){
+			$this->db->where("M.ModuleName",$Input['ModuleName']);
+			$this->db->limit(1);		
+		}
+		$this->db->order_by('M.ModuleTitle','ASC');
+
+		$Query = $this->db->get();
+		//echo $this->db->last_query();	
+		if($Query->num_rows()>0){
+			foreach($Query->result_array() as $Record){
+				if(!$multiRecords){
+					return $Record;
+				}
+				$Records[] = $Record;
+			}
+			$Return['Data']['Records'] = $Records;
+			return $Return;
+		}
+		return FALSE;		
+	}
+
+	/*
+	Description: 	Use to add new user type.
+	*/
+	public function saveUserType($Input=array()) {
+		$InsertData = array_filter(array(
+			"UserTypeID" 			=>	$Input['UserTypeID'],
+			"UserTypeGUID"			=>	get_guid(),
+			"UserTypeName" 			=>	$Input['UserTypeName'],
+			"IsAdmin" 				=>	$Input['IsAdmin']
+		));
+		if(!empty($InsertData)){
+			$Query = $this->db->insert('tbl_users_type', $InsertData);
+			if ($Query) {
+				return $this->db->insert_id();
+			}
+		}		
+		return false;
+	}
+
+
+	/*
+	Description: 	Use to edit user type.
+	*/
+	public function editUserType($UserTypeID, $Input=array()) {
+		/*delete group permissions*/
+		$this->db->where("UserTypeID",$UserTypeID);
+		$this->db->delete('admin_user_type_permission');
+
+		if(!empty($Input['ModuleName'])){ /*Update permissions*/
+			foreach($Input['ModuleName'] as $ModuleName){
+
+				$ModuleData = $this->getModules("M.ModuleID", array("ModuleName" => $ModuleName));
+				if(!empty($ModuleData)){
+					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID']);
+				}
+			}
+			$this->db->insert_batch('admin_user_type_permission', $InsertData); 
+		}	
+		return true;
+	}
 }
