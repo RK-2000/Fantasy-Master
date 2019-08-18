@@ -33,17 +33,17 @@
 			<thead>
 				<tr>
 					<th style="width:80px;" class="text-center">Banner</th>
-					<th style="width: 100px;">Coupon Code</th>
+					<th style="width: 120px;">Coupon Code</th>
 					<th style="width: 150px;">Title</th>
 					<th>Description</th>
-					<th style="width: 120px;" class="text-center">Value</th>
-					<th style="width: 160px;" class="text-center">Created on</th>
-					<th style="width: 160px;" class="text-center">Valid Till</th>
-					<th style="width: 100px;" class="text-center">Minium Amount</th>
-					<th style="width: 100px;" class="text-center">Maximum Amount</th>
-					<th style="width: 100px;" class="text-center">No. Of Uses</th>
-					<th style="width: 100px;" class="text-center">Status</th>
-					<th style="width: 100px;" class="text-center">Action</th>
+					<th style="width: 80px;">Value</th>
+					<th style="width: 160px;">Created on</th>
+					<th style="width: 160px;">Valid Till</th>
+					<th style="width: 100px;">Minium Amount</th>
+					<th style="width: 100px;">Maximum Amount</th>
+					<th style="width: 100px;">No. Of Uses</th>
+					<th style="width: 100px;">Status</th>
+					<th style="width: 100px;">Action</th>
 				</tr>
 			</thead>
 			<!-- table body -->
@@ -56,21 +56,22 @@
 					</td>
 
 
-					<td class="text-center"><strong>{{row.CouponCode}}</strong></td>
+					<td><div class="content float-left"><strong><a class="dropdown-item" href="couponhistory?CouponGUID={{row.CouponGUID}}&CouponCode={{row.CouponCode}}">{{row.CouponCode}}</a><strong></div></td>
 					<td>{{row.CouponTitle}}</td>
 					<td>{{row.CouponDescription}}</td>
-					<td class="text-center">{{DEFAULT_CURRENCY}}{{row.CouponValue}}<span ng-if="row.CouponType=='Percentage'">%</span></td>
+					<td>{{DEFAULT_CURRENCY}}{{row.CouponValue}}<span ng-if="row.CouponType=='Percentage'">%</span></td>
 					<td>{{row.EntryDate}}</td>
 					<td>{{row.CouponValidTillDate}}</td>
 					<td>{{DEFAULT_CURRENCY}}{{row.MiniumAmount}}</td>
 					<td>{{DEFAULT_CURRENCY}}{{row.MaximumAmount}}</td>
 					<td>{{row.NumberOfUses}}</td>
-					<td class="text-center"><span ng-class="{Inactive:'text-danger', Active:'text-success'}[row.Status]">{{row.Status}}</span></td> 
+					<td><span ng-class="{Inactive:'text-danger', Active:'text-success'}[row.Status]">{{row.Status}}</span></td> 
 					<td class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.CouponGUID)">Edit</a>
+								<a class="dropdown-item" href="couponhistory?CouponGUID={{row.CouponGUID}}&CouponCode={{row.CouponCode}}">History</a>
 							</div>
 						</div>
 					</td>

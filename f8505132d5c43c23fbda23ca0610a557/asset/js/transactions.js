@@ -62,12 +62,12 @@ app.controller('PageController', function ($scope, $http,$timeout){
             }
         });
     }
+    $scope.getUserInfo();
 
     $scope.TransactionMode = 'All';
     /*list append*/
     $scope.getList = function () 
     {
-        $scope.getUserInfo();
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
         var data = 'SessionKey='+SessionKey+'&UserGUID='+getQueryStringValue('UserGUID')+'&TransactionMode='+$scope.TransactionMode+'&Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,OpeningBalance,ClosingBalance,EntryDate,WalletAmount,WinningAmount,CashBonus&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&OrderBy=' + $scope.data.OrderBy + '&EntryFrom=' + FromDate + '&EntryTo=' + ToDate + '&Sequence=' + $scope.data.Sequence + '&' + $('#filterForm').serialize();
