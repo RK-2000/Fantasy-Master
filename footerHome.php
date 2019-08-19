@@ -1,5 +1,4 @@
 <!--Footer sec start-->
-<!--<div class="comingMesage"> <marquee>"Coming Soon, This website is currently under development phase."</marquee></div>-->
 <footer id="footer" class="footerSec">
     <div class="container">
         <div class="footRow mb-4">
@@ -71,33 +70,25 @@
                             <a href="javascript:;" style="color:var(--primaryclr)"><strong>  Stay in touch with us  </strong></a>
                         </li>
                     </ul>
-<!--                    <div class="searchInner mt-2">
-                        <form>
-                            <div class="input-group">
-                                <input class="form-control" placeholder="Weekly newsletter" type="text">
-                                <button class="btn btn-danger" type="button">Subscribe</button>
-                            </div>
-                        </form>
-                    </div>-->
 
                     <ul class="mediaIcon">
                         <li>
-                            <a class="fb"  href="https://www.facebook.com/FSLEleven/" target="_blank">
+                            <a class="fb"  href="https://www.facebook.com/" target="_blank">
                                 <i class="fa fa-facebook" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="tw"  href="https://twitter.com/FSL_Eleven" target="_blank">
+                            <a class="tw"  href="https://twitter.com/" target="_blank">
                                 <i class="fa fa-twitter" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="gplus" href="https://www.linkedin.com/company/fsl11" target="_blank">
+                            <a class="gplus" href="https://www.linkedin.com/" target="_blank">
                                 <i class="fa fa-linkedin" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="inst" href="https://www.instagram.com/FSL_Eleven/" target="_blank">
+                            <a class="inst" href="https://www.instagram.com/" target="_blank">
                                 <i class="fa fa-instagram" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -154,14 +145,14 @@
         $base_url = 'http://dev.fantasy96.com/';
         $api_url = 'http://dev.fantasy96.com/api/';
         break;
-        case 'fsl11.com':
-        $base_url = 'https://fsl11.com/';
-        $api_url = 'https://fsl11.com/api/';
+        case 'example.com':
+        $base_url = 'https://example.com/';
+        $api_url = 'https://example.com/api/';
         break;  
         default :
         $_SERVER['CI_ENV'] = 'production';
-        $base_url = 'https://www.fsl11.com/';
-        $api_url = 'https://www.fsl11.com/api/';
+        $base_url = 'https://www.example.com/';
+        $api_url = 'https://www.example.com/api/';
         break;
     }
     ?>
@@ -175,7 +166,7 @@
         base_url: "<?php echo $base_url;?>",
         api_url: "<?php echo $api_url;?>",
         image_base_url: '<?php echo $base_url; ?>assets/img/',
-        brand_name: 'FSL11'
+        brand_name: 'Fantasy Master'
     });
     app.config(function(socialProvider){
         socialProvider.setGoogleKey("597256090889-rmtpdn95747lqh1iufuc2n6210s7bf2j.apps.googleusercontent.com");
@@ -241,27 +232,6 @@
 <script src="assets/js/wow.min.js"></script>
 <script src="assets/js/custom.js?version=<?= VERSION ?>"></script>
 <!-- Test -->
-<!-- <script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="e34524" bolt-logo="https://playwinfantasy.com/uploads/app/1518587119_logoold.png" ></script> -->
-
-<!-- Live -->
-
-<?php
-//    switch ($_SERVER['SERVER_NAME']) {
-//    case 'localhost':
-//        echo '<script id="bolt" src="https://checkout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="e34524" bolt-logo="https://FSL11.com/assets/img/payu_logo.jpg" ></script>';
-//    break;
-//    case '192.168.1.211':
-//        echo '<script id="bolt" src="https://checkout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="e34524" bolt-logo="https://FSL11.com/assets/img/payu_logo.jpg" ></script>';
-//    break;
-//    case 'mwdemoserver.com':
-//        echo '<script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="e34524" bolt-logo="https://FSL11.com/assets/img/payu_logo.jpg" ></script>';
-//    break;  
-//    default :
-//    $_SERVER['CI_ENV'] = 'production';
-//        echo '<script id="bolt" src="https://checkout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="<color-code>" bolt-logo="https://FSL11.com/assets/img/payu_logo.jpg"></script>';        
-//    break;
-//}
-?>
 </body>
 
 </html>

@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <?php 
-/*if (!(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' ||
-        $_SERVER['HTTPS'] == 1) ||
-        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') && $_SERVER['HTTP_HOST'] != 'localhost') {
-    $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    header('HTTP/1.1 301 Moved Permanently');
-    header('Location: ' . $redirect);
-    exit();
-}*/
-/*if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.') {
-header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://www.' . substr($_SERVER['HTTP_HOST'], 0).$_SERVER['REQUEST_URI']);
-exit;
-}*/
-const VERSION = 4.3;
+    const VERSION = 4.3;
 ?>
 <html lang="en" data-ng-app="FSL11" ng-cloak >
     <head>
@@ -43,8 +30,6 @@ const VERSION = 4.3;
                     </div>
                     <div class="col-sm-8 col-7">
                         <ul class="nav justify-content-end login_menu d-flex">
-                            <!-- <li class="nav-item"><a class="nav-link" href="index">Login </a></li>
-                            <li class="nav-item"><a class="nav-link" href="index">Signup</a></li> -->
                             <li class="nav-item"><a class="nav-link" href="authenticate?type=login"><button type="button" class="btn text-white px-4"> Login </button></a></li>
                             <li class="nav-item"><a class="nav-link" href="authenticate?type=signup"><button type="button" class="btn text-white px-4"> Sign Up </button></a></li>
                         </ul>
@@ -61,7 +46,6 @@ const VERSION = 4.3;
                                 <div class="swiper-slide">
                                     <h1 class="mb-2">INDIA’S MOST FAVOURITE <br> SPORTS GAME PLATFORM!</h1>
                                     <p> FSL11 is more than just a Fantasy Sport. It’s the best way to watch the games, create your teams, win real cash, and bring the action right into your living room. </p>
-                                    <!-- <a href="#download_app" onclick="window.open('#download_app','_self')" class="btn btnPrimary mb-4"> Get The App </a> -->
                                     <a href="download-app" class="btn btnPrimary mb-4"> Get The App </a>
                                 </div>
                             </div>
@@ -104,9 +88,6 @@ const VERSION = 4.3;
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <!-- <div class="img-box">
-                              <img src="images/banner2.png" class="img-fluid">
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -114,7 +95,7 @@ const VERSION = 4.3;
                     <img src="assets/images/dots.png" alt="" width="160" class="img-fluid">
                 </div>
             </section>
-            <section id="howToPlay" class="howToPaySec text-black burger"> <!--style="background-image:url(assets/img/play-bg.jpg);"-->
+            <section id="howToPlay" class="howToPaySec text-black burger"> 
                 <div class="container">
                     <div class="text-center primarHead">
                         <h3 class="mb-5 comman_heading text-uppercase text-white text-center">lots of ways to win</h3>
@@ -139,7 +120,7 @@ const VERSION = 4.3;
                     </div>
                 </div>
             </section>
-            <section class="downloadapp burger upcomingMatches" id="Download"> <!-- style="background-image:url(assets/img/download-appbg.jpg);" -->
+            <section class="downloadapp burger upcomingMatches" id="Download">
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="upcoming">
@@ -232,7 +213,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/sumanbiswas.jpg" class="img-circle" alt="" />
                                 </div>
                                 <h4> Suman Biswas </h4>
-                                <!-- <span> Freelancer </span> -->
                             </div>
                         </div>
 
@@ -244,7 +224,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/team2.jpg" class="img-circle" alt="" />
                                 </div>
                                 <h4> Mohit Bakshi </h4>
-                                <!-- <span> Freelancer </span> -->
                             </div>
                         </div>
                         <div class="clientslide">
@@ -256,7 +235,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/client.png" class="img-circle" alt="" />
                                 </div>
                                 <h4> Sneha Mishra </h4>
-                                <!-- <span>Freelancer</span> -->
                             </div>
                         </div>
                         <div class="clientslide">
@@ -267,7 +245,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/team3.png" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Anjali Khare </h4>
-                                <!-- <span>Freelancer</span> -->
                             </div>
                         </div>
                         <div class="clientslide">
@@ -278,7 +255,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/team1.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Vivan Pandit</h4>
-                                <!-- <span>Freelancer</span> -->
                             </div>
                         </div>
                         <div class="clientslide">
@@ -290,7 +266,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/team4.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Rohan Patil </h4>
-                                <!-- <span>Freelancer</span> -->
                             </div>
                         </div>
                         <div class="clientslide">
@@ -300,7 +275,6 @@ const VERSION = 4.3;
                                     <img src="assets/images/team5.jpg" class="img-circle" alt=""/>
                                 </div>
                                 <h4> Santoo Sumit </h4>
-                                <!-- <span>Freelancer</span> -->
                             </div>
                         </div>
 

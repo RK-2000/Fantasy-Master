@@ -1,28 +1,11 @@
 <!DOCTYPE html>
 <html  lang="en" data-ng-app="FSL11" ng-cloak  >
-<?php 
-/*if (!(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' ||
-        $_SERVER['HTTPS'] == 1) ||
-        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') && $_SERVER['HTTP_HOST'] != 'localhost') {
-    $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    header('HTTP/1.1 301 Moved Permanently');
-    header('Location: ' . $redirect);
-    exit();
-}*/
-/*if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.') {
-header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://www.' . substr($_SERVER['HTTP_HOST'], 0).$_SERVER['REQUEST_URI']);
-exit;
-}*/
-
-?>
 <head>
     <?php include('MetaData.php') ?>
     <meta charset="utf-8">
     <meta name="keywords" content="play fantasy cricket and win cash daily, play fantasy cricket and win real cash, play cricket and win cash prize daily, play fantasy cricket, play cricket and win cash prizes,fantasy cricket app, daily fantasy cricket app, Fantasy Cricket, Fantasy Cricket Website, Fantasy Cricket sports, Fantasy Cricket League,Fantasy Sports,Online Fantasy Games,Cricket Fantasy Team,Fantasy Gaming, Online Cricket,Cricket Betting Tips,Fantasy Cricket World Cup 2019, ICC Cricket World Cup Fantasy League,fantasy cricket app download, best fantasy cricket app, daily fantasy cricket app download">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" >
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
@@ -145,25 +128,12 @@ exit;
                                 <li class="nav-item {{headerActiveMenu=='lobby' ? 'active' : '' }}">
                                     <a class="nav-link" href="lobby"> DFS  </a>
                                 </li>
-<!--                                <li class="nav-item {{headerActiveMenu=='auction' ? 'active' : '' }}  ">
-                                    <a class="nav-link" href="auction"> Auctions </a>
-                                </li>-->
-                               <!--
-                                <li class="nav-item {{headerActiveMenu=='' ? 'active' : '' }}  ">
-                                    <a class="nav-link" href=""> Snake </a>
-                                </li> -->
                                 <li class="nav-item {{headerActiveMenu=='leagueCenter' ? 'active' : '' }} ">
                                     <a class="nav-link" href="leagueCenter">  My League </a>
                                 </li>
                                 <li class="nav-item {{headerActiveMenu=='referAndEarn' ? 'active' : '' }}  ">
                                     <a class="nav-link" href="referAndEarn"> Refer &amp; Earn </a>
                                 </li>
-                                <!-- <li class="nav-item {{headerActiveMenu=='PointSystem' ? 'active' : '' }}  ">
-                                    <a class="nav-link" href="PointSystem"> Point System </a>
-                                </li> -->
-<!--                                <li class="nav-item {{headerActiveMenu=='Coupons' ? 'active' : '' }}  ">
-                                    <a class="nav-link" href="javascript:void(0)"> Player Stats </a>
-                                </li>-->
                             </ul>
                         </div>
                     </nav>
