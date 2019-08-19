@@ -212,7 +212,7 @@ class Common_model extends CI_Model
 			$Params = array_map('trim',explode(',',$Field));
 		}
 
-		$this->db->select('UT.UserTypeID UserTypeIDForUse, UT.UserTypeGUID, UT.UserTypeName, (SELECT COUNT(UserID) FROM `tbl_users` WHERE UserTypeID=UT.UserTypeID) UserCount');
+		$this->db->select('UT.UserTypeID UserTypeIDForUse, UT.UserTypeGUID, UT.UserTypeName, UT.IsAdmin');
 		$this->db->select($Field,false);
 		$this->db->from('tbl_users_type UT');
 
@@ -301,17 +301,16 @@ class Common_model extends CI_Model
 	Description: 	Use to add new user type.
 	*/
 	public function saveUserType($Input=array()) {
+		$GetGUID = get_guid();
 		$InsertData = array_filter(array(
-			// "UserTypeID" 			=>	$Input['UserTypeID'],
-			"UserTypeGUID"			=>	get_guid(),
+			"UserTypeGUID"			=>	$GetGUID,
 			"UserTypeName" 			=>	$Input['GroupName'],
 			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? @$Input['IsAdmin'] : "No")
 		));
 		if(!empty($InsertData)){
-			$Query = $this->db->insert('tbl_users_type', $InsertData);
-			if ($Query) {
-				return $this->db->insert_id();
-			}
+			$Query 		= $this->db->insert('tbl_users_type', $InsertData);
+			$insert_id 	= $this->db->insert_id();
+			return array('UserTypeID' => $insert_id, 'UserTypeGUID' => $GetGUID);
 		}		
 		return false;
 	}

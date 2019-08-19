@@ -44,7 +44,7 @@
                      </span>
                   </td>
                   <td class="text-center">
-                     <div class="dropdown">
+                     <div class="dropdown" ng-if="lists.IsAdmin!='Yes'">
                         <button class="btn btn-secondary  btn-sm action" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">&#8230;</button>
                         <div class="dropdown-menu dropdown-menu-left">
                            <a class="dropdown-item" href="" ng-click="loadFormEdit(key,lists.UserTypeGUID);">Edit</a>

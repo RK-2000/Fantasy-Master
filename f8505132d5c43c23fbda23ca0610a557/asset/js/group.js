@@ -87,17 +87,19 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey='+SessionKey+'&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'setup/addGroup', data, contentType).then(function(response) {
             var response = response.data;
+            // console.log(response);return;
             manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
-                $scope.applyFilter();
                 $('.modal-header .close').click();
-                $('.modal-header .close').click();
+                $scope.loadFormEdit(, response.UserTypeData.UserTypeGUID);
+                // $scope.applyFilter();
             }else{
                 alertify.error(response.Message);
             }
             $scope.addDataLoading = false;          
         });
+        
     }
 
 

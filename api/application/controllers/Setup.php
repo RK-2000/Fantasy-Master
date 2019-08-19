@@ -67,19 +67,17 @@ class Setup extends API_Controller_Secure
 	public function addGroup_post()
 	{
 		/* Validation section */
-		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]');
+		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]|max_length[20]');
+		$this->form_validation->set_message('is_unique', 'GroupName is already exist.');
 		$this->form_validation->validation($this);  /* Run validation */		
 		/* Validation - ends */
-		$GroupId = $this->Common_model->saveUserType($this->Post);	
-		if ($GroupId) {
+		$UserTypeData = $this->Common_model->saveUserType($this->Post);	
+		if ($UserTypeData) {
+			$this->Return['UserTypeData'] =	$UserTypeData;
 			$this->Return['ResponseCode'] 	=	200;
 			$this->Return['Message']      	=	"Success.";
 		}
 	}
-
-
-
-
 
 
 
