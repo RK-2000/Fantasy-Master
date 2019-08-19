@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 12, 2019 at 08:12 PM
+-- Generation Time: Aug 19, 2019 at 11:23 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -70,7 +70,9 @@ INSERT INTO `admin_control` (`ControlID`, `ControlName`, `ModuleID`, `ParentCont
 (47, 'Settings', 28, 9, 1, 'flaticon-user'),
 (48, 'Manage Testimonial', 29, 5, 5, 'flaticon-user'),
 (49, 'Banner', 30, 9, 1, 'flaticon-user'),
-(52, 'Pre Draft Contest', 35, 36, 7, 'flaticon-user');
+(52, 'Pre Draft Contest', 35, 36, 7, 'flaticon-user'),
+(54, 'Manage User Roles', 39, 55, 1, 'flaticon-user'),
+(55, 'Setup', NULL, NULL, 1, 'flaticon-user');
 
 -- --------------------------------------------------------
 
@@ -123,7 +125,10 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (34, 'Deposit History', 'depositHistory'),
 (35, 'Pre Draft Contest', 'predraft'),
 (36, 'Referral History', 'referral'),
-(37, 'Joined Users', 'joinedusers');
+(37, 'Joined Users', 'joinedusers'),
+(39, 'Manage User Roles', 'setup/group'),
+(40, 'Coupon History', 'couponhistory'),
+(41, 'Coupon History', 'couponhistory');
 
 -- --------------------------------------------------------
 
@@ -166,9 +171,10 @@ INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
 (1, 32),
 (1, 33),
 (1, 34),
-(1, 35),
 (1, 36),
-(1, 37);
+(1, 37),
+(1, 39),
+(1, 41);
 
 -- --------------------------------------------------------
 
@@ -3591,7 +3597,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-12 13:48:03', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-16 10:52:21', '2019-06-07 10:42:15'),
 (927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL);
 
 -- --------------------------------------------------------
@@ -3630,7 +3636,25 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, 'a87d70f9-1573-960f-e57a-3271f45854d5', NULL, 1, 1, NULL, NULL, '2019-08-09 10:43:56'),
 (125, '9b3a21c3-c487-bd6a-6634-7118d2411a9b', NULL, 1, 1, NULL, NULL, '2019-08-09 14:09:36'),
 (125, '42960781-2ac2-3c42-7865-6679aed91834', NULL, 1, 1, NULL, NULL, '2019-08-10 12:25:56'),
-(125, '4b32489b-5b02-17d8-5739-9518d363e2a6', NULL, 1, 1, NULL, NULL, '2019-08-12 13:48:03');
+(125, '4b32489b-5b02-17d8-5739-9518d363e2a6', NULL, 1, 1, NULL, NULL, '2019-08-12 13:48:03'),
+(125, 'eb4ffcc5-dd4b-0317-00ed-06e7fa7dfcd7', NULL, 1, 1, NULL, NULL, '2019-08-12 14:45:08'),
+(125, '3b437b3e-09f0-516d-c04e-abf97b7a0d82', NULL, 1, 1, NULL, NULL, '2019-08-13 06:40:56'),
+(125, 'b3267031-1a66-fecd-9ed4-5ff050144d13', NULL, 1, 1, NULL, NULL, '2019-08-13 10:34:11'),
+(125, 'b1e05a54-3ba4-038f-ac66-b8b7de36b090', NULL, 1, 1, NULL, NULL, '2019-08-13 10:35:13'),
+(125, 'a99f419f-f3ad-b413-d6ed-ad34f44a86e4', NULL, 1, 1, NULL, NULL, '2019-08-13 10:41:27'),
+(125, '32703d82-02bd-3384-4cb2-ca47f364d7a6', NULL, 1, 1, NULL, NULL, '2019-08-13 10:43:37'),
+(125, '7e261be5-7099-fbbc-6316-94d1d71a84ba', NULL, 1, 1, NULL, NULL, '2019-08-13 10:46:54'),
+(125, '99432058-78aa-d64c-435a-a3116cbf9043', NULL, 1, 1, NULL, NULL, '2019-08-13 10:48:21'),
+(125, 'dca1bb03-1333-b759-d7f5-1cf2f6e6f8ab', NULL, 1, 1, NULL, NULL, '2019-08-13 10:49:44'),
+(125, '9c3faf42-0314-6f7f-3a43-28f9a0d60e70', NULL, 1, 1, NULL, NULL, '2019-08-13 10:49:55'),
+(125, '52038133-cdbe-0441-2bf0-f15080be82cb', NULL, 1, 1, NULL, NULL, '2019-08-13 10:53:51'),
+(125, 'da4636a6-bd67-070a-5981-fec798749e29', NULL, 1, 1, NULL, NULL, '2019-08-13 10:54:07'),
+(125, 'd918ddab-6247-0c81-d717-e60141580386', NULL, 1, 1, NULL, NULL, '2019-08-13 11:03:29'),
+(125, 'c06c0023-45dc-9efb-a883-ba91c22fcd39', NULL, 1, 1, NULL, NULL, '2019-08-13 11:06:37'),
+(125, 'd5d760d2-910f-f492-119e-4397f0c7a672', NULL, 1, 1, NULL, NULL, '2019-08-13 13:46:15'),
+(125, 'dad46a41-1746-dede-2c74-dfe908633e11', NULL, 1, 1, NULL, NULL, '2019-08-13 13:54:53'),
+(125, 'edecd7a6-88a9-1bd1-ab2a-c1f5dcfe1f91', NULL, 1, 1, NULL, NULL, '2019-08-13 14:09:59'),
+(125, '519781cb-b037-fc14-b84d-dc32bdf6bd74', NULL, 1, 1, NULL, NULL, '2019-08-16 10:52:21');
 
 -- --------------------------------------------------------
 
@@ -3660,6 +3684,7 @@ INSERT INTO `tbl_users_settings` (`UserID`, `PushNotification`, `PrivacyPhone`, 
 
 CREATE TABLE `tbl_users_type` (
   `UserTypeID` int(11) NOT NULL,
+  `UserTypeGUID` varchar(36) NOT NULL,
   `UserTypeName` varchar(100) NOT NULL,
   `IsAdmin` enum('Yes','No') NOT NULL DEFAULT 'Yes'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -3668,11 +3693,11 @@ CREATE TABLE `tbl_users_type` (
 -- Dumping data for table `tbl_users_type`
 --
 
-INSERT INTO `tbl_users_type` (`UserTypeID`, `UserTypeName`, `IsAdmin`) VALUES
-(1, 'Administrator', 'Yes'),
-(2, 'User', 'No'),
-(3, 'User2', 'No'),
-(4, 'Staff', 'Yes');
+INSERT INTO `tbl_users_type` (`UserTypeID`, `UserTypeGUID`, `UserTypeName`, `IsAdmin`) VALUES
+(1, 'SADMN', 'Administrator', 'Yes'),
+(2, '059fae09-8245-dbae-4aeb-5876eaaf53e5', 'User', 'No'),
+(3, '', 'User2', 'No'),
+(4, '', 'Staff', 'Yes');
 
 -- --------------------------------------------------------
 
@@ -4163,12 +4188,12 @@ ALTER TABLE `tbl_users_withdrawal`
 -- AUTO_INCREMENT for table `admin_control`
 --
 ALTER TABLE `admin_control`
-  MODIFY `ControlID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `ControlID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 --
 -- AUTO_INCREMENT for table `admin_modules`
 --
 ALTER TABLE `admin_modules`
-  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 --
 -- AUTO_INCREMENT for table `dummy_names`
 --
