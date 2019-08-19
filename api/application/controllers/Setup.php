@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Setup extends API_Controller_Secure
 {
@@ -17,9 +17,9 @@ class Setup extends API_Controller_Secure
 	public function getGroups_post()
 	{
 		$GroupData = $this->Common_model->getUserTypes('', array("Permitted" => TRUE), TRUE);
-		if(!empty($GroupData)){
+		if (!empty($GroupData)) {
 			$this->Return['Data'] = $GroupData['Data'];
-		}	
+		}
 	}
 
 
@@ -32,13 +32,13 @@ class Setup extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('UserTypeGUID', 'UserTypeGUID', 'trim|required|callback_validateUserTypeGUID');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
 		$GroupData = $this->Common_model->getUserTypes('', array("UserTypeID" => $this->UserTypeID));
-		if(!empty($GroupData)){
+		if (!empty($GroupData)) {
 			$this->Return['Data'] = $GroupData;
-		}	
+		}
 	}
 
 
@@ -51,10 +51,9 @@ class Setup extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('UserTypeGUID', 'UserTypeGUID', 'trim|required|callback_validateUserTypeGUID');
-		$this->form_validation->validation($this);  /* Run validation */		
+		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-		$this->Common_model->editUserType($this->UserTypeID, $this->Post);	
-
+		$this->Common_model->editUserType($this->UserTypeID, $this->Post);
 		$GroupData = $this->Common_model->getUserTypes('', array("UserTypeID" => $this->UserTypeID, "Permitted" => TRUE));
 		$this->Return['Data'] = $GroupData;
 	}
@@ -67,6 +66,7 @@ class Setup extends API_Controller_Secure
 	public function addGroup_post()
 	{
 		/* Validation section */
+<<<<<<< HEAD
 		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]|max_length[20]');
 		$this->form_validation->set_message('is_unique', 'GroupName is already exist.');
 		$this->form_validation->validation($this);  /* Run validation */		
@@ -74,6 +74,14 @@ class Setup extends API_Controller_Secure
 		$UserTypeData = $this->Common_model->saveUserType($this->Post);	
 		if ($UserTypeData) {
 			$this->Return['UserTypeData'] =	$UserTypeData;
+=======
+		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]');
+		$this->form_validation->validation($this);  /* Run validation */
+		/* Validation - ends */
+
+		$GroupId = $this->Common_model->saveUserType($this->Post);
+		if ($GroupId) {
+>>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
 			$this->Return['ResponseCode'] 	=	200;
 			$this->Return['Message']      	=	"Success.";
 		}
@@ -81,11 +89,15 @@ class Setup extends API_Controller_Secure
 
 
 
-	/*------------------------------*/
-	/*------------------------------*/
-	function validateUserTypeGUID($UserTypeGUID) {
-		$UserTypeData = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeGUID" => $UserTypeGUID));
+<<<<<<< HEAD
+=======
 
+>>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
+	/*------------------------------*/
+	/*------------------------------*/
+	function validateUserTypeGUID($UserTypeGUID)
+	{
+		$UserTypeData = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeGUID" => $UserTypeGUID));
 		if ($UserTypeData) {
 			$this->UserTypeID = $UserTypeData['UserTypeID'];
 			return TRUE;
@@ -93,5 +105,4 @@ class Setup extends API_Controller_Secure
 		$this->form_validation->set_message('validateUserTypeGUID', 'Invalid {field}.');
 		return FALSE;
 	}
-
 }

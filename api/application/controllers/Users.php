@@ -101,14 +101,15 @@ class Users extends API_Controller_Secure
     public function updateUserInfo_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email|callback_validateEmail[' . $this->Post['SessionKey'] . ']');
+        $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email|callback_validateEmail[' . $this->Post['SessionKey'] . ']', array('validateEmail' => 'Sorry, But this email is already verified.'));
         $this->form_validation->set_rules('Username', 'Username', 'trim|alpha_dash|callback_validateUsername[' . $this->Post['SessionKey'] . ']');
         $this->form_validation->set_rules('Gender', 'Gender', 'trim|in_list[Male,Female,Other]');
         $this->form_validation->set_rules('CountryCode', 'Country Code', 'trim|exact_length[2]');
         $this->form_validation->set_rules('BirthDate', 'BirthDate', 'trim|callback_validateDate');
         if (@$this->Post['PhoneNumber']) {
-            $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|is_unique[tbl_users.PhoneNumber]|callback_validatePhoneNumber[' . $this->Post['SessionKey'] . ']');
+            $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|is_unique[tbl_users.PhoneNumber]|callback_validatePhoneNumber[' . $this->Post['SessionKey'] . ']', array('validatePhoneNumber' => 'Sorry, But this number is already verified.'));
         }
+        $this->form_validation->set_message('is_unique', 'Sorry, But this {field} is already verified.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
