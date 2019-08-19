@@ -13,7 +13,7 @@ class Signup extends API_Controller
     }
 
     /*
-      Name: 			Signup
+      Name: 		Signup
       Description: 	Use to register user to system.
       URL: 			/api/signup/
      */
@@ -37,6 +37,7 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
         $this->form_validation->set_rules('IPAddress', 'IPAddress', 'trim|callback_validateIP');
         $this->form_validation->set_rules('ReferralCode', 'ReferralCode', 'trim|callback_validateReferralCode');
+        $this->form_validation->set_message('is_unique', 'Sorry, But this {field} is already registered.');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
 
@@ -282,7 +283,7 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('Type', 'Type', 'trim|required|in_list[Email,Phone]');
         $this->form_validation->set_rules('Email', 'Email', 'trim' . (($this->Post['Type'] == 'Email') ? '|valid_email|is_unique[tbl_users.Email]' : ''));
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (($this->Post['Type'] == 'PhoneNumber') ? '|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]' : ''));
-        $this->form_validation->set_message('is_unique', '{field} field already exist');
+        $this->form_validation->set_message('is_unique', 'Sorry, But this {field} is already registered.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
