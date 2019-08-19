@@ -51,13 +51,13 @@
                         <tr>
                             <!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->
                             <th style="width: 200px;min-width:200px;">TransactionID</th>
-                            <th>Narration</th>
+                            <th style="width: 200px;min-width:200px;">Narration</th>
 
                             <th style="width: 120px;">Opening Balance</th>
-                            <th style="width: 160px;" class="text-center">Cr.</th>
-                            <th style="width: 100px;" class="text-center">Dr.</th>
-                            <th style="width: 100px;" class="text-center">Available Balance</th>
-                            <th style="width: 100px;" class="text-center">Date & Time</th>
+                            <th style="width: 160px;">Cr.</th>
+                            <th style="width: 100px;">Dr.</th>
+                            <th style="width: 100px;">Available Balance</th>
+                            <th style="width: 100px;">Date & Time</th>
                             <th style="width: 120px;">Status</th>
 
                         </tr>

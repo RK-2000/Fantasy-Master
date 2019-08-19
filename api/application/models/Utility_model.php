@@ -671,18 +671,6 @@ class Utility_model extends CI_Model
                     $TeamsData = array_merge($VisitorTeamData, $LocalTeamData);
                     if (!empty($TeamsData)) {
                         $this->db->insert_batch('sports_teams', $TeamsData);
-
-                        /* Add Into MongoDB */
-                        foreach($TeamsData as $Team){
-                            $TeamsDataMongo[] = array(
-                                            '_id'           => $Team['TeamGUID'],
-                                            'TeamID'        => (int) $Team['TeamID'],
-                                            'TeamName'      => $Team['TeamName'],
-                                            'TeamNameShort' => $Team['TeamNameShort'],
-                                            'TeamFlag'      => 'team.png'
-                                        );
-                        }
-                        $this->fantasydb->sports_teams->insertMany($TeamsDataMongo);
                     }
 
                     /* To check if match is already exist */

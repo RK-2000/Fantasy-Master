@@ -14,10 +14,11 @@ function send_mail($emailData = array())
                     "email": "' . $emailData['emailTo'] . '"
                 }],
                 "dynamic_template_data":{
-                    "site_url"              :   "' . SITE_HOST . '",
+                    "SITE_URL"              :   "' . SITE_HOST . '",
                     "BASE_URL"              :   "' . BASE_URL . '",
                     "ASSET_BASE_URL"        :   "' . ASSET_BASE_URL . '",
                     "SITE_NAME"             :   "' . SITE_NAME . '",
+                    "COMPANY_NAME"          :   "' . SITE_NAME . '",
                     "DEFAULT_CURRENCY"      :   "' . DEFAULT_CURRENCY . '",
                     "REFERRAL_SIGNUP_BONUS" :   "' . REFERRAL_SIGNUP_BONUS . '",
                     "FACEBOOK_URL"          :   "' . FACEBOOK_URL . '",
@@ -40,7 +41,7 @@ function send_mail($emailData = array())
                     "Amount"                :   "' . $emailData['Amount'] . '",
                     "ReferralCode"          :   "' . $emailData['ReferralCode'] . '",
                     "ReferralURL"           :   "' . $emailData['ReferralURL'] . '",
-                    "date"                  :   "' . date('Y') . '"
+                    "DATE"                  :   "' . date('Y') . '"
                 }
             }
             ],
@@ -371,7 +372,6 @@ function mongoDBConnection()
     /* Require MongoDB Library & Connection */
     $Obj = &get_instance();
     require_once getcwd() . '/vendor/autoload.php';
-    $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
     switch (ENVIRONMENT) {
         case 'local':
             $Obj->ClientObj = new MongoDB\Client("mongodb://192.168.1.251:27017");
@@ -382,6 +382,9 @@ function mongoDBConnection()
         case 'demo':
             $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
             break;
+        default :
+            $Obj->ClientObj = new MongoDB\Client("mongodb://fantasygameplanadminmw:fantasymw123mobiwebgameplan@localhost:27017");
+           break;
     }
     $Obj->fantasydb = $Obj->ClientObj->fantasymaster;
 }

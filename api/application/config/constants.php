@@ -123,10 +123,10 @@ define('USER_TEAMS_LIMIT', 60);
 define('CONTEST_FILL_PERCENT_LIMIT', 80);
 
 /*Social */
-define('FACEBOOK_URL', 'https://www.facebook.com/FSLEleven/');
-define('TWITTER_URL', 'https://twitter.com/FSL_Eleven');
-define('LINKEDIN_URL', 'https://www.linkedin.com/company/fsl11');
-define('INSTAGRAM_URL', 'https://www.instagram.com/FSL_Eleven/');
+define('FACEBOOK_URL', 'https://www.facebook.com/');
+define('TWITTER_URL', 'https://twitter.com/');
+define('LINKEDIN_URL', 'https://www.linkedin.com/');
+define('INSTAGRAM_URL', 'https://www.instagram.com/');
 
 /* Entity Sports API Details */
 define('SPORTS_API_URL_ENTITY', 'https://rest.entitysport.com');
@@ -320,7 +320,7 @@ switch (ENVIRONMENT)
 	break;
 case 'production':
 	/*Paths*/
-	define('SITE_HOST', 'https://fsl11.com/');
+	define('SITE_HOST', 'https://example.com/');
 	define('ROOT_FOLDER', '');
 
 	/*SMTP Settings*/
