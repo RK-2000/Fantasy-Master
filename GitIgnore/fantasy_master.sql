@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 19, 2019 at 11:23 AM
+-- Generation Time: Aug 19, 2019 at 07:05 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -121,14 +121,12 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (30, 'Banner', 'banner'),
 (31, 'UserDetails', 'userdetails'),
 (32, 'AuctionDrafts', 'auctionDrafts'),
-(33, 'Private Contests', 'Privatecontests'),
 (34, 'Deposit History', 'depositHistory'),
 (35, 'Pre Draft Contest', 'predraft'),
 (36, 'Referral History', 'referral'),
 (37, 'Joined Users', 'joinedusers'),
 (39, 'Manage User Roles', 'setup/group'),
-(40, 'Coupon History', 'couponhistory'),
-(41, 'Coupon History', 'couponhistory');
+(40, 'Coupon History', 'couponhistory');
 
 -- --------------------------------------------------------
 
@@ -149,32 +147,58 @@ INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
 (1, 1),
 (1, 2),
 (1, 3),
+(1, 4),
+(2, 4),
+(1, 5),
+(7, 5),
+(1, 6),
+(1, 7),
+(1, 8),
 (1, 9),
+(1, 10),
 (1, 11),
+(1, 12),
 (2, 12),
+(1, 13),
 (1, 15),
+(2, 15),
 (1, 16),
 (1, 17),
 (1, 18),
+(2, 18),
 (1, 19),
+(6, 19),
 (1, 20),
+(2, 20),
 (1, 22),
 (1, 23),
 (1, 24),
 (1, 25),
+(4, 25),
+(6, 25),
 (1, 26),
 (1, 27),
 (1, 28),
+(2, 28),
 (1, 29),
 (1, 30),
+(4, 30),
 (1, 31),
 (1, 32),
-(1, 33),
+(4, 32),
+(7, 32),
 (1, 34),
+(1, 35),
+(2, 35),
 (1, 36),
+(4, 36),
+(6, 36),
 (1, 37),
 (1, 39),
-(1, 41);
+(2, 39),
+(1, 40),
+(4, 40),
+(5, 40);
 
 -- --------------------------------------------------------
 
@@ -3597,7 +3621,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-16 10:52:21', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-19 13:34:47', '2019-06-07 10:42:15'),
 (927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL);
 
 -- --------------------------------------------------------
@@ -3654,7 +3678,15 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, 'd5d760d2-910f-f492-119e-4397f0c7a672', NULL, 1, 1, NULL, NULL, '2019-08-13 13:46:15'),
 (125, 'dad46a41-1746-dede-2c74-dfe908633e11', NULL, 1, 1, NULL, NULL, '2019-08-13 13:54:53'),
 (125, 'edecd7a6-88a9-1bd1-ab2a-c1f5dcfe1f91', NULL, 1, 1, NULL, NULL, '2019-08-13 14:09:59'),
-(125, '519781cb-b037-fc14-b84d-dc32bdf6bd74', NULL, 1, 1, NULL, NULL, '2019-08-16 10:52:21');
+(125, '519781cb-b037-fc14-b84d-dc32bdf6bd74', NULL, 1, 1, NULL, NULL, '2019-08-16 10:52:21'),
+(125, '7fbdca18-1ea2-d876-fecb-d925f0c669c8', NULL, 1, 1, NULL, NULL, '2019-08-19 08:24:22'),
+(125, 'b41b6f6a-ece1-02f3-31a7-cd9e98714f24', NULL, 1, 1, NULL, NULL, '2019-08-19 08:33:51'),
+(125, 'e36a9a84-968d-b229-7a48-5de1dbd62e4a', NULL, 1, 1, NULL, NULL, '2019-08-19 10:34:42'),
+(125, '3e2a4caf-63f5-61c2-2f68-50bcc2f650f6', NULL, 1, 1, NULL, NULL, '2019-08-19 10:35:59'),
+(125, '86c89afd-6d13-6130-0a5c-cb3bd6cf2b98', NULL, 1, 1, NULL, NULL, '2019-08-19 11:21:10'),
+(125, '9bd4e136-0bc7-5c5e-d33b-dc00cfb83ed6', NULL, 1, 1, NULL, NULL, '2019-08-19 13:21:04'),
+(125, '02a7e72b-01d5-7e7d-2ca1-6a7adbe5952f', NULL, 1, 1, NULL, NULL, '2019-08-19 13:34:31'),
+(125, '5490158d-309e-5d40-a46e-3ee081278d75', NULL, 1, 1, NULL, NULL, '2019-08-19 13:34:47');
 
 -- --------------------------------------------------------
 
@@ -3696,8 +3728,10 @@ CREATE TABLE `tbl_users_type` (
 INSERT INTO `tbl_users_type` (`UserTypeID`, `UserTypeGUID`, `UserTypeName`, `IsAdmin`) VALUES
 (1, 'SADMN', 'Administrator', 'Yes'),
 (2, '059fae09-8245-dbae-4aeb-5876eaaf53e5', 'User', 'No'),
-(3, '', 'User2', 'No'),
-(4, '', 'Staff', 'Yes');
+(4, '059fae09-8245-dbae-4aeb-5876eaaf53f5', 'Staff', 'No'),
+(5, '748a1f53-cb66-976a-53a0-46bcf0b385a5', 'Manager', 'No'),
+(6, '2a0f3df5-95f3-995b-d892-33f1016440a4', 'Employee', 'No'),
+(7, '573c2770-e2be-6da0-fa09-6b769f42af4b', 'Kamlesh', 'No');
 
 -- --------------------------------------------------------
 
@@ -4288,7 +4322,7 @@ ALTER TABLE `tbl_referral_codes`
 -- AUTO_INCREMENT for table `tbl_users_type`
 --
 ALTER TABLE `tbl_users_type`
-  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `tbl_users_wallet`
 --

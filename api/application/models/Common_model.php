@@ -236,7 +236,6 @@ class Common_model extends CI_Model
 		}
 
 		$Query = $this->db->get();
-		//echo $this->db->last_query();	
 		if($Query->num_rows()>0){
 			foreach($Query->result_array() as $Record){
 				$ModuleData = $this->getModules("M.ModuleTitle, M.ModuleName", array("UserTypeID" => $Record['UserTypeIDForUse'], "Permitted" => (@$Input['Permitted'] ? TRUE:'')), TRUE);
@@ -283,7 +282,6 @@ class Common_model extends CI_Model
 		$this->db->order_by('M.ModuleTitle','ASC');
 
 		$Query = $this->db->get();
-		//echo $this->db->last_query();	
 		if($Query->num_rows()>0){
 			foreach($Query->result_array() as $Record){
 				if(!$multiRecords){
@@ -302,16 +300,13 @@ class Common_model extends CI_Model
 	*/
 	public function saveUserType($Input=array()) {
 		$InsertData = array_filter(array(
-			// "UserTypeID" 			=>	$Input['UserTypeID'],
 			"UserTypeGUID"			=>	get_guid(),
 			"UserTypeName" 			=>	$Input['GroupName'],
 			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? @$Input['IsAdmin'] : "No")
 		));
 		if(!empty($InsertData)){
-			$Query = $this->db->insert('tbl_users_type', $InsertData);
-			if ($Query) {
-				return $this->db->insert_id();
-			}
+			$this->db->insert('tbl_users_type', $InsertData);
+			return $this->db->insert_id();
 		}		
 		return false;
 	}
@@ -327,7 +322,6 @@ class Common_model extends CI_Model
 
 		if(!empty($Input['ModuleName'])){ /*Update permissions*/
 			foreach($Input['ModuleName'] as $ModuleName){
-
 				$ModuleData = $this->getModules("M.ModuleID", array("ModuleName" => $ModuleName));
 				if(!empty($ModuleData)){
 					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID']);
