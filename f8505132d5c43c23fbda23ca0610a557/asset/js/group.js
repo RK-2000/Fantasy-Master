@@ -27,10 +27,6 @@ app.controller('PageController', function($scope, $http, $timeout) {
         });
     }
 
-
-
-
-
     /*load edit form*/
     $scope.loadFormEdit = function(Position, UserTypeGUID) {
         $scope.data.loadFormEdit = true;
@@ -50,14 +46,14 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.loadFormAdd();
     }
 
-
-
-
-
-
+    /*list*/
+    $scope.applyFilter = function ()
+    {
+        $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
+        $scope.getList();
+    }
 
     /*show listing*/
-
     $scope.getList = function() {
        $scope.data.listLoading = true;
         var data = 'SessionKey=' + SessionKey + '&Params=UserTypeID,Modules';
@@ -76,12 +72,31 @@ app.controller('PageController', function($scope, $http, $timeout) {
         });
     }
 
-
     /*load add form*/
     $scope.loadFormAdd = function() {
 
-        $('#addgroup').modal({
+        $('#edit_permission_modal').modal({
             show: true
+        });
+    }
+
+    /*add Group data*/
+    $scope.addGroupData = function ()
+    {
+        $scope.addDataLoading = true;
+        var data = 'SessionKey='+SessionKey+'&'+$("form[name='add_form']").serialize();
+        $http.post(API_URL+'setup/addGroup', data, contentType).then(function(response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if(response.ResponseCode==200){ /* success case */               
+                alertify.success(response.Message);
+                $scope.applyFilter();
+                $('.modal-header .close').click();
+                $('.modal-header .close').click();
+            }else{
+                alertify.error(response.Message);
+            }
+            $scope.addDataLoading = false;          
         });
     }
 

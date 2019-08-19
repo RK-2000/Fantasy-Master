@@ -59,6 +59,24 @@ class Setup extends API_Controller_Secure
 		$this->Return['Data'] = $GroupData;
 	}
 
+	/*
+	Description: 	Use to get add group.
+	URL: 			/api/setup/addGroup
+	Input (Sample JSON): 		
+	*/
+	public function addGroup_post()
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]');
+		$this->form_validation->validation($this);  /* Run validation */		
+		/* Validation - ends */
+		$GroupId = $this->Common_model->saveUserType($this->Post);	
+		if ($GroupId) {
+			$this->Return['ResponseCode'] 	=	200;
+			$this->Return['Message']      	=	"Success.";
+		}
+	}
+
 
 
 

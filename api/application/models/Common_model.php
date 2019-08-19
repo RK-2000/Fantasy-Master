@@ -302,10 +302,10 @@ class Common_model extends CI_Model
 	*/
 	public function saveUserType($Input=array()) {
 		$InsertData = array_filter(array(
-			"UserTypeID" 			=>	$Input['UserTypeID'],
+			// "UserTypeID" 			=>	$Input['UserTypeID'],
 			"UserTypeGUID"			=>	get_guid(),
-			"UserTypeName" 			=>	$Input['UserTypeName'],
-			"IsAdmin" 				=>	$Input['IsAdmin']
+			"UserTypeName" 			=>	$Input['GroupName'],
+			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? @$Input['IsAdmin'] : "No")
 		));
 		if(!empty($InsertData)){
 			$Query = $this->db->insert('tbl_users_type', $InsertData);
