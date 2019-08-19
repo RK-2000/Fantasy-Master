@@ -21,7 +21,7 @@ class Signup extends API_Controller
     public function index_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('Email', 'Email', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : '') . '|valid_email|callback_validateEmail');
+        $this->form_validation->set_rules('Email', 'Email', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : '') . '|valid_email|callback_validateEmail', array('validateEmail' => 'Sorry, But this email is already registered.'));
         $this->form_validation->set_rules('Username', 'Username', 'trim|alpha_dash|callback_validateUsername');
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim');
@@ -31,7 +31,7 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('Gender', 'Gender', 'trim|in_list[Male,Female,Other]');
         $this->form_validation->set_rules('BirthDate', 'BirthDate', 'trim|callback_validateDate');
         $this->form_validation->set_rules('Age', 'Age', 'trim|integer');
-        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]');
+        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]', array('validatePhoneNumber' => 'Sorry, But this number is already registered.'));
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('SourceGUID', 'SourceGUID', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] != 'Direct' ? '|required' : '') . '|callback_validateSourceGUID[' . @$this->Post['Source'] . ']');
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
@@ -281,9 +281,9 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('Type', 'Type', 'trim|required|in_list[Email,Phone]');
-        $this->form_validation->set_rules('Email', 'Email', 'trim' . (($this->Post['Type'] == 'Email') ? '|valid_email|is_unique[tbl_users.Email]' : ''));
-        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (($this->Post['Type'] == 'PhoneNumber') ? '|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]' : ''));
-        $this->form_validation->set_message('is_unique', 'Sorry, But this {field} is already registered.');
+        $this->form_validation->set_rules('Email', 'Email', 'trim' . (($this->Post['Type'] == 'Email') ? '|valid_email|callback_validateEmail' : ''), array('validateEmail' => 'Sorry, But this email is already verified.'));
+        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim' . (($this->Post['Type'] == 'PhoneNumber') ? '|callback_validatePhoneNumber|is_unique[tbl_users.PhoneNumber]' : ''), array('validatePhoneNumber' => 'Sorry, But this number is already verified.'));
+        $this->form_validation->set_message('is_unique', 'Sorry, But this {field} is already verified.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
