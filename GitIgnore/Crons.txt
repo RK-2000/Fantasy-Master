@@ -10,4 +10,7 @@
 */10 * * * * wget -qO- http://128.199.166.109/api/utilities/refundAmountCancelContest
 */16 * * * * wget -qO- http://128.199.166.109/api/utilities/tranferJoinedContestData
 */17 * * * * wget -qO- http://128.199.166.109/api/utilities/amountDistributeContestWinner
-0 0 * * * wget -qO- https://win365.live/api/utilities/createPreDraftContest
+0 0 * * * wget -qO- https://128.199.166.109/api/utilities/createPreDraftContest
+
+
+
