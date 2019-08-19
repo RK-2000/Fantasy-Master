@@ -14,7 +14,8 @@ class Wallet extends API_Controller
 	*/
 	public function getWallet_post()
 	{
-		$this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
+		$this->form_validation->set_rules('CouponCode', 'CouponCode', 'trim');
+		$this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim' . (empty($this->Post['CouponCode']) ? '|required|callback_validateEntityGUID[User,UserID]' : ''));
 		$this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
 		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
 		$this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
@@ -22,7 +23,7 @@ class Wallet extends API_Controller
 		$this->form_validation->validation($this);  /* Run validation */
 
 		/* Get Wallet Data */
-		$WalletDetails = $this->Users_model->getWallet(@$this->Post['Params'], array_merge($this->Post, array('UserID' => $this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
+		$WalletDetails = $this->Users_model->getWallet(@$this->Post['Params'], array_merge($this->Post, array('UserID' => @$this->UserID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
 		if (!empty($WalletDetails)) {
 			$this->Return['Data'] = $WalletDetails['Data'];
 		}

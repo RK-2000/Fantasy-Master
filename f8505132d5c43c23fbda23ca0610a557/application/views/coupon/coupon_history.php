@@ -8,24 +8,17 @@
     <div class="clearfix mt-2 mb-2">
         <div class="clearfix mt-2 mb-2">
             <span class="float-left records d-none d-sm-block">
-                <span class="h5"><b>{{userData.FullName}} ({{userData.Email}})</b></span><br>
+                <span class="h5"><b>Coupon Code: {{couponData.CouponCode}}</b></span><br>
             </span>
 
         </div>
-
-
-
         <div class="clearfix mt-2 mb-2">
             <span class="float-left records hidden-sm-down">
                 <span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
             </span>
             <div class="float-right">
                 <button class="btn btn-success btn-sm ml-1 float-right"
-                    onclick="window.location.href= BASE_URL + 'user'">Back</button>
-            </div>
-            <div class="float-right ">
-                <button class="btn btn-success btn-sm ml-1"
-                    ng-click="ExportList('TransactionList','TransactionList.csv')">Export</button>&nbsp;
+                    onclick="window.location.href= BASE_URL + 'coupon'">Back</button>
             </div>
             <div class="float-right">
                 <button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal"
@@ -38,7 +31,7 @@
 
 
         <!-- Data table -->
-        <div class="table-responsive block_pad_md" infinite-scroll="getList()"
+        <div class="table-responsive block_pad_md" infinite-scroll="getHistoryList()"
             infinite-scroll-disabled='data.listLoading' infinite-scroll-distance="0">
 
             <!-- loading -->
@@ -49,14 +42,11 @@
                     <!-- table heading -->
                     <thead>
                         <tr>
-                            <!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->
-                            <th style="width: 200px;min-width:200px;">TransactionID</th>
-                            <th style="width: 200px;min-width:200px;">Narration</th>
-
-                            <th style="width: 120px;">Opening Balance</th>
-                            <th style="width: 160px;">Cr.</th>
-                            <th style="width: 100px;">Dr.</th>
-                            <th style="width: 100px;">Available Balance</th>
+                            <th style="width: 200px;min-width:200px;">User</th>
+                            <th style="width: 200px;min-width:200px;">Deposit Amount</th>
+                            <th style="width: 120px;">Coupon Type</th>
+                            <th style="width: 120px;">Coupon Value</th>
+                            <th style="width: 100px;">Discount Amount</th>
                             <th style="width: 100px;">Date & Time</th>
                             <th style="width: 120px;">Status</th>
 
@@ -74,22 +64,17 @@
                                 <span ng-if="row.Narration">{{row.Narration}}</span><span
                                     ng-if="!row.Narration">-</span>
                             </td>
-
+                            <td>
+                                <span ng-if="row.Narration">{{row.Narration}}</span><span
+                                    ng-if="!row.Narration">-</span>
+                            </td>
+                            <td>
+                                <span ng-if="row.Narration">{{row.Narration}}</span><span
+                                    ng-if="!row.Narration">-</span>
+                            </td>
                             <td>
                                 <span ng-if="row.OpeningBalance">{{DEFAULT_CURRENCY}}{{row.OpeningBalance}}</span><span
                                     ng-if="!row.OpeningBalance">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.TransactionType=='Cr'">{{DEFAULT_CURRENCY}}{{row.Amount}}</span>
-                                <span ng-if="row.TransactionType!='Cr'">{{DEFAULT_CURRENCY}}0</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.TransactionType=='Dr'">{{DEFAULT_CURRENCY}}{{row.Amount}}</span>
-                                <span ng-if="row.TransactionType!='Dr'">{{DEFAULT_CURRENCY}}0</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.ClosingBalance">{{DEFAULT_CURRENCY}}{{row.ClosingBalance}}</span><span
-                                    ng-if="!row.ClosingBalance">-</span>
                             </td>
                             <td>
                                 <span ng-if="row.EntryDate">{{row.EntryDate}}</span><span
@@ -112,41 +97,6 @@
         </div>
         <!-- Data table/ -->
 
-
-        <!-- edit Modal -->
-        <div class="modal fade" id="edit_model">
-            <div class="modal-dialog modal-md" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title h5">Edit <?php echo $this->ModuleData['ModuleName'];?></h3>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    </div>
-                    <!-- form -->
-                    <form id="edit_form" name="edit_form" autocomplete="off" ng-include="templateURLEdit">
-                    </form>
-                    <!-- /form -->
-                </div>
-            </div>
-        </div>
-
-
-        <!-- delete Modal -->
-        <div class="modal fade" id="delete_model">
-            <div class="modal-dialog modal-md" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title h5">Delete <?php echo $this->ModuleData['ModuleName'];?></h3>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    </div>
-                    <!-- form -->
-                    <form id="edit_form" name="edit_form" autocomplete="off" ng-include="templateURLDelete">
-                    </form>
-                    <!-- /form -->
-                </div>
-            </div>
-        </div>
         <!-- Filter Modal -->
         <div class="modal fade" id="filter_model" ng-init="initDateRangePicker()">
             <div class="modal-dialog modal-md" role="document">

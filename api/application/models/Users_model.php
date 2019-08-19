@@ -1323,6 +1323,7 @@ class Users_model extends CI_Model
                 'WithdrawalHoldAmount' => 'W.WithdrawalHoldAmount',
                 'Currency' => 'W.Currency',
                 'PaymentGateway' => 'W.PaymentGateway',
+                'CouponCode' => 'W.CouponCode',
                 'CouponDetails' => 'W.CouponDetails',
                 'TransactionType' => 'W.TransactionType',
                 'TransactionID' => 'W.TransactionID',

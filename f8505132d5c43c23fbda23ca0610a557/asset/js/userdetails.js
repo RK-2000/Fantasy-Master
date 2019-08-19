@@ -49,9 +49,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
     /*list append*/
     $scope.transactions = [];
     $scope.getList = function(TransactionMode) {
-        
         var data = 'SessionKey=' + SessionKey + '&UserGUID='+getQueryStringValue('UserGUID')+'&IsAdmin=No&OrderBy=' + $scope.data.OrderBy + '&Sequence=' + $scope.data.Sequence + '&' +'Params=Amount,CurrencyPaymentGateway,TransactionType,TransactionID,Status,Narration,EntryDate,OpeningWalletAmount,OpeningWinningAmount,OpeningCashBonus,WalletAmount,WinningAmount,CashBonus,ClosingWalletAmount,ClosingWinningAmount,ClosingCashBonus,TotalCash&Filter=FailedCompleted&TransactionMode='+TransactionMode+'&'+$('#filterForm').serialize();
-
         $http.post(API_URL + 'admin/wallet/getWallet', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);

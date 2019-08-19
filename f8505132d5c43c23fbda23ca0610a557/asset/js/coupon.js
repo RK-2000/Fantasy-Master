@@ -50,6 +50,20 @@ app.controller('PageController', function ($scope, $http,$timeout){
         });
     }
 
+    /* Get Coupom Details */
+    $scope.getCouponInfo = function(){
+        $scope.userData = {};
+        var CouponGUID = getQueryStringValue('CouponGUID');
+        $http.post(API_URL + 'store/getCoupons', 'SessionKey=' + SessionKey + '&CouponGUID=' + CouponGUID + '&Params=CouponCode', contentType).then(function(response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200) { /* success case */
+                $scope.couponData = response.Data.Records[0];
+            }
+        });
+    }
+    $scope.getCouponInfo();
+
 
     /*list append*/
     $scope.getList = function ()
@@ -70,7 +84,28 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.data.noRecords = true;
         }
         $scope.data.listLoading = false;
-    });
+        });
+    }
+
+    /*list append*/
+    $scope.transactions = [];
+    $scope.getHistoryList = function ()
+    {
+        if ($scope.data.listLoading || $scope.data.noRecords) return;
+        $scope.data.listLoading = true;
+        var data = 'SessionKey=' + SessionKey + '&CouponCode='+getQueryStringValue('CouponCode')+'&OrderBy=WalletID&Sequence=DESC&' +'Params=Amount,CouponDetails,Status,EntryDate&Filter=FailedCompleted&TransactionMode=All&'+$('#filterForm').serialize();
+        $http.post(API_URL + 'admin/wallet/getWallet', data, contentType).then(function(response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if(response.ResponseCode==200 && response.Data.Records){ /* success case */
+                $scope.data.totalRecords = response.Data.TotalRecords;
+                $scope.transactions = response.Data.Records;
+                $scope.data.pageNo++;               
+            }else{
+             $scope.data.noRecords = true;
+            }
+            $scope.data.listLoading = false;
+        });
     }
 
 
