@@ -14,10 +14,11 @@ function send_mail($emailData = array())
                     "email": "' . $emailData['emailTo'] . '"
                 }],
                 "dynamic_template_data":{
-                    "site_url"              :   "' . SITE_HOST . '",
+                    "SITE_URL"              :   "' . SITE_HOST . '",
                     "BASE_URL"              :   "' . BASE_URL . '",
                     "ASSET_BASE_URL"        :   "' . ASSET_BASE_URL . '",
                     "SITE_NAME"             :   "' . SITE_NAME . '",
+                    "COMPANY_NAME"          :   "' . SITE_NAME . '",
                     "DEFAULT_CURRENCY"      :   "' . DEFAULT_CURRENCY . '",
                     "REFERRAL_SIGNUP_BONUS" :   "' . REFERRAL_SIGNUP_BONUS . '",
                     "FACEBOOK_URL"          :   "' . FACEBOOK_URL . '",
@@ -40,7 +41,7 @@ function send_mail($emailData = array())
                     "Amount"                :   "' . $emailData['Amount'] . '",
                     "ReferralCode"          :   "' . $emailData['ReferralCode'] . '",
                     "ReferralURL"           :   "' . $emailData['ReferralURL'] . '",
-                    "date"                  :   "' . date('Y') . '"
+                    "DATE"                  :   "' . date('Y') . '"
                 }
             }
             ],

@@ -320,7 +320,7 @@ switch (ENVIRONMENT)
 	break;
 case 'production':
 	/*Paths*/
-	define('SITE_HOST', 'https://fsl11.com/');
+	define('SITE_HOST', 'https://example.com/');
 	define('ROOT_FOLDER', '');
 
 	/*SMTP Settings*/
