@@ -38,7 +38,6 @@ function APICall($URL, $JSON='') {
 
 	curl_setopt($CH, CURLOPT_URL, $URL);
 	if ($JSON != '') {
-		//curl_setopt($CH, CURLOPT_POST, count($JSON));
 		curl_setopt($CH, CURLOPT_POSTFIELDS, $JSON);
 	}
 

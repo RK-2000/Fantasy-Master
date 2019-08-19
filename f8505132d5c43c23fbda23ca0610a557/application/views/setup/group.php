@@ -13,7 +13,7 @@
       </span>
 
       <div class="float-right mr-2">      
-         <button class="btn btn-success btn-sm ml-1 float-right" onclick="Add_group();">Add Group</button>
+         <button class="btn btn-success btn-sm ml-1 float-right" onclick='$("#add_group_modal").modal("show")'>Add Group</button>
       </div>
      
    </div>
@@ -123,7 +123,7 @@
                         <div class="col-md-12">
                            <div class="form-group">
                               <label class="control-label">Group Name</label>
-                              <input name="GroupName" type="text" class="form-control" value="" placeholder="Group Name">
+                              <input name="GroupName" type="text" class="form-control" value="" placeholder="Group Name" maxlength="20">
                            </div>
                         </div>
                      </div>
@@ -141,16 +141,3 @@
 
 </div><!-- Body/ -->
 
-<script>
-   function valueChanged(){
-      if($('.coupon_question').is(":checked"))   
-         $("#addreview").modal();
-      else
-         $("#addreview").hide();
-   }
-
-   function Add_group(){
-            
-      $("#add_group_modal").modal('show');
-   }
-</script>

@@ -41,6 +41,26 @@ class Setup extends API_Controller_Secure
 		}
 	}
 
+	/*
+	Description: 	Use to get add group.
+	URL: 			/api/setup/addGroup
+	Input (Sample JSON): 		
+	*/
+	public function addGroup_post()
+	{
+		/* Validation section */
+		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]|max_length[20]');
+		$this->form_validation->set_message('is_unique', 'GroupName is already exist.');
+		$this->form_validation->validation($this);  /* Run validation */		
+		/* Validation - ends */
+		$UserTypeData = $this->Common_model->saveUserType($this->Post);	
+		if ($UserTypeData) {
+			$this->Return['UserTypeData'] =	$UserTypeData;
+			$this->Return['ResponseCode'] 	=	200;
+			$this->Return['Message']      	=	"Success.";
+		}
+	}
+
 
 	/*
 	Description: 	Use to get edit group.
@@ -58,41 +78,6 @@ class Setup extends API_Controller_Secure
 		$this->Return['Data'] = $GroupData;
 	}
 
-	/*
-	Description: 	Use to get add group.
-	URL: 			/api/setup/addGroup
-	Input (Sample JSON): 		
-	*/
-	public function addGroup_post()
-	{
-		/* Validation section */
-<<<<<<< HEAD
-		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]|max_length[20]');
-		$this->form_validation->set_message('is_unique', 'GroupName is already exist.');
-		$this->form_validation->validation($this);  /* Run validation */		
-		/* Validation - ends */
-		$UserTypeData = $this->Common_model->saveUserType($this->Post);	
-		if ($UserTypeData) {
-			$this->Return['UserTypeData'] =	$UserTypeData;
-=======
-		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]');
-		$this->form_validation->validation($this);  /* Run validation */
-		/* Validation - ends */
-
-		$GroupId = $this->Common_model->saveUserType($this->Post);
-		if ($GroupId) {
->>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
-			$this->Return['ResponseCode'] 	=	200;
-			$this->Return['Message']      	=	"Success.";
-		}
-	}
-
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
 	/*------------------------------*/
 	/*------------------------------*/
 	function validateUserTypeGUID($UserTypeGUID)

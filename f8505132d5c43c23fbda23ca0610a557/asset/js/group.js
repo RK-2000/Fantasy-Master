@@ -12,7 +12,6 @@ app.controller('PageController', function($scope, $http, $timeout) {
     /*edit Data */
     $scope.editData = function() {
         $scope.editDataLoading = true;
-
         var data = $('#editForm').serialize() + '&SessionKey=' + SessionKey;
         $http.post(API_URL + 'setup/editGroup', data, contentType).then(function(response) {
             var response = response.data;
@@ -74,7 +73,6 @@ app.controller('PageController', function($scope, $http, $timeout) {
 
     /*load add form*/
     $scope.loadFormAdd = function() {
-
         $('#edit_permission_modal').modal({
             show: true
         });
@@ -87,13 +85,11 @@ app.controller('PageController', function($scope, $http, $timeout) {
         var data = 'SessionKey='+SessionKey+'&'+$("form[name='add_form']").serialize();
         $http.post(API_URL+'setup/addGroup', data, contentType).then(function(response) {
             var response = response.data;
-            // console.log(response);return;
             manageSession(response.ResponseCode);
             if(response.ResponseCode==200){ /* success case */               
                 alertify.success(response.Message);
                 $('.modal-header .close').click();
-                $scope.loadFormEdit(, response.UserTypeData.UserTypeGUID);
-                // $scope.applyFilter();
+                $scope.applyFilter();
             }else{
                 alertify.error(response.Message);
             }

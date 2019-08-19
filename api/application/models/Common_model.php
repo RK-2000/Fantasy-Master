@@ -301,23 +301,13 @@ class Common_model extends CI_Model
 	public function saveUserType($Input=array()) {
 		$GetGUID = get_guid();
 		$InsertData = array_filter(array(
-<<<<<<< HEAD
 			"UserTypeGUID"			=>	$GetGUID,
-=======
-			"UserTypeGUID"			=>	get_guid(),
->>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
 			"UserTypeName" 			=>	$Input['GroupName'],
 			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? @$Input['IsAdmin'] : "No")
 		));
 		if(!empty($InsertData)){
-<<<<<<< HEAD
 			$Query 		= $this->db->insert('tbl_users_type', $InsertData);
-			$insert_id 	= $this->db->insert_id();
-			return array('UserTypeID' => $insert_id, 'UserTypeGUID' => $GetGUID);
-=======
-			$this->db->insert('tbl_users_type', $InsertData);
-			return $this->db->insert_id();
->>>>>>> bdcdc7f92c9fae28ce95f84b1d2af6fdcf62f983
+			return array('UserTypeID' => $this->db->insert_id(), 'UserTypeGUID' => $GetGUID);
 		}		
 		return false;
 	}

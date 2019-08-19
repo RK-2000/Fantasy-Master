@@ -32,9 +32,11 @@ class Admin_Controller_Secure extends Main_Controller {
 			redirect(base_url()); exit;
 		}
 		$this->SessionData 		=	$this->session->userdata('UserData'); 
-		// if($this->uri->segment(1)!='dashboard'){
-			$this->ModuleData 	= ValidateUserAccess($this->SessionData['PermittedModules'],$this->uri->uri_string);
-		// }
+		if($this->uri->segment(1) != 'dashboard'){
+			$this->ModuleData 	= 	ValidateUserAccess($this->SessionData['PermittedModules'],$this->uri->uri_string);
+		}else{
+			$this->ModuleData 	= 	ValidateUserAccess($this->SessionData['PermittedModules'],'dashboard');
+		}
 		$this->SessionKey		=	$this->SessionData['SessionKey'];	
 		$this->UserGUID			=	$this->SessionData['UserGUID'];
 		$this->Menu				=	$this->SessionData['Menu'];
