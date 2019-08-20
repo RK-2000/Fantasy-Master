@@ -118,7 +118,7 @@ switch (ENVIRONMENT)
 	break;
 	case 'production':
 	/*Paths*/
-	define('SITE_HOST', 'http://fsl11.com');
+	define('SITE_HOST', 'http://example.com');
 	define('ROOT_FOLDER', '/'.ADMIN_FOLDER);
 	define('API_URL', SITE_HOST."/api/");
 	break;
