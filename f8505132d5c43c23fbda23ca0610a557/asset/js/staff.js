@@ -29,8 +29,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
     });
     }
 
-
-
     /*load add form*/
     $scope.loadFormAdd = function (Position, CategoryGUID)
     {
@@ -73,8 +71,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
 
     }
 
-
-  /*add data*/
+    /*add data*/
     $scope.addData = function ()
     {
         $scope.addDataLoading = true;
@@ -92,8 +89,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.addDataLoading = false;          
         });
     }
-
-
 
     /*delete selected */
     $scope.deleteSelectedRecords = function ()
@@ -116,9 +111,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
         }).set('labels', {ok:'Yes', cancel:'No'});
     }
 
-
-
-
     /*edit data*/
     $scope.editData = function ()
     {
@@ -137,7 +129,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
             $scope.editDataLoading = false;          
         });
     }
-
 
     /*load delete form*/
     $scope.loadFormDelete = function (Position, UserGUID)
@@ -159,26 +150,6 @@ app.controller('PageController', function ($scope, $http,$timeout){
         });
 
     }
-
-    // /*get*/
-    // $scope.loadFormAdd = function (Position, CategoryGUID)
-    // {
-    //     $scope.templateURLAdd = PATH_TEMPLATE+module+'/add_form.htm?'+Math.random();
-    //     $scope.data.pageLoading = true;
-    //     $http.post(API_URL+'setup/getGroups', 'SessionKey='+SessionKey, contentType).then(function(response) {
-    //         var response = response.data;
-    //         manageSession(response.ResponseCode);
-    //         if(response.ResponseCode==200){ /* success case */
-    //             $scope.data.pageLoading = false;
-    //             $scope.TypeList = response.Data.Records
-    //             $('#add_model').modal({show:true});
-    //             $timeout(function(){            
-    //              $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
-    //          }, 200);
-    //         }
-    //     });
-    // }
-
 
 }); 
 

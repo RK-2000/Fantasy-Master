@@ -43,7 +43,7 @@ class Signin extends API_Controller
 		} elseif ($UserData && $UserData['StatusID'] == 5) {
 			$this->Return['ResponseCode'] 	=	500;
 			$this->Return['Message']      	=	"You have deactivated your account, please contact the Admin to reactivate.";
-		} elseif ($UserData && $UserData['IsAdmin'] == 'No') {
+		} elseif ($UserData && $UserData['UserTypeName'] == 'User') {
 			$this->Return['ResponseCode'] 	=	500;
 			$this->Return['Message']      	=	"Access restricted.";
 		} else {
