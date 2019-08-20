@@ -239,8 +239,8 @@ class Common_model extends CI_Model
 		if($Query->num_rows()>0){
 			foreach($Query->result_array() as $Record){
 				$ModuleData = $this->getModules("M.ModuleTitle, M.ModuleName", array("UserTypeID" => $Record['UserTypeIDForUse'], "Permitted" => (@$Input['Permitted'] ? TRUE:'')), TRUE);
-				$Record['PermittedModules'] = ($ModuleData ? $ModuleData['Data']['Records'] : new stdClass());		
-
+				$Record['PermittedModules'] = ($ModuleData ? $ModuleData['Data']['Records'] : new stdClass());
+				$Record['UserTypeID'] = $Record['UserTypeIDForUse'];		
 				unset($Record['UserTypeIDForUse']);		
 				if(!$multiRecords){
 					return $Record;

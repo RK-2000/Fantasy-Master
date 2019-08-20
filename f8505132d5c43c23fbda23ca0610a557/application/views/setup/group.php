@@ -66,7 +66,7 @@
 
    <!-- Edit permission-modal -->
    <div class="modal fade" id="edit_permission_modal">
-      <div class="modal-dialog modal-md" role="document">
+      <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
@@ -83,7 +83,7 @@
                         </div>
                         <hr>
                         <div class="row">
-                           <div class="col-md-6" ng-repeat="List in formData.PermittedModules">
+                           <div class="col-md-3" ng-repeat="List in formData.PermittedModules">
                               <div class="form-group">
                                  <div class="customCheckbox checkbox">
                                     <input name="ModuleName[]" value="{{List.ModuleName}}" class="coupon_question" ng-checked="List.Permission=='Yes'"  type="checkbox" id="{{List.ModuleTitle}}">

@@ -12,7 +12,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&IsAdmin=Yes&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&Params=RegisteredOn,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status, StatusID&'+$('#filterForm').serialize();
+        var data = 'SessionKey='+SessionKey+'&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize+'&Params=RegisteredOn,LastLoginDate,UserTypeName, FullName, Email, Username, ProfilePic, Gender, BirthDate, PhoneNumber, Status, StatusID&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/users', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -35,10 +35,19 @@ app.controller('PageController', function ($scope, $http,$timeout){
     $scope.loadFormAdd = function (Position, CategoryGUID)
     {
         $scope.templateURLAdd = PATH_TEMPLATE+module+'/add_form.htm?'+Math.random();
-        $('#add_model').modal({show:true});
+        $scope.data.pageLoading = true;
+        $http.post(API_URL+'setup/getGroups', 'SessionKey='+SessionKey, contentType).then(function(response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if(response.ResponseCode==200){ /* success case */
+                $scope.data.pageLoading = false;
+                $scope.TypeList = response.Data.Records
+                $('#add_model').modal({show:true});
                 $timeout(function(){            
-                   $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
-               }, 200);
+                 $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+             }, 200);
+            }
+        });
     }
 
 
@@ -150,6 +159,25 @@ app.controller('PageController', function ($scope, $http,$timeout){
         });
 
     }
+
+    // /*get*/
+    // $scope.loadFormAdd = function (Position, CategoryGUID)
+    // {
+    //     $scope.templateURLAdd = PATH_TEMPLATE+module+'/add_form.htm?'+Math.random();
+    //     $scope.data.pageLoading = true;
+    //     $http.post(API_URL+'setup/getGroups', 'SessionKey='+SessionKey, contentType).then(function(response) {
+    //         var response = response.data;
+    //         manageSession(response.ResponseCode);
+    //         if(response.ResponseCode==200){ /* success case */
+    //             $scope.data.pageLoading = false;
+    //             $scope.TypeList = response.Data.Records
+    //             $('#add_model').modal({show:true});
+    //             $timeout(function(){            
+    //              $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
+    //          }, 200);
+    //         }
+    //     });
+    // }
 
 
 }); 

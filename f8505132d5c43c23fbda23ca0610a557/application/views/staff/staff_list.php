@@ -46,7 +46,6 @@
 				<!-- table heading -->
 				<thead>
 					<tr>
-						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1"></th>	 -->
 						<th style="width: 300px;">User</th>
 						<th>Contact No.</th>
 						<th style="width: 200px;">Role</th>
@@ -60,9 +59,7 @@
 				<!-- table body -->
 				<tbody>
 					<tr scope="row" ng-repeat="(key, row) in data.dataList">
-						<!-- <td class="text-center"  ng-if="data.dataList.length>1">
-							<input type="checkbox" name="select-all-checkbox[]" id="select-all-checkbox-{{key}}" class="mt-2 select-all-checkbox" value="{{row.UserGUID}}" ng-if="data.UserGUID!=row.UserGUID">
-						</td> -->
+						
 						<td class="listed sm clearfix">
 							<img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}">
 							<div class="content float-left"><strong>{{row.FullName}}</strong>
@@ -97,8 +94,6 @@
 	</div>
 	<!-- Data table/ -->
 
-
-
 	<!-- add Modal -->
 	<div class="modal fade" id="add_model">
 		<div class="modal-dialog modal-md" role="document">
@@ -111,10 +106,6 @@
 			</div>
 		</div>
 	</div>
-
-
-
-
 
 	<!-- edit Modal -->
 	<div class="modal fade" id="edit_model">
@@ -131,7 +122,6 @@
 			</div>
 		</div>
 	</div>
-
 
 	<!-- delete Modal -->
 	<div class="modal fade" id="delete_model">
