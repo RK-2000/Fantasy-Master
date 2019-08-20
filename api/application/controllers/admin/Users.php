@@ -10,7 +10,6 @@ class Users extends API_Controller_Secure
         parent::__construct();
         $this->load->model('Recovery_model');
         $this->load->model('Utility_model');
-        $this->load->model('Common_model');
     }
 
     /*
@@ -223,7 +222,6 @@ class Users extends API_Controller_Secure
       Description: 	Use to register user to system.
       URL: 			/admin/users/add/
      */
-
     public function add_post()
     {
         /* Validation section */
