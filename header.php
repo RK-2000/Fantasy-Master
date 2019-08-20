@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="en" data-ng-app="FSL11" ng-cloak  >
+<html  lang="en" data-ng-app="FANTASY" ng-cloak  >
 <head>
     <?php include('MetaData.php') ?>
     <meta charset="utf-8">

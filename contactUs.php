@@ -16,10 +16,8 @@
                             <div class="contectInformation">
                                 <ul>
                                    <li><i class="fa fa-home"></i> BRAINYBUCKS GAMES PRIVATE LIMITED  </li>
-                                    <li><i class="fa fa-phone"></i>
-                                         <!-- 9644095948 --> 
-                                    </li>
-                                    <li><i class="fa fa-envelope"></i> info@fsl11.com </li>
+                                    <li><i class="fa fa-phone"></i>+91-9090909090</li>
+                                    <li><i class="fa fa-envelope"></i> info@example.com </li>
                                     <li><i class="fa fa-map-marker"></i>
                                         22-23-24, R S Bhandari Marg, Indore Madhya Pradesh, India, 452001 </li>
                                 </ul>
@@ -27,11 +25,10 @@
                             <div class="listPar">
                                 <p>Let's Connect</p>
                                 <ul>
-                                    <li><a class="fb" href="https://www.facebook.com/FSLEleven/" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                    <li><a class="tw" href="https://twitter.com/FSL_Eleven" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-                                    <li><a class="gplus"  href="https://www.linkedin.com/company/fsl11" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                                    <li><a class="inst" href="https://www.instagram.com/FSL_Eleven/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-                                    <!-- <li><a href="#"><i class="fa fa-phone" aria-hidden="true"></i></a></li> -->
+                                    <li><a class="fb" href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a class="tw" href="https://twitter.com" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a class="gplus"  href="https://www.linkedin.com" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a class="inst" href="https://www.instagram.com/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
                                 </ul>
                             </div>
                         </div>
