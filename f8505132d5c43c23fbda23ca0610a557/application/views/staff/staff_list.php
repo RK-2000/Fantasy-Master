@@ -8,17 +8,6 @@
 		<span class="float-left records hidden-sm-down">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
-
-
-		<!-- <span class="float-left ml-3" ng-if="data.dataList.length>1">
-			<div class="dropdown">
-				<button class="btn btn-secondary btn-sm action ng-scope" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">Action</button>
-				<div class="dropdown-menu dropdown-menu-left">
-					<a class="dropdown-item" href="" ng-click="deleteSelectedRecords()">Delete</a>
-				</div>
-			</div>
-		</span> -->
-
 		<div class="float-right">
 			<form class="form-inline" id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()">
 				<input type="text" class="form-control" name="Keyword" placeholder="Search">
@@ -47,8 +36,8 @@
 				<thead>
 					<tr>
 						<th style="width: 300px;">User</th>
-						<th>Contact No.</th>
-						<th style="width: 200px;">Role</th>
+						<th style="width: 100px;">Contact No.</th>
+						<th style="width: 100px;">Role</th>
 						<th style="width: 160px;" class="text-center">Registered On</th>
 						<th style="width: 160px;" class="text-center">Last Login</th>
 						<th style="width: 100px;" class="text-center">Status</th>
@@ -67,7 +56,6 @@
 							</div>
 
 						</td> 
-						
 						<td><span ng-if="row.PhoneNumber">{{row.PhoneNumber}}</span><span ng-if="!row.PhoneNumber">-</span></td> 
 						<td ng-bind="row.UserTypeName"></td> 
 						<td ng-bind="row.RegisteredOn"></td>  
