@@ -94,7 +94,6 @@ app.controller('settingsController', ['$scope', '$rootScope', '$location', 'envi
                 }
                 $data.PhoneNumber = $scope.PhoneNumber;
                 $data.SessionKey = $localStorage.user_details.SessionKey;
-
                 appDB
                         .callPostForm('users/updateUserInfo', $data)
                         .then(
@@ -157,6 +156,8 @@ app.controller('settingsController', ['$scope', '$rootScope', '$location', 'envi
                 }
                 $data.OTP = $scope.OTP;
                 $data.SessionKey = $localStorage.user_details.SessionKey;
+                $data.Source = 'Direct';
+                $data.DeviceType = 'Native';
 
                 appDB
                         .callPostForm('signup/verifyPhoneNumber', $data)
@@ -225,12 +226,14 @@ app.controller('settingsController', ['$scope', '$rootScope', '$location', 'envi
                 $data.Email = $scope.Email;
                 $data.SessionKey = $localStorage.user_details.SessionKey;
                 $data.Type = 'Email';
+
                 appDB
                         .callPostForm('signup/resendVerification', $data)
                         .then(
                                 function successCallback(data) {
                                     if (data.ResponseCode == 200) {
                                         $scope.emailSubmitted = false;
+                                        $scope.isEmailSend = true;
                                         var toast = toastr.success('Email has been sent.', {
                                             closeButton: true
                                         });
@@ -271,7 +274,72 @@ app.controller('settingsController', ['$scope', '$rootScope', '$location', 'envi
                                 });
             }
 
+            /*function to verify mobile number*/
+            $scope.otpSubmitted = false;
+            $scope.verifyEmail = function (form) {
 
+                var $data = {};
+                $scope.helpers = Mobiweb.helpers;
+                $scope.otpSubmitted = true;
+                if (!form.$valid) {
+                    return false;
+                }
+                $data.OTP = $scope.OTP;
+                $data.SessionKey = $localStorage.user_details.SessionKey;
+                $data.Source = 'Direct';
+                $data.DeviceType = 'Native';
+
+                appDB
+                        .callPostForm('signup/verifyEmail', $data)
+                        .then(
+                                function successCallback(data) {
+                                    if (data.ResponseCode == 200) {
+                                        delete $scope.OTP;
+                                        //$scope.profileDetails = data.Data;
+                                        $scope.isEmailSend = false;
+                                        $scope.otpSubmitted = false;
+                                        var toast = toastr.success(data.Message, {
+                                            closeButton: true
+                                        });
+                                        toastr.refreshTimer(toast, 5000);
+                                        setTimeout(function () {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    if (data.ResponseCode == 500) {
+                                        var toast = toastr.warning(data.Message, {
+                                            closeButton: true
+                                        });
+                                        toastr.refreshTimer(toast, 5000);
+
+                                    }
+                                    if (data.ResponseCode == 501) {
+                                        var toast = toastr.warning(data.Message, {
+                                            closeButton: true
+                                        });
+                                        toastr.refreshTimer(toast, 5000);
+                                    }
+                                    if (data.ResponseCode == 502) {
+                                        var toast = toastr.warning(data.Message, {
+                                            closeButton: true
+                                        });
+                                        toastr.refreshTimer(toast, 5000);
+                                        setTimeout(function () {
+                                            localStorage.clear();
+                                            window.location.href = base_url;
+                                        }, 1000);
+                                    }
+                                },
+                                function errorCallback(data) {
+
+                                    if (typeof data == 'object') {
+                                        var toast = toastr.error(data.Message, {
+                                            closeButton: true
+                                        });
+                                        toastr.refreshTimer(toast, 5000);
+                                    }
+                                });
+            }
             /*PAN upload*/
             //uploadPanCardDetails
             $scope.panSubmitted = false;
