@@ -129,6 +129,7 @@
 <!-- angular storage -->
 <script src="assets/js/angular-modules/ngStorage.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-cookies.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <!-- MAIN CONTROLLER -->
 <script src="assets/js/app.js?version=<?= VERSION ?>"></script>
 

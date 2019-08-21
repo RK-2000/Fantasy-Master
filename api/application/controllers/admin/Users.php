@@ -249,22 +249,8 @@ class Users extends API_Controller_Secure
                 "Name" => $this->Post['FirstName'],
                 'Password' => $this->Post['Password']
             ));
-            return true;
         }
     }
-
-    /*-------------- Callback UserTypeId -------------*/
-    function validateUserTypeId($UserTypeID)
-    {
-        $ExistUserType = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeID" => $UserTypeID));
-        if ($ExistUserType) {
-            $this->UserTypeID = $UserTypeData['UserTypeID'];
-            return TRUE;
-        }
-        $this->form_validation->set_message('validateUserTypeId', 'Invalid {field}.');
-        return FALSE;
-    }
-    /*---------------End-----------*/
 
     /*
       Name: 		getWallet
@@ -487,5 +473,18 @@ class Users extends API_Controller_Secure
 		$this->Post['UserFullName']     = $WithdrawalData['FullName'];
 		$this->Post['UserEmail']        = $WithdrawalData['Email'];
 		return TRUE;
-	}
+    }
+    
+        /*-------------- Callback UserTypeId -------------*/
+        function validateUserTypeId($UserTypeID)
+        {
+            $ExistUserType = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeID" => $UserTypeID));
+            if ($ExistUserType) {
+                $this->UserTypeID = $ExistUserType['UserTypeID'];
+                return TRUE;
+            }
+            $this->form_validation->set_message('validateUserTypeId', 'Invalid {field}.');
+            return FALSE;
+        }
+        /*---------------End-----------*/
 }

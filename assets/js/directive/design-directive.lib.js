@@ -14,17 +14,17 @@ app.directive('customScroll', function () {
     };
 });
 app.directive('onePageScroll', ['$window', function ($window) {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attribute) {
-                scope.scrollTo = function (id) {
-                    angular.element('html,body').animate({
-                        scrollTop: angular.element('#' + id).offset().top - 60
-                    }, 1000);
-                }
+    return {
+        restrict: 'A',
+        link: function (scope, element, attribute) {
+            scope.scrollTo = function (id) {
+                angular.element('html,body').animate({
+                    scrollTop: angular.element('#' + id).offset().top - 60
+                }, 1000);
             }
-        };
-    }]);
+        }
+    };
+}]);
 app.directive('counter_num', function () {
     return {
         restrict: 'C',
@@ -70,7 +70,8 @@ app.directive('animsition', function () {
     };
 });
 app.directive('popupHandler', function () {
-    return {restrict: 'A', link: function ($scope, element) {
+    return {
+        restrict: 'A', link: function ($scope, element) {
             $scope.closePopup = function (id) {
                 if ($('#' + id).find('.close').length > 0) {
                     $('#' + id).trigger('click');
@@ -90,17 +91,14 @@ app.directive('popupHandler', function () {
     }
 });
 app.directive('dropdownHandler', function () {
-    return{restrict: 'A', link: function ($scope, element)
-        {
+    return {
+        restrict: 'A', link: function ($scope, element) {
             $scope.handleDropDownMenu = function (e) {
                 var _that = $(e.target).closest('li');
-                if (_that.find('i').length > 0)
-                {
-                    if (_that.find('i').first().hasClass('fa-angle-down'))
-                    {
+                if (_that.find('i').length > 0) {
+                    if (_that.find('i').first().hasClass('fa-angle-down')) {
                         _that.find('i').first().removeClass('fa-angle-down').addClass('fa-angle-up');
-                    } else
-                    {
+                    } else {
                         _that.find('i').first().removeClass('fa-angle-down').addClass('fa-angle-up');
                     }
                 }
@@ -111,49 +109,44 @@ app.directive('dropdownHandler', function () {
     }
 });
 app.directive('justClick', function () {
-    return{restrict: 'A', link: function ($scope, element)
-        {
+    return {
+        restrict: 'A', link: function ($scope, element) {
             setTimeout(function () {
                 var pwd = $(element).find('input[type=password]').focus();
             }, 2000);
         }
     }
 });
-app.directive('loading', ['$http', function ($http)
-    {
-        return {
-            restrict: 'A',
-            template: '',
-            link: function (scope, elm, attrs)
-            {
-                scope.isLoading = function () {
-                    return $http.pendingRequests.length > 0;
-                };
-                scope.showLoader = function () {
-                    elm.show();
-                }
-                scope.hideLoader = function () {
-                    elm.hide();
-                }
-
-                scope.$watch(scope.isLoading, function (v)
-                {
-                    if (v) {
-                        elm.show();
-                    } else {
-                        elm.hide();
-                    }
-                });
-            }
-        };
-    }])
-app.directive('processHolder', function ()
-{
+app.directive('loading', ['$http', function ($http) {
     return {
         restrict: 'A',
         template: '',
-        link: function (scope, elm, attrs)
-        {
+        link: function (scope, elm, attrs) {
+            scope.isLoading = function () {
+                return $http.pendingRequests.length > 0;
+            };
+            scope.showLoader = function () {
+                elm.show();
+            }
+            scope.hideLoader = function () {
+                elm.hide();
+            }
+
+            scope.$watch(scope.isLoading, function (v) {
+                if (v) {
+                    elm.show();
+                } else {
+                    elm.hide();
+                }
+            });
+        }
+    };
+}])
+app.directive('processHolder', function () {
+    return {
+        restrict: 'A',
+        template: '',
+        link: function (scope, elm, attrs) {
             scope.showLoaderBarrier = function () {
                 elm.show();
             }
@@ -304,23 +297,26 @@ app.directive('numbersOnly', function () {
 
 
 app.directive('timerText', ["$interval", "$filter", function ($interval, $filter) {
-        return {
-            restrict: 'A',
-            link: function (scope, el, attrs) {
+    return {
+        restrict: 'A',
+        link: function (scope, el, attrs) {
 
 
-                var tick = function () {
-                    // date = scope.matches.MatchStartDateTime;
+            var tick = function () {
+                // date = scope.matches.MatchStartDateTime;
 
-                    date = attrs.timerData;
-                    status = attrs.matchStatus;
-                    type = attrs.matchType;
+                date = attrs.timerData;
+                status = attrs.matchStatus;
+                type = attrs.matchType;
 
-                    /*var date1 = new Date(date);
-                     var date2 = new Date();*/
-                   
-                    var date1 = new Date(date);
-                    var date3 = $filter('date')(date1, "medium");
+                /* var date1 = new Date(date);
+                var date3 = $filter('date')(date1, "medium");
+                var date2 = new Date();
+                var date1 = date; */
+                if (date1) {
+                    date1 = $filter('convertIntoUserTimeZone')(date1);
+
+                    var date3 = new Date(date1);
                     var date2 = new Date();
 
                     if (date1 < date2 && status == 'Completed') {
@@ -330,10 +326,10 @@ app.directive('timerText', ["$interval", "$filter", function ($interval, $filter
                         scope.clock = '<span class="text-success">Running</span>';
                         return false;
                     } else if (date1 < date2 && status == 'Pending') {
-                        scope.clock = '<span class="text-success">'+date3+'</span>';
+                        scope.clock = '<span class="text-success">' + date3 + '</span>';
                         return false;
                     } else {
-                        var diffInSeconds = Math.abs(date1 - date2) / 1000;
+                        var diffInSeconds = Math.abs(date3 - date2) / 1000;
                         var days = Math.floor(diffInSeconds / 60 / 60 / 24);
                         var hours = Math.floor(diffInSeconds / 60 / 60 % 24);
                         var minutes = Math.floor(diffInSeconds / 60 % 60);
@@ -344,32 +340,32 @@ app.directive('timerText', ["$interval", "$filter", function ($interval, $filter
                         hours = hours.toString();
                         seconds = seconds.toString();
 
-                        if (type == 'createTeam' && type != undefined) { 
+                        if (type == 'createTeam' && type != undefined) {
                             var showTime = '';
-                            if(days >= 2){
-                                showTime = days+'days left';
-                            }else if (days <= 2 && days != 0) { 
-                                showTime = days +' days left';
-                                hours = Number(days*24) + Number(hours);
-                                showTime = hours+'h left';
-                            }else if(hours <= 24 && hours > 0){ 
+                            if (days >= 2) {
+                                showTime = days + 'days left';
+                            } else if (days <= 2 && days != 0) {
+                                showTime = days + ' days left';
+                                hours = Number(days * 24) + Number(hours);
+                                showTime = hours + 'h left';
+                            } else if (hours <= 24 && hours > 0) {
                                 if (minutes.length == 1) {
                                     minutes = '0' + minutes;
                                 }
-                                showTime =  hours+'h '+minutes+'m left';
-                            }else if(minutes > 0 && hours == 0){ 
+                                showTime = hours + 'h ' + minutes + 'm left';
+                            } else if (minutes > 0 && hours == 0) {
                                 if (minutes.length == 1) {
                                     minutes = '0' + minutes;
                                 }
                                 if (seconds.length == 1) {
                                     seconds = '0' + seconds;
                                 }
-                                showTime = minutes+'m '+seconds +'s left';
-                            }else if(minutes == 0){
+                                showTime = minutes + 'm ' + seconds + 's left';
+                            } else if (minutes == 0) {
                                 if (seconds.length == 1) {
                                     seconds = '0' + seconds;
                                 }
-                                showTime = seconds+'s left';
+                                showTime = seconds + 's left';
                             }
                             scope.clock = showTime;
                         } else {
@@ -395,24 +391,25 @@ app.directive('timerText', ["$interval", "$filter", function ($interval, $filter
 
 
                     }
-
                 }
-                tick();
-                $interval(tick, 1000);
+
             }
+            tick();
+            $interval(tick, 1000);
         }
-    }]);
+    }
+}]);
 
 app.filter('trustAsHtml', ['$sce', function ($sce) {
-        return function (input) {
-            return $sce.trustAsHtml(input);
-        };
-    }]);
+    return function (input) {
+        return $sce.trustAsHtml(input);
+    };
+}]);
 app.filter('secondsToDateTime', [function () {
-        return function (seconds) {
-            return new Date(1970, 0, 1).setSeconds(seconds);
-        };
-    }])
+    return function (seconds) {
+        return new Date(1970, 0, 1).setSeconds(seconds);
+    };
+}])
 
 app.directive('scrolly', function ($location) {
     return {
@@ -439,7 +436,7 @@ app.directive('scrolly', function ($location) {
                         scope.getContests(false);
                     } else if (page_name.includes('createAuctionTeam')) {
                         scope.getBidHistory(false);
-                    } else if(page_name == 'myAccount'){ 
+                    } else if (page_name == 'myAccount') {
                         scope.getAccountInfo(false);
                         scope.getWithdrawals(false);
                     }
@@ -450,9 +447,48 @@ app.directive('scrolly', function ($location) {
     };
 });
 
-app.filter('myDateFormat', function myDateFormat($filter){
-  return function(text){
-    var  tempdate= new Date(text.replace(/-/g,"/"));
-    return $filter('date')(tempdate, "medium");
-  }
+app.filter('myDateFormat', function myDateFormat($filter) {
+    return function (text) {
+        var tempdate = new Date(text.replace(/-/g, "/"));
+        return $filter('date')(tempdate, "medium");
+    }
+});
+
+app.filter('convertIntoUserTimeZone', function () {
+    return function (input) {
+        var offset = new Date().getTimezoneOffset();
+        offset = offset.toString();
+        var plusSign = offset.indexOf("+");
+        var minusSign = offset.indexOf("-");
+        var timeZoneObj = {};
+        timeZoneObj.offset = offset;
+        if (plusSign > -1) {
+            timeZoneObj.identifire = "-";
+            timeZoneObj.totalMinutes = parseInt(offset.replace("+", ""));
+        } else if (minusSign > -1) {
+            timeZoneObj.identifire = "+";
+            timeZoneObj.totalMinutes = parseInt(offset.replace("-", ""));
+        } else {
+            timeZoneObj.identifire = "-";
+            timeZoneObj.totalMinutes = parseInt(offset);
+        }
+        let totalMinutes = timeZoneObj.totalMinutes;
+        let totalHours = parseInt(totalMinutes / 60);
+        let hourMinutes = 60 * totalHours;
+        let reaminingMinutes = totalMinutes - hourMinutes;
+        timeZoneObj.totalHours = totalHours;
+        timeZoneObj.hourMinutes = hourMinutes;
+        timeZoneObj.reaminingMinutes = reaminingMinutes;
+        timeZoneObj.finalTimeZoneFormatted = ((totalHours > 10) ? totalHours : "0" + totalHours)
+        let identifire = timeZoneObj.identifire;
+        totalMinutes = timeZoneObj.totalMinutes;
+        var utcTime = '';
+        if (identifire === '+') {
+            utcTime = moment(input).add(totalMinutes, 'minutes');
+        } else {
+            utcTime = moment(input).subtract(totalMinutes, 'minutes');
+        }
+        utcTime = moment(utcTime).format("LLL"); // March 19, 2018 4:04 PM
+        return utcTime;
+    }
 });

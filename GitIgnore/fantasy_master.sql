@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 19, 2019 at 07:05 PM
+-- Generation Time: Aug 21, 2019 at 12:34 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -46,18 +46,10 @@ INSERT INTO `admin_control` (`ControlID`, `ControlName`, `ModuleID`, `ParentCont
 (5, 'User', NULL, NULL, 3, 'flaticon-user'),
 (6, 'Users', 3, 5, 1, 'flaticon-user'),
 (7, 'Social', NULL, NULL, 4, 'flaticon-user'),
-(8, 'Reported Contents', 4, 7, 1, 'flaticon-user'),
 (9, 'Configuration', NULL, NULL, 5, 'flaticon-user'),
-(10, 'Categories', 5, 9, 1, 'flaticon-user'),
-(11, 'Products', 6, 12, 2, 'flaticon-user'),
 (12, 'Store', NULL, NULL, 4, 'flaticon-user'),
-(13, 'Stores', 7, 12, 1, 'flaticon-user'),
-(14, 'Orders', 8, 12, 3, 'flaticon-user'),
 (15, 'Coupon', 9, 12, 4, 'flaticon-user'),
-(16, 'Bookings', 10, 12, 3, 'flaticon-user'),
 (17, 'Broadcast', 11, 5, 2, 'flaticon-user'),
-(18, 'Manage Pages', 12, 9, 2, 'flaticon-user'),
-(19, 'Sales Report', 13, 12, 4, 'flaticon-user'),
 (36, 'Cricket', NULL, NULL, 4, 'flaticon-user'),
 (37, 'Series', 15, 36, 1, 'flaticon-user'),
 (38, 'Matches', 16, 36, 2, 'flaticon-user'),
@@ -94,16 +86,8 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (1, 'Dashboard', 'dashboard'),
 (2, 'Manage Staff', 'staff'),
 (3, 'Manage Users', 'user'),
-(4, 'Reported Content', 'flagged'),
-(5, 'Manage Categories', 'category'),
-(6, 'Manage Products', 'product'),
-(7, 'Manage Stores', 'store'),
-(8, 'Manage Orders', 'order'),
 (9, 'Manage Coupons', 'coupon'),
-(10, 'Manage Bookings', 'booking'),
 (11, 'Broadcast Message', 'broadcast'),
-(12, 'Manage Page', 'page'),
-(13, 'Sales Report', 'storesalesreport'),
 (15, 'Series', 'series'),
 (16, 'Matches', 'matches'),
 (17, 'Contests', 'contests'),
@@ -120,7 +104,6 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (29, 'Manage Testimonial', 'post'),
 (30, 'Banner', 'banner'),
 (31, 'UserDetails', 'userdetails'),
-(32, 'AuctionDrafts', 'auctionDrafts'),
 (34, 'Deposit History', 'depositHistory'),
 (35, 'Pre Draft Contest', 'predraft'),
 (36, 'Referral History', 'referral'),
@@ -145,29 +128,25 @@ CREATE TABLE `admin_user_type_permission` (
 
 INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
 (1, 1),
+(31, 1),
 (1, 2),
 (1, 3),
-(1, 4),
-(2, 4),
-(1, 5),
-(7, 5),
-(1, 6),
-(1, 7),
-(1, 8),
 (1, 9),
-(1, 10),
+(31, 9),
 (1, 11),
-(1, 12),
-(2, 12),
-(1, 13),
+(5, 11),
 (1, 15),
 (2, 15),
+(31, 15),
 (1, 16),
+(31, 16),
 (1, 17),
+(31, 17),
 (1, 18),
 (2, 18),
 (1, 19),
 (6, 19),
+(31, 19),
 (1, 20),
 (2, 20),
 (1, 22),
@@ -180,25 +159,27 @@ INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
 (1, 27),
 (1, 28),
 (2, 28),
+(31, 28),
 (1, 29),
 (1, 30),
 (4, 30),
 (1, 31),
-(1, 32),
-(4, 32),
-(7, 32),
 (1, 34),
+(5, 34),
 (1, 35),
 (2, 35),
+(31, 35),
 (1, 36),
 (4, 36),
 (6, 36),
 (1, 37),
+(31, 37),
 (1, 39),
 (2, 39),
 (1, 40),
 (4, 40),
-(5, 40);
+(5, 40),
+(31, 40);
 
 -- --------------------------------------------------------
 
@@ -3311,7 +3292,15 @@ INSERT INTO `tbl_entity` (`EntityID`, `EntityGUID`, `EntityTypeID`, `CreatedByUs
 (928, '7930bd6f-b573-9871-0e6d-615f3e1aef49', 12, 927, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:41:03', NULL, NULL, 2),
 (929, 'dae1ec28-3046-1d2b-6d0c-217e086e0b59', 11, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-05 12:43:23', NULL, NULL, 1),
 (930, '3aead4ed-ffbb-6119-4ffa-92d58fc8ff5c', 6, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-10 12:44:25', NULL, NULL, 2),
-(931, '1c130c3a-2705-6304-d1d3-392bb9ffda5e', 13, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-10 12:46:48', '2019-08-10 12:50:07', NULL, 2);
+(931, '1c130c3a-2705-6304-d1d3-392bb9ffda5e', 13, 125, '0', 0, 0, 0, 0, 0, 0, '2019-08-10 12:46:48', '2019-08-10 12:50:07', NULL, 2),
+(932, 'cde55abd-4dc4-d21e-8696-cdd3d3f3e13f', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-19 15:13:45', NULL, NULL, 1),
+(933, '34cce8e9-78ca-ca29-ba92-d4939de8d605', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-19 15:14:21', NULL, NULL, 2),
+(934, '92caac7f-fedd-ad2d-9655-fd706fa87465', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 07:02:23', NULL, NULL, 1),
+(935, '37fbfdcb-b797-9659-fb16-04f6e855e86a', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 07:06:08', NULL, NULL, 1),
+(936, '40591cba-9cc7-c741-34b3-fdc6645bb916', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 07:09:57', NULL, NULL, 1),
+(937, '26f2db4e-5c3c-0dce-1b42-674c6a551708', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 07:19:14', NULL, NULL, 1),
+(938, '2c4d28e8-66c8-df1e-e80a-2cac4aad9161', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 07:47:37', NULL, NULL, 1),
+(939, 'addd7bbc-fc00-ff9e-b8af-077ba3b6bdc5', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-08-20 08:21:25', NULL, NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -3465,7 +3454,10 @@ CREATE TABLE `tbl_notifications` (
 INSERT INTO `tbl_notifications` (`NotificationID`, `NotificationPatternID`, `UserID`, `ToUserID`, `RefrenceID`, `NotificationText`, `NotificationMessage`, `EntryDate`, `ModifiedDate`, `StatusID`) VALUES
 (1, 7, 927, 927, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-08-05 12:34:56', NULL, 1),
 (2, 1, 927, 927, NULL, 'Welcome to Fantasy Master!', 'Hi vishakha, Verify your Email and PAN Details and Earn more Cash Bonus.', '2019-08-05 12:35:02', NULL, 1),
-(3, 1, 927, 125, NULL, 'vishakha, got Registered', NULL, '2019-08-05 12:35:02', NULL, 1);
+(3, 1, 927, 125, NULL, 'vishakha, got Registered', NULL, '2019-08-05 12:35:02', NULL, 1),
+(4, 7, 932, 932, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-08-19 15:13:45', NULL, 1),
+(5, 7, 933, 933, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-08-19 15:14:21', '2019-08-20 06:54:13', 2),
+(11, 7, 939, 939, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-08-20 08:21:25', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -3599,7 +3591,10 @@ CREATE TABLE `tbl_users` (
 
 INSERT INTO `tbl_users` (`UserID`, `UserGUID`, `UserTypeID`, `FirstName`, `MiddleName`, `LastName`, `About`, `About1`, `About2`, `ProfilePic`, `ProfileCoverPic`, `Email`, `EmailForChange`, `Username`, `IsUsernameUpdateded`, `Gender`, `BirthDate`, `Age`, `Height`, `Weight`, `Address`, `Address1`, `Postal`, `CountryCode`, `CityName`, `StateName`, `Latitude`, `Longitude`, `PhoneNumber`, `PhoneNumberForChange`, `Website`, `FacebookURL`, `TwitterURL`, `GoogleURL`, `InstagramURL`, `LinkedInURL`, `WhatsApp`, `ReferralCodeID`, `ReferredByUserID`, `WalletAmount`, `WinningAmount`, `CashBonus`, `WithdrawalHoldAmount`, `PanStatus`, `BankStatus`, `IsPrivacyNameDisplay`) VALUES
 (125, 'abcd', 1, 'Admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin@mailinator.com', 'alexm@mailinator.com', NULL, 'No', 'Male', '1984-05-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 23, 76, '9898989899', '9981823755', NULL, NULL, 'native', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, 0.00, 9, 9, 'No'),
-(927, '6371a8f8-9852-8447-cfef-1f6e66b2c540', 2, 'Vishakha', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'vishakha.mobiwebtech@gmail.com', NULL, 'pjjozk', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9669422162', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4950.50, 0.00, 44.50, 0.00, 9, 9, 'No');
+(927, '6371a8f8-9852-8447-cfef-1f6e66b2c540', 2, 'Vishakha', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'vishakha.mobiwebtech@gmail.com', NULL, 'pjjozk', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9669422162', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4950.50, 0.00, 44.50, 0.00, 9, 9, 'No'),
+(932, 'cde55abd-4dc4-d21e-8696-cdd3d3f3e13f', 4, 'Sorav', NULL, 'Garg', NULL, NULL, NULL, NULL, NULL, 'admin@mailinator.comffdfd', NULL, NULL, 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9074939905', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No'),
+(933, '34cce8e9-78ca-ca29-ba92-d4939de8d605', 4, 'Sorav', NULL, 'Garg', NULL, NULL, NULL, NULL, NULL, 'sorav.mobiwebtech123@gmail.com', NULL, NULL, 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9898989898', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No'),
+(939, 'addd7bbc-fc00-ff9e-b8af-077ba3b6bdc5', 31, 'Kamlesh', NULL, 'Praja', NULL, NULL, NULL, NULL, NULL, 'kamlesh.mobiweb@gmail.com', NULL, NULL, 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9009318109', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No');
 
 -- --------------------------------------------------------
 
@@ -3621,8 +3616,11 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-19 13:34:47', '2019-06-07 10:42:15'),
-(927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL);
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-21 07:02:57', '2019-06-07 10:42:15'),
+(927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL),
+(932, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-19 15:13:45', NULL, NULL),
+(933, '34d74d56595bb92d6731d28fcf6065b6', 1, '2019-08-19 15:14:21', '2019-08-20 06:34:06', NULL),
+(939, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-20 08:21:25', '2019-08-21 07:04:09', NULL);
 
 -- --------------------------------------------------------
 
@@ -3686,7 +3684,18 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '86c89afd-6d13-6130-0a5c-cb3bd6cf2b98', NULL, 1, 1, NULL, NULL, '2019-08-19 11:21:10'),
 (125, '9bd4e136-0bc7-5c5e-d33b-dc00cfb83ed6', NULL, 1, 1, NULL, NULL, '2019-08-19 13:21:04'),
 (125, '02a7e72b-01d5-7e7d-2ca1-6a7adbe5952f', NULL, 1, 1, NULL, NULL, '2019-08-19 13:34:31'),
-(125, '5490158d-309e-5d40-a46e-3ee081278d75', NULL, 1, 1, NULL, NULL, '2019-08-19 13:34:47');
+(125, '5490158d-309e-5d40-a46e-3ee081278d75', NULL, 1, 1, NULL, NULL, '2019-08-19 13:34:47'),
+(125, 'a44baa29-10ae-680a-7121-ec90cf737f2d', NULL, 1, 1, NULL, NULL, '2019-08-19 15:06:54'),
+(125, 'a7a172f0-2669-f5bb-8c37-4b12308140fd', NULL, 1, 1, NULL, NULL, '2019-08-19 15:07:29'),
+(125, '7faba409-b708-f25d-c84a-1f8731c563ed', NULL, 1, 1, NULL, NULL, '2019-08-20 05:36:35'),
+(125, '4cbfec6b-3906-9bfb-49d7-2bb382953979', NULL, 1, 1, NULL, NULL, '2019-08-20 06:33:54'),
+(125, '0c85259f-1eb2-576d-49e2-6f42721427f4', NULL, 1, 1, NULL, NULL, '2019-08-20 06:33:56'),
+(939, '4c6a8fc9-35a1-6b35-297c-ba8f581c4577', NULL, 1, 1, NULL, NULL, '2019-08-20 08:33:48'),
+(125, '99905e6d-2495-c7fe-b108-0606841b4792', NULL, 1, 1, NULL, NULL, '2019-08-20 13:08:25'),
+(125, 'ae3ad8b3-9ddd-a2fc-5f36-c44490e52d3e', NULL, 1, 1, NULL, NULL, '2019-08-20 13:30:09'),
+(125, '72946410-b15d-0be7-4362-01279293c0cc', NULL, 1, 1, NULL, NULL, '2019-08-20 16:07:23'),
+(125, '301ff6fd-e3fb-8b11-c591-20abd4caa953', NULL, 1, 1, NULL, NULL, '2019-08-21 05:33:48'),
+(125, '9315d94e-86e0-c07d-747e-8a6f79e7d36c', NULL, 1, 1, NULL, NULL, '2019-08-21 07:02:57');
 
 -- --------------------------------------------------------
 
@@ -3706,7 +3715,10 @@ CREATE TABLE `tbl_users_settings` (
 --
 
 INSERT INTO `tbl_users_settings` (`UserID`, `PushNotification`, `PrivacyPhone`, `PrivacyLocation`) VALUES
-(927, 'Yes', 'Public', 'Public');
+(927, 'Yes', 'Public', 'Public'),
+(932, 'Yes', 'Public', 'Public'),
+(933, 'Yes', 'Public', 'Public'),
+(939, 'Yes', 'Public', 'Public');
 
 -- --------------------------------------------------------
 
@@ -3731,7 +3743,8 @@ INSERT INTO `tbl_users_type` (`UserTypeID`, `UserTypeGUID`, `UserTypeName`, `IsA
 (4, '059fae09-8245-dbae-4aeb-5876eaaf53f5', 'Staff', 'No'),
 (5, '748a1f53-cb66-976a-53a0-46bcf0b385a5', 'Manager', 'No'),
 (6, '2a0f3df5-95f3-995b-d892-33f1016440a4', 'Employee', 'No'),
-(7, '573c2770-e2be-6da0-fa09-6b769f42af4b', 'Kamlesh', 'No');
+(30, '96ff29a2-9705-d950-e027-39c424bd8c5e', 'Test', 'No'),
+(31, '286d5183-4398-7161-222b-787041636c11', 'developer', 'No');
 
 -- --------------------------------------------------------
 
@@ -3774,7 +3787,10 @@ CREATE TABLE `tbl_users_wallet` (
 INSERT INTO `tbl_users_wallet` (`WalletID`, `UserID`, `Amount`, `OpeningWalletAmount`, `OpeningWinningAmount`, `OpeningCashBonus`, `WalletAmount`, `WinningAmount`, `CashBonus`, `ClosingWalletAmount`, `ClosingWinningAmount`, `ClosingCashBonus`, `Currency`, `PaymentGateway`, `TransactionType`, `TransactionID`, `Narration`, `EntityID`, `UserTeamID`, `PaymentGatewayResponse`, `CouponDetails`, `CouponCode`, `EntryDate`, `ModifiedDate`, `StatusID`) VALUES
 (1, 927, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', 'edceeaee722751fee744', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-08-05 12:34:56', NULL, 5),
 (2, 927, 5000.00, 0.00, 0.00, 50.00, 5000.00, 0.00, 0.00, 5000.00, 0.00, 50.00, 'INR', NULL, 'Cr', '8ab533473f26f8de55d8', 'Admin Deposit Money', NULL, NULL, NULL, NULL, NULL, '2019-08-05 12:44:23', NULL, 5),
-(3, 927, 55.00, 5000.00, 0.00, 50.00, 49.50, 0.00, 5.50, 4950.50, 0.00, 44.50, 'INR', NULL, 'Dr', '49e198e01892b224b917', 'Join Contest', 929, 928, NULL, NULL, NULL, '2019-08-05 12:44:37', NULL, 5);
+(3, 927, 55.00, 5000.00, 0.00, 50.00, 49.50, 0.00, 5.50, 4950.50, 0.00, 44.50, 'INR', NULL, 'Dr', '49e198e01892b224b917', 'Join Contest', 929, 928, NULL, NULL, NULL, '2019-08-05 12:44:37', NULL, 5),
+(4, 932, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', '20189e0fe5a0414eb8ea', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-08-19 15:13:45', NULL, 5),
+(5, 933, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', 'eb7f14a68bd0745c1800', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-08-19 15:14:21', NULL, 5),
+(11, 939, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', 'd4338cc424493a20a50a', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-08-20 08:21:25', NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -4292,7 +4308,7 @@ ALTER TABLE `sports_team_players`
 -- AUTO_INCREMENT for table `tbl_entity`
 --
 ALTER TABLE `tbl_entity`
-  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=932;
+  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=940;
 --
 -- AUTO_INCREMENT for table `tbl_entity_type`
 --
@@ -4307,7 +4323,7 @@ ALTER TABLE `tbl_media`
 -- AUTO_INCREMENT for table `tbl_notifications`
 --
 ALTER TABLE `tbl_notifications`
-  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `tbl_notification_pattern`
 --
@@ -4322,12 +4338,12 @@ ALTER TABLE `tbl_referral_codes`
 -- AUTO_INCREMENT for table `tbl_users_type`
 --
 ALTER TABLE `tbl_users_type`
-  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 --
 -- AUTO_INCREMENT for table `tbl_users_wallet`
 --
 ALTER TABLE `tbl_users_wallet`
-  MODIFY `WalletID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `WalletID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `tbl_users_withdrawal`
 --
