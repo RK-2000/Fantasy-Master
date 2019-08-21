@@ -98,6 +98,18 @@ app.controller('PageController', function($scope, $http, $timeout) {
         
     }
 
-
+    $scope.OldValue = '';
+    $scope.SelDefaultModule = function(ModuleName) {
+        
+        for(let i in $scope.formData.PermittedModules){
+            if($scope.formData.PermittedModules[i].ModuleName == $scope.OldValue){
+                $scope.formData.PermittedModules[i].Permission = '';
+            }
+            if($scope.formData.PermittedModules[i].ModuleName == ModuleName){
+                $scope.formData.PermittedModules[i].Permission = 'Yes';
+                $scope.OldValue = ModuleName;
+            }
+        }   
+    }
 
 });
