@@ -13,7 +13,7 @@
       </span>
 
       <div class="float-right mr-2">      
-         <button class="btn btn-success btn-sm ml-1 float-right" onclick='$("#add_group_modal").modal("show")'>Add Group</button>
+         <button class="btn btn-success btn-sm ml-1 float-right" onclick='$("#add_group_modal").modal("show")'>Add User Type</button>
       </div>
      
    </div>
@@ -28,7 +28,7 @@
             <!-- table heading -->
             <thead>
                <tr>
-                  <th style="width: 50px;">Group Name</th>
+                  <th style="width: 50px;">User Type Name</th>
                   <th style="width: 400px;">Permitted Modules</th>
                   <th style="width: 50px;">Action</th>
                </tr>
@@ -78,15 +78,37 @@
                <form id="editForm" name="editForm" novalidate>
                   <div class="modal-body">
                      <div class="form-area">
-                        <div class="form-group">
-                           <h4 class="text-center">Set Permission</h4>
+                        <div class="row">
+
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <label class="control-label">User Type Name</label>
+                                 <input name="GroupName" type="text" class="form-control" value="{{formData.UserTypeName}}" placeholder="User Type Name" maxlength="20">
+                              </div>
+                           </div>
+
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <h4 class="text-center">Set Permission</h4>
+                              </div>
+                           </div>
+
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <label class="control-label">Default Module</label>
+                                 <select name="DefaultModule" id="DefaultModule" class="form-control chosen-select" ng-model="ModuleName" ng-change="SelDefaultModule(ModuleName)">
+                                    <option value=""></option>
+                                    <option ng-repeat="List in formData.PermittedModules" value="{{List.ModuleName}}" ng-selected="List.IsDefault=='Yes'">{{List.ModuleTitle}}</option>
+                                 </select>
+                              </div>
+                           </div>
                         </div>
                         <hr>
                         <div class="row">
                            <div class="col-md-3" ng-repeat="List in formData.PermittedModules">
                               <div class="form-group">
                                  <div class="customCheckbox checkbox">
-                                    <input name="ModuleName[]" value="{{List.ModuleName}}" class="coupon_question" ng-checked="List.Permission=='Yes'"  type="checkbox" id="{{List.ModuleTitle}}">
+                                    <input name="ModuleName[]" value="{{List.ModuleName}}" class="coupon_question" ng-checked="List.Permission=='Yes'" type="checkbox" id="{{List.ModuleTitle}}">
                                     <label for="{{List.ModuleTitle}}">{{List.ModuleTitle}}</label>
                                  </div>
                               </div>
@@ -108,12 +130,12 @@
       </div>
    </div>
 
-   <!-- Add-Group-Modal -->
+   <!-- Add-User Type-Modal -->
    <div class="modal fade" id="add_group_modal">
       <div class="modal-dialog modal-md" role="document">
          <div class="modal-content">
             <div class="modal-header">
-               <h3 class="modal-title h5">Add Group</h3>      
+               <h3 class="modal-title h5">Add User Type</h3>      
                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -122,8 +144,19 @@
                      <div class="row">
                         <div class="col-md-12">
                            <div class="form-group">
-                              <label class="control-label">Group Name</label>
-                              <input name="GroupName" type="text" class="form-control" value="" placeholder="Group Name" maxlength="20">
+                              <label class="control-label">User Type Name</label>
+                              <input name="GroupName" type="text" class="form-control" value="" placeholder="User Type Name" maxlength="20">
+                           </div>
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <div class="checkbox">
+                                 <input name="IsAdmin" type="checkbox" id="is_admin">
+                                 <label for="is_admin">Is Admin</label>
+                              </div>
                            </div>
                         </div>
                      </div>
@@ -141,3 +174,14 @@
 
 </div><!-- Body/ -->
 
+<script type="text/javascript">
+      // $scope.SelDefaultModule = function(ModuleTitle) {
+
+      //   $("#"+ModuleTitle).attr("ng-checked",true);      
+      // }
+
+   function SelDefaultModule(sel_val) {
+      $("."+sel_val).attr("ng-checked",true); 
+
+   }
+</script>

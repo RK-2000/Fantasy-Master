@@ -266,7 +266,7 @@ class Common_model extends CI_Model
 
 		if(!empty($Input['UserTypeID'])){
 			if(empty($Input['Permitted'])){
-				$this->db->select("IF(UTP.UserTypeID,'Yes','No') Permission",false);
+				$this->db->select("IF(UTP.UserTypeID,'Yes','No') Permission,UTP.IsDefault",false);
 				$this->db->join('admin_user_type_permission UTP', "M.ModuleID=UTP.ModuleID AND UTP.UserTypeID='".$Input['UserTypeID']."' ", 'left');
 			}else{
 				$this->db->from('admin_user_type_permission AUTP');
@@ -300,10 +300,11 @@ class Common_model extends CI_Model
 	*/
 	public function saveUserType($Input=array()) {
 		$GetGUID = get_guid();
+
 		$InsertData = array_filter(array(
 			"UserTypeGUID"			=>	$GetGUID,
 			"UserTypeName" 			=>	$Input['GroupName'],
-			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? @$Input['IsAdmin'] : "No")
+			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? "Yes" : "No")
 		));
 		if(!empty($InsertData)){
 			$Query 		= $this->db->insert('tbl_users_type', $InsertData);
@@ -320,16 +321,49 @@ class Common_model extends CI_Model
 		/*delete group permissions*/
 		$this->db->where("UserTypeID",$UserTypeID);
 		$this->db->delete('admin_user_type_permission');
+		
+		$UpdateData = array(
+			"UserTypeName" 	=>	$Input['GroupName'],
+		);
+		$this->db->where("UserTypeID",$UserTypeID);
+        $this->db->limit(1);
+        $this->db->update('tbl_users_type', $UpdateData);
 
 		if(!empty($Input['ModuleName'])){ /*Update permissions*/
 			foreach($Input['ModuleName'] as $ModuleName){
 				$ModuleData = $this->getModules("M.ModuleID", array("ModuleName" => $ModuleName));
 				if(!empty($ModuleData)){
-					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID']);
+					if ($Input['DefaultModule'] == $ModuleName) {
+						$IsDefault = 'Yes';
+					}else{
+						$IsDefault = NULL;
+					}
+					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID'],'IsDefault' => $IsDefault);
 				}
 			}
 			$this->db->insert_batch('admin_user_type_permission', $InsertData); 
-		}	
+		}		
 		return true;
 	}
+
+	/*
+	Description: 	use for check user type is unique edit time.
+	*/
+	function CheckUserTypeUnique($UserTypeName)
+	{
+		if (empty($UserTypeName)) {
+			return FALSE;
+		}
+		$this->db->select('UserTypeID');
+		$this->db->from('tbl_users_type');
+		$this->db->where('UserTypeName', $UserTypeName);
+		$this->db->limit(1);
+		$Query = $this->db->get();
+		if ($Query->num_rows() > 0) {
+			return $Query->row()->UserTypeID;
+		} else {
+			return FALSE;
+		}
+	}
+
 }
