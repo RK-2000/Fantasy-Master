@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 21, 2019 at 12:34 PM
+-- Generation Time: Aug 21, 2019 at 07:39 PM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -40,17 +40,17 @@ CREATE TABLE `admin_control` (
 --
 
 INSERT INTO `admin_control` (`ControlID`, `ControlName`, `ModuleID`, `ParentControlID`, `Sort`, `ModuleIcon`) VALUES
-(1, 'Dashboard', 1, NULL, 1, 'flaticon-user'),
-(2, 'Admin', NULL, NULL, 2, 'flaticon-user'),
+(1, 'Dashboard', 1, NULL, 1, 'fas fa-tachometer-alt'),
+(2, 'Admin', NULL, NULL, 2, 'fas fa-user-shield'),
 (3, 'Staff Members', 2, 2, 1, 'flaticon-user'),
-(5, 'User', NULL, NULL, 3, 'flaticon-user'),
+(5, 'User', NULL, NULL, 3, 'fas fa-users'),
 (6, 'Users', 3, 5, 1, 'flaticon-user'),
 (7, 'Social', NULL, NULL, 4, 'flaticon-user'),
-(9, 'Configuration', NULL, NULL, 5, 'flaticon-user'),
-(12, 'Store', NULL, NULL, 4, 'flaticon-user'),
+(9, 'Configuration', NULL, NULL, 5, 'fas fa-cogs'),
+(12, 'Store', NULL, NULL, 4, 'fas fa-store'),
 (15, 'Coupon', 9, 12, 4, 'flaticon-user'),
 (17, 'Broadcast', 11, 5, 2, 'flaticon-user'),
-(36, 'Cricket', NULL, NULL, 4, 'flaticon-user'),
+(36, 'Cricket', NULL, NULL, 4, 'flaticon-cricket'),
 (37, 'Series', 15, 36, 1, 'flaticon-user'),
 (38, 'Matches', 16, 36, 2, 'flaticon-user'),
 (39, 'Contests', 17, 36, 4, 'flaticon-user'),
@@ -64,7 +64,7 @@ INSERT INTO `admin_control` (`ControlID`, `ControlName`, `ModuleID`, `ParentCont
 (49, 'Banner', 30, 9, 1, 'flaticon-user'),
 (52, 'Pre Draft Contest', 35, 36, 7, 'flaticon-user'),
 (54, 'Manage User Roles', 39, 55, 1, 'flaticon-user'),
-(55, 'Setup', NULL, NULL, 1, 'flaticon-user');
+(55, 'Setup', NULL, NULL, 1, 'fas fa-user-tag');
 
 -- --------------------------------------------------------
 
@@ -119,67 +119,67 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 
 CREATE TABLE `admin_user_type_permission` (
   `UserTypeID` int(11) NOT NULL,
-  `ModuleID` tinyint(2) UNSIGNED NOT NULL
+  `ModuleID` tinyint(2) UNSIGNED NOT NULL,
+  `IsDefault` enum('Yes') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `admin_user_type_permission`
 --
 
-INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`) VALUES
-(1, 1),
-(31, 1),
-(1, 2),
-(1, 3),
-(1, 9),
-(31, 9),
-(1, 11),
-(5, 11),
-(1, 15),
-(2, 15),
-(31, 15),
-(1, 16),
-(31, 16),
-(1, 17),
-(31, 17),
-(1, 18),
-(2, 18),
-(1, 19),
-(6, 19),
-(31, 19),
-(1, 20),
-(2, 20),
-(1, 22),
-(1, 23),
-(1, 24),
-(1, 25),
-(4, 25),
-(6, 25),
-(1, 26),
-(1, 27),
-(1, 28),
-(2, 28),
-(31, 28),
-(1, 29),
-(1, 30),
-(4, 30),
-(1, 31),
-(1, 34),
-(5, 34),
-(1, 35),
-(2, 35),
-(31, 35),
-(1, 36),
-(4, 36),
-(6, 36),
-(1, 37),
-(31, 37),
-(1, 39),
-(2, 39),
-(1, 40),
-(4, 40),
-(5, 40),
-(31, 40);
+INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`, `IsDefault`) VALUES
+(1, 1, NULL),
+(1, 2, NULL),
+(1, 3, NULL),
+(1, 9, NULL),
+(1, 11, NULL),
+(1, 15, NULL),
+(1, 16, NULL),
+(1, 17, NULL),
+(1, 18, NULL),
+(1, 19, NULL),
+(1, 20, NULL),
+(1, 22, NULL),
+(1, 23, NULL),
+(1, 24, NULL),
+(1, 25, NULL),
+(1, 26, NULL),
+(1, 27, NULL),
+(1, 28, NULL),
+(1, 29, NULL),
+(1, 30, NULL),
+(1, 31, NULL),
+(1, 34, NULL),
+(1, 35, NULL),
+(1, 36, NULL),
+(1, 37, NULL),
+(1, 39, NULL),
+(1, 40, NULL),
+(2, 15, NULL),
+(2, 18, NULL),
+(2, 20, NULL),
+(2, 28, NULL),
+(2, 35, NULL),
+(2, 39, NULL),
+(4, 25, NULL),
+(4, 30, NULL),
+(4, 36, NULL),
+(4, 40, NULL),
+(5, 11, NULL),
+(5, 34, NULL),
+(5, 40, NULL),
+(6, 19, NULL),
+(6, 25, NULL),
+(6, 36, NULL),
+(31, 9, NULL),
+(31, 15, NULL),
+(31, 16, NULL),
+(31, 17, NULL),
+(31, 19, NULL),
+(31, 28, NULL),
+(31, 35, NULL),
+(31, 37, NULL),
+(31, 40, NULL);
 
 -- --------------------------------------------------------
 
@@ -3396,7 +3396,9 @@ INSERT INTO `tbl_media` (`MediaID`, `MediaGUID`, `IsImage`, `UserID`, `SectionID
 (14, '7805a1e3-a5d3-fd42-1041-b7605de12f5c', 1, 125, 'Post', NULL, 'mobail_app.png', 'mobail_app_1565441062.png', 406.97, '.png', NULL, '2019-08-10 12:44:22'),
 (15, '8a55956a-48d7-d939-3bae-09386468038e', NULL, 125, 'Coupon', NULL, 'buildOwnContest.svg', 'buildowncontest_1565441088.svg', 6.18, '.svg', NULL, '2019-08-10 12:44:48'),
 (16, 'ea36b5aa-cfe7-a8a1-a7f8-e9ef34b2f696', 1, 125, 'Coupon', NULL, 'play.png', 'play_1565441099.png', 22.81, '.png', NULL, '2019-08-10 12:44:59'),
-(17, 'd8f940e5-6245-65e7-389a-1822ae32e638', 1, 125, 'Coupon', NULL, 'matches-img2.png', 'matches-img2_1565441188.png', 2.56, '.png', NULL, '2019-08-10 12:46:28');
+(17, 'd8f940e5-6245-65e7-389a-1822ae32e638', 1, 125, 'Coupon', NULL, 'matches-img2.png', 'matches-img2_1565441188.png', 2.56, '.png', NULL, '2019-08-10 12:46:28'),
+(18, '2b0f3f04-6929-fccf-7236-b59c80827057', 1, 125, 'PlayerPic', NULL, 'banner1.jpg', 'banner1_1566386730.jpg', 136.09, '.jpg', NULL, '2019-08-21 11:25:30'),
+(19, 'f5428b06-498f-6356-4a55-9cd0b55585a4', 1, 125, 'PlayerPic', NULL, 'banner1.jpg', 'banner1_1566386746.jpg', 136.09, '.jpg', NULL, '2019-08-21 11:25:46');
 
 -- --------------------------------------------------------
 
@@ -3616,11 +3618,11 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-21 07:02:57', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-08-21 13:54:43', '2019-06-07 10:42:15'),
 (927, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-05 12:34:56', '2019-08-05 12:39:28', NULL),
 (932, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-19 15:13:45', NULL, NULL),
 (933, '34d74d56595bb92d6731d28fcf6065b6', 1, '2019-08-19 15:14:21', '2019-08-20 06:34:06', NULL),
-(939, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-20 08:21:25', '2019-08-21 07:04:09', NULL);
+(939, 'e10adc3949ba59abbe56e057f20f883e', 1, '2019-08-20 08:21:25', '2019-08-21 07:06:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -3695,7 +3697,10 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, 'ae3ad8b3-9ddd-a2fc-5f36-c44490e52d3e', NULL, 1, 1, NULL, NULL, '2019-08-20 13:30:09'),
 (125, '72946410-b15d-0be7-4362-01279293c0cc', NULL, 1, 1, NULL, NULL, '2019-08-20 16:07:23'),
 (125, '301ff6fd-e3fb-8b11-c591-20abd4caa953', NULL, 1, 1, NULL, NULL, '2019-08-21 05:33:48'),
-(125, '9315d94e-86e0-c07d-747e-8a6f79e7d36c', NULL, 1, 1, NULL, NULL, '2019-08-21 07:02:57');
+(939, '3bab0437-8467-e361-2f7d-9fca1511e2aa', NULL, 1, 1, NULL, NULL, '2019-08-21 07:06:40'),
+(125, 'ebb09dc8-f97a-9d78-9018-63697407ee35', NULL, 1, 1, NULL, NULL, '2019-08-21 07:06:56'),
+(125, '358f7022-91bc-3822-e3e3-362b99fb0cd7', NULL, 1, 1, NULL, NULL, '2019-08-21 07:32:52'),
+(125, '5e3422a2-c094-79a4-5ef0-8364c9a389f2', NULL, 1, 1, NULL, NULL, '2019-08-21 11:25:16');
 
 -- --------------------------------------------------------
 
@@ -3730,7 +3735,7 @@ CREATE TABLE `tbl_users_type` (
   `UserTypeID` int(11) NOT NULL,
   `UserTypeGUID` varchar(36) NOT NULL,
   `UserTypeName` varchar(100) NOT NULL,
-  `IsAdmin` enum('Yes','No') NOT NULL DEFAULT 'Yes'
+  `IsAdmin` enum('Yes','No') NOT NULL DEFAULT 'No'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -3743,8 +3748,9 @@ INSERT INTO `tbl_users_type` (`UserTypeID`, `UserTypeGUID`, `UserTypeName`, `IsA
 (4, '059fae09-8245-dbae-4aeb-5876eaaf53f5', 'Staff', 'No'),
 (5, '748a1f53-cb66-976a-53a0-46bcf0b385a5', 'Manager', 'No'),
 (6, '2a0f3df5-95f3-995b-d892-33f1016440a4', 'Employee', 'No'),
-(30, '96ff29a2-9705-d950-e027-39c424bd8c5e', 'Test', 'No'),
-(31, '286d5183-4398-7161-222b-787041636c11', 'developer', 'No');
+(31, '286d5183-4398-7161-222b-787041636c11', 'developer', 'No'),
+(33, '3d9edf8b-5156-5812-27f1-4787e579ab49', 'Emp', 'Yes'),
+(34, '5f3840ad-a41e-a5e8-eeae-4707ecf945a7', 'test', 'No');
 
 -- --------------------------------------------------------
 
@@ -4318,7 +4324,7 @@ ALTER TABLE `tbl_entity_type`
 -- AUTO_INCREMENT for table `tbl_media`
 --
 ALTER TABLE `tbl_media`
-  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `tbl_notifications`
 --
@@ -4338,7 +4344,7 @@ ALTER TABLE `tbl_referral_codes`
 -- AUTO_INCREMENT for table `tbl_users_type`
 --
 ALTER TABLE `tbl_users_type`
-  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `UserTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `tbl_users_wallet`
 --
