@@ -22,7 +22,6 @@
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>	
-		
 	</div>
 	<!-- Top container/ -->
 
@@ -52,8 +51,6 @@
 			</thead>
 			<!-- table body -->
 			<tbody id="tabledivbody">
-
-
 
 				<tr scope="row" ng-repeat="(key, row) in data.dataList" id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
 				
@@ -306,4 +303,18 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- contest joined user Modal -->
+    <div class="modal fade" id="viewTeams_model">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title h5">Team Players</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div ng-include="templateURLEdit"></div>
+            </div>
+        </div>
+    </div>
 </div><!-- Body/ -->
