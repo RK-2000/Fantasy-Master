@@ -59,8 +59,22 @@ class Common_model extends CI_Model
             ['_id'    => $CronID],
             ['$set'   => array('CompletionDate' => date('Y-m-d H:i:s'), 'CronStatus' => $CronStatus)]
         );
-    }
-
+	}
+	
+	/*
+		Description: Use to Save User activity logs in mongodb
+	*/
+	function log($Action,$UserID,$Data=array()){
+		if(!SAVE_DATA_LOG){
+			return TRUE;
+		}
+		$this->fantasydb->user_activity_logs->insertOne(array(
+			'Action'       => $Action,
+			'UserID'       => $UserID,
+			'Data'	       => array_filter($Data),
+			'EntryDate'    => date('Y-m-d H:i:s')
+		));
+	}
 
 	/*
 	Description: 	Use to get EntityTypeID by EntityTypeName

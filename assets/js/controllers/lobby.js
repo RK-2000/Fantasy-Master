@@ -167,7 +167,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 $scope.silder_visible = false;
                 $data.SeriesGUID = SelectedSeries; // Selected series ID
                 // $scope.listLoading = true;
-                $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status,StatusID';
+                $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,Status,StatusID,MatchStartDateTimeUTC';
                 $data.Status = 'Pending';
                 $data.PageSize = 15;
                 $data.PageNo = 1;
@@ -265,7 +265,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 var $data = {};
                 $data.SessionKey = $localStorage.user_details.SessionKey; //user session key
                 $data.MatchGUID = $scope.MatchGUID; //Match GUID
-                $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,TeamGUIDVisitor,TeamGUIDLocal';
+                $data.Params = 'SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,TeamGUIDVisitor,TeamGUIDLocal,MatchStartDateTimeUTC';
                 appDB
                         .callPostForm('sports/getMatches', $data)
                         .then(

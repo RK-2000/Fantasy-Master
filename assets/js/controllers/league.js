@@ -372,7 +372,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $data.ContestGUID = getQueryStringValue('League'); // Selected ContestGUID
                 $data.SessionKey = $localStorage.user_details.SessionKey; // User SessionKey
                 $data.SessionKey = $localStorage.user_details.SessionKey; // User SessionKey
-                $data.Params = 'Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,IsJoined,Status,ContestFormat,ContestType,CustomizeWinning,TotalJoined,UserInvitationCode,SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,MatchScoreDetails,ShowJoinedContest,TeamGUIDVisitor,TeamGUIDLocal';
+                $data.Params = 'Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,IsJoined,Status,ContestFormat,ContestType,CustomizeWinning,TotalJoined,UserInvitationCode,SeriesName,MatchType,MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor,TeamNameShortLocal,TeamNameShortVisitor,TeamFlagLocal,TeamFlagVisitor,MatchLocation,SeriesGUID,Status,MatchScoreDetails,ShowJoinedContest,TeamGUIDVisitor,TeamGUIDLocal,MatchStartDateTimeUTC';
                 $data.Keyword = $scope.Keyword;
 
                 appDB

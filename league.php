@@ -65,8 +65,8 @@
                                     </div>
                                     <div class="h-100" ng-if="Contest.Status == 'Pending'">
                                         <h5 class="mb-2">League Closes In</h5>
-                                        <div class="timer league_demo" ng-if="Contest.MatchStartDateTime">
-                                            <p id="demo" timer-text="{{Contest.MatchStartDateTime}}" timer-data="{{Contest.MatchStartDateTime}}" match-status="{{Contest.Status}}" ng-bind-html="clock | trustAsHtml"></p>
+                                        <div class="timer league_demo" ng-if="Contest.MatchStartDateTimeUTC">
+                                            <p id="demo" timer-text="{{Contest.MatchStartDateTimeUTC}}" timer-data="{{Contest.MatchStartDateTimeUTC}}" match-status="{{Contest.Status}}" ng-bind-html="clock | trustAsHtml"></p>
                                         </div>
                                     </div>
                                 </div>
