@@ -318,7 +318,7 @@ class Common_model extends CI_Model
 		$InsertData = array_filter(array(
 			"UserTypeGUID"			=>	$GetGUID,
 			"UserTypeName" 			=>	$Input['GroupName'],
-			"IsAdmin" 				=>	(@$Input['IsAdmin'] ? "Yes" : "No")
+			"IsAdmin" 				=>	(!empty($Input['IsAdmin']) ? "Yes" : "No")
 		));
 		if(!empty($InsertData)){
 			$Query 		= $this->db->insert('tbl_users_type', $InsertData);
@@ -347,10 +347,9 @@ class Common_model extends CI_Model
 			foreach($Input['ModuleName'] as $ModuleName){
 				$ModuleData = $this->getModules("M.ModuleID", array("ModuleName" => $ModuleName));
 				if(!empty($ModuleData)){
+					$IsDefault = NULL;
 					if ($Input['DefaultModule'] == $ModuleName) {
 						$IsDefault = 'Yes';
-					}else{
-						$IsDefault = NULL;
 					}
 					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID'],'IsDefault' => $IsDefault);
 				}
@@ -361,7 +360,7 @@ class Common_model extends CI_Model
 	}
 
 	/*
-	Description: 	use for check user type is unique edit time.
+	Description: use for check user type is unique edit time.
 	*/
 	function CheckUserTypeUnique($UserTypeName)
 	{

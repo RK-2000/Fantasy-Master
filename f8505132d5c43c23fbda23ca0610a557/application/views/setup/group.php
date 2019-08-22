@@ -148,14 +148,13 @@
                               <input name="GroupName" type="text" class="form-control" value="" placeholder="User Type Name" maxlength="20">
                            </div>
                         </div>
-                     </div>
-
+                     </div> 
                      <div class="row">
                         <div class="col-md-12">
                            <div class="form-group">
                               <div class="checkbox">
-                                 <input name="IsAdmin" type="checkbox" id="is_admin">
-                                 <label for="is_admin">Is Admin</label>
+                                 <input name="IsAdmin" type="checkbox" id="is_admin" class="form-control">
+                                 <label class="control-label" for="is_admin">Is Admin</label>
                               </div>
                            </div>
                         </div>
