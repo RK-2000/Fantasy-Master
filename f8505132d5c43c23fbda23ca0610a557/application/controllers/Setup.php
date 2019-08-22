@@ -37,10 +37,11 @@ class Setup extends Admin_Controller_Secure {
 	public function group()
 	{
 		$load['css']=array(
-			
+			'asset/plugins/chosen/chosen.min.css',
 		);
 		$load['js']=array(
-			'asset/js/group.js',			
+			'asset/js/group.js',	
+			'asset/plugins/chosen/chosen.jquery.min.js',		
 		);	
 
 		$this->load->view('includes/header',$load);

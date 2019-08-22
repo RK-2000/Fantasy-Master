@@ -50,7 +50,7 @@ class Setup extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|is_unique[tbl_users_type.UserTypeName]|max_length[20]');
-		$this->form_validation->set_message('is_unique', 'User Type is already exist.');
+		$this->form_validation->set_message('is_unique', 'Administrative User is already exist.');
 		$this->form_validation->validation($this);  /* Run validation */		
 		/* Validation - ends */
 		$UserTypeData = $this->Common_model->saveUserType($this->Post);	
@@ -72,11 +72,17 @@ class Setup extends API_Controller_Secure
 		/* Validation section */
 		$this->form_validation->set_rules('UserTypeGUID', 'UserTypeGUID', 'trim|required|callback_validateUserTypeGUID');
 		$this->form_validation->set_rules('GroupName', 'GroupName', 'trim|required|max_length[20]|callback_validateUserTypeUnique');
+		$this->form_validation->set_rules('IsDefault', 'IsDefault', 'trim|required');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
-		$this->Common_model->editUserType($this->UserTypeID, $this->Post);
-		$GroupData = $this->Common_model->getUserTypes('', array("UserTypeID" => $this->UserTypeID, "Permitted" => TRUE));
-		$this->Return['Data'] = $GroupData;
+
+		if (!$this->Common_model->editUserType($this->UserTypeID, $this->Post)) {
+            $this->Return['ResponseCode'] = 500;
+            $this->Return['Message'] = "An error occurred, please try again later.";
+        } else {
+            $this->Return['Data'] = $this->Common_model->getUserTypes('', array("UserTypeID" => $this->UserTypeID, "Permitted" => TRUE));
+        }
+		
 	}
 
 	/*------------------------------*/
@@ -98,7 +104,7 @@ class Setup extends API_Controller_Secure
 	{
 		$ExistUserTypeId = $this->Common_model->CheckUserTypeUnique($GroupName);
 		if ($ExistUserTypeId && $ExistUserTypeId!=$this->UserTypeID) {
-			$this->form_validation->set_message('validateUserTypeUnique', 'User Type is already exist.');
+			$this->form_validation->set_message('validateUserTypeUnique', 'Administrative User is already exist.');
 			return FALSE;
 		}else{			
 			return TRUE;

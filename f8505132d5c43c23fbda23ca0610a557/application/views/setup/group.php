@@ -13,7 +13,7 @@
       </span>
 
       <div class="float-right mr-2">      
-         <button class="btn btn-success btn-sm ml-1 float-right" onclick='$("#add_group_modal").modal("show")'>Add User Type</button>
+         <button class="btn btn-success btn-sm ml-1 float-right" onclick='$("#add_group_modal").modal("show")'>Add Administrative User</button>
       </div>
      
    </div>
@@ -28,7 +28,7 @@
             <!-- table heading -->
             <thead>
                <tr>
-                  <th style="width: 50px;">User Type Name</th>
+                  <th style="width: 50px;">Administrative User Name</th>
                   <th style="width: 400px;">Permitted Modules</th>
                   <th style="width: 50px;">Action</th>
                </tr>
@@ -44,7 +44,7 @@
                      </span>
                   </td>
                   <td class="text-center">
-                     <div class="dropdown" ng-if="lists.IsAdmin!='Yes'">
+                     <div class="dropdown" ng-if="lists.UserTypeID!=UserTypeID">
                         <button class="btn btn-secondary  btn-sm action" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">&#8230;</button>
                         <div class="dropdown-menu dropdown-menu-left">
                            <a class="dropdown-item" href="" ng-click="loadFormEdit(key,lists.UserTypeGUID);">Edit</a>
@@ -80,27 +80,25 @@
                      <div class="form-area">
                         <div class="row">
 
-                           <div class="col-md-4">
+                           <div class="col-md-6">
+                           <label class="control-label">Administrative User Name</label>
                               <div class="form-group">
-                                 <label class="control-label">User Type Name</label>
-                                 <input name="GroupName" type="text" class="form-control" value="{{formData.UserTypeName}}" placeholder="User Type Name" maxlength="20">
+                                 <input name="GroupName" type="text" class="form-control" value="{{formData.UserTypeName}}" placeholder="Administrative User Name" maxlength="20">
                               </div>
                            </div>
 
-                           <div class="col-md-4">
-                              <div class="form-group">
-                                 <h4 class="text-center">Set Permission</h4>
-                              </div>
-                           </div>
-
-                           <div class="col-md-4">
+                           <div class="col-md-6">
                               <div class="form-group">
                                  <label class="control-label">Default Module</label>
-                                 <select name="DefaultModule" id="DefaultModule" class="form-control chosen-select" ng-model="ModuleName" ng-change="SelDefaultModule(ModuleName)">
-                                    <option value=""></option>
-                                    <option ng-repeat="List in formData.PermittedModules" value="{{List.ModuleName}}" ng-selected="List.IsDefault=='Yes'">{{List.ModuleTitle}}</option>
-                                 </select>
+                                 <select id="IsDefault" name="IsDefault" class="form-control chosen-select1" ng-model="ModuleName" ng-change="SetDefaultModule(ModuleName)">
+                                    <option value="">Please Select</option>
+                                    <option ng-repeat="List in formData.PermittedModules" value="{{List.ModuleName}}">{{List.ModuleTitle}}</option>
+                                 </select> 
                               </div>
+                           </div>
+                           <hr>
+                           <div class="col-md-12">
+                              <h4 class="text-center">Set Permission</h4>
                            </div>
                         </div>
                         <hr>
@@ -135,7 +133,7 @@
       <div class="modal-dialog modal-md" role="document">
          <div class="modal-content">
             <div class="modal-header">
-               <h3 class="modal-title h5">Add User Type</h3>      
+               <h3 class="modal-title h5">Add Administrative User</h3>      
                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -143,22 +141,11 @@
                   <form id="add_form" name="add_form" autocomplete="off" >
                      <div class="row">
                         <div class="col-md-12">
-                           <div class="form-group">
-                              <label class="control-label">User Type Name</label>
-                              <input name="GroupName" type="text" class="form-control" value="" placeholder="User Type Name" maxlength="20">
+                           <div class="form-group">   
+                              <input name="GroupName" type="text" class="form-control" value="" placeholder="Administrative User Name" maxlength="20">
                            </div>
                         </div>
                      </div> 
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="form-group">
-                              <div class="checkbox">
-                                 <input name="IsAdmin" type="checkbox" id="is_admin" class="form-control">
-                                 <label class="control-label" for="is_admin">Is Admin</label>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
                   </form>
                </div>
             </div>
@@ -173,14 +160,3 @@
 
 </div><!-- Body/ -->
 
-<script type="text/javascript">
-      // $scope.SelDefaultModule = function(ModuleTitle) {
-
-      //   $("#"+ModuleTitle).attr("ng-checked",true);      
-      // }
-
-   function SelDefaultModule(sel_val) {
-      $("."+sel_val).attr("ng-checked",true); 
-
-   }
-</script>

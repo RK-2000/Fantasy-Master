@@ -229,6 +229,7 @@ class Common_model extends CI_Model
 		$this->db->select('UT.UserTypeID UserTypeIDForUse, UT.UserTypeGUID, UT.UserTypeName, UT.IsAdmin');
 		$this->db->select($Field,false);
 		$this->db->from('tbl_users_type UT');
+		$this->db->where('UT.IsAdmin','Yes');
 
 		if(!empty($Input['UserTypeID'])){
 			$this->db->where('UT.UserTypeID',$Input['UserTypeID']);
@@ -318,10 +319,10 @@ class Common_model extends CI_Model
 		$InsertData = array_filter(array(
 			"UserTypeGUID"			=>	$GetGUID,
 			"UserTypeName" 			=>	$Input['GroupName'],
-			"IsAdmin" 				=>	(!empty($Input['IsAdmin']) ? "Yes" : "No")
+			"IsAdmin" 				=>	"Yes"
 		));
 		if(!empty($InsertData)){
-			$Query 		= $this->db->insert('tbl_users_type', $InsertData);
+			$this->db->insert('tbl_users_type', $InsertData);
 			return array('UserTypeID' => $this->db->insert_id(), 'UserTypeGUID' => $GetGUID);
 		}		
 		return false;
@@ -332,31 +333,33 @@ class Common_model extends CI_Model
 	Description: 	Use to edit user type.
 	*/
 	public function editUserType($UserTypeID, $Input=array()) {
-		/*delete group permissions*/
+
+		$this->db->trans_start();
+
+		/* Delete group permissions */
 		$this->db->where("UserTypeID",$UserTypeID);
 		$this->db->delete('admin_user_type_permission');
 		
-		$UpdateData = array(
-			"UserTypeName" 	=>	$Input['GroupName'],
-		);
+		/* Update User Type */
 		$this->db->where("UserTypeID",$UserTypeID);
         $this->db->limit(1);
-        $this->db->update('tbl_users_type', $UpdateData);
+        $this->db->update('tbl_users_type', array("UserTypeName" =>	$Input['GroupName']));
 
+		/* Insert Module Permission */
 		if(!empty($Input['ModuleName'])){ /*Update permissions*/
 			foreach($Input['ModuleName'] as $ModuleName){
 				$ModuleData = $this->getModules("M.ModuleID", array("ModuleName" => $ModuleName));
 				if(!empty($ModuleData)){
-					$IsDefault = NULL;
-					if ($Input['DefaultModule'] == $ModuleName) {
-						$IsDefault = 'Yes';
-					}
-					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID'],'IsDefault' => $IsDefault);
+					$InsertData[] = array('UserTypeID'=>$UserTypeID,'ModuleID' => $ModuleData['ModuleID'],'IsDefault' => ($Input['IsDefault'] == $ModuleName ? 'Yes' : NULL));
 				}
 			}
 			$this->db->insert_batch('admin_user_type_permission', $InsertData); 
+		}
+		$this->db->trans_complete();
+		if ($this->db->trans_status() === FALSE) {
+			return FALSE;
 		}		
-		return true;
+		return TRUE;
 	}
 
 	/*
