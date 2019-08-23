@@ -260,6 +260,7 @@ input.form-control input:-moz-placeholder {
 /*****************************************************************************
 *************************** header sec start  ***************************
 ******************************************************************************/
+
 .login_menu .nav-item:last-child a{
     padding-right: 0;
 }
@@ -324,11 +325,6 @@ input.form-control input:-moz-placeholder {
     right: -8px;
     top: 10px;
 }
-
-.navbar-expand-lg .navbar-nav.mr-auto {
-    margin-left: 203px;
-}
-
 .withoutLogin .navbar-expand-lg .navbar-nav {
     justify-content: flex-end;
     width: 100%;
@@ -392,8 +388,8 @@ input.form-control input:-moz-placeholder {
 .navbar-brand {
     /* 	padding-bottom: 0;
 padding-top: 0; */
-    position: absolute;
-    top: 2px;
+    /* position: absolute;
+    top: 2px; */
 }
 
 .headerBottom .navbar-expand-lg {
@@ -417,6 +413,7 @@ padding-top: 0; */
 
 .rightNav li:last-child {
     border-right: none;
+    padding-right: 0;
 }
 /* 
 .navbar-nav.rightNav li span {
@@ -4525,11 +4522,6 @@ p.captaine {
 .onlyMobileMenu {
     display: none;
 }
-
-.headerBottom .navbar-collapse {
-    flex-direction: row-reverse;
-}
-
 .payoutPar.text-center ul li:nth-child(5) {
     color: #ccc;
 }
@@ -5375,4 +5367,17 @@ p.captaine {
     margin-bottom: 15px;
     font-size: 18px;
     padding: 0 15px;
+}
+
+
+@media (min-width: 992px){
+    .rightMenuWrapr{
+        position: absolute;
+        right: 210px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .primary_menu {
+        margin-left: 40px;
+    }
 }

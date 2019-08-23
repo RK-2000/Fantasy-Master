@@ -440,7 +440,7 @@
     height: 23px;
     width: 31px;
     position: relative;
-    margin-left: auto;
+    margin-left: 15px;
 }
 .navbar-toggler.navbar-toggler-right::after {
     content: "";
@@ -1268,6 +1268,30 @@ li.list-inline-item.dropdown.accountDrop {
 
 }
 @media (max-width: 991px){ 
+    .primary_menu {
+        width: 100%;
+    }
+    .headerBottom .navbar-collapse.show {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        justify-content: flex-end;
+        transform: translateX(0);
+    }
+    .headerBottom .navbar-collapse {
+        border-width: 0 1px 0 0;
+        position: fixed;
+        width: calc(100% - 50px);
+        top: 0;
+        height: 100vh;
+        z-index: 99;
+        left: 0;
+        background-color: #000;
+        margin-top: 0;
+        border-right: 1px solid #777;
+        transform: translateX(-100%);
+        transition: all ease .3s;
+    }
 .createContestSetBtn {
     position: static;
     padding: 8px 33px !important;
