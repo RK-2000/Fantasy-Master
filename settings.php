@@ -103,6 +103,23 @@
                                             </div>
                                         </form>
                                     </div>
+                                    <div class="col-sm-4" ng-show="isEmailSend">
+                                        <h4>Verify your Email Address</h4>
+                                        <form name="verifyEmailOptForm" class="form-commen" ng-submit="verifyEmail(verifyEmailOptForm)" novalidate="">
+                                            <div class="form-group">
+                                                <label>One Time Password</label>
+                                                <input placeholder="Enter Your OTP" class="form-control" type="text" ng-model="OTP" name="OTP" numbers-only ng-change="removeMassage()" ng-maxlength="6" ng-required="true">
+                                                <div style="color:red" ng-show="otpSubmitted && verifyEmailOptForm.OTP.$error.required" class="form-error">
+                                                    *One time password is required.
+                                                </div>
+                                                <div style="color:red" ng-show="verifyEmailOptForm.OTP.$error.pattern || verifyEmailOptForm.OTP.$error.minlength" class="form-error">*OTP must be of 6 digit.</div>
+                                            </div>
+                                            <p>We’ll send you an OTP Verification</p>
+                                            <div class="form-group">
+                                                <button class="btn btnSetting theme_bgclr">Verify</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane {{activeMenu =='panCard' ? 'active' : ''  }}" id="panCard">

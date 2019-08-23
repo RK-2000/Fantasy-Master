@@ -80,7 +80,7 @@
                                                         <figure class="mb-0"><img ng-src="{{matches.TeamFlagLocal}}" alt="{{matches.TeamNameShortLocal}}"class="img-fluid" width="60" /></figure>
                                                         <div class="timer">
                                                                     <h4 class="theme_txtclr"><small>{{matches.TeamNameShortLocal}}</small>  VS <small>{{matches.TeamNameShortVisitor}}</small></h4>
-                                                            <p id="demo" timer-text="{{matches.MatchStartDateTime}}" timer-data="{{matches.MatchStartDateTime}}" match-status="{{matches.Status}}" ng-bind-html="clock | trustAsHtml" class="ng-binding"></p>
+                                                            <p id="demo" timer-text="{{matches.MatchStartDateTimeUTC}}" timer-data="{{matches.MatchStartDateTimeUTC}}" match-status="{{matches.Status}}" ng-bind-html="clock | trustAsHtml" class="ng-binding"></p>
                                                         </div>
                                                         <figure class="mb-0"> <img ng-src="{{matches.TeamFlagVisitor}}" alt="{{matches.TeamNameShortVisitor}}" class="img-fluid" width="60"  /> </figure>
                                                     </div>
@@ -95,7 +95,7 @@
                                 <div class="col-md-4">
                                     <div class="timer">
                                         <p> Next Contest Starts In  </p> 
-                                        <p id="demo" timer-text="{{MatchesDetail.MatchStartDateTime}}" timer-data="{{MatchesDetail.MatchStartDateTime}}" match-status="{{MatchesDetail.Status}}" ng-bind-html="clock | trustAsHtml" class="ng-binding"><span>213 <strong>DAY</strong></span><span>22 <strong>HRS</strong></span><span>32 <strong>MIN</strong></span><span>04 <strong>SEC</strong></span></p>
+                                        <p id="demo" timer-text="{{MatchesDetail.MatchStartDateTimeUTC}}" timer-data="{{MatchesDetail.MatchStartDateTimeUTC}}" match-status="{{MatchesDetail.Status}}" ng-bind-html="clock | trustAsHtml" class="ng-binding"><span>213 <strong>DAY</strong></span><span>22 <strong>HRS</strong></span><span>32 <strong>MIN</strong></span><span>04 <strong>SEC</strong></span></p>
                                     </div>
                                 </div>
                                 <div class="col-md-5 text-center">

@@ -53,7 +53,7 @@ class Signup extends API_Controller
                 /* Send welcome Email to User with Token. (only if source is Direct) */
                 send_mail(array(
                     'emailTo'       => $this->Post['Email'],
-                    'template_id'   => 'd-8cae2914de5c4e3dbbf8d419e8777dbd',
+                    'template_id'   => ($this->DeviceTypeID !=1 ? 'd-3a4d4645033743618fef4ec5f3375190' : 'd-55ba1bc1b8e047888b82575e1587f0bb'),
                     'Subject'       => 'Thank you for registering at ' . SITE_NAME,
                     "Name"          => @$this->Post['FirstName'],
                     'Token'         => ($this->Post['Source'] == 'Direct' ? $this->Recovery_model->generateToken($UserID, 2) : ''),

@@ -3,7 +3,7 @@
 <head>
   <!-- <meta charset="utf-8"> -->
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-  <title>Account Verification | FSL 11</title>
+  <title>Account Verification | <?php echo SITE_NAME; ?></title>
   <style>
   p{margin:0;}
   a{text-decoration: none;}
@@ -31,7 +31,7 @@
             <tr>
               <td colspan="2" class="content-padding" style="padding:40px 40px 20px; border-bottom:1px solid #E5E5E5;background:#FFFFFF;" >
                 <p style="text-align: center; margin-bottom: 20px;"> 
-                  <a style="outline:none;border:none;margin: 0 auto;" href="https://fsl11.com">
+                  <a style="outline:none;border:none;margin: 0 auto;" href="https://example.com">
                     <img style="outline:none;border:none;max-width: 25%;" src="<?php echo ASSET_BASE_URL .'img/emailer/logo2.png';?>" alt="<?php echo SITE_NAME ?>" />
                   </a> 
                 </p>
@@ -49,7 +49,7 @@
                 <p style="font-family: 'Roboto', sans-serif; font-size:16px; color:#444444; font-weight:500; margin-bottom:30px;"><?php echo $Error ;?></p>
 
                 <?php } ?>
-                <p>Please click here to visit website <a href="https://www.fsl11.com">https://www.fsl11.com</a> or download the app from <a href="https://www.fsl11.com/download-app">https://www.fsl11.com/download-app</a></p>
+                <p>Please click here to visit website <a href="<?php echo SITE_HOST; ?>"><?php echo SITE_HOST; ?></a> or download the app from <a href="<?php echo SITE_HOST; ?>download-app"><?php echo SITE_HOST; ?>download-app</a></p>
               </td>
             </tr>
             <tr>

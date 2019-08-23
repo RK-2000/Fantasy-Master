@@ -1,4 +1,4 @@
-/********* 527-fsl11 Css New Start 01-02-19********/
+/********* 527-fantasy Css New Start 01-02-19********/
 :root{
   --primaryclr :#fac733;
   --graybgclr : #cdcdcd ;
@@ -642,9 +642,9 @@ margin-left: -25px;
 color: #000;
 /* margin-left: -50px; */
 }
- /********* 527-fsl11 Css New End ********/
+ /********* 527-fantasy Css New End ********/
 
-/********* 527-fsl11 Css New start (vivek) ********/
+/********* 527-fantasy Css New start (vivek) ********/
 
  .creatTeamTable .nav.nav-tabs .nav-item{
     background: #fff;
@@ -767,7 +767,7 @@ width: 99.1%;
 .player_tab_table thead tr {
 display: flex;
 }
-/********* 527-fsl11 Css New end (vivek) ********/
+/********* 527-fantasy Css New end (vivek) ********/
 
 /*********Auction Css New start (vivek) ********/
 .auction_order .player_tab_table table th{

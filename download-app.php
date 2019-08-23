@@ -82,7 +82,7 @@ const VERSION = 4.7;
                             <a  href="https://fsl11.com/android/FSL11.apk" download data-toggle="tooltip" title="" data-original-title="Download Now">
                                 <span class="icon"><img src="assets/images/android.svg" alt=""> </span>
                                 <span class="text">
-                                <span class="small">FSL11 On</span>
+                                <span class="small"> On</span>
                                 <span class="big"> Android </span>
                                 </span>
                             </a></li>

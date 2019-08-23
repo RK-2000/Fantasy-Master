@@ -113,8 +113,8 @@ switch (ENVIRONMENT) {
         break;
     case 'production':
         $db['default']['hostname'] = 'localhost';
-        $db['default']['database'] = 'fsl11-sports';
+        $db['default']['database'] = 'fantasy-sports';
         $db['default']['username'] = 'root';
-        $db['default']['password'] = 'zJ?-d3U!gC*^Hfc#ns=f4x$nL%3s^z';
+        $db['default']['password'] = 'root';
         break;
 }

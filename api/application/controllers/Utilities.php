@@ -343,6 +343,7 @@ class Utilities extends API_Controller
     */
     public function createPreDraftContest_get()
     {
+        $this->load->model('PredraftContest_model');
         $this->PredraftContest_model->createPreDraftContest();
     }
 

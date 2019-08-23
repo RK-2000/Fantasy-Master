@@ -100,7 +100,7 @@ app.controller('headerController', ['$scope', '$rootScope', '$location', 'enviro
         $scope.headerActiveMenu = 'lobby';
         var pathArray = window.location.pathname.split('/');
         var secondLevelLocation = pathArray[2];
-        if (window.location.host == 'www.fsl11.com') {
+        if (window.location.host == 'www.example.com') {
             secondLevelLocation = pathArray[1];
         }
         $scope.type = getQueryStringValue('type');
@@ -343,8 +343,6 @@ app.controller('headerController', ['$scope', '$rootScope', '$location', 'enviro
                                         $scope.WEBSITE = $rootScope.payData.Website;
                                         $scope.TXN_AMOUNT = $rootScope.payData.Amount;
                                         $scope.CALLBACK_URL = $rootScope.payData.CallbackURL;
-                                        // $scope.CALLBACK_URL='http://localhost/515-FSL11/paymentMethod?amount='+$scope.TXN_AMOUNT;
-                                        // console.log($rootScope.payData); return false;
                                         setTimeout(function () {
                                             $scope.submitPayTmData();
                                         }, 1000);

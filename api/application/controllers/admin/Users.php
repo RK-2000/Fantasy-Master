@@ -222,7 +222,6 @@ class Users extends API_Controller_Secure
       Description: 	Use to register user to system.
       URL: 			/admin/users/add/
      */
-
     public function add_post()
     {
         /* Validation section */
@@ -230,7 +229,7 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim|required');
         $this->form_validation->set_rules('LastName', 'LastName', 'trim');
-        $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|in_list[1,2,3,4]');
+        $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|callback_validateUserTypeId');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber');
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
@@ -250,7 +249,6 @@ class Users extends API_Controller_Secure
                 "Name" => $this->Post['FirstName'],
                 'Password' => $this->Post['Password']
             ));
-            return true;
         }
     }
 
@@ -475,5 +473,18 @@ class Users extends API_Controller_Secure
 		$this->Post['UserFullName']     = $WithdrawalData['FullName'];
 		$this->Post['UserEmail']        = $WithdrawalData['Email'];
 		return TRUE;
-	}
+    }
+    
+        /*-------------- Callback UserTypeId -------------*/
+        function validateUserTypeId($UserTypeID)
+        {
+            $ExistUserType = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeID" => $UserTypeID));
+            if ($ExistUserType) {
+                $this->UserTypeID = $ExistUserType['UserTypeID'];
+                return TRUE;
+            }
+            $this->form_validation->set_message('validateUserTypeId', 'Invalid {field}.');
+            return FALSE;
+        }
+        /*---------------End-----------*/
 }

@@ -6,7 +6,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     /*----------------*/
      /*list*/
 
-     $scope.getFilterData = function ()
+    $scope.getFilterData = function ()
     {
         var data = 'SessionKey='+SessionKey+'&Params=SeriesName,SeriesGUID&StatusID=2&'+$('#filterPanel form').serialize();
 

@@ -1205,7 +1205,6 @@ class Users_model extends CI_Model
     */
     function razorpayWebhook($WebhookResp)
     {
-
         /* Decode Response */
         $PayResponse = json_decode($WebhookResp, TRUE);
         $PayResponse = $PayResponse['payload']['payment']['entity'];
@@ -1425,7 +1424,7 @@ class Users_model extends CI_Model
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
                     if (in_array('CouponDetails', $Params)) {
-                        $Records[$key]['CouponDetails'] = (!empty($Record['CouponDetails'])) ? json_decode($Record['CouponDetails']) : new stdClass();
+                        $Records[$key]['CouponDetails'] = (!empty($Record['CouponDetails'])) ? json_decode($Record['CouponDetails'],TRUE) : array();
                     }
                 }
                 $Return['Data']['Records'] = $Records;
@@ -1433,7 +1432,7 @@ class Users_model extends CI_Model
             } else {
                 $Record = $Query->row_array();
                 if (in_array('CouponDetails', $Params)) {
-                    $Record['CouponDetails'] = (!empty($Record['CouponDetails'])) ? json_decode($Record['CouponDetails']) : new stdClass();
+                    $Record['CouponDetails'] = (!empty($Record['CouponDetails'])) ? json_decode($Record['CouponDetails'],TRUE) : array();
                 }
                 return $Record;
             }

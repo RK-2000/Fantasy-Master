@@ -1,13 +1,16 @@
 'use strict';
 
 app.controller('PageController', function($scope, $http, $timeout) {
-    $scope.hrm_base_url = hrm_base_url;
+    $timeout(function () {
+        $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+    }, 300);
 
     function arrayColumn(array, columnName) {
         return array.map(function(value, index) {
             return value[columnName];
         })
     }
+    $scope.UserTypeID = UserTypeID;
 
     /*edit Data */
     $scope.editData = function() {
@@ -27,6 +30,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
     }
 
     /*load edit form*/
+    $scope.ModuleName = ''
     $scope.loadFormEdit = function(Position, UserTypeGUID) {
         $scope.data.loadFormEdit = true;
         $scope.data.Position = Position;
@@ -37,6 +41,13 @@ app.controller('PageController', function($scope, $http, $timeout) {
             var response = response.data;
             if (response.ResponseCode == 200 && response.Data) {
                 $scope.formData = response.Data;
+                
+                $scope.formData.PermittedModules.map(function(value) {
+                    if(value.IsDefault == "Yes"){
+                        $scope.ModuleName = value.ModuleName
+                    }
+                })
+                
             } else {
                 $scope.data.noRecords = true;
             }
@@ -98,6 +109,18 @@ app.controller('PageController', function($scope, $http, $timeout) {
         
     }
 
-
+    $scope.OldValue = '';
+    $scope.SetDefaultModule = function(ModuleName) {
+        //console.log($scope.IsDefault)
+        for(let i in $scope.formData.PermittedModules){            
+            if($scope.formData.PermittedModules[i].ModuleName == $scope.OldValue){
+                $scope.formData.PermittedModules[i].Permission = '';
+            }
+            if($scope.formData.PermittedModules[i].ModuleName == ModuleName){
+                $scope.formData.PermittedModules[i].Permission = 'Yes';
+                $scope.OldValue = ModuleName;
+            }
+        }  
+    }
 
 });

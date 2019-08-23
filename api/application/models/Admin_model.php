@@ -29,7 +29,7 @@ class Admin_model extends CI_Model
 	/*------------------------------*/
 	function getMenu($UserTypeID, $ParentControlID = NULL)
 	{
-		$this->db->select('C.ControlID, C.ControlName, M.ModuleName');
+		$this->db->select('C.ControlID, C.ControlName, C.ModuleIcon, M.ModuleName');
 		$this->db->from('admin_control C');
 		$this->db->join('admin_modules M', 'C.ModuleID=M.ModuleID', 'left');
 		$this->db->or_group_start(); //this will start grouping

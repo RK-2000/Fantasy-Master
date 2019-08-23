@@ -1,7 +1,25 @@
 app.controller('PageController', function ($scope, $http,$timeout){
+    $scope.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
+    $scope.data.DEFAULT_CURRENCY = DEFAULT_CURRENCY;
     $scope.data.pageSize = 15;
     /*----------------*/
-     /*list*/
+    /*list*/
+    $scope.getFilterData = function ()
+    {
+        var data = 'SessionKey='+SessionKey+'&Params=SeriesName,SeriesGUID&StatusID=2&'+$('#filterPanel form').serialize();
+
+        $http.post(API_URL+'admin/matches/getFilterData', data, contentType).then(function(response) {
+            var response = response.data;
+            if(response.ResponseCode==200 && response.Data){ 
+            /* success case */
+                $scope.filterData =  response.Data;
+                $timeout(function(){
+                    $("select.chosen-select").chosen({ width: '100%',"disable_search_threshold": 8}).trigger("chosen:updated");
+                }, 300);          
+            }
+        });
+    }
+
     $scope.applyFilter = function() {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
@@ -39,6 +57,25 @@ app.controller('PageController', function ($scope, $http,$timeout){
                 $scope.data.noRecords = true;
             }
             $scope.data.listLoading = false;
+        });
+    }
+
+    $scope.loadContestJoinedUser = function (Position, ContestGUID) {
+
+        $scope.data.Position = Position;
+        $scope.templateURLEdit = PATH_TEMPLATE + 'contests/joinedContest_form.htm?' + Math.random();
+        $scope.data.pageLoading = true;
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime', contentType).then(function (response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200) { /* success case */
+                $scope.data.pageLoading = false;
+                $scope.contestData = response.Data;
+                $('#contestJoinedUsers_model').modal({ show: true });
+                $timeout(function () {
+                    $(".chosen-select").chosen({ width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
+                }, 200);
+            }
         });
     }
 
@@ -93,6 +130,45 @@ app.controller('PageController', function ($scope, $http,$timeout){
             }
         });
 
+    }
+    
+    $scope.loadTeams = function (row) {
+        var ContestGUID = row.ContestGUID;
+        var data = 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=FullName,ProfilePic,UserRank,TotalPoints,UserWinningAmount,UserTeamPlayers,UserTeamName&OrderBy=' + $scope.data.OrderBy + '&Sequence=' + $scope.data.Sequence;
+        $http.post(API_URL + 'admin/contest/getJoinedContestsUsers', data, contentType).then(function (response) {
+            var response = response.data;
+            if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
+                $scope.playerData = response.Data.Records[0].UserTeamPlayers;
+            } else {
+                $scope.data.noRecords = true;
+            }
+        });
+        $scope.templateURLEdit = PATH_TEMPLATE + module + '/getTeams_form.htm?' + Math.random();
+        $('#viewTeams_model').modal({ show: true });
+    }
+
+    /*To get matches according to Series*/
+    $scope.getMatches = function (SeriesGUID, Status = '') {
+        if (!SeriesGUID) {
+            $scope.MatchData = [];
+            $timeout(function () {
+                $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+            }, 300);
+            return;
+        }
+        $scope.SeriesGUID = SeriesGUID;
+        $scope.MatchData = {};
+        var data = 'SeriesGUID=' + SeriesGUID + '&Params=MatchNo,MatchStartDateTime,TeamNameLocal,TeamNameVisitor&OrderBy=MatchStartDateTime&Sequence=ASC&Status=' + Status;
+        $http.post(API_URL + 'sports/getMatches', data, contentType).then(function (response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200 && response.Data) { /* success case */
+                $scope.MatchData = response.Data.Records;
+                $timeout(function () {
+                    $("select.chosen-select").chosen({ width: '100%', "disable_search_threshold": 8 }).trigger("chosen:updated");
+                }, 300);
+            }
+        });
     }
 
 

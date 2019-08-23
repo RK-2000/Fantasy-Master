@@ -1,5 +1,5 @@
 
-var app = angular.module('FSL11', ['ngStorage', 'ngAnimate', 'toastr', '720kb.datepicker', 'ngFileUpload', 'socialLogin', 'infinite-scroll', 'ngCookies']);
+var app = angular.module('FANTASY', ['ngStorage', 'ngAnimate', 'toastr', '720kb.datepicker', 'ngFileUpload', 'socialLogin', 'infinite-scroll', 'ngCookies']);
 var contentType = {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'

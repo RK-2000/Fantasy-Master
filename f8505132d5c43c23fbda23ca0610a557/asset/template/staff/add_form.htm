@@ -50,8 +50,7 @@
 					<div class="form-group">
 						<label class="control-label">User Type</label>
 						<select name="UserTypeID" id="UserTypeID" class="form-control chosen-select">
-							<option value="1">Administrator</option>
-							<option value="4" selected>Staff</option>
+							<option value="{{val.UserTypeID}}" ng-repeat="val in TypeList">{{val.UserTypeName}}</option>
 						</select>
 					</div>
 				</div>

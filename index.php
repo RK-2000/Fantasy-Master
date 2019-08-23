@@ -2,7 +2,7 @@
 <?php 
     const VERSION = 4.3;
 ?>
-<html lang="en" data-ng-app="FSL11" ng-cloak >
+<html lang="en" data-ng-app="FANTASY" ng-cloak >
     <head>
         <title>Play Fantasy Cricket | Play Fantasy Cricket and Win Cash Daily</title>
         <meta charset="utf-8">

@@ -41,8 +41,8 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown"> Welcome Admin </a>
               <div class="dropdown-menu dropdown-menu-right" data-display="static">
-                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#changePassword_modal"  >Change Password</a>
-                <a class="dropdown-item logout-btn" href="<?php echo base_url().'dashboard/signout/'.$this->SessionData['SessionKey'];?>">Sign Out</a>
+                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#changePassword_modal"  ><i class="fas fa-key"></i> Change Password</a>
+                <a class="dropdown-item logout-btn" href="<?php echo base_url().'dashboard/signout/'.$this->SessionData['SessionKey'];?>"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
               </div>
             </li>
           </ul>
@@ -58,12 +58,12 @@
         <?php foreach($this->Menu as $Value){?>
           <?php if(empty($Value['ChildMenu'])){ ?>
             <li class="nav-item mt-3">        
-            <a class="nav-link  <?php if($Value['ModuleName']==$this->ModuleData['ModuleName']){echo "active";} ?>" href="<?php echo base_url().$Value['ModuleName'];?>"><i class="flaticon-home"></i><?php echo $Value['ControlName'];?></a>
+            <a class="nav-link  <?php if($Value['ModuleName']==$this->ModuleData['ModuleName']){echo "active";} ?>" href="<?php echo base_url().$Value['ModuleName'];?>"><i class="fas fa-tachometer-alt"></i><?php echo $Value['ControlName'];?></a>
             </li>       
           <?php }else{ ?>
             <li class="nav-item dropdown <?php if($Value['ModuleName']==$this->ModuleData['ModuleName']){echo "active";} ?>">
               <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-              <i class="flaticon-user"></i><?php echo $Value['ControlName'];?>
+              <i class="<?php echo $Value['ModuleIcon'];?>"></i><?php echo $Value['ControlName'];?>
             </a>
 
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">

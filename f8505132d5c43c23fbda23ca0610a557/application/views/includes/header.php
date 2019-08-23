@@ -10,8 +10,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Noto+Sans|Roboto:300,400,500|Poppins:100,200,300,400,500,600' rel='stylesheet'>
 	<!-- BOOTSTRAP CSS -->
 	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> 
-	<!-- <link rel="stylesheet"  href="https://blackrockdigital.github.io/startbootstrap-sb-admin-2/vendor/bootstrap/css/bootstrap.min.css">
- -->	<!-- Alertify CSS -->
+	<!-- Alertify CSS -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>asset/plugins/alertify/css/alertify.min.css" />
 	<link rel="stylesheet" href="<?php echo base_url(); ?>asset/plugins/alertify/css/themes/bootstrap.min.css"/>
 	<!-- Plugins CSS -->
@@ -21,8 +20,7 @@
 	<!-- CUSTOM CSS -->
 	<link rel="stylesheet" href="asset/css/app.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="asset/css/custom.css" type="text/css" media="screen" />
-	
-
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 	<script>
 		var BASE_URL = "<?php echo base_url(); ?>";
 		var API_URL = "<?php echo API_URL; ?>";

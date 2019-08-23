@@ -103,10 +103,10 @@
             <div class="row">
                <div class="text-center col-md-10 offset-md-1">
                     <div class="copyright text-center">Copyright © Brainy Bucks Games Pvt. Ltd. All Rights Reserved.</div>
-                    <p> FSL11 is not affiliated in any way to and claims no association, FSL11 acknowledges that the ICC, BCCI, 
+                    <p> Fantasy is not affiliated in any way to and claims no association, Fantasy acknowledges that the ICC, BCCI, 
                         IPL and its franchises/teams. Own all proprietary names and marks relating to the relevant tournament or 
                         competition. Residents of the states of Assam, Odisha and Telangana, and where otherwise prohibited by 
-                        law are not eligible to enter FSL11 leagues.</p>
+                        law are not eligible to enter Fantasy leagues.</p>
             </div>
         </div>
     </div>
@@ -129,6 +129,7 @@
 <!-- angular storage -->
 <script src="assets/js/angular-modules/ngStorage.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-cookies.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <!-- MAIN CONTROLLER -->
 <script src="assets/js/app.js?version=<?= VERSION ?>"></script>
 

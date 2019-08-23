@@ -383,7 +383,7 @@ function mongoDBConnection()
             $Obj->ClientObj = new MongoDB\Client("mongodb://localhost:58017");
             break;
         default :
-            $Obj->ClientObj = new MongoDB\Client("mongodb://fantasygameplanadminmw:fantasymw123mobiwebgameplan@localhost:27017");
+            $Obj->ClientObj = new MongoDB\Client("mongodb://root:root@localhost:27017");
            break;
     }
     $Obj->fantasydb = $Obj->ClientObj->fantasymaster;

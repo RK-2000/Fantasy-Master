@@ -104,8 +104,7 @@
 					<td class="text-center">
 						<p>{{DEFAULT_CURRENCY}}{{row.TotalWinningAmount}}</p>
 					</td>
-					<td class="text-center"><span
-                            ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td>
+					<td class="text-center"><span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td>
 
 					<td class="text-center">
                         <div class="dropdown">
