@@ -71,7 +71,7 @@
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.CouponGUID)">Edit</a>
-								<a class="dropdown-item" href="couponhistory?CouponGUID={{row.CouponGUID}}&CouponCode={{row.CouponCode}}">History</a>
+								<a class="dropdown-item" href="couponhistory?CouponGUID={{row.CouponGUID}}">History</a>
 							</div>
 						</div>
 					</td>

@@ -54,7 +54,10 @@ app.controller('PageController', function ($scope, $http,$timeout){
     $scope.getCouponInfo = function(){
         $scope.userData = {};
         var CouponGUID = getQueryStringValue('CouponGUID');
-        $http.post(API_URL + 'store/getCoupons', 'SessionKey=' + SessionKey + '&CouponGUID=' + CouponGUID + '&Params=CouponCode', contentType).then(function(response) {
+        if(!CouponGUID){
+            return;
+        }
+        $http.post(API_URL + 'store/getCoupons', 'SessionKey=' + SessionKey + '&CouponGUID=' + CouponGUID + '&Params=TotalSuccessfulUses,TotalDiscount', contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */

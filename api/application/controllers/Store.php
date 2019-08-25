@@ -37,7 +37,9 @@ class Store extends API_Controller
 			C.MaximumAmount,
 			C.NumberOfUses,
 			C.CouponValueLimit,
-			C.CouponValidTillDate
+			C.CouponValidTillDate,
+			(SELECT COUNT(W.CouponCode) FROM tbl_users_wallet W WHERE W.CouponCode = C.CouponCode AND W.StatusID = 5) TotalSuccessfulUses,
+			(SELECT IFNULL(SUM(JSON_EXTRACT(W.CouponDetails, "$.DiscountedAmount")),0) FROM tbl_users_wallet W WHERE W.CouponCode = C.CouponCode AND W.StatusID = 5) TotalDiscount
 			',
 			array_merge($this->Post,array('StatusID' => @$this->StatusID)),
 			TRUE,

@@ -8,9 +8,8 @@
     <div class="clearfix mt-2 mb-2">
         <div class="clearfix mt-2 mb-2">
             <span class="float-left records d-none d-sm-block">
-                <span class="h5"><b>Coupon Code: {{couponData.CouponCode}}</b></span><br>
+                <span class="h5"><b>Coupon Details</b></span><br>
             </span>
-
         </div>
         <div class="clearfix mt-2 mb-2">
             <span class="float-left records hidden-sm-down">
@@ -27,7 +26,49 @@
 
         </div>
         <!-- Top container/ -->
+        <table class="table table-striped table-hover">
+            <!-- table heading -->
+            <thead>
+                <tr>
+                    <th style="width: 100px;" class="text-center">Coupon Code</th>
+                    <th style="width: 100px;" class="text-center">Coupon Value</th>
+                    <th style="width: 100px;" class="text-center">Coupon Type</th>
+                    <th style="width: 100px;" class="text-center">Coupon Validity</th>
+                    <th style="width: 100px;" class="text-center">Total Successful Uses</th>
+                    <th style="width: 100px;" class="text-center">Total Discount ({{DEFAULT_CURRENCY}})</th>
+                    <th style="width: 100px;" class="text-center">Status</th>
 
+                </tr>
+            </thead>
+            <!-- table body -->
+            <tbody>
+                <tr scope="row">
+                    <td class="text-center">
+                        <span>{{couponData.CouponCode}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span>{{couponData.CouponValue}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span>{{couponData.CouponType}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span>{{couponData.CouponValidTillDate}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span>{{couponData.TotalSuccessfulUses}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span>{{DEFAULT_CURRENCY}}{{couponData.TotalDiscount}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span ng-if="couponData.Status"
+                            ng-class="{Inactive:'text-danger', Active:'text-success'}[couponData.Status]">{{couponData.Status}}</span><span
+                            ng-if="!couponData.Status">-</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
 
         <!-- Data table -->
