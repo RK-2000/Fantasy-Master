@@ -51,9 +51,6 @@
                             <a href="javascript:;"> <strong> News & Resources  </strong></a>
                         </li>
                         <li>
-                            <a href="blog"> Blog </a>
-                        </li>
-                        <li>
                             <a href="PointSystem"> Fantasy Points System  </a>
                         </li>
                         <li>
@@ -75,22 +72,22 @@
                     </ul>
                     <ul class="mediaIcon">
                         <li>
-                            <a class="fb"  href="https://www.facebook.com/" target="_blank">
+                            <a class="fb"  href="<?php echo FACEBOOK_URL; ?>" target="_blank">
                                 <i class="fa fa-facebook" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="tw"  href="https://twitter.com" target="_blank">
+                            <a class="tw"  href="<?php echo TWITTER_URL; ?>" target="_blank">
                                 <i class="fa fa-twitter" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="gplus" href="https://www.linkedin.com" target="_blank">
+                            <a class="gplus" href="<?php echo LINKDIN_URL; ?>" target="_blank">
                                 <i class="fa fa-linkedin" aria-hidden="true"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="inst" href="https://www.instagram.com/" target="_blank">
+                            <a class="inst" href="<?php echo INSTAGRAM_URL; ?>" target="_blank">
                                 <i class="fa fa-instagram" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -104,11 +101,11 @@
         <div class="container">
            <div class="row">
                <div class="text-center col-md-10 offset-md-1">
-                    <div class="copyright text-center">Copyright © Brainy Bucks Games Pvt. Ltd. All Rights Reserved.</div>
-                    <p> FSL11 is not affiliated in any way to and claims no association, FSL11 acknowledges that the ICC, BCCI, 
+                    <div class="copyright text-center">Copyright © <?php echo SITE_NAME; ?> Pvt. Ltd. All Rights Reserved.</div>
+                    <p> <?php echo SITE_NAME; ?> is not affiliated in any way to and claims no association, <?php echo SITE_NAME; ?> acknowledges that the ICC, BCCI, 
                         IPL and its franchises/teams. Own all proprietary names and marks relating to the relevant tournament or 
                         competition. Residents of the states of Assam, Odisha and Telangana, and where otherwise prohibited by 
-                        law are not eligible to enter FSL11 leagues.</p>
+                        law are not eligible to enter <?php echo SITE_NAME; ?> leagues.</p>
                </div>
            </div>
         </div>
@@ -145,29 +142,6 @@
 <script src="assets/js/app.js?version=<?= VERSION ?>"></script>
 <script src="assets/js/custom.js?version=<?= VERSION ?>"></script>
 <script type="text/javascript">
-    
-    <?php
-        switch ($_SERVER['SERVER_NAME']) {
-        case 'localhost':
-        $base_url = 'http://localhost/fantasy-master/';
-        $api_url = 'http://localhost/fantasy-master/api/';
-        break;
-        case '178.128.60.157':
-        case 'dev.fantasy96.com':
-        $base_url = 'http://dev.fantasy96.com/';
-        $api_url = 'http://dev.fantasy96.com/api/';
-        break;
-        case 'example.com':
-        $base_url = 'https://example.com/';
-        $api_url = 'https://example.com/api/';
-        break;  
-        default :
-        $_SERVER['CI_ENV'] = 'production';
-        $base_url = 'https://www.example.com/';
-        $api_url = 'https://www.example.com/api/';
-        break;
-    }
-    ?>
 
     var base_url = "<?php echo $base_url;?>";
     var UserGUID, UserTypeID, ParentCategoryGUID = '';
@@ -178,7 +152,7 @@
         base_url: "<?php echo $base_url;?>",
         api_url: "<?php echo $api_url;?>",
         image_base_url: '<?php echo $base_url; ?>assets/img/',
-        brand_name: 'Fantasy Master'
+        brand_name: '<?php echo SITE_NAME; ?>'
     });
     app.config(function(socialProvider){
         socialProvider.setGoogleKey("597256090889-rmtpdn95747lqh1iufuc2n6210s7bf2j.apps.googleusercontent.com");

@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
     <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.10/angular-material.css" rel="stylesheet">
     <script src="auctionDraft/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
 </head>
 
 <body ng-controller="MainController" ng-cloak >

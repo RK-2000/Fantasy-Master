@@ -99,9 +99,9 @@
                                         <div class="d-flex justify-space-between">
                                             <cite><i class="fa fa-facebook" aria-hidden="true"></i> </cite>
                                             <cite><i class="fa fa-twitter" aria-hidden="true"></i> </cite>
-                                            <cite><a href="https://api.whatsapp.com/send?text=Join {{Contest.TeamNameLocal}} V/s {{Contest.TeamNameVisitor}} {{Contest.IsPaid=='No' ? 'Free Roll' : 'Paid' }} league on FSL11 and win ₹{{Contest.WinningAmount}}. Entry fee ₹{{Contest.EntryFee}}. Use league code {{Contest.UserInvitationCode}}. " target="_blank"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></cite>
+                                            <cite><a href="https://api.whatsapp.com/send?text=Join {{Contest.TeamNameLocal}} V/s {{Contest.TeamNameVisitor}} {{Contest.IsPaid=='No' ? 'Free Roll' : 'Paid' }} league on <?php echo SITE_NAME; ?> and win ₹{{Contest.WinningAmount}}. Entry fee ₹{{Contest.EntryFee}}. Use league code {{Contest.UserInvitationCode}}. " target="_blank"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></cite>
                                             <cite>
-                                                <a href="mailto:?subject=Get paid to be a fan&body=Join {{Contest.TeamNameLocal}} V/s {{Contest.TeamNameVisitor}} {{Contest.IsPaid=='No' ? 'Free Roll' : 'Paid' }} league on FSL11 and win ₹{{Contest.WinningAmount}}. Entry fee ₹{{Contest.EntryFee}}. Use league code {{Contest.UserInvitationCode}}"><i class="fa fa-envelope"></i></a>
+                                                <a href="mailto:?subject=Get paid to be a fan&body=Join {{Contest.TeamNameLocal}} V/s {{Contest.TeamNameVisitor}} {{Contest.IsPaid=='No' ? 'Free Roll' : 'Paid' }} league on <?php echo SITE_NAME; ?> and win ₹{{Contest.WinningAmount}}. Entry fee ₹{{Contest.EntryFee}}. Use league code {{Contest.UserInvitationCode}}"><i class="fa fa-envelope"></i></a>
                                             </cite>
                                         </div>
                                     </li>

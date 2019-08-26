@@ -578,7 +578,7 @@
                                         <a class="inst" href="https://www.instagram.com/accounts/login" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
                                     </li>
                                     <li>
-                                        <a class="wt" href="https://api.whatsapp.com/send?text=Put your cricket knowledge to test and play with me on FSL11. Click https://fsl11.com/download-app to download the FSL11 app or login on portal and Use contest code: {{InviteCode}} to join my contest." target="_blank"><i class="fa fa-whatsapp"></i></a>
+                                        <a class="wt" href="https://api.whatsapp.com/send?text=Put your cricket knowledge to test and play with me on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?>download-app to download the <?php echo SITE_NAME; ?> app or login on portal and Use contest code: {{InviteCode}} to join my contest." target="_blank"><i class="fa fa-whatsapp"></i></a>
                                     </li>
                                 </ul>
                             </div>
@@ -598,7 +598,7 @@
     $('.fb').click( function() 
     {
         var shareurl = $(this).data('shareurl');
-        window.open('https://www.facebook.com/dialog/feed?app_id=2261225134126697&picture=http://www.fbrell.com/f8.jpg&name=FSL11&description=homeschool%20.versus%20.awayschool%20@%20.venue%20@%20.datetime&caption=Put your cricket knowledge to test and play with me on FSL11. Click https://fsl11.com/download-app to download the FSL11 app or login on portal and Use contest code: '+$('#invite_code').text()+' to join my contest.', 'Fantasy', 
+        window.open('https://www.facebook.com/dialog/feed?app_id=2261225134126697&picture=http://www.fbrell.com/f8.jpg&name=<?php echo SITE_NAME; ?>&description=homeschool%20.versus%20.awayschool%20@%20.venue%20@%20.datetime&caption=Put your cricket knowledge to test and play with me on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?>download-app to download the <?php echo SITE_NAME; ?> app or login on portal and Use contest code: '+$('#invite_code').text()+' to join my contest.', 'Fantasy', 
         'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
         return false;
     });
@@ -607,7 +607,7 @@ var twitterShare = document.querySelector('[data-js="twitter-share"]');
 
 twitterShare.onclick = function(e) {
   e.preventDefault();    
-      var twitterWindow = window.open("https://twitter.com/intent/tweet?text=Put your cricket knowledge to test and play with me on FSL11. Click https://fsl11.com/download-app to download the FSL11 app or login on portal and Use contest code: "+$('#invite_code').text()+" to join my contest.", 'twitter-popup', 'height=350,width=600');
+      var twitterWindow = window.open("https://twitter.com/intent/tweet?text=Put your cricket knowledge to test and play with me on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?>download-app to download the <?php echo SITE_NAME; ?> app or login on portal and Use contest code: "+$('#invite_code').text()+" to join my contest.", 'twitter-popup', 'height=350,width=600');
       if(twitterWindow.focus) { twitterWindow.focus(); }
         return false;
     }
