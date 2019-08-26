@@ -123,13 +123,13 @@
                                 <a target="_blank" href="contests?MatchGUID={{row.MatchGUID}}"><strong>{{row.SeriesName}}</strong></a>
                             </td>
                             <td class="text-center">
-                                <img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="70px" height="45px;">
+                                <img class="float-left" ng-src="{{row.TeamFlagLocal}}" width="80px" height="80px;">
                             </td>
                             <td>
                                 <p>{{row.TeamNameLocal}} <br><small>( {{row.TeamNameShortLocal}} )</small></p>
                             </td>
                             <td class="text-center">
-                                <img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="70px" height="45px;">
+                                <img class="float-left" ng-src="{{row.TeamFlagVisitor}}" width="80px" height="80px;">
                             </td>
                             <td>
                                 <p>{{row.TeamNameVisitor}} <br><small>( {{row.TeamNameShortVisitor}} )</small></p>

@@ -15,15 +15,6 @@
             <span class="float-left records hidden-sm-down">
                 <span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
             </span>
-            <div class="float-right">
-                <button class="btn btn-success btn-sm ml-1 float-right"
-                    onclick="window.location.href= BASE_URL + 'coupon'">Back</button>
-            </div>
-            <div class="float-right">
-                <button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal"
-                    data-target="#filter_model"><img src="asset/img/filter.svg"></button>
-            </div>
-
         </div>
         <!-- Top container/ -->
         <table class="table table-striped table-hover">
@@ -35,7 +26,7 @@
                     <th style="width: 100px;" class="text-center">Coupon Type</th>
                     <th style="width: 100px;" class="text-center">Coupon Validity</th>
                     <th style="width: 100px;" class="text-center">Total Successful Uses</th>
-                    <th style="width: 100px;" class="text-center">Total Discount ({{DEFAULT_CURRENCY}})</th>
+                    <th style="width: 100px;" class="text-center">Total Discount (Till now)</th>
                     <th style="width: 100px;" class="text-center">Status</th>
 
                 </tr>
@@ -74,20 +65,34 @@
         <!-- Data table -->
         <div class="table-responsive block_pad_md" infinite-scroll="getHistoryList()"
             infinite-scroll-disabled='data.listLoading' infinite-scroll-distance="0">
-
             <!-- loading -->
             <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
+            <hr>
+            <div class="clearfix mt-2 mb-2">
+                <span class="float-left records d-none d-sm-block">
+                    <span class="h5"><b>History</b></span><br>
+                </span>
+                <div class="float-right">
+                    <button class="btn btn-success btn-sm ml-1 float-right"
+                        onclick="window.location.href= BASE_URL + 'coupon'">Back</button>
+                </div>
+                <div class="float-right">
+                    <button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal"
+                        data-target="#filter_model"><img src="asset/img/filter.svg"></button>
+                </div>
+            </div>
             <form name="records_form" id="records_form">
                 <!-- data table -->
-                <table class="table table-striped table-hover" ng-if="data.dataList.length">
+                <table class="table table-striped table-hover" ng-if="couponHistory.length">
                     <!-- table heading -->
                     <thead>
                         <tr>
-                            <th style="width: 200px;min-width:200px;">User</th>
-                            <th style="width: 200px;min-width:200px;">Deposit Amount</th>
-                            <th style="width: 120px;">Coupon Type</th>
-                            <th style="width: 120px;">Coupon Value</th>
+                            <th style="width: 200px;">User</th>
+                            <th style="width: 100px;">Phone No.</th>
+                            <th style="width: 100px;">Transaction ID</th>
+                            <th style="width: 100px;">Amount</th>
                             <th style="width: 100px;">Discount Amount</th>
+                            <th style="width: 100px;">Pay By</th>
                             <th style="width: 100px;">Date & Time</th>
                             <th style="width: 120px;">Status</th>
 
@@ -95,37 +100,42 @@
                     </thead>
                     <!-- table body -->
                     <tbody>
-                        <tr scope="row" ng-repeat="(key, row) in data.dataList">
+                        <tr scope="row" ng-repeat="(key, row) in couponHistory">
 
                             <td class="listed sm clearfix">
-                                <span ng-if="row.TransactionID">{{row.TransactionID}}</span><span
-                                    ng-if="!row.TransactionID">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.Narration">{{row.Narration}}</span><span
-                                    ng-if="!row.Narration">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.Narration">{{row.Narration}}</span><span
-                                    ng-if="!row.Narration">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.Narration">{{row.Narration}}</span><span
-                                    ng-if="!row.Narration">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.OpeningBalance">{{DEFAULT_CURRENCY}}{{row.OpeningBalance}}</span><span
-                                    ng-if="!row.OpeningBalance">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.EntryDate">{{row.EntryDate}}</span><span
-                                    ng-if="!row.EntryDate">-</span>
-                            </td>
-                            <td>
-                                <span ng-if="row.Status"
-                                    ng-class="{Completed:'text-success',Failed:'text-danger',Pending:'text-danger'}[row.Status]">{{row.Status}}</span><span
-                                    ng-if="!row.Status">-</span>
-                            </td>
+                            <a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
+                            <div class="content float-left"><strong><a target="_blank" href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
+                            <div ng-if="row.Email || row.EmailForChange"><a href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}" target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div><div ng-if="!row.Email && !row.EmailForChange">-</div>
+                            <span ng-if="row.Email || row.EmailForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.EmailStatus]">({{row.EmailStatus}})</span><br>
+                            </div>
+
+                        </td> 
+                        <td>
+                            <div ng-if="row.PhoneNumber || row.PhoneNumberForChange"><a href="javascript:void(0);">{{row.PhoneNumber == "" ? row.PhoneNumberForChange : row.PhoneNumber}}</a>
+                            </div>
+                            <div ng-if="!row.PhoneNumber && !row.PhoneNumberForChange">-</div>
+                            <span ng-if="row.PhoneNumber || row.PhoneNumberForChange" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PhoneStatus]">({{row.PhoneStatus}})</span><br>
+                        </td> 
+                        <td>
+                            {{row.TransactionID}}
+                        </td>
+                        <td>
+                            {{DEFAULT_CURRENCY}}{{row.Amount}}
+                        </td>
+                        <td>
+                            {{DEFAULT_CURRENCY}}{{row.CouponDetails.DiscountedAmount}}
+                        </td>
+                        <td>
+                            {{row.PaymentGateway}}
+                        </td>
+                        <td>
+                            {{row.EntryDate}}
+                        </td>
+                        <td>
+                            <span ng-if="row.Status"
+                                ng-class="{Completed:'text-success',Failed:'text-danger',Pending:'text-danger'}[row.Status]">{{row.Status}}</span><span
+                                ng-if="!row.Status">-</span>
+                        </td>
                         </tr>
                     </tbody>
                 </table>
@@ -156,34 +166,38 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="filter-col" for="Narration">Narration</label>
-                                            <select id="Narration" name="Narration" class="form-control chosen-select">
+                                            <label class="filter-col" for="EmailStatus">Email Status</label>
+                                            <select id="EmailStatus" name="EmailStatus" class="form-control chosen-select">
                                                 <option value="">Please Select</option>
-                                                <option value="Deposit Money">Deposit Money</option>
-                                                <option value="Join Contest">Join Contest</option>
-                                                <option value="Cancel Contest">Cancel Contest</option>
-                                                <option value="Signup Bonus">Signup Bonus</option>
-                                                <option value="Admin Cash Bonus">Admin Cash Bonus</option>
-                                                <option value="Admin Deposit Money">Admin Deposit Money</option>
-                                                <option value="Join Contest Winning">Join Contest Winning</option>
-                                                <option value="First Deposit Bonus">First Deposit Bonus</option>
-                                                <option value="Verification Bonus">Verification Bonus</option>
-                                                <option value="Referral Bonus">Referral Bonus</option>
-                                                <option value="Coupon Discount">Coupon Discount</option>
-                                                <option value="Withdrawal Request">Withdrawal Request</option>
-                                                <option value="Withdrawal Reject">Withdrawal Reject</option>
-                                            </select>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Verified">Verified</option>
+                                            </select>   
                                         </div>
                                     </div>
-
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="filter-col" for="Status">Status</label>
+                                            <label class="filter-col" for="PhoneStatus">Phone Status</label>
+                                            <select id="PhoneStatus" name="PhoneStatus" class="form-control chosen-select">
+                                                <option value="">Please Select</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Verified">Verified</option>
+                                            </select>   
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="filter-col" for="Status">Transaction Status</label>
                                             <select id="Status" name="Status" class="form-control chosen-select">
                                                 <option value="">Please Select</option>
                                                 <option value="Completed">Completed</option>
                                                 <option value="Failed">Failed</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="filter-col" for="ParentCategory">Search</label>
+                                            <input type="text" class="form-control" name="Keyword" placeholder="Search">
                                         </div>
                                     </div>
                                 </div>
@@ -199,26 +213,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="filter-col" for="ParentCategory">Search</label>
-                                            <input type="text" class="form-control" name="Keyword" placeholder="Search">
-                                        </div>
-                                    </div>
+                                    
                                 </div>
-
-
-
-
 
                             </div> <!-- form-area /-->
                         </div> <!-- modal-body /-->
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-sm"
-                                ng-click="resetUserForm()">Reset</button>
+                                ng-click="resetForm()">Reset</button>
                             <button type="submit" class="btn btn-success btn-sm" data-dismiss="modal"
-                                ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
+                                ng-disabled="editDataLoading" ng-click="applyHistoryFilter()">Apply</button>
                         </div>
 
                     </form>
