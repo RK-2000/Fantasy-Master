@@ -2,7 +2,7 @@
     
 <!--Main container sec start-->
 <div class="mainContainer" ng-controller="contactController" ng-cloak >
-    <div class="mt-5">
+    <div class="mrTop">
         <div class="top-header-title">
             <h3> Terms and Conditions </h3>
         </div>

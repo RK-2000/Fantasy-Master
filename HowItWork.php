@@ -1,7 +1,7 @@
 <?php
 include('header.php');
 ?>
-<div class="">
+<div class="mrTop">
 	<div class="top-header-title mt-5">
         <h3>How  It  Works</h3>
     </div>

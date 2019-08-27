@@ -1,7 +1,7 @@
 <?php
 include('header.php');
 ?>
-<div class=" mt-md-5">
+<div class="mrTop">
 	<div class="top-header-title">
         <h3> How to Play </h3>
     </div>

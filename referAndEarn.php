@@ -1,7 +1,7 @@
     <?php include('header.php');?>
     <!--Main container sec start-->
     <div class="mainContainer" ng-controller="inviteController" ng-cloak >
-        <div class="refer_banner_img">  
+        <div class="refer_banner_img mt-5">  
             <div class="container">
                  <div class="row">
                      <div class="col-md-8 offset-md-2 text-center refer_banner_content">

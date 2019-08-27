@@ -377,21 +377,12 @@ input.form-control input:-moz-placeholder {
     left: 0;
     width: 100%;
     z-index: 999;
-    /* background: #000; */
 }
 
 .navbar-brand img {
-    /* max-height: 60px; */
     max-width: 140px;
+    filter: brightness(100);
 }
-
-.navbar-brand {
-    /* 	padding-bottom: 0;
-padding-top: 0; */
-    /* position: absolute;
-    top: 2px; */
-}
-
 .headerBottom .navbar-expand-lg {
     padding: 0;
 }
@@ -411,16 +402,10 @@ padding-top: 0; */
     padding: 5px 5px 0;
 }
 
-.rightNav li:last-child {
+/*.rightNav li:last-child {
     border-right: none;
     padding-right: 0;
-}
-/* 
-.navbar-nav.rightNav li span {
-    font-family: 'arial';
-    font-size: 16px;
-}
- */
+}*/
 .accountDrop a {
     border: none !important;
 }
@@ -435,13 +420,11 @@ padding-top: 0; */
     overflow: hidden;
     vertical-align: middle;
     border-radius: 50%;
-    /* margin-right: 5px; */
     width: 40px;
     height: 40px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    /* background: var(--primarySecClr); */
     color: #fff;
     border: 2px solid #fff;
 }
@@ -553,7 +536,6 @@ padding-top: 0; */
 }
 
 .bannerForm .btn-danger {
-    /* background: var(--primarySecClr); */
     border-radius: 30px;
     padding: 12px;
     font-size: 12px;
@@ -563,7 +545,6 @@ padding-top: 0; */
     display: inline-block;
     vertical-align: text-bottom;
     margin: 0 1% 20px;
-    /* color: #fff; */
 }
 
 .bannerForm p {
@@ -589,7 +570,6 @@ padding-top: 0; */
     margin-bottom: 15px;
     font-weight: 600;
     white-space: nowrap;
-    /*Evitar saltos de línea*/
     overflow: hidden;
     width: 100%;
     animation: keyframes 3s steps(500) infinite;
@@ -600,7 +580,6 @@ padding-top: 0; */
     font-weight: 700;
     font-size: 12px;
     border-color: var(--primarySecClr);
-    /* color: #fff; */
 }
 
 .bannerTxt h2 {
@@ -609,7 +588,6 @@ padding-top: 0; */
 }
 
 .bannerTxt .btn {
-    /* background: var(--primarySecClr); */
     border-radius: 30px;
     padding: 12px;
     font-size: 14px;
@@ -617,10 +595,7 @@ padding-top: 0; */
     padding: 10px 60px;
     font-weight: 600;
 }
-
-
 /*bannerSec end*/
-
 
 /*AppSec start*/
 
@@ -653,9 +628,7 @@ padding-top: 0; */
     margin-left: 0;
 }
 
-
 /*AppSec end*/
-
 
 /*featureSec start*/
 
@@ -725,11 +698,6 @@ padding-top: 0; */
     color: #fff;
     font-size: 14px;
 }
-
-
-/* .btnPrimary:hover,.btn-danger:hover {
-  background: #000;
-} */
 
 .btnPrimary:hover {
     color: #fff;
@@ -892,21 +860,15 @@ padding-top: 0; */
     left: 0;
     right: 0;
 }
-
-
 /***testimonial****/
 
-
 /****loginSignup****/
-
 .loginModal .modal-content {
     border-radius: 0;
 }
-
 .loginModal .modal-content .modal-body {
     padding: 20px 40px;
 }
-
 .loginSignup .nav.nav-tabs {
     border: 0;
     margin-bottom: 20px;
@@ -1033,8 +995,6 @@ padding-top: 0; */
 .custom_popup .modal-content .btn {
     text-transform: capitalize;
     color: var(--blackclr);
-    /* border-color: rgba(0,0,0,0.3) !important; */
-    /* background-color: var(--primaryclr); */
 }
 
 .custom_popup .modal-content .btn:hover {
@@ -1046,16 +1006,9 @@ padding-top: 0; */
     padding: 15px 25px;
 }
 
-
-/* .custom_popup .ammount_popup span {
-	color: #fff;
-} */
-
 .add_money ul li {
     display: inline-block;
-    /*background: #2c293e;*/
     color: #fff;
-    /*padding: 7px 15px 5px;*/
     border-radius: 3px;
     margin: 0 5px;
     cursor: pointer;
@@ -1070,25 +1023,13 @@ padding-top: 0; */
     text-align: center;
     font-size: 14px;
     font-weight: 400;
-    /* color: #3d3c3c; */
 }
-
-
-/* .btn.btn-submit {
-	color: var(--primarySecClr);
-	padding: 7px 20px;
-	font-size: 14px;
-	border: 1px solid;
-} */
-
 .centerPopup .modal-dialog {
     transform: translate(0, -50%) !important;
     top: 50%;
 }
 
-
 /****loginSignup****/
-
 
 /*****************************************************************************
 ***************************home page end  ***************************
@@ -1099,10 +1040,9 @@ padding-top: 0; */
 
 .comonBg {
     background-image: url(../img/bgimg_blk.jpg);
-    padding-top: 70px;
+    padding-top: 100px;
     background-color: #000;
     background-size: cover;
-    /*min-height: calc(100vh - 76px);*/
     background-attachment: fixed;
     background-position: center center;
     min-height: 100vh;
@@ -1110,10 +1050,9 @@ padding-top: 0; */
 
 .bglayer {
     background-image: url(../img/bgimg_blk.jpg);
-    padding-top: 70px;
+    padding-top: 100px;
     background-color: #000;
     background-size: cover;
-    /*min-height: calc(100vh - 76px);*/
     background-attachment: fixed;
     background-position: center center;
     min-height: 100vh;
@@ -1190,10 +1129,7 @@ padding-top: 0; */
     font-weight: 500;
     margin-bottom: 10px;
 }
-
-
 /*********teamscorecardEnd******/
-
 
 /****creatTeamstart****/
 
@@ -1250,25 +1186,9 @@ padding-top: 0; */
     letter-spacing: 0.5px;
 }
 
-
-/* .creatTeamHead {
-    padding: 15px 0;
-} */
-
 .creatTeam {
     padding-bottom: 50px;
 }
-
-
-/* .btn.btnClone {
-  display: inline-block;
-  background: #000;
-  color: var(--primaryclr);
-  border: 1px solid #fff;
-  padding: 6px 20px;
-  text-transform: uppercase;
-  font-size: 14px;
-} */
 
 .creatTeamTable .table_scroll table tr:hover,
 .creatTeamTable .table_scroll table tr:active,
@@ -1312,11 +1232,6 @@ padding-top: 0; */
     bottom: 0;
 }
 
-
-/*.fixedFooterBar ul{ 
-    align-items: center;
-}*/
-
 .fixedFooterBar ul li:first-child {
     background: #17ba07;
     border: 0;
@@ -1327,13 +1242,6 @@ padding-top: 0; */
     padding: 7px 20px;
     background: #191919;
 }
-
-
-/*.fixedFooterBar ul li:last-child {
-    border: 0;
-    background: #34314c;
-    padding: 7px 0;
-}*/
 
 .fixedFooterBar ul li marquee {
     line-height: 10px;
@@ -1374,7 +1282,6 @@ padding-top: 0; */
 .leagueStatusParent span {
     padding-left: 20px;
     font-size: 15px;
-    /* font-weight: normal; */
 }
 
 .matchFeedList ul li {
@@ -1392,12 +1299,8 @@ padding-top: 0; */
 }
 
 .accountHead .btn.btnClone {
-    /* min-width: 120px; */
     font-size: 14px;
-    /* padding: 7px;
-	color: var(--primarySecClr); */
     background: #1b173a;
-    /* margin-right: 10px; */
 }
 
 .accountHead .btn.btnClone:hover {
@@ -1436,15 +1339,6 @@ padding-top: 0; */
     font-weight: 500;
     border-bottom: 2px solid transparent;
 }
-
-
-/* 
-.creatTeamTable .nav.nav-tabs .nav-item a span {
-	position: relative;
-	font-size: 14px;
-	top: -9px;
-} */
-
 .creatTeamTable .nav.nav-tabs .nav-item a.active,
 .creatTeamTable .nav.nav-tabs .nav-item a:hover {
     border-bottom-color: var(--primarySecClr);
@@ -1493,20 +1387,6 @@ padding-top: 0; */
     box-shadow: 0px 0 0 transparent;
 }
 
-
-/* .creatTeamTable .table_scroll table td:nth-child(3){
-	padding-left: 12px;
-	text-align: center;
-} */
-
-
-/* .creatTeamTable .table_scroll table td:nth-child(4) {
-	justify-content: center; 
-	text-align: center; 
-	width: 2%;   
-    padding-left: 19px;
-} */
-
 .player_tab_table table td:last-child {
     display: flex;
     justify-content: center;
@@ -1515,7 +1395,6 @@ padding-top: 0; */
 .table_scroll table td {
     color: #000;
     padding: 5px;
-    /* box-shadow: 0px 1px 0px rgba(225, 225, 225, 0.3); */
     position: relative;
     flex: 1;
     font-size: 14px;
@@ -1567,17 +1446,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     line-height: 33px;
     display: none;
 }
-
-
-/* .table_scroll table td a i.fa.fa-info{display: none;} */
-
-
-/* 
-.table_scroll table tr.active td a,
-.table_scroll table td a:hover {
-	background: var(--primaryclr);
-} */
-
 .table_scroll {
     max-height: 500px;
 }
@@ -1636,9 +1504,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     background: var(--primarySecClr);
 }
 
-
 /****creatTeamendt****/
-
 
 /*******matchcenterstart******/
 
@@ -1650,7 +1516,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     padding: 0;
     margin: 0;
     min-width: 250px;
-    /*min-width: 300px;*/
     top: 42px;
     right: 0;
     left: -215px;
@@ -1754,16 +1619,10 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     background: transparent;
 }
 
-
-/* .custom_popup table tr  {
-	border-top: 1px solid #dee2e6 ;
-} */
-
 .custom_popup table th,
 .custom_popup table td {
     padding: 5px;
     font-size: 13px;
-    /* color: #fff; */
     border-top: none !important;
 }
 
@@ -1903,9 +1762,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     display: none;
 }
 
-
 /*******matchcenterend******/
-
 
 /******settingpage-start******/
 
@@ -1953,14 +1810,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 .veryfy_icn li.yellow i {
     color: #FFA610;
 }
-
-
-/* .settingContent {
-	background: rgba(52, 49, 76, 0.4);
-	padding: 40px;
-	border-radius: 5px;
-} */
-
 .settingContent .tab-content {
     border: 1px solid #eee;
     padding: 25px;
@@ -2094,10 +1943,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     color: var(--blackclr);
     background-color: var(--primaryclr);
 }
-
-
 /******settingpage-end******/
-
 
 /******accountPage-start******/
 
@@ -2139,7 +1985,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 
 .accountImg {
     position: absolute;
-    /*border-radius: 50%;*/
     overflow: hidden;
     height: 100px;
     width: 100px;
@@ -2209,11 +2054,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     background: rgba(0, 0, 0, 0.5);
     padding: 5px;
 }
-
-
-/* .transictionOption table tr:nth-child(2n) {
-	background: rgba(0, 0, 0, 0.4);
-} */
 
 .transictionOption table th {
     font-size: 12px;
@@ -2289,9 +2129,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     display: block;
 }
 
-
 /******accountPage-end******/
-
 
 /******pointSystem-start******/
 
@@ -2335,9 +2173,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     padding-bottom: 70px;
 }
 
-
 /******pointSystem-end******/
-
 
 /******matchCenterDetail-start******/
 
@@ -2376,15 +2212,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 .nav.nav-tabs.matchTabs li a.active,
 .nav.nav-tabs.matchTabs li a:hover {
     background: var(--primaryclr);
-    /* color: #fff; */
 }
-
-
-/* .matchcenterDetail .nav.nav-tabs li a sup,
-.nav.nav-tabs.matchTabs li a sup {
-	color: var(--primarySecClr);
-	font-size: 14px;
-} */
 
 .matchcenterDetail .nav.nav-tabs li a:after,
 .nav.nav-tabs.matchTabs li a:after {
@@ -2466,11 +2294,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     font-size: 15px;
 }
 
-
-/* .sortHead ul li:last-child {
-	flex-basis: 20%;
-} */
-
 .customCheck {
     position: relative;
     padding-left: 25px;
@@ -2516,7 +2339,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 
 .matchSearch {
     position: relative;
-    /* border-bottom: 1px solid var(--primaryclr); */
     max-width: 312px;
     text-align: left;
     float: right;
@@ -2550,8 +2372,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 }
 
 .matchtypeBody .alertBox {
-    /* background: #2e283f; */
-    /* color: rgba(255, 255, 255, .75); */
     font-weight: 600;
     text-align: center;
     display: inline-block;
@@ -2571,13 +2391,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     border: 1px solid #ffffff36;
     font-size: 14px;
 }
-
-
-/* 
-.alertBox .btnCreat:hover{
-      background: var(--primarySecClr);
-    color: #1b173a;
-} */
 
 .matchtypeHead ul {
     display: flex;
@@ -2613,11 +2426,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     background-color: #aaa !important;
 }
 
-
-/* .matchtypeBody {
-	border-left: 3px solid var(--primaryclr);
-} */
-
 .matchtypeBody ul li .progress .progress-bar {
     background: var(--greenclr);
 }
@@ -2631,33 +2439,14 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     margin: 0;
 }
 
-
-/* .matchtypeBody ul li .btn {
-	left: -34px;
-	border: 0 !important;
-	position: relative;
-	top: 1px;
-	color: #020202 !important;
-} */
-
-
-/*.matchtypeBody ul.flex-child-3par li{  flex: 0 0 33.33%; max-width: 33.33%; }*/
-
 .matchtypeBody ul.flex-child-3par li {
     flex: 0 0 25.33%;
     max-width: 25.33%;
 }
-
-
-/*.matchtypeHead ul.flex-child-3par li { flex: 0 0 33.33%; max-width: 33.33%; }*/
-
 .matchtypeHead ul.flex-child-3par li {
     flex: 0 0 25.33%;
     max-width: 25.33%;
 }
-
-
-/* .sortHead ul li span */
 
 .matchtypeBody ul li span {
     background-color: #fac733;
@@ -2675,23 +2464,10 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     cursor: pointer;
 }
 
-
-/* .matchtypeBody ul li.cColor span,
-.matchtypeBody ul li span:nth-child(2) {
-	background: #0288D1;
-}
-
-.matchtypeBody ul li.cColor span,
-.matchtypeBody ul li span:nth-child(3) {
-	background: #12c451;
-} */
-
 .matchtypeBody ul li .btn.btn-submit {
     border: 1px solid transparent!important;
-    /* background: var(--primaryclr); */
     padding: 7px 15px;
     min-width: 85px;
-    /* color: #000 !important; */
 }
 
 .matchtypeBody ul li .btn.btn-submit:hover {
@@ -2740,8 +2516,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 
 .custom_popup .form-control {
     background: transparent;
-    /* border-color: rgba(255, 255, 255, 0.5) !important; */
-    /* color: #fff !important; */
 }
 
 .custom_popup .form-control option {
@@ -2805,14 +2579,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     display: block;
     background: transparent;
     max-height: 180px;
-    /* overflow: hidden; */
 }
-
-
-/* .payoutPar.mCustomScrollbar {
-	min-height: 205px;
-} */
-
 .payoutPar ul li {
     color: #000;
     border-bottom: 1px solid #ccc;
@@ -2838,13 +2605,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 .profilePage label {
     font-size: 15px;
 }
-
-/* .profilePage .form-control {
-    height: 43px !important;
-    font-size: 15px;
-    background-color: #eee;
-} */
-
 
 /******profilepage-end******/
 
@@ -2953,17 +2713,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 
 /*****refer&earn-start******/
 
-
-/* .referRightBox {
-	background: #fff;
-	padding: 40px;
-	border-radius: 5px;
-	text-align: center;
-	width: 100%;
-	max-width: 500px;
-	margin: 0 auto;
-} */
-
 .referRightBox .nav.nav-tabs {
     border: 0;
 }
@@ -2999,16 +2748,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     border-color: var(--primarySecClr);
 }
 
-
-/* .referearnSec .primarHead p {
-	color: #fff;
-} */
-
-
-/* .listPar p {
-	color: #fff;
-} */
-
 .referRightBox .nav.nav-tabs .nav-item {
     flex: 0 0 50%;
 }
@@ -3034,25 +2773,16 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
 }
 
 .referRightBox .h5 {
-    /* color: #fff; */
     font-weight: 400;
     font-size: 18px;
 }
-
-
-/* .referRightBox .nav.nav-tabs {
-	border: 0;
-	margin-top: 25px;
-} */
 
 .referearnSec {
     padding-bottom: 30px;
     background-color: #f4f5f8;
 }
 
-
 /*****refer&earn-end******/
-
 
 /****payment-mode-start******/
 
@@ -3126,8 +2856,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     z-index: 1;
     opacity: 0;
 }
-
-
 /****payment-mode-end******/
 
 
@@ -3169,9 +2897,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     padding: 0;
 }
 
-
 /****about-us-end******/
-
 
 /****faq-start*********/
 
@@ -3213,9 +2939,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     font-size: 12px;
 }
 
-
 /****faq-end*********/
-
 
 /****contact-us-start*****/
 
@@ -3301,9 +3025,7 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     font-size: 22px;
 }
 
-
 /****contact-us-end*****/
-
 
 /*****************************************************************************
   ***************************footer start  ***************************
@@ -3386,7 +3108,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     justify-content: center;
     border-radius: 50%;
     color: #fff;
-    /* border: 2px solid #fff; */
 }
 
 .footerSec .mediaIcon li a:hover {
@@ -3402,7 +3123,6 @@ table.table-fixed.userTeamPlayersTable p:nth-child(2) {
     padding: 15px 0;
     background-color: #000;
     border-top: 1px solid rgba(203, 212, 221, 0.15);
-    /* margin-top: 40px; */
 }
 
 
@@ -5380,4 +5100,15 @@ p.captaine {
     .primary_menu {
         margin-left: 40px;
     }
+}
+
+.mrTop {
+    margin-top: 5.5rem;
+}
+.withoutLogin + .mainContainer .mrTop {
+    margin-top: 0rem;
+}
+
+.withoutLogin + .mrTop {
+    margin-top: 0rem;
 }

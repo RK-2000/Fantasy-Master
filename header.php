@@ -129,9 +129,15 @@
                                 </div>
                             </li>
                         </ul>
-                        <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb">
+    <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" 
+    data-target="#navb">
+        <span> </span>
+        <span> </span>
+        <span> </span>
+   </button>
+<!--                         <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb">
                             <span class="navbar-toggler-icon"></span>
-                        </button>
+                        </button> -->
                     </div>
                 </nav>
                    <!-- <div class="onlyMobileMenu " ng-if="isLoggedIn" >

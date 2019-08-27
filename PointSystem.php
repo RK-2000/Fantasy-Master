@@ -4,7 +4,7 @@
 
 <!--Main container sec start-->
 <div class="mainContainer" ng-controller="pointSystemController" ng-init="pointSystem()" ng-cloak >
-    <div class="py-5">
+    <div class="mrTop">
       <div class="pointSystem">
         <div class="container-fluid">
          

@@ -4,7 +4,7 @@
     
     <!--Main container sec start-->
     <div class="mainContainer">
-        <div class="mt-5">
+        <div class="mrTop">
             <div class="top-header-title">
                     <h3> Privacy Policy </h3>
                 </div>

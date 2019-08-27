@@ -111,7 +111,7 @@
 <div loading class="loderBG flex-container" id="loderBG">
     <img src="assets/img/loader.svg">
 </div> 
-
+<?php include('config.php') ?>
 <add-cash></add-cash>
 <!--Footer sec end-->
 </main>

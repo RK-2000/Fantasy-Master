@@ -3,7 +3,7 @@
 ?>
 <!--Main container sec start-->
 <div class="mainContainer" ng-controller="contactController" ng-cloak >
-    <div class="mt-md-5">
+    <div class="mrTop">
         <div class="top-header-title">
             <h3> ABOUT US</h3>
         </div>
