@@ -6,7 +6,7 @@
     <head>
         <title>Play Fantasy Cricket | Play Fantasy Cricket and Win Cash Daily</title>
         <meta charset="utf-8">
-        <meta name="description" content="Play fantasy Cricket in Cricket World Cup and win cash daily at India's premier fantasy game platform FSL 11. Play fantasy cricket leagues and win cash prize.">
+        <meta name="description" content="Play fantasy Cricket in Cricket World Cup and win cash daily at India's premier fantasy game platform Fantasy. Play fantasy cricket leagues and win cash prize.">
         <meta name="keywords" content="play fantasy cricket and win cash daily, play fantasy cricket and win real cash, play cricket and win cash prize daily, play fantasy cricket, play cricket and win cash prizes,fantasy cricket app, daily fantasy cricket app, Fantasy Cricket, Fantasy Cricket Website, Fantasy Cricket sports, Fantasy Cricket League,Fantasy Sports,Online Fantasy Games,Cricket Fantasy Team,Fantasy Gaming, Online Cricket,Cricket Betting Tips,Fantasy Cricket World Cup 2019, ICC Cricket World Cup Fantasy League">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">

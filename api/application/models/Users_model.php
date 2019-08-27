@@ -478,7 +478,7 @@ class Users_model extends CI_Model
                 'FirstName' => 'U.FirstName',
                 'MiddleName' => 'U.MiddleName',
                 'LastName' => 'U.LastName',
-                'ProfilePic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/picture/","user-img.svg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfilePic)) AS ProfilePic',
+                'ProfilePic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/picture/","default.jpg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfilePic)) AS ProfilePic',
                 'ProfileCoverPic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/cover/","default.jpg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfileCoverPic)) AS ProfileCoverPic',
                 'About' => 'U.About',
                 'About1' => 'U.About1',
@@ -1329,6 +1329,15 @@ class Users_model extends CI_Model
                 'OpeningBalance' => '(W.OpeningWalletAmount + W.OpeningWinningAmount + W.OpeningCashBonus) OpeningBalance',
                 'ClosingBalance' => '(W.ClosingWalletAmount + W.ClosingWinningAmount + W.ClosingCashBonus) ClosingBalance',
                 'Narration' => 'W.Narration',
+                'UserGUID' => 'U.UserGUID',
+                'Email' => 'U.Email',
+                'EmailForChange' => 'U.EmailForChange',
+                'PhoneNumber' => 'U.PhoneNumber',
+                'PhoneNumberForChange' => 'U.PhoneNumberForChange',
+                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
+                'ProfilePic' => 'IF(U.ProfilePic IS NULL,CONCAT("' . BASE_URL . '","uploads/profile/picture/","default.jpg"),CONCAT("' . BASE_URL . '","uploads/profile/picture/",U.ProfilePic)) ProfilePic',
+                'PhoneStatus' => 'IF(U.PhoneNumber IS NULL, "Pending", "Verified") PhoneStatus',
+                'EmailStatus' => 'IF(U.Email IS NULL, "Pending", "Verified") EmailStatus',
                 'EntryDate' => 'DATE_FORMAT(CONVERT_TZ(W.EntryDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") EntryDate',
                 'Status' => 'CASE W.StatusID
                                         when "1" then "Pending"
@@ -1360,7 +1369,27 @@ class Users_model extends CI_Model
         $this->db->select('W.WalletID');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_users_wallet W');
+            $this->db->from('tbl_users_wallet W');
+        if (array_keys_exist($Params, array('UserGUID','ProfilePic','FullName','Email','EmailForChange','PhoneNumber','PhoneNumberForChange','EmailStatus','PhoneStatus'))) {
+            $this->db->from('tbl_users U');
+            $this->db->where("W.UserID", "U.UserID", FALSE);
+        }
+        if (!empty($Where['Keyword'])) {
+            $Where['Keyword'] = trim($Where['Keyword']);
+            $this->db->group_start();
+            $this->db->like("W.CouponCode", $Where['Keyword']);
+            $this->db->or_like("W.Narration", $Where['Keyword']);
+            if (array_keys_exist($Params, array('UserGUID','ProfilePic','FullName','Email','EmailForChange','PhoneNumber','PhoneNumberForChange','EmailStatus','PhoneStatus'))) {
+                $this->db->or_like("U.FirstName", $Where['Keyword']);
+                $this->db->or_like("U.LastName", $Where['Keyword']);
+                $this->db->or_like("U.Email", $Where['Keyword']);
+                $this->db->or_like("U.EmailForChange", $Where['Keyword']);
+                $this->db->or_like("U.PhoneNumber", $Where['Keyword']);
+                $this->db->or_like("U.PhoneNumberForChange", $Where['Keyword']);
+                $this->db->or_like("CONCAT_WS('',U.FirstName,U.Middlename,U.LastName)", preg_replace('/\s+/', '', $Where['Keyword']), FALSE);
+            }
+            $this->db->group_end();
+        }
         if (!empty($Where['WalletID'])) {
             $this->db->where("W.WalletID", $Where['WalletID']);
         }
@@ -1388,7 +1417,7 @@ class Users_model extends CI_Model
         if (!empty($Where['TransactionMode']) && $Where['TransactionMode'] != 'All') {
             $this->db->where("W." . $Where['TransactionMode'] . ' >', 0);
         }
-        if (!empty($Where['Filter']) && $Where['Filter'] == 'FailedCompleted') {
+        if (!empty($Where['Filter']) && $Where['Filter'] == 'FailedCompleted' && empty($Where['StatusID'])) {
             $this->db->where_in("W.StatusID", array(3, 5));
         }
         if (!empty($Where['FromDate'])) {
@@ -1399,6 +1428,12 @@ class Users_model extends CI_Model
         }
         if (!empty($Where['StatusID'])) {
             $this->db->where("W.StatusID", $Where['StatusID']);
+        }
+        if (!empty($Where['EmailStatus'])) {
+            $this->db->having("EmailStatus", $Where['EmailStatus']);
+        }
+        if (!empty($Where['PhoneStatus'])) {
+            $this->db->having("PhoneStatus", $Where['PhoneStatus']);
         }
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
@@ -1436,8 +1471,6 @@ class Users_model extends CI_Model
                 }
                 return $Record;
             }
-        } else {
-            return $Return;
         }
         return FALSE;
     }

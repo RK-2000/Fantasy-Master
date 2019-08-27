@@ -27,7 +27,7 @@ include('header.php');
                         <img src="assets/img/dollar.svg" alt="" />
                     </figure>
                     <h5> Earn </h5>
-                    <p> Once qualified, you'll <strong> earn ₹ 50 </strong> and your buddy will <strong> get ₹ 50 </strong> to play on FSL11 !</p>
+                    <p> Once qualified, you'll <strong> earn ₹ 50 </strong> and your buddy will <strong> get ₹ 50 </strong> to play on <?php echo SITE_NAME; ?> !</p>
                 </div>
             </div>
         </div>

@@ -40,10 +40,10 @@ include('header.php');
                 </div>
             </div>
             <h5> Create your Team </h5>
-            <p>  Use you cricketing knowledge and showcase your team management skills to create your FSL11 
+            <p>  Use you cricketing knowledge and showcase your team management skills to create your <?php echo SITE_NAME; ?> 
                  team in various league formats. </p>
 
-            <h5 class="mt-3">Classic FSL11</h5>
+            <h5 class="mt-3">Classic <?php echo SITE_NAME; ?></h5>
 
             <ol>
                 <li>Select a total of 11 players from the two teams.</li>
@@ -56,7 +56,7 @@ include('header.php');
                 </li>
             </ol>
 
-            <h5>Batting FSL11 </h5>
+            <h5>Batting <?php echo SITE_NAME; ?> </h5>
                 <ol>
                     <li>Select a total of 5 players from 2 teams who will score maximum runs according to you.</li>
                     <li>Maximum 3 Players from 1 team.</li>
@@ -68,7 +68,7 @@ include('header.php');
                     </li>
                 </ol>
             
-            <h5>Bowling FSL11 </h5>
+            <h5>Bowling <?php echo SITE_NAME; ?> </h5>
             <ol>
                 <li>Select a total of 5 players from 2 teams who will the maximum wickets according to you.</li>
                 <li>Maximum 3 Players from 1 team.</li>
@@ -87,7 +87,7 @@ include('header.php');
                 real cash games. </p>
             
             <h5> Follow the match </h5>
-            <p> Watch the live match and track your FSL11 scorecard. </p>
+            <p> Watch the live match and track your <?php echo SITE_NAME; ?> scorecard. </p>
 
             <h5> Withdraw winnings </h5>
             <p> Withdraw your winnings conveniently to your Bank. </p>

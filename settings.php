@@ -186,7 +186,7 @@
 
                                         <div class="col-sm-12">
                                             <ul class="form-group">
-                                                <li><i class="fa fa-info-circle info_icon" data-toggle="tooltip" title="Your withdrawals involve transfer of money from your FSL11 account to your bank account. Hence, PAN Card is mandatory to get your account verified, due to regulatory requirements." data-placement="bottom"  ></i>Why should I submit my PAN</li>
+                                                <li><i class="fa fa-info-circle info_icon" data-toggle="tooltip" title="Your withdrawals involve transfer of money from your <?php echo SITE_NAME; ?> account to your bank account. Hence, PAN Card is mandatory to get your account verified, due to regulatory requirements." data-placement="bottom"  ></i>Why should I submit my PAN</li>
                                                 <li>&nbsp;&nbsp; - Max size 4MB. Formats - .jpg .jpeg .png .pdf only.</li>
                                                 <li>&nbsp;&nbsp; - We don’t accept password-protected docs.</li>
                                             </ul>
@@ -264,7 +264,7 @@
 
                                         <div class="col-sm-12">
                                             <ul class="form-group">
-                                                <li><i class="fa fa-info-circle" data-toggle="tooltip" title="At FSL11, we transfer your winnings directly to your bank account. Hence, once your bank account details are submitted and verified, you can make withdrawls from your FSL11 account to your bank account." data-placement="bottom"  ></i> Why should I submit my bank account details?</li>
+                                                <li><i class="fa fa-info-circle" data-toggle="tooltip" title="At <?php echo SITE_NAME; ?>, we transfer your winnings directly to your bank account. Hence, once your bank account details are submitted and verified, you can make withdrawls from your <?php echo SITE_NAME; ?> account to your bank account." data-placement="bottom"  ></i> Why should I submit my bank account details?</li>
 
                                                 <li>&nbsp;&nbsp; - Max size 4MB. Formats - .jpg .jpeg .png .pdf only.</li>
                                                 <li>&nbsp;&nbsp; - We don’t accept password-protected docs.</li>

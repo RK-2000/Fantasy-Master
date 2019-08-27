@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
     <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.10/angular-material.css" rel="stylesheet">
     <script src="auctionDraft/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
 </head>
 
 <body ng-controller="MainController" ng-cloak >
@@ -36,21 +35,63 @@
                         <img src="assets/img/logo2.png" alt="" ng-if="secondLevelLocation !='authenticate'" style="position: absolute; left: 0;"> 
                         <img src="assets/img/logo.png" alt="" ng-if="secondLevelLocation == 'authenticate'">
                     </a>
-                    <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+                    
 
                 </nav>
                 <nav class="navbar navbar-expand-lg" ng-if="isLoggedIn" ng-init="getNotifications()">
-                    <a class="navbar-brand text-white" href="{{base_url}}lobby">
+                    <a class="navbar-brand text-white order-1" href="{{base_url}}lobby">
                         <img src="assets/img/logo.png" alt=""> 
                     </a>
-                    <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+                    <div class="navbar-collapse collapse order-lg-2 order-3" id="navb">
+                        <ul class="navbar-nav mr-lg-auto primary_menu">
+                            <li class="nav-item {{headerActiveMenu=='lobby' ? 'active' : '' }}">
+                                <a class="nav-link" href="lobby"> DFS  </a>
+                            </li>
+                            <li class="nav-item {{headerActiveMenu=='leagueCenter' ? 'active' : '' }} ">
+                                <a class="nav-link" href="leagueCenter">  My League </a>
+                            </li>
+                            <li class="nav-item {{headerActiveMenu=='referAndEarn' ? 'active' : '' }}  ">
+                                <a class="nav-link" href="referAndEarn"> Refer &amp; Earn </a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav rightNav">
+                            <li class="dropdown accountDrop mr-2">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <cite><img ng-src="{{profileDetails.ProfilePic}}" style="width: 40px;"></cite> <!--<span>{{profileDetails.FirstName}}</span>--></a>
+                                <div class="dropdown-menu">
+                                    <div class="profile-header px-3 border-bottom">
+                                        <div class="row">
+                                            <h4 class="dropdown_title"> User settings </h4> 
+                                            <ul class="col-md-12 border-bottom px-3 pb-2">
+                                                <li> <span> BALANCE </span> : {{moneyFormat(profileDetails.TotalCash)}} </li>
+                                            </ul>
 
-                    <div class="navbar-collapse collapse" id="navb">
-                            <ul class="navbar-nav rightNav" >               
+                                            <div class="d-flex w-100 pt-2 pb-2">
+                                                <div class="col-md-6 border-right"><a  href="javascript:void(0)" ng-click="openPopup('add_money');"> <i class="fa fa-money" aria-hidden="true"></i> Add Cash </a></div>
+                                                <div class="col-md-6"><a href="javascript:void(0)" ng-click="openPopup('withdrawPopup')"><i class="fa fa-credit-card" aria-hidden="true"></i> Withdraw </a></div>
+                                            </div>
+                                        </div>    
+                                    </div>
+                                    <ul>
+                                        <li><a href="profile"> <i class="fa fa-fw fa-user"></i> Profile</a></li>
+                                        <li><a href="myAccount"><i class="fa fa-user-circle"></i> My Account</a></li>
+                                        <li><a href="changePassword"><i class="fa fa-user-circle"></i> Change Password</a></li>
+                                        <li><a href="settings"><i class="fa fa-fw fa-gear"></i> Verify Accounts</a></li>
+                                        <li><a href="javascript:void(0)" ng-click="logout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item  text-right">
+                                <b style="color:#12c451;"> {{moneyFormat(profileDetails.TotalCash)}} </b>
+                                <p style="text-align: right;"> BALANCE </p>
+                            </li>
+                            <li>
+                            <button type="button" class="btnTrans btn bggreen" ng-click="openPopup('add_money');" data-toggle="tooltip" title="Click to Add Cash"> Add Funds </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex align-items-center order-lg-3 order-2">
+                        <ul class="navbar-nav rightNav rightMenuWrapr" >               
                             <li class="nav-item wallet_icon"> 
                                 <a href="myAccount" data-toggle="tooltip" title="Click to view wallet"><img src="assets/img/wallet.svg" alt="wallet"/></a>
                                 <a href="myAccount" data-toggle="tooltip" title="Click to view wallet"><img src="assets/img/wallet-yello.svg" alt="wallet"></a>
@@ -71,73 +112,29 @@
                                     </ul>
                                 </div>
                             </li>
-
-                                <li class="dropdown accountDrop bdr d-flex">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fa fa-question" aria-hidden="true"  style="font-size: 25px; margin-top: -3px;"></i></a>
-                                        <div class="dropdown-menu">
-                                           <h4 class="dropdown_title"> Help center  </h4>
-                                            <ul>
-                                                <li><a href="AboutUs"> About Us  </a></li>
-                                                <li><a href="contactUs"> Contact Us  </a></li>
-                                                <li><a href="Faq">FAQs  </a></li>
-                                                <li><a href="Legalities">Legality  </a></li>
-                                                <li><a href="PointSystem">Point System  </a></li>
-                                                <li><a href="privacyPolicy">Privacy Policy  </a></li>
-                                                <li><a href="TermConditions">Term & Conditions  </a></li>
-                                            </ul>
-                                        </div>
-                                </li>
-
-                                <li class="dropdown accountDrop mr-2">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <cite><img ng-src="{{profileDetails.ProfilePic}}" style="width: 40px;"></cite> <!--<span>{{profileDetails.FirstName}}</span>--></a>
-                                        <div class="dropdown-menu">
-                                            <div class="profile-header px-3 border-bottom">
-                                                <div class="row">
-                                                   <h4 class="dropdown_title"> User settings </h4> 
-                                                    <ul class="col-md-12 border-bottom px-3 pb-2">
-                                                        <li> <span> BALANCE </span> : {{moneyFormat(profileDetails.TotalCash)}} </li>
-                                                    </ul>
-
-                                                    <div class="d-flex w-100 pt-2 pb-2">
-                                                        <div class="col-md-6 border-right"><a  href="javascript:void(0)" ng-click="openPopup('add_money');"> <i class="fa fa-money" aria-hidden="true"></i> Add Cash </a></div>
-                                                        <div class="col-md-6"><a href="javascript:void(0)" ng-click="openPopup('withdrawPopup')"><i class="fa fa-credit-card" aria-hidden="true"></i> Withdraw </a></div>
-                                                    </div>
-                                                </div>    
-                                            </div>
-                                            <ul>
-                                                <li><a href="profile"> <i class="fa fa-fw fa-user"></i> Profile</a></li>
-                                                <li><a href="myAccount"><i class="fa fa-user-circle"></i> My Account</a></li>
-                                                <li><a href="changePassword"><i class="fa fa-user-circle"></i> Change Password</a></li>
-                                                <li><a href="settings"><i class="fa fa-fw fa-gear"></i> Verify Accounts</a></li>
-                                                <li><a href="javascript:void(0)" ng-click="logout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a></li>
-                                            </ul>
-                                        </div>
-                                </li>
-
-                                <li class="nav-item  text-right">
-                                    <b style="color:#12c451;"> {{moneyFormat(profileDetails.TotalCash)}} </b>
-                                    <p style="text-align: right;"> BALANCE </p>
-                                </li>
-                                <li>
-                                   <button type="button" class="btnTrans btn bggreen" ng-click="openPopup('add_money');" data-toggle="tooltip" title="Click to Add Cash"> Add Funds </button>
-                                </li>
-                            </ul>
-                            <ul class="navbar-nav mr-auto">
-                                <li class="nav-item {{headerActiveMenu=='lobby' ? 'active' : '' }}">
-                                    <a class="nav-link" href="lobby"> DFS  </a>
-                                </li>
-                                <li class="nav-item {{headerActiveMenu=='leagueCenter' ? 'active' : '' }} ">
-                                    <a class="nav-link" href="leagueCenter">  My League </a>
-                                </li>
-                                <li class="nav-item {{headerActiveMenu=='referAndEarn' ? 'active' : '' }}  ">
-                                    <a class="nav-link" href="referAndEarn"> Refer &amp; Earn </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                   <div class="onlyMobileMenu " ng-if="isLoggedIn" >
+                            <li class="dropdown accountDrop bdr d-flex">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-question" aria-hidden="true"  style="font-size: 25px; margin-top: -3px;"></i></a>
+                                <div class="dropdown-menu">
+                                    <h4 class="dropdown_title"> Help center  </h4>
+                                    <ul>
+                                        <li><a href="AboutUs"> About Us  </a></li>
+                                        <li><a href="contactUs"> Contact Us  </a></li>
+                                        <li><a href="Faq">FAQs  </a></li>
+                                        <li><a href="Legalities">Legality  </a></li>
+                                        <li><a href="PointSystem">Point System  </a></li>
+                                        <li><a href="privacyPolicy">Privacy Policy  </a></li>
+                                        <li><a href="TermConditions">Term & Conditions  </a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                </nav>
+                   <!-- <div class="onlyMobileMenu " ng-if="isLoggedIn" >
                         <ul class="navbar-nav rightNav" >
 
                             <li class="nav-item wallet_icon"> 
@@ -167,7 +164,7 @@
                                 </div>
                             </li>
                             </ul>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </header>

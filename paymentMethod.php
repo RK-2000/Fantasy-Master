@@ -36,7 +36,7 @@
                                 <button class="btn btn-submit theme_bgclr" ng-click="razorPayReq(amount)"> <i class="fa fa-cc-mastercard"></i> Razorpay</button>
                             </div>
                         </div>
-                        <p>By proceeding, you have read and agreed to FSL11 <a target="_blank" href="TermConditions">Terms and Conditions</a> and <a target="_blank" href="privacyPolicy">Privacy Policy</a></p> 
+                        <p>By proceeding, you have read and agreed to <?php echo SITE_NAME; ?> <a target="_blank" href="TermConditions">Terms and Conditions</a> and <a target="_blank" href="privacyPolicy">Privacy Policy</a></p> 
 
                     </div>
                 </div>

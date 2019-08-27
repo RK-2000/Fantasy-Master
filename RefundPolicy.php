@@ -9,14 +9,14 @@
                 <div class="container">
                     <div class="comnOpecity  mt-3">
                         <div class="termContent mCustomScrollbar">
-                            <p> At FSL11 we believe "Your money is yours & you should get it immediately when you want". We are working with the best banking & gateway partners to payout our users at the earliest possible.</p>
-                                <p>However, all the refunds at FSL11 are subject to following conditions :</p>
+                            <p> At <?php echo SITE_NAME; ?> we believe "Your money is yours & you should get it immediately when you want". We are working with the best banking & gateway partners to payout our users at the earliest possible.</p>
+                                <p>However, all the refunds at <?php echo SITE_NAME; ?> are subject to following conditions :</p>
                                     <BLOCKQUOTE type="disc">
                                         <li>All the refunds are processed to the same mode / financial instruments through which the deposits were made.</li>
                                         <li>In some cases, internal review team may take upto 24 working hours to process a withdrawal.</li>
                                         <li>Immediate withdrawal after deposits, without playing matches will invite transaction fee charges, as applicable.</li>
                                         <li>All the winnings above Rs 10,000 is subject to applicable TDS deduction.</li>
-                                        <li>FSL11 reserves the right to modify/change these terms & conditions anytime without any notice.</li>
+                                        <li><?php echo SITE_NAME; ?> reserves the right to modify/change these terms & conditions anytime without any notice.</li>
                                     </BLOCKQUOTE>
                                 
                         </div>

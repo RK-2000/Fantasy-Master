@@ -4,15 +4,16 @@ if (!(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' ||
         $_SERVER['HTTPS'] == 1) ||
         isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
         $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') && $_SERVER['HTTP_HOST'] != 'localhost') {
-    $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: ' . $redirect);
     exit();
 }
 const VERSION = 4.7;
 ?>
-<html lang="en" data-ng-app="FSL11" ng-cloak >
+<html lang="en" data-ng-app="FANTASY" ng-cloak >
     <head>
+        <?php include('MetaData.php') ?>
         <title>Download Fantasy Cricket App | Daily Fantasy Cricket App</title>
         <meta name="description" content="Daily Fantasy Cricket App- Download the best Fantasy Cricket App in India, Play Fantasy Cricket and win cash prize daily in this ICC Cricket World Cup.">
         <meta name="keywords" content="play fantasy cricket and win cash daily, play fantasy cricket and win real cash, play cricket and win cash prize daily, play fantasy cricket, play cricket and win cash prizes,fantasy cricket app, daily fantasy cricket app, Fantasy Cricket, Fantasy Cricket Website, Fantasy Cricket sports, Fantasy Cricket League,Fantasy Sports,Online Fantasy Games,Cricket Fantasy Team,Fantasy Gaming, Online Cricket,Cricket Betting Tips,Fantasy Cricket World Cup 2019, ICC Cricket World Cup Fantasy League">
@@ -26,14 +27,6 @@ const VERSION = 4.7;
         <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
         <link href="assets/css/custom.css?version=<?= VERSION ?>" rel="stylesheet">
         <link href="assets/css/draftcustom.css?version=<?= VERSION ?>" rel="stylesheet">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'UA-138966359-1');
-        </script>
     </head>
 
 <div class="mainContainer" ng-controller="contactController" ng-cloak >
@@ -57,9 +50,9 @@ const VERSION = 4.7;
                 <div class="row">
                     <div class="col-md-6 flex_center">
                         <div class="getFanasy">
-                            <h2 class="mt-5 text-white">  Download the FSL11 Mobile App to  Win Real Money </h2>
+                            <h2 class="mt-5 text-white">  Download the <?php echo SITE_NAME; ?> Mobile App to  Win Real Money </h2>
 
-                            <h5 class="mt-3 text-white"> Download our Fantasy Cricket App, play fantasy sports anywhere and get an opportunity to win real cash prizes. </h5>
+                            <h5 class="mt-3 text-white"> Download our <?php echo SITE_NAME; ?> Cricket App, play fantasy sports anywhere and get an opportunity to win real cash prizes. </h5>
 
                             <h5 class="mt-3 text-white"> Get the app link via SMS </h5>
 
@@ -79,18 +72,18 @@ const VERSION = 4.7;
                         <div>
                             <ul class="btns black_downloads mt-3">
                             <li class="mr-3">
-                            <a  href="https://fsl11.com/android/FSL11.apk" download data-toggle="tooltip" title="" data-original-title="Download Now">
+                            <a  href="<?php echo $base_url; ?>android/fantasy.apk" download data-toggle="tooltip" title="" data-original-title="Download Now">
                                 <span class="icon"><img src="assets/images/android.svg" alt=""> </span>
                                 <span class="text">
-                                <span class="small"> On</span>
+                                <span class="small"><?php echo SITE_NAME; ?> On</span>
                                 <span class="big"> Android </span>
                                 </span>
                             </a></li>
                             <li>
-                            <a href="#" data-toggle="tooltip" title="" data-original-title="Coming Soon">
+                            <a href="javascript:void(0);" data-toggle="tooltip" title="" data-original-title="Coming Soon">
                                 <span class="icon"><img src="assets/images/apple.svg" alt=""> </span>
                                 <span class="text">
-                                    <span class="small">FSL11 On</span>
+                                    <span class="small"><?php echo SITE_NAME; ?> On</span>
                                     <span class="big"> iOS </span>
                                 </span>
                             </a></li>
@@ -178,8 +171,8 @@ const VERSION = 4.7;
                 </div>
                 <div class="" id="clientSlider">
                     <div class="clientslide">
-                        <p> I enjoy playing fantasy cricket at FSL11. Everything is totally hassle free here and 
-                            therefore I have referred a lot of friends. I become a fan of FSL11 now.  </p>
+                        <p> I enjoy playing fantasy cricket at <?php echo SITE_NAME; ?>. Everything is totally hassle free here and 
+                            therefore I have referred a lot of friends. I become a fan of <?php echo SITE_NAME; ?> now.  </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
                                 <img src="assets/images/team2.jpg" class="img-circle" alt="" />
@@ -189,7 +182,7 @@ const VERSION = 4.7;
                         </div>
                     </div>
                     <div class="clientslide">
-                        <p> My first year at FSL11 is going awesome. Thank You for providing an amazing gaming 
+                        <p> My first year at <?php echo SITE_NAME; ?> is going awesome. Thank You for providing an amazing gaming 
                             experience. I tried so many platforms to play fantasy cricket and finally got what I
                             was looking for from a long time.</p>
                         <div class="clientImgbox">
@@ -201,7 +194,7 @@ const VERSION = 4.7;
                         </div>
                     </div>
                     <div class="clientslide">
-                        <p> FSL11 made my favorite sport “Cricket” more interesting. The concept of the app is unique and 
+                        <p> <?php echo SITE_NAME; ?> made my favorite sport “Cricket” more interesting. The concept of the app is unique and 
                             exciting. I would really like to recommend the app to everyone. </p>
                         <div class="clientImgbox">
                             <div class="clientImg">
@@ -223,8 +216,8 @@ const VERSION = 4.7;
                         </div>
                     </div>
                     <div class="clientslide">
-                        <p> Both website and apps of FSL11 works smoothly. My cricketing skills helped me in winning 
-                            a good amount at FSL11. I have a very good experience till now and I am sure that they will 
+                        <p> Both website and apps of <?php echo SITE_NAME; ?> works smoothly. My cricketing skills helped me in winning 
+                            a good amount at <?php echo SITE_NAME; ?>. I have a very good experience till now and I am sure that they will 
                             make me and all other users feel delight in future as well. </p>
                         <div class="clientImgbox">
                             <div class="clientImg">

@@ -7,7 +7,7 @@
                      <div class="col-md-8 offset-md-2 text-center refer_banner_content">
                         <h1 class="mb-2"> Refer and Earn </h1>
                         <p> If you love fantasy sports, it is very likely that your friends are also equally passionate 
-                            about this game. FSL11.com offers a very lucrative referral program for it's players. <!-- When 
+                            about this game. <?php echo DOMAIN_NAME; ?> offers a very lucrative referral program for it's players. <!-- When 
                             your friend signs up with your invite code, verifies his account and adds a minimum amount 
                             of Rs.100 then you & your friend get Rs.25 and Rs.50 bonus amount respectively.You can share
                             our invite code with upto 6 friends.  -->
@@ -76,7 +76,7 @@
                                             <a class="inst" href="https://www.instagram.com/accounts/login" target="_blank" ><i class="fa fa-instagram" aria-hidden="true"></i></a>
                                         </li>
                                         <li>
-                                            <a class="wt" href="https://api.whatsapp.com/send?text=Here Rs.50 to play Fantasy Cricket on FSL11. Click https://www.fsl11.com to share to download the app and use my code: *{{user_details.ReferralCode}}* or use the link to register https://www.fsl11.com/authenticate?referral= {{user_details.ReferralCode}}. " target="_blank"><i class="fa fa-whatsapp"></i></a>
+                                            <a class="wt" href="https://api.whatsapp.com/send?text=Here Rs.50 to play Fantasy Cricket on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?> to share to download the app and use my code: *{{user_details.ReferralCode}}* or use the link to register <?php echo $base_url; ?>/authenticate?referral= {{user_details.ReferralCode}}. " target="_blank"><i class="fa fa-whatsapp"></i></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -111,7 +111,7 @@
                                     <img src="assets/img/dollar.svg" alt="" />
                                 </figure>
                                 <h5> Earn </h5>
-                                <p> Once qualified, you'll <strong> earn ₹ 50 </strong> and your buddy will <strong> get ₹ 50 </strong> to play on FSL11 !</p>
+                                <p> Once qualified, you'll <strong> earn ₹ 50 </strong> and your buddy will <strong> get ₹ 50 </strong> to play on <?php echo SITE_NAME; ?> !</p>
                             </div>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
     $('.fb').click( function() 
     {
         var shareurl = $(this).data('shareurl');
-        window.open('https://www.facebook.com/dialog/feed?app_id=2261225134126697&picture=http://www.fbrell.com/f8.jpg&name=FSL11&description=homeschool%20.versus%20.awayschool%20@%20.venue%20@%20.datetime&caption=Here Rs.50 to play Fantasy Cricket on FSL11. Click https://www.fsl11.com to share to download the app and use my code '+$(".invite-code").text()+' to register.&link=https://www.fsl11.com/authenticate?referral='+$(".invite-code").text(), 'Fantasy', 
+        window.open('https://www.facebook.com/dialog/feed?app_id=2261225134126697&picture=http://www.fbrell.com/f8.jpg&name=<?php echo SITE_NAME; ?>&description=homeschool%20.versus%20.awayschool%20@%20.venue%20@%20.datetime&caption=Here Rs.50 to play Fantasy Cricket on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?> to share to download the app and use my code '+$(".invite-code").text()+' to register.&link=<?php echo $base_url; ?>/authenticate?referral='+$(".invite-code").text(), 'Fantasy', 
         'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
         return false;
     });
@@ -135,7 +135,7 @@ var twitterShare = document.querySelector('[data-js="twitter-share"]');
 
 twitterShare.onclick = function(e) {
   e.preventDefault();    
-      var twitterWindow = window.open("https://twitter.com/intent/tweet?text=Here's Rs.50 to play Fantasy Cricket on FSL11. Click https://www.fsl11.com/authenticate?referral="+$(".invite-code").text()+" to share to download the app and use my code "+$(".invite-code").text()+" to register.", 'twitter-popup', 'height=350,width=600');
+      var twitterWindow = window.open("https://twitter.com/intent/tweet?text=Here's Rs.50 to play Fantasy Cricket on <?php echo SITE_NAME; ?>. Click <?php echo $base_url; ?>/authenticate?referral="+$(".invite-code").text()+" to share to download the app and use my code "+$(".invite-code").text()+" to register.", 'twitter-popup', 'height=350,width=600');
       if(twitterWindow.focus) { twitterWindow.focus(); }
         return false;
     }

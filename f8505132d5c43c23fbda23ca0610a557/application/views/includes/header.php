@@ -36,8 +36,6 @@
 			<?php if(!empty($_GET['ParentCategoryGUID'])){ ?>
 				var ParentCategoryGUID = "<?php echo $_GET['ParentCategoryGUID']; ?>";
 			<?php } ?>
-
-			var hrm_base_url    = 'http://159.89.128.204/sentrifugo-crm/index.php/';
 		<?php } ?>
 	</script>
 
