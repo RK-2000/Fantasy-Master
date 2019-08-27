@@ -48,7 +48,7 @@ class Signup extends API_Controller
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
-            if (!empty($this->Post['Email'])) {
+            if (!empty($this->Post['Email']) && $this->Post['Source'] == 'Direct') {
 
                 /* Send welcome Email to User with Token. (only if source is Direct) */
                 send_mail(array(
@@ -56,7 +56,7 @@ class Signup extends API_Controller
                     'template_id'   => ($this->DeviceTypeID !=1 ? 'd-3a4d4645033743618fef4ec5f3375190' : 'd-55ba1bc1b8e047888b82575e1587f0bb'),
                     'Subject'       => 'Thank you for registering at ' . SITE_NAME,
                     "Name"          => @$this->Post['FirstName'],
-                    'Token'         => ($this->Post['Source'] == 'Direct' ? $this->Recovery_model->generateToken($UserID, 2) : ''),
+                    'Token'         => $this->Recovery_model->generateToken($UserID, 2),
                     'DeviceTypeID'  => $this->DeviceTypeID
                 ));
             }
