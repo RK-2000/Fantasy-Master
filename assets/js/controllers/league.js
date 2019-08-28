@@ -164,96 +164,116 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
                 $scope.viewJoinButton = false;
             }
 
-            $scope.ViewTeamOnGround = function (data) {
-                $scope.TeamPlayers = data;
-                $scope.teamStructure = {
-                    "WicketKeeper": {
-                        "min": 1,
-                        "max": 1,
-                        "occupied": 0,
-                        player: [],
-                        "icon": "flaticon1-pair-of-gloves"
-                    },
-                    "Batsman": {
-                        "min": 3,
-                        "max": 5,
-                        "occupied": 0,
-                        player: [],
-                        "icon": "flaticon1-ball"
-                    },
-                    "Bowler": {
-                        "min": 3,
-                        "max": 5,
-                        "occupied": 0,
-                        player: [],
-                        "icon": "flaticon1-tennis-ball"
-                    },
-                    "AllRounder": {
-                        "min": 1,
-                        "max": 3,
-                        "occupied": 0,
-                        player: [],
-                        "icon": "flaticon1-ball"
-                    },
-                    "Extra": {
-                        "min": 3,
-                        "max": 3,
-                        occupied: 0,
-                        player: []
-                    },
-                    "ready": false
-                };
-                angular.forEach($scope.TeamPlayers, function (value, key) {
-                    if (value.PlayerRole == 'WicketKeeper') {
+            $scope.ViewTeamOnGround = function (data, status) {
+                $scope.flag = 0
+                if(status == 'Pending'){
+                    if($localStorage.user_details.UserGUID == data.UserGUID){
+                        $scope.flag = 1
+                    }else{
+                        $scope.flag = 0
+                    }    
+                }else{
+                    $scope.flag = 1
+                }
+                
+                
+                if($scope.flag == 1){
+                   
+                    $scope.TeamPlayers = data.UserTeamPlayers;
+                    $scope.teamStructure = {
+                        "WicketKeeper": {
+                            "min": 1,
+                            "max": 1,
+                            "occupied": 0,
+                            player: [],
+                            "icon": "flaticon1-pair-of-gloves"
+                        },
+                        "Batsman": {
+                            "min": 3,
+                            "max": 5,
+                            "occupied": 0,
+                            player: [],
+                            "icon": "flaticon1-ball"
+                        },
+                        "Bowler": {
+                            "min": 3,
+                            "max": 5,
+                            "occupied": 0,
+                            player: [],
+                            "icon": "flaticon1-tennis-ball"
+                        },
+                        "AllRounder": {
+                            "min": 1,
+                            "max": 3,
+                            "occupied": 0,
+                            player: [],
+                            "icon": "flaticon1-ball"
+                        },
+                        "Extra": {
+                            "min": 3,
+                            "max": 3,
+                            occupied: 0,
+                            player: []
+                        },
+                        "ready": false
+                    };
+                    angular.forEach($scope.TeamPlayers, function (value, key) {
+                        if (value.PlayerRole == 'WicketKeeper') {
 
-                        $scope.teamStructure['WicketKeeper'].player.push({
-                            'PlayerGUID': value.PlayerGUID,
-                            'PlayerPosition': value.PlayerPosition,
-                            'PlayerName': value.PlayerName,
-                            //'Points': value.Points,
-                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
-                            'PlayerPic': value.PlayerPic,
-                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                            $scope.teamStructure['WicketKeeper'].player.push({
+                                'PlayerGUID': value.PlayerGUID,
+                                'PlayerPosition': value.PlayerPosition,
+                                'PlayerName': value.PlayerName,
+                                //'Points': value.Points,
+                                'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
+                                'PlayerPic': value.PlayerPic,
+                                'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                            });
+                            $scope.teamStructure['WicketKeeper'].occupied++;
+                        }
+                        if (value.PlayerRole == 'Batsman') {
+                            $scope.teamStructure['Batsman'].player.push({
+                                'PlayerGUID': value.PlayerGUID,
+                                'PlayerPosition': value.PlayerPosition,
+                                'PlayerName': value.PlayerName,
+                                //'Points': value.Points,
+                                'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
+                                'PlayerPic': value.PlayerPic,
+                                'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                            });
+                            $scope.teamStructure['Batsman'].occupied++;
+                        }
+                        if (value.PlayerRole == 'AllRounder') {
+                            $scope.teamStructure['AllRounder'].player.push({
+                                'PlayerGUID': value.PlayerGUID,
+                                'PlayerPosition': value.PlayerPosition,
+                                'PlayerName': value.PlayerName,
+                                //'Points': value.Points,
+                                'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
+                                'PlayerPic': value.PlayerPic,
+                                'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                            });
+                            $scope.teamStructure['AllRounder'].occupied++;
+                        }
+                        if (value.PlayerRole == 'Bowler') {
+                            $scope.teamStructure['Bowler'].player.push({
+                                'PlayerGUID': value.PlayerGUID,
+                                'PlayerPosition': value.PlayerPosition,
+                                'PlayerName': value.PlayerName,
+                                //'Points': value.Points,
+                                'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
+                                'PlayerPic': value.PlayerPic,
+                                'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
+                            });
+                            $scope.teamStructure['Bowler'].occupied++;
+                        }
+                    });
+                }else{
+                    var toast = toastr.warning("You can not view other member  team until match get started..", {
+                            closeButton: true
                         });
-                        $scope.teamStructure['WicketKeeper'].occupied++;
-                    }
-                    if (value.PlayerRole == 'Batsman') {
-                        $scope.teamStructure['Batsman'].player.push({
-                            'PlayerGUID': value.PlayerGUID,
-                            'PlayerPosition': value.PlayerPosition,
-                            'PlayerName': value.PlayerName,
-                            //'Points': value.Points,
-                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
-                            'PlayerPic': value.PlayerPic,
-                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                        });
-                        $scope.teamStructure['Batsman'].occupied++;
-                    }
-                    if (value.PlayerRole == 'AllRounder') {
-                        $scope.teamStructure['AllRounder'].player.push({
-                            'PlayerGUID': value.PlayerGUID,
-                            'PlayerPosition': value.PlayerPosition,
-                            'PlayerName': value.PlayerName,
-                            'Points': value.Points,
-                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
-                            'PlayerPic': value.PlayerPic,
-                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                        });
-                        $scope.teamStructure['AllRounder'].occupied++;
-                    }
-                    if (value.PlayerRole == 'Bowler') {
-                        $scope.teamStructure['Bowler'].player.push({
-                            'PlayerGUID': value.PlayerGUID,
-                            'PlayerPosition': value.PlayerPosition,
-                            'PlayerName': value.PlayerName,
-                            'Points': value.Points,
-                            'Points': ($scope.Contest.Status == 'Pending')?parseFloat(value.PointCredits):parseFloat(value.Points),
-                            'PlayerPic': value.PlayerPic,
-                            'SelectedPlayerTeam': (value.TeamGUID == $scope.Contest.TeamGUIDLocal) ? 'A' : 'B'
-                        });
-                        $scope.teamStructure['Bowler'].occupied++;
-                    }
-                });
+                        toastr.refreshTimer(toast, 5000);
+                }               
 
             }
 
