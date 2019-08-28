@@ -49,15 +49,16 @@
                                                     <li class="col-7 text-left">Match Status</li>
                                                     <li class="col-5"><span ng-class="{Pending:'text-danger', Live:'text-success',Cancelled:'text-danger',Completed:'text-success'}[MatchDetails.Status]">{{MatchDetails.Status}}</span></li>
                                                 </ul>
+
                                                 <ul class="row">
                                                     <li class="col-7 text-left">{{MatchDetails.MatchScoreDetails.TeamScoreLocal.Name}}</li>
-                                                    <li class="col-5 numeric" ng-if="MatchDetails.MatchScoreDetails.TeamScoreLocal.Scores">{{MatchDetails.MatchScoreDetails.TeamScoreLocal.Scores}} ({{MatchDetails.MatchScoreDetails.TeamScoreLocal.Overs}})</li>
+                                                    <li class="col-5 numeric" ng-if="MatchDetails.MatchScoreDetails.TeamScoreLocal.Scores">{{MatchDetails.MatchScoreDetails.TeamScoreLocal.Scores[0].Scores}} ({{MatchDetails.MatchScoreDetails.TeamScoreLocal.Scores[0].Overs}})</li>
                                                     
                                                 </ul>
 
                                                 <ul class="row">
                                                     <li class="col-7 text-left">{{MatchDetails.MatchScoreDetails.TeamScoreVisitor.Name}}</li>
-                                                    <li class="col-5 numeric " ng-if=" MatchDetails.MatchScoreDetails.TeamScoreVisitor.Scores">{{MatchDetails.MatchScoreDetails.TeamScoreVisitor.Scores}} ({{MatchDetails.MatchScoreDetails.TeamScoreVisitor.Overs}})</li>
+                                                    <li class="col-5 numeric " ng-if=" MatchDetails.MatchScoreDetails.TeamScoreVisitor.Scores">{{MatchDetails.MatchScoreDetails.TeamScoreVisitor.Scores[0].Scores}} ({{MatchDetails.MatchScoreDetails.TeamScoreVisitor.Scores[0].Overs}})</li>
                                                 </ul>
                                                 
                                             </div>

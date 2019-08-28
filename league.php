@@ -49,15 +49,16 @@
                                                     <li class="col-md-7">Match status</li>
                                                     <li class="col-md-5"><span ng-class="{Pending:'text - danger', Live:'text - success',Cancelled:'text - danger',Completed:'text - success'}[Contest.Status]">{{Contest.Status}}</span></li>
                                                 </ul>
+                                                
                                                 <ul class="row">
-                                                    <li class="col-md-7">{{Contest.MatchScoreDetails.TeamScoreLocal.Name}}</li>
-                                                    <li class="col-md-5 numeric " ng-if="Contest.MatchScoreDetails.TeamScoreLocal.Scores">{{Contest.MatchScoreDetails.TeamScoreLocal.Scores}} ({{Contest.MatchScoreDetails.TeamScoreLocal.Overs}})</li>
-
+                                                    <li class="col-7 text-left">{{Contest.MatchScoreDetails.TeamScoreLocal.Name}}</li>
+                                                    <li class="col-5 numeric" ng-if="Contest.MatchScoreDetails.TeamScoreLocal.Scores">{{Contest.MatchScoreDetails.TeamScoreLocal.Scores[0].Scores}} ({{Contest.MatchScoreDetails.TeamScoreLocal.Scores[0].Overs}})</li>
+                                                    
                                                 </ul>
 
                                                 <ul class="row">
-                                                    <li class="col-md-7">{{Contest.MatchScoreDetails.TeamScoreVisitor.Name}}</li>
-                                                    <li class="col-md-5 numeric" ng-if=" Contest.MatchScoreDetails.TeamScoreVisitor.Scores">{{Contest.MatchScoreDetails.TeamScoreVisitor.Scores}} ({{Contest.MatchScoreDetails.TeamScoreVisitor.Overs}})</li>
+                                                    <li class="col-7 text-left">{{Contest.MatchScoreDetails.TeamScoreVisitor.Name}}</li>
+                                                    <li class="col-5 numeric " ng-if=" Contest.MatchScoreDetails.TeamScoreVisitor.Scores">{{Contest.MatchScoreDetails.TeamScoreVisitor.Scores[0].Scores}} ({{Contest.MatchScoreDetails.TeamScoreVisitor.Scores[0].Overs}})</li>
                                                 </ul>
 
                                             </div>
