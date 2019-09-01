@@ -853,6 +853,9 @@ class Utility_model extends CI_Model
 
         foreach ($MatchesData['Data']['Records'] as $Value) {
 
+            /* Manage All Player Id's */
+            $PlayersData = array();
+
             /* Get Both Teams */
             $TeamsArr = array($Value['TeamIDLiveLocal'] => $Value['SeriesIDLive'] . "_" . $Value['TeamIDLiveLocal'], $Value['TeamIDLiveVisitor'] => $Value['SeriesIDLive'] . "_" . $Value['TeamIDLiveVisitor']);
             foreach ($TeamsArr as $TeamKey => $TeamValue) {
@@ -937,6 +940,7 @@ class Utility_model extends CI_Model
                         );
                         $this->fantasydb->sports_players->insertOne($PlayersDataMongo);
                     }
+                    $PlayersData[$PlayerIDLive] = $PlayerID;
 
                     /* To check If match player is already exist */
                     if (!$IsNewTeam && !empty($MatchIds)) {
