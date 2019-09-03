@@ -783,7 +783,9 @@ class Users_model extends CI_Model
      */
     function deleteSession($SessionKey)
     {
-        $this->db->limit(1);
+        if (!MULTISESSION) {
+            $this->db->limit(1);
+        }
         $this->db->delete('tbl_users_session', array('SessionKey' => $SessionKey));
         return TRUE;
     }
