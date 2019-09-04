@@ -116,6 +116,9 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
 
                                             }
                                             $scope.UserTeamsTotalCount = data.Data.TotalRecords;
+                                            setTimeout(function () {
+                                                $('.selectpickerJoinLeague').selectpicker('refresh');
+                                            }, 1000);
                                         } else {
                                             $scope.data.noRecords = true;
                                         }
