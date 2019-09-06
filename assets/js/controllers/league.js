@@ -688,7 +688,7 @@ app.controller('leagueController', ['$scope', '$rootScope', '$location', 'enviro
             }
 
             $scope.getTeamName = function (str) {
-                return str.substr(6, 1);
+                return str.substr(5, 1);
             }
 
             /**
