@@ -1262,7 +1262,7 @@ class Sports_model extends CI_Model
                     $this->IsStrikeRate = $this->IsEconomyRate = $this->IsBattingState = $this->IsBowlingState = $PlayerTotalPoints = "0";
                     $this->defaultStrikeRatePoints = $this->defaultEconomyRatePoints = $this->defaultBattingPoints = $this->defaultBowlingPoints = $PointsData = array();
                     $PointsData['SB'] = array('PointsTypeGUID' => 'StatringXI', 'PointsTypeShortDescription' => 'SB', 'DefinedPoints' => $StatringXIPoints, 'ScoreValue' => "1", 'CalculatedPoints' => $StatringXIPoints);
-                    if(!isset($AllPalyers[$PlayerValue['PlayerIDLive']])){
+                    if(!isset($PlayerValue['PlayerIDLive']) || !isset($AllPalyers[$PlayerValue['PlayerIDLive']])){
                         continue;
                     }
                     $ScoreData = $AllPalyers[$PlayerValue['PlayerIDLive']];
