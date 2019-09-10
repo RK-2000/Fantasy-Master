@@ -32,21 +32,6 @@
                                     </div>
                                 </div>
                             </div>
-                        
-                            <!-- <div class="col-sm-4">  
-                                <div class="form-group">
-                                    <label class="filter-col" for="ParentCategory">Game Type</label>
-                                    <select id="ContestFormat" ng-model="GameType" name="GameType" class="form-control selectpicker" ng-change="getTime(GameType)">
-                                        <option value="">Please Select</option>
-                                        <option value="Advance">Advance Play</option>
-                                        <option value="Safe">Safe Play</option>
-                                    </select>
-                                    <small style="color: #fff;">League is locked {{GameTimeLive}} minutes before the actual Match time.</small>
-                                    <div style="color:red" ng-show="submitted && createContestForm.GameType.$error.required" class="form-error">
-                                        *Game type is required.
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="col-md-6 col-lg-4">  
                                 <div class="form-group">
                                     <label class="filter-col" for="ParentCategory">Contest Format</label>
@@ -71,10 +56,10 @@
                                 </div>
                             </div>
                             <input type="hidden" name="ContestSize" ng-model="ContestSize" value="2" ng-if="ContestFormat=='Head to Head'" ng-focus="ContestSize=2">
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4" ng-show="ContestFormat!='Head to Head'">
                                 <div class="form-group">
                                     <label>Join contest with multiple teams</label>
-                                    <select class="form-control selectpicker" name="EntryType" ng-model="EntryType" ng-required="true">
+                                    <select class="form-control selectpicker" name="EntryType" ng-model="EntryType">
                                         <option value="">Please Select</option>
                                         <option value="Single">Single</option>
                                         <option value="Multiple">Multiple</option>
@@ -94,7 +79,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-12" ng-show="ContestFormat!='Head to Head'">
                                 <div class="form-group ">
                                     <div class="customCheckbox">
                                         <input type="checkbox" ng-model="winnings" ng-click="customizeWin()" >

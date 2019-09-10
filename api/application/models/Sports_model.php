@@ -1421,15 +1421,14 @@ class Sports_model extends CI_Model
 
                     $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-                    // $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'], 'PlayerID' => $PlayersIdsArr[$UserTeamValue['PlayerGUID']], 'PlayerName' => $UserTeamValue['PlayerName'], 'PlayerPic' => $UserTeamValue['PlayerPic'], 'PlayerPosition' => $UserTeamValue['PlayerPosition'], 'PlayerRole' => $UserTeamValue['PlayerRole'], 'TeamGUID' => $UserTeamValue['TeamGUID'], 'Points' => (float)$Points);
-                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'], 'PlayerName' => $UserTeamValue['PlayerName'], 'PlayerPic' => $UserTeamValue['PlayerPic'], 'PlayerPosition' => $UserTeamValue['PlayerPosition'], 'PlayerRole' => $UserTeamValue['PlayerRole'], 'TeamGUID' => $UserTeamValue['TeamGUID'], 'Points' => (float)$Points);
+                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'], 'PlayerName' => $UserTeamValue['PlayerName'], 'PlayerPic' => $UserTeamValue['PlayerPic'], 'PlayerPosition' => $UserTeamValue['PlayerPosition'], 'PlayerRole' => $UserTeamValue['PlayerRole'], 'TeamGUID' => $UserTeamValue['TeamGUID'], 'Points' => (float) round($Points,2));
                 }
 
                 /* Add/Edit Joined Contest Data (MongoDB) */
                 $ContestCollection = $this->fantasydb->{'Contest_' . $Value['ContestID']};
                 $ContestCollection->updateOne(
                     ['_id'    => (int)$Value['ContestID'] . $Value['UserID'] . $Value['UserTeamID']],
-                    ['$set'   => ['ContestID' => $Value['ContestID'], 'UserID' =>  $Value['UserID'], 'UserTeamID' => $Value['UserTeamID'], 'UserGUID' => $Value['UserGUID'], 'UserTeamName' => $Value['UserTeamName'], 'Username' => $Value['Username'], 'FullName' => $Value['FullName'], 'ProfilePic' => $Value['ProfilePic'], 'TotalPoints' => $UserTotalPoints, 'UserTeamPlayers' => $UserPlayersArr, 'IsWinningAssigned' => 'No']],
+                    ['$set'   => ['ContestID' => $Value['ContestID'], 'UserID' =>  $Value['UserID'], 'UserTeamID' => $Value['UserTeamID'], 'UserGUID' => $Value['UserGUID'], 'UserTeamName' => $Value['UserTeamName'], 'Username' => $Value['Username'], 'FullName' => $Value['FullName'], 'ProfilePic' => $Value['ProfilePic'], 'TotalPoints' => (float) round($UserTotalPoints,2), 'UserTeamPlayers' => $UserPlayersArr, 'IsWinningAssigned' => 'No']],
                     ['upsert' => true]
                 );
             }

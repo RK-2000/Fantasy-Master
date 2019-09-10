@@ -231,7 +231,7 @@ class PredraftContest_model extends CI_Model {
         if ($DraftData->num_rows() > 0) {
 
             /* Get next 10 matches */ 
-            $MatchesData = $this->db->query('SELECT M.SeriesID,M.MatchID FROM tbl_entity E, sports_matches M WHERE E.EntityID = M.MatchID AND E.StatusID = 1 ORDER BY M.MatchStartDateTime DESC LIMIT 10');
+            $MatchesData = $this->db->query('SELECT M.SeriesID,M.MatchID FROM tbl_entity E, sports_matches M WHERE E.EntityID = M.MatchID AND E.StatusID = 1 ORDER BY M.MatchStartDateTime ASC LIMIT 50');
             if($MatchesData->num_rows() == 0){
                 return FALSE;
             }
