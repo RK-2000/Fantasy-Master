@@ -545,9 +545,9 @@ class Sports_model extends CI_Model
                 'LastUpdateDiff' => 'IF(P.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", P.LastUpdatedOn))) LastUpdateDiff',
                 'MatchTypeID' => 'SSM.MatchTypeID',
                 'MatchType' => 'SSM.MatchTypeName MatchType',
+                'PlayerSelectedPercent' => 'TP.SelectionPercent',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
-                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID']) ? $Where['SessionUserID'] : $Where['UserID']) . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ') > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = P.PlayerID AND UT.MatchID = ' . $Where['MatchID'] . ')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ')),2),0)) PlayerSelectedPercent'
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID']) ? $Where['SessionUserID'] : $Where['UserID']) . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -558,8 +558,8 @@ class Sports_model extends CI_Model
         $this->db->select('P.PlayerGUID,P.PlayerName');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_players P');
-        if (array_keys_exist($Params, array('TeamGUID', 'TeamName', 'TeamNameShort', 'TeamFlag', 'PlayerRole', 'IsPlaying', 'TotalPoints', 'PointsData', 'SeriesID', 'MatchID'))) {
+        $this->db->from('sports_players P');
+        if (array_keys_exist($Params, array('TeamGUID', 'TeamName', 'TeamNameShort', 'TeamFlag', 'PlayerRole', 'IsPlaying', 'TotalPoints', 'PointsData', 'SeriesID', 'MatchID','PlayerSelectedPercent'))) {
             $this->db->from('sports_teams T,sports_matches M, sports_team_players TP,sports_set_match_types SSM');
             $this->db->where("P.PlayerID", "TP.PlayerID", FALSE);
             $this->db->where("TP.TeamID", "T.TeamID", FALSE);
@@ -570,7 +570,11 @@ class Sports_model extends CI_Model
             $this->db->from('sports_series S');
             $this->db->where("S.SeriesID", "TP.SeriesID", FALSE);
         }
-        $this->db->where("P.PlayerID", "E.EntityID", FALSE);
+        if (!empty($Where['StatusID'])) {
+            $this->db->from('tbl_entity E');
+            $this->db->where("P.PlayerID", "E.EntityID", FALSE);
+            $this->db->where("E.StatusID", $Where['StatusID']);
+        }
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();
@@ -604,9 +608,6 @@ class Sports_model extends CI_Model
         }
         if (!empty($Where['IsAdminUpdate'])) {
             $this->db->where("TP.IsAdminUpdate", $Where['IsAdminUpdate']); // Salary (Match Wise)
-        }
-        if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
         }
         if (!empty($Where['CronFilter']) && $Where['CronFilter'] == 'OneDayDiff') {
             $this->db->having("LastUpdateDiff", 0);
@@ -795,8 +796,8 @@ class Sports_model extends CI_Model
                 'TeamFlagLocal' => 'IF(TL.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag)) TeamFlagLocal',
                 'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'TotalPoints' => 'TP.TotalPoints',
-                'TotalTeams' => '(SELECT COUNT(UserTeamName) FROM `sports_users_teams` WHERE `MatchID` = M.MatchID) TotalTeams',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID) > 0,ROUND((((SELECT COUNT(UTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players UTP WHERE UT.UserTeamID = UTP.UserTeamID AND UTP.PlayerID = TP.PlayerID AND UT.MatchID = M.MatchID)*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID = M.MatchID)),2),0)) PlayerSelectedPercent'
+                'PlayerSelectedPercent' => 'TP.SelectionPercent',
+                'TotalTeams' => '(SELECT COUNT(UserTeamName) FROM `sports_users_teams` WHERE `MatchID` = M.MatchID) TotalTeams'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
