@@ -545,7 +545,7 @@ class Sports_model extends CI_Model
                 'LastUpdateDiff' => 'IF(P.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", P.LastUpdatedOn))) LastUpdateDiff',
                 'MatchTypeID' => 'SSM.MatchTypeID',
                 'MatchType' => 'SSM.MatchTypeName MatchType',
-                'PlayerSelectedPercent' => 'TP.SelectionPercent',
+                'PlayerSelectedPercent' => 'TP.SelectionPercent PlayerSelectedPercent',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
                 'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players UTP WHERE JC.UserTeamID = UTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID']) ? $Where['SessionUserID'] : $Where['UserID']) . ' AND UTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer'
             );
@@ -796,7 +796,7 @@ class Sports_model extends CI_Model
                 'TeamFlagLocal' => 'IF(TL.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TL.TeamFlag)) TeamFlagLocal',
                 'TeamFlagVisitor' => 'IF(TV.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",TV.TeamFlag)) TeamFlagVisitor',
                 'TotalPoints' => 'TP.TotalPoints',
-                'PlayerSelectedPercent' => 'TP.SelectionPercent',
+                'PlayerSelectedPercent' => 'TP.SelectionPercent PlayerSelectedPercent',
                 'TotalTeams' => '(SELECT COUNT(UserTeamName) FROM `sports_users_teams` WHERE `MatchID` = M.MatchID) TotalTeams'
             );
             if ($Params) {

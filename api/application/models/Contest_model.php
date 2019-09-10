@@ -716,7 +716,7 @@ class Contest_model extends CI_Model
                 'PlayerRole' => 'TP.PlayerRole',
                 'PointsData' => 'TP.PointsData',
                 'TeamGUID' => 'T.TeamGUID',
-                'PlayerSelectedPercent' => 'TP.SelectionPercent',
+                'PlayerSelectedPercent' => 'TP.SelectionPercent PlayerSelectedPercent',
                 'MatchType' => 'SM.MatchTypeName as MatchType',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
                 'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'] . ' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer'

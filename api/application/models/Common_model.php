@@ -19,8 +19,8 @@ class Common_model extends CI_Model
 		$this->fantasydb->log_api->insertOne(array(
 			'URL' 		=> current_url(),
 			'RawData'	=> @file_get_contents("php://input"),
-			'DataJ'		=> json_encode(array_merge(array("API" => $this->classFirstSegment = $this->uri->segment(2)), $this->Post, $_FILES)),
-			'Response'	=> json_encode($Response)
+			'DataJ'		=> array_merge(array("API" => $this->classFirstSegment = $this->uri->segment(2)), $this->Post, $_FILES),
+			'Response'	=> $Response
 		));
 	}
 
@@ -32,7 +32,7 @@ class Common_model extends CI_Model
         if (!CRON_SAVE_LOG) {
             return true;
         }
-        $this->fantasydb->log_cron_api->insertOne(array('CronID' => $CronID, 'Response' => @json_encode($Response, JSON_UNESCAPED_UNICODE)));
+        $this->fantasydb->log_cron_api->insertOne(array('CronID' => $CronID, 'Response' => $Response));
     }
 
     /*
