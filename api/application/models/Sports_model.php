@@ -1172,7 +1172,7 @@ class Sports_model extends CI_Model
     {
         /* Get Live Matches Data */
         $LiveMatches = $this->getMatches('MatchID,MatchType,MatchScoreDetails,StatusID,IsPlayerPointsUpdated', array('Filter' => 'Yesterday', 'StatusID' => array(2, 5, 10), 'IsPlayerPointsUpdated' => 'No', 'OrderBy' => 'M.MatchStartDateTime', 'Sequence' => 'DESC', 'MatchID' => $MatchID, 'SportsType' => 'Cricket'), true, 1, 10);
-        if (!empty($LiveMatches)) {
+        if (!empty($LiveMatches['Data']['Records'])) { 
 
             /* Get Points Data */
             $PointsDataArr = $this->cache->memcached->get('CricketPoints');

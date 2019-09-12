@@ -551,7 +551,7 @@ class Contest_model extends CI_Model
         if($TotalTeams > 0){
 
             /* Get Match Players */
-            $MatchPlayers = $this->db->query('SELECT P.`PlayerID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $Value['MatchID'] . ' LIMIT 100');
+            $MatchPlayers = $this->db->query('SELECT P.`PlayerID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100');
             if ($MatchPlayers->num_rows() > 0) {
                 foreach(array_column($MatchPlayers->result_array(), 'PlayerID') as $PlayerID){
 

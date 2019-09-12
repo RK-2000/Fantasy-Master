@@ -733,6 +733,12 @@ class Utility_model extends CI_Model
         } else {
             $MatchData = $this->Sports_model->getMatches('MatchStartDateTime,MatchIDLive,MatchID,MatchType,SeriesIDLive,SeriesID,TeamIDLiveLocal,TeamIDLiveVisitor,LastUpdateDiff', array('StatusID' => array(1), 'CronFilter' => 'OneDayDiff', "SportsType" => "Cricket"), true, 1, 10);
         }
+        if(empty($MatchData['Data']['Records'])) { 
+            $this->db->where('CronID', $CronID);
+            $this->db->limit(1);
+            $this->db->update('log_cron', array('CronStatus' => 'Exit'));
+            exit;
+        }
         /* Player Roles */
         $PlayerRolesArr = array('bowl' => 'Bowler', 'bat' => 'Batsman', 'wkbat' => 'WicketKeeper', 'wk' => 'WicketKeeper', 'all' => 'AllRounder');
         foreach ($MatchData['Data']['Records'] as $Value) {
@@ -844,7 +850,7 @@ class Utility_model extends CI_Model
     {
         /* Get matches data */
         $MatchesData = $this->Sports_model->getMatches('MatchStartDateTime,MatchIDLive,MatchID,MatchType,SeriesIDLive,SeriesID,TeamIDLiveLocal,TeamIDLiveVisitor,LastUpdateDiff', array('StatusID' => array(1, 2),'SportsType' => 'Cricket'), true, 1, 15);
-        if (!$MatchesData) {
+        if (empty($MatchesData['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit'));
@@ -1005,7 +1011,7 @@ class Utility_model extends CI_Model
     {
         /* To get All Player Stats Data */
         $MatchData = $this->Sports_model->getMatches('MatchID,MatchIDLive,SeriesIDLive,SeriesID', array('StatusID' => 5, 'PlayerStatsUpdate' => 'No', 'MatchCompleteDateTime' => date('Y-m-d H:i:s'),'SportsType' => 'Cricket'), true, 0);
-        if (!$MatchData) {
+        if (empty($MatchData['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit'));
@@ -1048,7 +1054,7 @@ class Utility_model extends CI_Model
     {
         /* To get All Player Stats Data */
         $MatchData = $this->Sports_model->getMatches('MatchID,MatchIDLive,SeriesIDLive,SeriesID,MatchStartDateTime', array('StatusID' => 5, 'PlayerStatsUpdate' => 'No', 'MatchCompleteDateTime' => date('Y-m-d H:i:s'),'SportsType' => 'Cricket'), true, 0);
-        if (!$MatchData) {
+        if (empty($MatchData['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit'));
@@ -1211,7 +1217,7 @@ class Utility_model extends CI_Model
     {
         /* Get Live Matches Data */
         $LiveMatches = $this->Sports_model->getMatches('MatchIDLive,MatchID,StatusID', array('Filter' => 'Yesterday', 'StatusID' => array(1, 2, 10),'SportsType' => 'Cricket'), true, 1, 20);
-        if (!$LiveMatches) {
+        if (empty($LiveMatches['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit'));
@@ -1462,7 +1468,7 @@ class Utility_model extends CI_Model
     {
         /* Get Live Matches Data */
         $LiveMatches = $this->Sports_model->getMatches('MatchIDLive,MatchID,MatchStartDateTime,Status', array('Filter'=> 'Yesterday','StatusID' => array(1,2,10),'SportsType' => 'Cricket'), true, 1, 20);
-        if (!$LiveMatches) {
+        if (empty($LiveMatches['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
             $this->db->update('log_cron', array('CronStatus' => 'Exit', 'CronResponse' => $this->db->last_query()));

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 10, 2019 at 04:53 PM
+-- Generation Time: Sep 12, 2019 at 11:37 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
 
@@ -778,7 +778,7 @@ INSERT INTO `set_status` (`StatusID`, `StatusName`) VALUES
 (7, 'Discontinued'),
 (8, 'Abandoned'),
 (9, 'No Result, Not Submitted'),
-(10, 'Match Review');
+(10, 'Reviewing');
 
 -- --------------------------------------------------------
 
@@ -1877,7 +1877,10 @@ ALTER TABLE `sports_contest`
   ADD KEY `ContestType` (`ContestType`),
   ADD KEY `Privacy` (`Privacy`),
   ADD KEY `IsPaid` (`IsPaid`),
-  ADD KEY `sports_contest_ibfk_8` (`AuctionStatusID`);
+  ADD KEY `sports_contest_ibfk_8` (`AuctionStatusID`),
+  ADD KEY `LeagueType` (`LeagueType`),
+  ADD KEY `GameType` (`GameType`),
+  ADD KEY `ContestID` (`ContestID`,`LeagueType`,`MatchID`);
 
 --
 -- Indexes for table `sports_contest_join`
@@ -1888,17 +1891,7 @@ ALTER TABLE `sports_contest_join`
   ADD KEY `UserTeamID` (`UserTeamID`),
   ADD KEY `MatchID` (`MatchID`),
   ADD KEY `SeriesID` (`SeriesID`),
-  ADD KEY `ContestID_2` (`ContestID`,`UserTeamID`),
-  ADD KEY `ContestID_3` (`ContestID`),
-  ADD KEY `UserID_2` (`UserID`),
-  ADD KEY `MatchID_2` (`MatchID`),
-  ADD KEY `SeriesID_2` (`SeriesID`),
-  ADD KEY `UserTeamID_2` (`UserTeamID`),
-  ADD KEY `ContestID_4` (`ContestID`),
-  ADD KEY `UserID_3` (`UserID`),
-  ADD KEY `MatchID_3` (`MatchID`),
-  ADD KEY `SeriesID_3` (`SeriesID`),
-  ADD KEY `UserTeamID_3` (`UserTeamID`);
+  ADD KEY `ContestID_2` (`ContestID`,`UserTeamID`);
 
 --
 -- Indexes for table `sports_matches`
