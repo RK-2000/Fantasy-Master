@@ -920,7 +920,7 @@ class Users_model extends CI_Model
 
     function getUserWalletOpeningBalance($UserID, $Field)
     {
-        $Query = $this->db->query('SELECT IF(' . $Field . ' IS NULL,0,' . $Field . ') Amount FROM `tbl_users_wallet` WHERE StatusID = 5 AND `UserID` = ' . $UserID . ' AND WalletID > 589482 ORDER BY `WalletID` DESC LIMIT 1');
+        $Query = $this->db->query('SELECT IF(' . $Field . ' IS NULL,0,' . $Field . ') Amount FROM `tbl_users_wallet` WHERE StatusID = 5 AND `UserID` = ' . $UserID . ' ORDER BY `WalletID` DESC LIMIT 1');
         if ($Query->num_rows() > 0) {
             return $Query->row()->Amount;
         } else {
