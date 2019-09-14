@@ -805,8 +805,15 @@ class Contest extends API_Controller_Secure
             }
         }
 
+        /* Sort Player Array  */
+        $TempArr =array();
+        foreach ($this->Post['UserTeamPlayers'] as $Player) {
+          $TempArr[] = $Player['PlayerID'];
+        }
+        array_multisort($TempArr,SORT_ASC,$this->Post['UserTeamPlayers']);
+
         /* To check same players teams */
-        $AllPlayersIds  = array_column($this->Post['UserTeamPlayers'], 'PlayerID'); // Sort Players ID In Ascending Order
+        $AllPlayersIds  = array_column($this->Post['UserTeamPlayers'], 'PlayerID'); 
         $AllPlayerRoles = array_column($this->Post['UserTeamPlayers'], 'PlayerPosition');
         $PlayerString   = '';
         for ($I = 0; $I < 11; $I++) {
