@@ -34,7 +34,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey='+SessionKey+'&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize+'&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameVisitor,Status,CustomizeWinning,ContestType,MatchStartDateTime,TotalJoined&Privacy=All&OrderByToday=Yes&' + $('#filterForm').serialize() + '&' + $('#filterForm1').serialize();
+        var data = 'SessionKey='+SessionKey+'&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize+'&Status=Completed&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameVisitor,Status,CustomizeWinning,ContestType,MatchStartDateTime,TotalJoined&Privacy=All&OrderByToday=Yes&' + $('#filterForm').serialize() + '&' + $('#filterForm1').serialize();
         $http.post(API_URL+'contest/getContests', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -110,7 +110,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/joinedContestWinning_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime', contentType).then(function (response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime,CreatedType', contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */

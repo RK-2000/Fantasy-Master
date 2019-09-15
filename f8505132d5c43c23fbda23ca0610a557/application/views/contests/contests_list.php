@@ -30,6 +30,14 @@
             <!-- table heading -->
             <thead>
                 <tr>
+                    <th>
+                        <div class="checkbox" title="Select All">
+                            <input id="checkboxAll" type="checkbox" id="SelectAll"
+                            name="SelectAll" value="Yes">
+                            <label for="checkboxAll">
+                            </label>
+                        </div>
+                    </th>
                     <th>Contest Name</th>
                     <th style="width: 100px;">Type</th>
                     <th style="width: 70px;">Is Paid?</th>
@@ -50,11 +58,16 @@
             <!-- table body -->
             <tbody id="tabledivbody">
 
-
-
                 <tr scope="row" ng-repeat="(key, row) in data.dataList"
                     id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
-
+                    <td>
+                        <div class="checkbox" ng-if="row.Status == 'Pending'">
+                            <input id="checkbox{{key}}" class="SelectContest" type="checkbox" id="Contest{{key}}"
+                             value="Yes">
+                            <label for="checkbox{{key}}">
+                            </label>
+                        </div>
+                    </td>
                     <td>
                         <div class="content float-left"><strong><a href="javascript:void(0)"
                                     ng-click="loadContestJoinedUser(key,row.ContestGUID)">{{row.ContestName}}</a></strong>
@@ -111,10 +124,10 @@
                                     ng-click="loadContestJoinedUser(key,row.ContestGUID)">Details</a>
                                 <a class="dropdown-item" href=""
                                     ng-click="loadFormEdit(key, row.ContestGUID,row.TotalJoined)"
-                                    ng-if="row.Status=='Pending'">Edit</a>
+                                    ng-if="row.Status=='Pending' && row.TotalJoined == 0">Edit</a>
                                 <a class="dropdown-item" href=""
                                     ng-click="deleteContest(key, row.ContestGUID,row.TotalJoined)"
-                                    ng-if="row.Status=='Pending'">Delete</a>
+                                    ng-if="row.Status=='Pending' && row.TotalJoined == 0">Delete</a>
                                 <a class="dropdown-item" href="" ng-click="loadFormStatus(key, row.ContestGUID)"
                                     ng-if="row.Status=='Pending'">Status</a>
                                 <a class="dropdown-item" target="_blank"

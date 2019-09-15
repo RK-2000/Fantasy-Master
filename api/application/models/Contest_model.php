@@ -199,6 +199,7 @@ class Contest_model extends CI_Model
                 'UserWinningAmount' => 'JC.UserWinningAmount',
                 'TotalPoints' => 'JC.TotalPoints',
                 'UserRank' => 'JC.UserRank',
+                'CreatedType' => 'IF(C.PredraftContestID IS NULL, "Manually", "PreDraft") CreatedType',
                 'TotalAmountReceived' => '(SELECT IFNULL(SUM(SC.EntryFee),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalAmountReceived',
                 'TotalWinningAmount'  => '(SELECT IFNULL(SUM(SJC.UserWinningAmount),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalWinningAmount',
                 'UserTeamDetails' => "( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'UserTeamGUID', SUT.UserTeamGUID, 'UserTeamName', SUT.UserTeamName,'UserTeamType',SUT.UserTeamType,'TotalPoints', SJC.TotalPoints) ), ']' ) FROM sports_contest_join SJC, sports_users_teams SUT WHERE SJC.UserTeamID = SUT.UserTeamID AND SJC.ContestID = C.ContestID AND SJC.UserID = " . $Where['SessionUserID'] . " ORDER BY SUT.UserTeamID DESC)  UserTeamDetails"
