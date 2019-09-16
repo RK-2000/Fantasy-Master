@@ -1659,6 +1659,7 @@ class Sports_model extends CI_Model
             return FALSE;
         }
 
+        $ContestIds = array();
         foreach ($ContestsUsers->result_array() as $Value) {
             if ($CancelType == "Cancelled") {
 
@@ -1667,7 +1668,7 @@ class Sports_model extends CI_Model
                 }
 
                 /* To Check Unfilled Contest */
-                if(($Value['UnfilledWinningPercent'] == 'GuranteedPool' || $Value['UnfilledWinningPercent'] == 'Yes') && $Value['ContestSize'] != $Value['TotalJoined']){
+                if(($Value['UnfilledWinningPercent'] == 'Yes') && $Value['ContestSize'] != $Value['TotalJoined']){
                     if($Value['TotalJoined'] == 0){
     
                         /* Update Contest Status */
@@ -1710,10 +1711,13 @@ class Sports_model extends CI_Model
                     continue;
                 }
             }
+            $ContestIds[] = $Value['ContestID'];
+        }
 
-            /* Update Contest Status */
-            $this->db->where('EntityID', $Value['ContestID']);
-            $this->db->limit(1);
+        /* Update Contest Status */
+        if(!empty($ContestIds)){
+            $this->db->where_in('EntityID', $ContestIds);
+            $this->db->limit(count($ContestIds));
             $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
         }
     }
