@@ -66,12 +66,12 @@
 				</div>
 				<div class="col-md-6" ng-if="contestData.IsPaid == 'Yes'">
 					<div class="form-group">
-						<label>Entry Fee : {{data.DEFAULT_CURRENCY}} {{contestData.EntryFee}}</label>
+						<label>Entry Fee : {{data.DEFAULT_CURRENCY}}{{contestData.EntryFee}}</label>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label>Admin Percent : {{!contestData.AdminPercent ? 0 : contestData.AdminPercent}} %</label>
+						<label>Admin Percent : {{!contestData.AdminPercent ? 0 : contestData.AdminPercent}}%</label>
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -96,7 +96,7 @@
 				</div>
 				<div class="col-md-6" ng-if="contestData.WinningAmount > 0">
 					<div class="form-group">
-						<label>Winning Amount : {{data.DEFAULT_CURRENCY}} {{contestData.WinningAmount}}</label>
+						<label>Winning Amount : {{data.DEFAULT_CURRENCY}}{{contestData.WinningAmount}}</label>
 					</div>
 				</div>
 				<div class="col-md-6" ng-if="contestData.ContestFormat == 'League'">
@@ -106,7 +106,7 @@
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label>Cash Bonus Contribution : {{contestData.CashBonusContribution}} %</label>
+						<label>Cash Bonus Contribution : {{contestData.CashBonusContribution}}%</label>
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -116,22 +116,27 @@
 				</div>
 				<div class="col-md-6" ng-if="contestData.IsPaid == 'Yes'">
 					<div class="form-group">
-						<label>Total Amount Received : {{data.DEFAULT_CURRENCY}} {{contestData.TotalAmountReceived}}</label>
+						<label>Total Amount Received : {{data.DEFAULT_CURRENCY}}{{contestData.TotalAmountReceived}}</label>
 					</div>
 				</div>
 				<div class="col-md-6" ng-if="contestData.WinningAmount > 0">
 					<div class="form-group">
-						<label>Total Winning Amount : {{data.DEFAULT_CURRENCY}} {{contestData.TotalWinningAmount}}</label>
+						<label>Total Winning Amount : {{data.DEFAULT_CURRENCY}}{{contestData.TotalWinningAmount}}</label>
 					</div>
 				</div>
-				<div class="col-md-6" ng-if="contestData.CustomizeWinning.length">
+				<div class="col-md-6">
 					<div class="form-group">
-						<label >Winning Breakout</label>
+						<label>Created Type : {{contestData.CreatedType}}</label>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
 						<label>Status : <span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[contestData.Status]">{{contestData.Status}}</span></label>
+					</div>
+				</div>
+				<div class="col-md-12" ng-if="contestData.CustomizeWinning.length">
+					<div class="form-group">
+						<label >Winning Breakout</label>
 					</div>
 				</div>
 				<div class="col-md-12" ng-if="contestData.CustomizeWinning.length">
@@ -148,8 +153,8 @@
 							<tr ng-repeat="breakouts in contestData.CustomizeWinning">
 								<td>{{breakouts.From}}</td>
 								<td>{{breakouts.To}}</td>
-								<td>{{breakouts.Percent}} %</td>
-								<td>{{data.DEFAULT_CURRENCY}} {{breakouts.WinningAmount}}</td>
+								<td>{{breakouts.Percent}}%</td>
+								<td>{{data.DEFAULT_CURRENCY}}{{breakouts.WinningAmount}}</td>
 							</tr>
 						</tbody>
 					</table>

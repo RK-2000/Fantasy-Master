@@ -365,19 +365,17 @@ class Utilities extends API_Controller
         $SiteStatics = $this->db->query(
             'SELECT
                                             TotalUsers,
-                                            TotalContest,
                                             TodayContests,
                                             TotalDeposits,
                                             TotalWithdraw,
                                             TodayDeposit,
                                             NewUsers,
-                                            TotalDeposits - TotalWithdraw AS TotalEarning,
                                             PendingWithdraw
                                         FROM
                                             (SELECT
                                                 (
                                                     SELECT
-                                                        COUNT(UserID) AS `TotalUsers`
+                                                        COUNT(UserID)
                                                     FROM
                                                         `tbl_users`
                                                     WHERE
@@ -385,18 +383,12 @@ class Utilities extends API_Controller
                                                 ) AS TotalUsers,
                                                 (
                                                     SELECT
-                                                        COUNT(UserID) AS `NewUsers`
+                                                        COUNT(UserID)
                                                     FROM
                                                         `tbl_users` U, `tbl_entity` E
                                                     WHERE
                                                         U.`UserTypeID` = 2 AND U.UserID = E.EntityID AND DATE(E.EntryDate) = "' . date('Y-m-d') . '"
                                                 ) AS NewUsers,
-                                                (
-                                                    SELECT
-                                                        COUNT(ContestID) AS `TotalContest`
-                                                    FROM
-                                                        `sports_contest`
-                                                ) AS TotalContest,
                                                 (
                                                     SELECT
                                                         COUNT(ContestID)
@@ -407,7 +399,7 @@ class Utilities extends API_Controller
                                                 ) AS TodayContests,
                                                 (
                                                     SELECT
-                                                        IFNULL(SUM(`WalletAmount`),0) AS TotalDeposits
+                                                        IFNULL(SUM(`WalletAmount`),0)
                                                     FROM
                                                         `tbl_users_wallet`
                                                     WHERE
@@ -416,7 +408,7 @@ class Utilities extends API_Controller
                                                 ) AS TotalDeposits,
                                                 (
                                                     SELECT
-                                                        IFNULL(SUM(`WalletAmount`),0) AS TodayDeposit
+                                                        IFNULL(SUM(`WalletAmount`),0)
                                                     FROM
                                                         `tbl_users_wallet`
                                                     WHERE
@@ -425,7 +417,7 @@ class Utilities extends API_Controller
                                                 ) AS TodayDeposit,
                                                 (
                                                     SELECT
-                                                        IFNULL(SUM(`Amount`),0) AS TotalWithdraw
+                                                        IFNULL(SUM(`Amount`),0)
                                                     FROM
                                                         `tbl_users_withdrawal`
                                                     WHERE
@@ -433,7 +425,7 @@ class Utilities extends API_Controller
                                                 ) AS TotalWithdraw,
                                                 (
                                                     SELECT
-                                                        IFNULL(SUM(`Amount`),0) AS TotalWithdraw
+                                                        IFNULL(SUM(`Amount`),0)
                                                     FROM
                                                         `tbl_users_withdrawal`
                                                     WHERE
