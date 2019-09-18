@@ -122,7 +122,7 @@
                                         </div>
                                         <div class="payoutMsg">
 
-                                            <div class="payoutParBox" ng-if="Contest.IsPaid == 'Yes'">
+                                            <div class="payoutParBox" ng-if="Contest.WinningAmount > 0">
                                                 <a href="javascript:void(0)" ng-click="showWinningPayout(Contest.CustomizeWinning)"><p><i class="fa fa-star" aria-hidden="true"></i> View Payout Breakup</p></a>
                                             </div>
                                         </div>

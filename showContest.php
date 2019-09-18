@@ -105,7 +105,7 @@
                                         </div>
                                 </li>
                                 <li>
-                                    <div class="payoutParBox">
+                                    <div class="payoutParBox" ng-if="joinedContests.WinningAmount > 0">
                                         <a href="javascript:void(0)" ng-click="showWinningPayout(joinedContests.CustomizeWinning)"><cite class="fa fa-eye" aria-hidden="true"></cite></a>
                                     </div>
                                     <i>₹</i>{{joinedContests.WinningAmount}}
