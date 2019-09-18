@@ -1348,9 +1348,9 @@ class Sports_model extends CI_Model
                 }
 
                 /* Update Final player points before complete match */
-                $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPoints');
-                $this->getJoinedContestPlayerPointsCricket($CronID, array(2), $Value['MatchID']);
-                $this->Common_model->updateCronLogs($CronID);
+                // $CronID = $this->Common_model->insertCronLogs('getJoinedContestPlayerPoints');
+                // $this->getJoinedContestPlayerPointsCricket($CronID, array(2), $Value['MatchID']);
+                // $this->Common_model->updateCronLogs($CronID);
 
                 /* Update Match Player Points Status */
                 if ($Value['StatusID'] == 5) {
@@ -1372,6 +1372,21 @@ class Sports_model extends CI_Model
     */
     function getJoinedContestPlayerPointsCricket($CronID, $StatusArr = array(2), $MatchID = "")
     {
+        /* To check match id */
+        if(empty($MatchID)){
+            $MatchQuery = $this->db->query('SELECT MatchID FROM `sports_matches` M, tbl_entity E WHERE E.EntityID = M.MatchID AND E.StatusID IN (' . implode(',', $StatusArr) . ') ORDER BY M.PointsLastUpdatedOn ASC LIMIT 1');
+            if($MatchQuery->num_rows() == 0){
+                return FALSE;
+            }
+            $MatchID = $MatchQuery->row()->MatchID;
+        }
+        
+        /* Update Match PointsLastUpdatedOn */
+        $this->db->where('MatchID', $MatchID);
+        $this->db->limit(1);
+        $this->db->update('sports_matches', array('PointsLastUpdatedOn' => date('Y-m-d H:i:s')));
+        log_message('ERROR',"Points MatchID - ".$MatchID);
+        
         ini_set('memory_limit', '512M');
 
         /* Get Live Contests */

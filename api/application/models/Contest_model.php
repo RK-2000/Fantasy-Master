@@ -348,6 +348,7 @@ class Contest_model extends CI_Model
             $this->db->where_in("E.StatusID", ($Where['StatusID'] == 10) ? 2 : $Where['StatusID']);
         }
         if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes") {
+            $this->db->select('JC.UserTeamID UserTeamIDAsUse,JC.UserID UserIDAsUse,E.StatusID As StatusIDAsUse,C.IsWinningAssigned');
             $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID="' . @$Where['SessionUserID'] . '" LIMIT 1)');
         }
         if (!empty($Where['UserInvitationCode'])) {
@@ -396,6 +397,19 @@ class Contest_model extends CI_Model
                     }
                     if (in_array('UserTeamDetails', $Params)) {
                         $Records[$key]['UserTeamDetails'] = (!empty($Record['UserTeamDetails'])) ? json_decode($Record['UserTeamDetails'], true) : array();
+                    }
+                    if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes" && ($Record['StatusIDAsUse'] == 2 || ($Record['StatusIDAsUse'] == 5 && $Record['IsWinningAssigned'] == 'Yes'))) {
+
+                        /* Get Data From MongoDB */
+                        $ContestCollection  = $this->fantasydb->{'Contest_' . $Record['ContestIDAsUse']};
+                        $JoinedContestsUser = $ContestCollection->find(["_id" => $Record['ContestIDAsUse'].$Record['UserIDAsUse'].$Record['UserTeamIDAsUse']], ['projection' => ['TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1, 'TaxAmount' => 1]]);
+                        foreach ($JoinedContestsUser as $JC) {
+                            $Records[$key]['TotalPoints'] = $JC['TotalPoints'];
+                            $Records[$key]['UserWinningAmount'] = $JC['UserWinningAmount'];
+                            $Records[$key]['UserRank'] = $JC['UserRank'];
+                            $Records[$key]['TaxAmount'] = $JC['TaxAmount'];
+                        }
+                        unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['UserIDAsUse'],$Records[$key]['StatusIDAsUse'],$Records[$key]['IsWinningAssigned']);
                     }
                     unset($Records[$key]['ContestIDAsUse']);
                 }
