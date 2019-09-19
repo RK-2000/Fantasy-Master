@@ -30,14 +30,14 @@
             <!-- table heading -->
             <thead>
                 <tr>
-                    <th>
+                    <!-- <th>
                         <div class="checkbox" title="Select All">
                             <input id="checkboxAll" type="checkbox" id="SelectAll"
                             name="SelectAll" value="Yes">
                             <label for="checkboxAll">
                             </label>
                         </div>
-                    </th>
+                    </th> -->
                     <th>Contest Name</th>
                     <th style="width: 100px;">Type</th>
                     <th style="width: 70px;">Is Paid?</th>
@@ -60,14 +60,14 @@
 
                 <tr scope="row" ng-repeat="(key, row) in data.dataList"
                     id="sectionsid_{{row.MenuOrder}}.{{row.CategoryID}}">
-                    <td>
+                    <!-- <td>
                         <div class="checkbox" ng-if="row.Status == 'Pending'">
                             <input id="checkbox{{key}}" class="SelectContest" type="checkbox" id="Contest{{key}}"
                              value="Yes">
                             <label for="checkbox{{key}}">
                             </label>
                         </div>
-                    </td>
+                    </td> -->
                     <td>
                         <div class="content float-left"><strong><a href="javascript:void(0)"
                                     ng-click="loadContestJoinedUser(key,row.ContestGUID)">{{row.ContestName}}</a></strong>
