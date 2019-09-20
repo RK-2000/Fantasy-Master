@@ -184,7 +184,7 @@ app.controller('PageController', function($scope, $http, $timeout) {
         $scope.data.pageLoading = true;
         $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params=FirstName,ProfilePic,Email,WalletAmount', contentType).then(function(response) {
             var response = response.data;
-            manageSession(response.ResponseCode);
+            manageSession(response.ResponseCode); 
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
                 $scope.formData = response.Data
