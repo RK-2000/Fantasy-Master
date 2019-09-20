@@ -4,7 +4,7 @@
 0 23 */2 * * wget -qO- http://128.199.166.109/api/utilities/getPlayerStatsLiveCricket
 */5 * * * * wget -qO- http://128.199.166.109/api/utilities/getMatchScoreLiveCricket
 */6 * * * * wget -qO- http://128.199.166.109/api/utilities/getPlayerPointsCricket
-*/6 * * * * wget -qO- http://128.199.166.109/api/utilities/getJoinedContestPlayerPoints
+*/6 * * * * wget -qO- http://128.199.166.109/api/utilities/getJoinedContestPlayerPointsCricket
 */15 * * * * wget -qO- http://128.199.166.109/api/utilities/autoCancelContest
 */15 * * * * wget -qO- http://128.199.166.109/api/utilities/setContestWinners
 */10 * * * * wget -qO- http://128.199.166.109/api/utilities/refundAmountCancelContest

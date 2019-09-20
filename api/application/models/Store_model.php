@@ -15,7 +15,7 @@ class Store_model extends CI_Model
 		/* Define section  */
 		$Return = array('Data' => array('Records' => array()));
 		/* Define variables - ends */
-		$this->db->select('C.CouponID CouponIDForUse');
+		$this->db->select('C.CouponID CouponIDForUse,IF(C.CouponBanner IS NULL,CONCAT("' . BASE_URL . '","uploads/Coupon/","default-coupon.png"), CONCAT("' . BASE_URL . '","uploads/Coupon/",C.CouponBanner)) CouponBanner');
 		$this->db->select($Field);
 		$this->db->select('
 		CASE E.StatusID
@@ -91,6 +91,7 @@ class Store_model extends CI_Model
 			"CouponID" 				=> 	$CouponID,
 			"CouponTitle" 			=>	@$Input['CouponTitle'],
 			"CouponDescription" 	=>	@$Input['CouponDescription'],
+			"CouponBanner" 	        =>	@$Input['CouponBanner'],
 			"ProductRegPrice" 		=>	@$Input['ProductRegPrice'],
 			"CouponCode" 			=>	@$Input['CouponCode'],
 			"CouponType" 			=>	@$Input['CouponType'],
@@ -117,6 +118,7 @@ class Store_model extends CI_Model
 		$UpdateArray = array_filter(array(
 			"CouponTitle" 			=>	@$Input['CouponTitle'],
 			"CouponDescription" 	=>	@$Input['CouponDescription'],
+			"CouponBanner" 	        =>	@$Input['CouponBanner'],
 			"ProductRegPrice" 		=>	@$Input['ProductRegPrice'],
 			"CouponCode" 			=>	@$Input['CouponCode'],
 			"CouponType" 			=>	@$Input['CouponType'],

@@ -47,7 +47,7 @@ class Contest_model extends CI_Model
                 "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
                 "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
                 "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-                "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
+                "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? ((@$Input['ContestFormat'] == 'League') ? @$Input['NoOfWinners'] : 1) : 0,
                 "EntryType" => @$Input['EntryType'],
                 "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
                 "CashBonusContribution" => @$Input['CashBonusContribution'],
@@ -88,7 +88,7 @@ class Contest_model extends CI_Model
             "UnfilledWinningPercent" => @$Input['UnfilledWinningPercent'],
             "ContestSize" => (@$Input['ContestFormat'] == 'Head to Head') ? 2 : @$Input['ContestSize'],
             "EntryFee" => (@$Input['IsPaid'] == 'Yes') ? @$Input['EntryFee'] : 0,
-            "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? @$Input['NoOfWinners'] : 0,
+            "NoOfWinners" => (@$Input['WinningAmount'] > 0) ? ((@$Input['ContestFormat'] == 'League') ? @$Input['NoOfWinners'] : 1) : 0,
             "EntryType" => @$Input['EntryType'],
             "UserJoinLimit" => (@$Input['EntryType'] == 'Multiple') ? (!empty($Input['UserJoinLimit']) ? $Input['UserJoinLimit'] : 6) : 1,
             "CashBonusContribution" => @$Input['CashBonusContribution'],
@@ -199,6 +199,7 @@ class Contest_model extends CI_Model
                 'UserWinningAmount' => 'JC.UserWinningAmount',
                 'TotalPoints' => 'JC.TotalPoints',
                 'UserRank' => 'JC.UserRank',
+                'CreatedType' => 'IF(C.PredraftContestID IS NULL, "Manually", "PreDraft") CreatedType',
                 'TotalAmountReceived' => '(SELECT IFNULL(SUM(SC.EntryFee),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalAmountReceived',
                 'TotalWinningAmount'  => '(SELECT IFNULL(SUM(SJC.UserWinningAmount),0) FROM sports_contest SC, sports_contest_join SJC WHERE SC.ContestID = SJC.ContestID AND SC.ContestID = C.ContestID) TotalWinningAmount',
                 'UserTeamDetails' => "( SELECT CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'UserTeamGUID', SUT.UserTeamGUID, 'UserTeamName', SUT.UserTeamName,'UserTeamType',SUT.UserTeamType,'TotalPoints', SJC.TotalPoints) ), ']' ) FROM sports_contest_join SJC, sports_users_teams SUT WHERE SJC.UserTeamID = SUT.UserTeamID AND SJC.ContestID = C.ContestID AND SJC.UserID = " . $Where['SessionUserID'] . " ORDER BY SUT.UserTeamID DESC)  UserTeamDetails"
@@ -347,6 +348,7 @@ class Contest_model extends CI_Model
             $this->db->where_in("E.StatusID", ($Where['StatusID'] == 10) ? 2 : $Where['StatusID']);
         }
         if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes") {
+            $this->db->select('JC.UserTeamID UserTeamIDAsUse,JC.UserID UserIDAsUse,E.StatusID As StatusIDAsUse,C.IsWinningAssigned');
             $this->db->where('EXISTS (select ContestID from sports_contest_join JE where JE.ContestID = C.ContestID AND JE.UserID="' . @$Where['SessionUserID'] . '" LIMIT 1)');
         }
         if (!empty($Where['UserInvitationCode'])) {
@@ -395,6 +397,19 @@ class Contest_model extends CI_Model
                     }
                     if (in_array('UserTeamDetails', $Params)) {
                         $Records[$key]['UserTeamDetails'] = (!empty($Record['UserTeamDetails'])) ? json_decode($Record['UserTeamDetails'], true) : array();
+                    }
+                    if (!empty($Where['MyJoinedContest']) && $Where['MyJoinedContest'] == "Yes" && ($Record['StatusIDAsUse'] == 2 || ($Record['StatusIDAsUse'] == 5 && $Record['IsWinningAssigned'] == 'Yes'))) {
+
+                        /* Get Data From MongoDB */
+                        $ContestCollection  = $this->fantasydb->{'Contest_' . $Record['ContestIDAsUse']};
+                        $JoinedContestsUser = $ContestCollection->find(["_id" => $Record['ContestIDAsUse'].$Record['UserIDAsUse'].$Record['UserTeamIDAsUse']], ['projection' => ['TotalPoints' => 1, 'UserRank' => 1, 'UserWinningAmount' => 1, 'TaxAmount' => 1]]);
+                        foreach ($JoinedContestsUser as $JC) {
+                            $Records[$key]['TotalPoints'] = $JC['TotalPoints'];
+                            $Records[$key]['UserWinningAmount'] = $JC['UserWinningAmount'];
+                            $Records[$key]['UserRank'] = $JC['UserRank'];
+                            $Records[$key]['TaxAmount'] = $JC['TaxAmount'];
+                        }
+                        unset($Records[$key]['UserTeamIDAsUse'],$Records[$key]['UserIDAsUse'],$Records[$key]['StatusIDAsUse'],$Records[$key]['IsWinningAssigned']);
                     }
                     unset($Records[$key]['ContestIDAsUse']);
                 }
@@ -480,6 +495,10 @@ class Contest_model extends CI_Model
         if ($UserTeamPlayers) {
             $this->db->insert_batch('sports_users_team_players', $UserTeamPlayers);
         }
+
+        /* Update Player Selection */
+        $this->updatePlayerSelectionPercent($MatchID);
+
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
@@ -527,11 +546,45 @@ class Contest_model extends CI_Model
             }
         }
 
+        /* Update Player Selection */
+        $this->updatePlayerSelectionPercent($MatchID);
+
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
         }
         return TRUE;
+    }
+
+    /*
+      Description: Update player selection percentage
+     */
+    function updatePlayerSelectionPercent($MatchID)
+    {
+        /* Get Total Teams */
+        $TotalTeams = $this->db->query('SELECT COUNT(UserTeamID) TotalTeams FROM sports_users_teams WHERE MatchID='. $MatchID)->row()->TotalTeams;
+        if($TotalTeams > 0){
+
+            /* Get Match Players */
+            $MatchPlayers = $this->db->query('SELECT P.`PlayerID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100');
+            if ($MatchPlayers->num_rows() > 0) {
+                foreach(array_column($MatchPlayers->result_array(), 'PlayerID') as $PlayerID){
+
+                    /* Get Total Players */
+                    $this->db->select('COUNT(SUTP.PlayerID) TotalPlayer');
+                    $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
+                    $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
+                    $this->db->where(array("SUTP.PlayerID" => $PlayerID,"SUTP.MatchID" => $MatchID));
+                    $Players = $this->db->get()->row();
+                    $PlayerSelectedPercent = (($Players->TotalPlayer * 100 ) / $TotalTeams) > 100 ? 100 : (($Players->TotalPlayer * 100 ) / $TotalTeams);
+
+                    /* Update Player Selection Percent */
+                    $this->db->where(array('PlayerID' => $PlayerID,'MatchID' => $MatchID));
+                    $this->db->limit(1);
+                    $this->db->update('sports_team_players', array('SelectionPercent' => $PlayerSelectedPercent));
+                }
+            }
+        }
     }
 
     /*
@@ -678,10 +731,10 @@ class Contest_model extends CI_Model
                 'PlayerRole' => 'TP.PlayerRole',
                 'PointsData' => 'TP.PointsData',
                 'TeamGUID' => 'T.TeamGUID',
+                'PlayerSelectedPercent' => 'TP.SelectionPercent PlayerSelectedPercent',
                 'MatchType' => 'SM.MatchTypeName as MatchType',
                 'TotalPointCredits' => '(SELECT IFNULL(SUM(`TotalPoints`),0) FROM `sports_team_players` WHERE `PlayerID` = TP.PlayerID AND `SeriesID` = TP.SeriesID) TotalPointCredits',
-                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'] . ' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer',
-                'PlayerSelectedPercent' => '(SELECT IF((SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ') > 0,ROUND((((SELECT COUNT(SUTP.PlayerID) FROM sports_users_teams UT,sports_users_team_players SUTP WHERE UT.UserTeamID = SUTP.UserTeamID AND SUTP.PlayerID = P.PlayerID AND UT.MatchID = ' . $Where['MatchID'] . ')*100)/(SELECT COUNT(UserTeamName) FROM sports_users_teams WHERE MatchID= ' . $Where['MatchID'] . ')),2),0)) PlayerSelectedPercent'
+                'MyTeamPlayer' => '(SELECT IF( EXISTS(SELECT UTP.PlayerID FROM sports_contest_join JC,sports_users_team_players SUTP WHERE JC.UserTeamID = SUTP.UserTeamID AND JC.MatchID = ' . $Where['MatchID'] . ' AND JC.UserID = ' . (!empty($Where['SessionUserID'])) ? $Where['SessionUserID'] : $Where['UserID'] . ' AND SUTP.PlayerID = P.PlayerID LIMIT 1), "Yes", "No")) MyPlayer'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -2392,11 +2445,17 @@ class Contest_model extends CI_Model
     */
     function getVirtualTeamPlayerMatchWise($MatchID, $DummyUserPercentage)
     {
-        $Sql = "SELECT SUT.UserTeamID, SUT.UserID, CONCAT('[',GROUP_CONCAT(distinct CONCAT('{\"PlayerID\":\"',PlayerID,'\",\"PlayerPosition\":\"',PlayerPosition,'\"}')),']') as Players "
-            . "FROM `sports_users_teams` SUT JOIN tbl_users U ON U.UserID = SUT.UserID "
-            . "JOIN sports_users_team_players UTP ON UTP.UserTeamID = SUT.UserTeamID WHERE SUT.MatchID = $MatchID "
-            . "AND U.UserTypeID = 3 GROUP BY SUT.UserTeamID ORDER BY RAND() limit $DummyUserPercentage";
-        return $this->db->query($Sql)->result_array();
+        $Users = array();
+        $this->db->select("SUT.UserTeamID, SUT.UserID,(Select CONCAT('[',GROUP_CONCAT(distinct CONCAT('{\"PlayerID\":\"',PlayerID,'\",\"PlayerPosition\":\"',PlayerPosition,'\"}')),']') FROM sports_users_team_players UTP WHERE UTP.UserTeamID = SUT.UserTeamID) as Players");
+        $this->db->from("sports_users_teams SUT");
+        $this->db->where('SUT.MatchID', $MatchID);
+        $this->db->where('EXISTS (select UserID from tbl_users U where U.UserID = SUT.UserID AND U.UserTypeID=3)');
+        $this->db->limit($DummyUserPercentage);
+        $Query = $this->db->get();
+        if ($Query->num_rows() > 0) {
+            $Users = $Query->result_array();
+        }
+        return $Users;
     }
 
     /*

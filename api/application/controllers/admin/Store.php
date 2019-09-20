@@ -26,21 +26,30 @@ class Store extends API_Controller
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-		$CouponData = $this->Store_model->addCoupon($this->SessionUserID, array_merge($this->Post), $this->StatusID);
-		if ($CouponData) {
-
-			/* check for media present - associate media with this Post */
-			if (!empty($this->Post['MediaGUIDs'])) {
-				$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
-				foreach ($MediaGUIDsArray as $MediaGUID) {
-					$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 13));
-					if ($EntityData) {
-						$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $CouponData['CouponID']);
-					}
+		/* check for media present - associate media with this Post */
+		if (!empty($this->Post['MediaGUIDs'])) {
+			$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
+			foreach ($MediaGUIDsArray as $MediaGUID) {
+				$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 13));
+				if ($EntityData) {
+					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->TeamID);
 				}
+				$MediaData = $this->Media_model->getMedia(
+					'MediaGUID,M.MediaName',
+					array("SectionID" => "Coupon", "MediaID" => $EntityData['MediaID']),
+					FALSE
+				);
 			}
-			/* check for media present - associate media with this Post - ends */
-			$this->Return['Message']      	=	"Coupon added successfully.";
+		}
+		/* check for media present - associate media with this Post - ends */
+
+		/* Add Coupon */
+		$CouponData = $this->Store_model->addCoupon($this->SessionUserID, array_merge($this->Post,array('CouponBanner'=> @$MediaData['MediaName'])), $this->StatusID);
+		if($CouponData){
+			$this->Return['Message']  =	"Coupon added successfully.";
+		}else{
+			$this->Return['ResponseCode'] = 500;
+			$this->Return['Message'] = "An error occurred, please try again later.";			
 		}
 	}
 
@@ -58,19 +67,26 @@ class Store extends API_Controller
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-		$this->Store_model->updateCoupon($this->CouponID, array_merge($this->Post, array("StatusID" => $this->StatusID)));
-
 		/* check for media present - associate media with this Post */
 		if (!empty($this->Post['MediaGUIDs'])) {
 			$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
 			foreach ($MediaGUIDsArray as $MediaGUID) {
-				$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 4));
+				$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 13));
 				if ($EntityData) {
-					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->CouponID);
+					$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->TeamID);
 				}
+				$MediaData = $this->Media_model->getMedia(
+					'MediaGUID,M.MediaName',
+					array("SectionID" => "Coupon", "MediaID" => $EntityData['MediaID']),
+					FALSE
+				);
 			}
 		}
 		/* check for media present - associate media with this Post - ends */
+
+		/* Update Coupon */
+		$this->Store_model->updateCoupon($this->CouponID, array_merge($this->Post, array("StatusID" => $this->StatusID,'CouponBanner'=> @$MediaData['MediaName'])));
+
 
 		$CouponData = $this->Store_model->getCoupons(
 			'

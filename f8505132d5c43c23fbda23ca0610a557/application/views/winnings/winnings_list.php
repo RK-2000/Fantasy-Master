@@ -73,7 +73,7 @@
 					<td>
 						<p>{{row.MatchStartDateTime}}</p>
 					</td>
-					<td class="text-center"><span ng-class="{Pending:'text-danger', Running:'text-success',Cancelled:'text-danger',Completed:'text-success'}[row.Status]">{{row.Status}}</span></td> 
+					<td class="text-center"><span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[row.Status]">{{row.Status}}</span></td> 
 					<td class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
@@ -198,18 +198,6 @@
 										<option value="">Please Select</option>
 										<option value="Single">Single</option>
 										<option value="Multiple">Multiple</option>
-									</select>   
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="filter-col" for="Status">Contest Status</label>
-									<select id="Status" name="Status" class="form-control chosen-select">
-										<option value="">Please Select</option>
-										<option value="Pending">Pending</option>
-										<option value="Running">Running</option>
-										<option value="Cancelled">Cancelled</option>
-										<option value="Completed">Completed</option>
 									</select>   
 								</div>
 							</div>
