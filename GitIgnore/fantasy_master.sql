@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 12, 2019 at 11:37 AM
+-- Generation Time: Sep 20, 2019 at 09:40 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
--- PHP Version: 7.0.33-8+ubuntu16.04.1+deb.sury.org+1
+-- PHP Version: 7.0.33-11+ubuntu16.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -248,6 +248,7 @@ CREATE TABLE `ecom_coupon` (
   `CouponID` int(11) NOT NULL,
   `CouponTitle` varchar(255) DEFAULT NULL,
   `CouponDescription` mediumtext,
+  `CouponBanner` text,
   `CouponCode` varchar(12) NOT NULL,
   `CouponType` enum('Flat','Percentage') NOT NULL,
   `CouponValue` int(11) NOT NULL,
@@ -262,9 +263,9 @@ CREATE TABLE `ecom_coupon` (
 -- Dumping data for table `ecom_coupon`
 --
 
-INSERT INTO `ecom_coupon` (`CouponID`, `CouponTitle`, `CouponDescription`, `CouponCode`, `CouponType`, `CouponValue`, `CouponValueLimit`, `MiniumAmount`, `MaximumAmount`, `NumberOfUses`, `CouponValidTillDate`) VALUES
-(942, 'sdcsd', 'dscds', 'sdvcds', 'Flat', 12, 0, 10, 5, 1, '2019-09-02'),
-(947, 'ewr', 'wer', '324', 'Flat', 234, 0, 34, 234, 3, '2019-09-10');
+INSERT INTO `ecom_coupon` (`CouponID`, `CouponTitle`, `CouponDescription`, `CouponBanner`, `CouponCode`, `CouponType`, `CouponValue`, `CouponValueLimit`, `MiniumAmount`, `MaximumAmount`, `NumberOfUses`, `CouponValidTillDate`) VALUES
+(942, 'sdcsd', 'dscds', NULL, 'sdvcds', 'Flat', 12, 0, 10, 5, 1, '2019-09-02'),
+(947, 'ewr', 'wer', NULL, '324', 'Flat', 234, 0, 34, 234, 3, '2019-09-10');
 
 -- --------------------------------------------------------
 
@@ -879,7 +880,7 @@ CREATE TABLE `sports_contest` (
   `DraftUserTeamSubmitted` enum('Yes','No') NOT NULL DEFAULT 'No',
   `IsRefund` enum('Yes','No') NOT NULL DEFAULT 'No',
   `IsVirtualUserJoined` enum('Yes','No','Completed') NOT NULL DEFAULT 'No',
-  `IsDummyJoined` tinyint(4) NOT NULL DEFAULT '0',
+  `IsDummyJoined` int(11) NOT NULL DEFAULT '0',
   `VirtualUserJoinedPercentage` int(6) DEFAULT NULL,
   `IsPrivacyNameDisplay` enum('Yes','No') DEFAULT 'No'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -936,6 +937,7 @@ CREATE TABLE `sports_matches` (
   `MatchStartDateTime` datetime DEFAULT NULL,
   `MatchClosedInMinutes` smallint(6) DEFAULT NULL,
   `MatchCompleteDateTime` datetime DEFAULT NULL,
+  `PointsLastUpdatedOn` datetime DEFAULT NULL COMMENT '(For Joined Contest Player Points Cron)',
   `IsPreSquad` enum('Yes','No') NOT NULL DEFAULT 'No' COMMENT 'if yes matches going to user crate team ',
   `PlayerStatsUpdate` enum('Yes','No') NOT NULL DEFAULT 'No',
   `MatchScoreDetails` text,
@@ -1562,7 +1564,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`UserID`, `UserGUID`, `UserTypeID`, `FirstName`, `MiddleName`, `LastName`, `About`, `About1`, `About2`, `ProfilePic`, `ProfileCoverPic`, `Email`, `EmailForChange`, `Username`, `IsUsernameUpdateded`, `Gender`, `BirthDate`, `Age`, `Height`, `Weight`, `Address`, `Address1`, `Postal`, `CountryCode`, `CityName`, `StateName`, `Latitude`, `Longitude`, `PhoneNumber`, `PhoneNumberForChange`, `Website`, `FacebookURL`, `TwitterURL`, `GoogleURL`, `InstagramURL`, `LinkedInURL`, `WhatsApp`, `ReferralCodeID`, `ReferredByUserID`, `WalletAmount`, `WinningAmount`, `CashBonus`, `WithdrawalHoldAmount`, `PanStatus`, `BankStatus`, `IsPrivacyNameDisplay`) VALUES
-(125, 'abcd', 1, 'Admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin@mailinator.com', 'alexm@mailinator.com', NULL, 'No', 'Male', '1984-05-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 23, 76, '9898989899', '9981823755', NULL, NULL, 'native', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, 0.00, 9, 9, 'No'),
+(125, 'daac5fd7-adcb-b881-40e7-b4edaeef9311', 1, 'Admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin@mailinator.com', 'alexm@mailinator.com', NULL, 'No', 'Male', '1984-05-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 23, 76, '9898989899', '9981823755', NULL, NULL, 'native', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, 0.00, 9, 9, 'No'),
 (945, 'f1f1ec49-7835-2f12-8485-e4695f2e6e17', 2, 'Preetibirle', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'preeti.mobiwebtech@gmail.com', '8cgzmu', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9753589610', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No'),
 (946, '44e6576f-8868-6ca7-9f91-48527e64353d', 2, 'Preetibirle', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'preeti.mobiwebtech@gmail.com', 'yzazye', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9753589610', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No');
 
@@ -1586,7 +1588,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-09-10 06:00:16', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-09-17 10:18:29', '2019-06-07 10:42:15'),
 (945, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:16:42', '2019-09-03 09:16:45', NULL),
 (946, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:17:01', '2019-09-03 09:17:04', NULL);
 
@@ -1621,7 +1623,12 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (946, '7a11c140-1136-00fc-a23c-f154d79950ff', NULL, 1, 1, NULL, NULL, '2019-09-03 09:17:04'),
 (125, 'b6875c3c-bc57-da98-7483-8a2193cb7efd', NULL, 1, 1, NULL, NULL, '2019-09-09 06:33:07'),
 (125, 'd940b17c-f3d3-2051-8727-51dc47135b4f', NULL, 1, 1, NULL, NULL, '2019-09-09 09:13:56'),
-(125, '2b509700-dcad-254a-df37-e3f705adc058', NULL, 1, 1, NULL, NULL, '2019-09-10 06:00:16');
+(125, '2b509700-dcad-254a-df37-e3f705adc058', NULL, 1, 1, NULL, NULL, '2019-09-10 06:00:16'),
+(125, '330f175d-be17-c2d6-04b6-c61ac194ff55', NULL, 1, 1, NULL, NULL, '2019-09-17 10:15:42'),
+(125, '7f8a8bb3-4215-8f55-99dc-40810d534ef4', NULL, 1, 1, NULL, NULL, '2019-09-17 10:15:50'),
+(125, 'c4dbc297-c57d-f0bb-afbd-0c79a1fe147d', NULL, 1, 1, NULL, NULL, '2019-09-17 10:16:01'),
+(125, '107c7e1e-4a0f-3d25-e3e0-76a7e8ca078e', NULL, 1, 1, NULL, NULL, '2019-09-17 10:17:41'),
+(125, '50cc7360-4be0-eda3-25d0-ad9be9d6dc80', NULL, 1, 1, NULL, NULL, '2019-09-17 10:18:29');
 
 -- --------------------------------------------------------
 

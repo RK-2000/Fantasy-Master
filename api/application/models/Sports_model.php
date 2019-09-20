@@ -1436,7 +1436,7 @@ class Sports_model extends CI_Model
 
                     $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
                     $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'], 'PlayerName' => $UserTeamValue['PlayerName'], 'PlayerPic' => $UserTeamValue['PlayerPic'], 'PlayerPosition' => $UserTeamValue['PlayerPosition'], 'PlayerRole' => $UserTeamValue['PlayerRole'], 'TeamGUID' => $UserTeamValue['TeamGUID'], 'Points' => (float) round($Points,2));
+                    $UserPlayersArr[] = array('PlayerGUID' => $UserTeamValue['PlayerGUID'], 'PlayerName' => $UserTeamValue['PlayerName'], 'PlayerPic' => $UserTeamValue['PlayerPic'], 'PlayerPosition' => $UserTeamValue['PlayerPosition'], 'PlayerRole' => $UserTeamValue['PlayerRole'], 'TeamGUID' => $UserTeamValue['TeamGUID'], 'SeriesGUID' => $UserTeamValue['SeriesGUID'], 'Points' => (float) round($Points,2));
                 }
 
                 /* Add/Edit Joined Contest Data (MongoDB) */
