@@ -51,11 +51,8 @@
 				<tr scope="row" ng-repeat="(key, row) in data.dataList">
 
 					<td class="listed sm text-center">
-						<img ng-if="!row.Media.Records[0].MediaThumbURL" ng-src="./asset/img/default-coupon.png">
-						<img ng-if="row.Media.Records[0].MediaThumbURL" ng-src="{{row.Media.Records[0].MediaThumbURL}}">
+						<img ng-src="{{row.CouponBanner}}" alt="coupon-img">
 					</td>
-
-
 					<td><div class="content float-left"><strong><a class="dropdown-item" href="couponhistory?CouponGUID={{row.CouponGUID}}&CouponCode={{row.CouponCode}}">{{row.CouponCode}}</a><strong></div></td>
 					<td>{{row.CouponTitle}}</td>
 					<td>{{row.CouponDescription}}</td>

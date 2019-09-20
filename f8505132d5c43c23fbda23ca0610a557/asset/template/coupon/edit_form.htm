@@ -5,8 +5,7 @@
 		<div class="form-group">
 			<div id="picture-box" class="picture-box banner">
 				<!-- picture display -->
-				<img id="picture-box-picture" ng-if="!formData.Media.Records[0].MediaThumbURL" ng-src="./asset/img/default-coupon.png">
-				<img id="picture-box-picture" ng-if="formData.Media.Records[0].MediaThumbURL" ng-src="{{formData.Media.Records[0].MediaThumbURL}}">
+				<img id="picture-box-picture" ng-src="{{formData.CouponBanner}}" alt="coupon-img">
 
 				<!-- picture upload form -->
 				<div class="picture-upload">
