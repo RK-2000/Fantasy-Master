@@ -130,7 +130,9 @@ class Utility_model extends CI_Model
         if ($this->db->trans_status() === FALSE) {
             return FALSE;
         }
-        $this->cache->memcached->delete('Banners');
+        if(MEMCACHE){
+            $this->cache->memcached->delete('Banners');
+        }
         return array('BannerID' => $BannerID, 'BannerGUID' => $EntityGUID);
     }
 
@@ -139,12 +141,14 @@ class Utility_model extends CI_Model
      */
     function bannerList($Field = '', $Where = array(), $multiRecords = FALSE, $PageNo = 1, $PageSize = 15)
     {
-        $MediaData = $this->cache->memcached->get('Banners');
+        $MediaData = (MEMCACHE) ? $this->cache->memcached->get('Banners') : array();
         if (empty($MediaData)) {
             $MediaData = $this->Media_model->getMedia('MediaGUID, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaThumbURL, CONCAT("' . BASE_URL . '",MS.SectionFolderPath,M.MediaName) AS MediaURL,	M.MediaCaption', array("SectionID" => 'Banner'), TRUE);
             if ($MediaData) {
                 $Return = ($MediaData ? $MediaData : new StdClass());
-                $this->cache->memcached->save('Banners', $Return);
+                if(MEMCACHE){
+                    $this->cache->memcached->save('Banners', $Return);
+                }
                 return $Return;
             }
             return false;
@@ -199,7 +203,7 @@ class Utility_model extends CI_Model
             $this->db->update('set_site_config', array('ConfigTypeValue' => $Input['ConfigTypeValue'], 'StatusID' => $Input['StatusID']));
 
             /* Delete Caching */
-            if(in_array($ConfigTypeGUID, array('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory'))){
+            if(MEMCACHE && in_array($ConfigTypeGUID, array('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory'))){
                 $this->cache->memcached->delete('AndroidAppVersion');
             }
         }
@@ -271,7 +275,7 @@ class Utility_model extends CI_Model
      */
     function getAppVersionDetails()
     {
-        $VersionData = $this->cache->memcached->get('AndroidAppVersion');
+        $VersionData = (MEMCACHE) ? $this->cache->memcached->get('AndroidAppVersion') : array();
         if(empty($VersionData)){
             $Query = $this->db->query("SELECT ConfigTypeGUID,ConfigTypeDescprition,ConfigTypeValue FROM set_site_config WHERE ConfigTypeGUID IN ('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory')");
             if ($Query->num_rows() > 0) {
@@ -279,7 +283,9 @@ class Utility_model extends CI_Model
                 foreach ($Query->result_array() as $Value) {
                     $VersionData[$Value['ConfigTypeGUID']] = $Value['ConfigTypeValue'];
                 }
-                $this->cache->memcached->save('AndroidAppVersion',$VersionData, 3600 * 24); // Expire in every 24 
+                if(MEMCACHE){
+                    $this->cache->memcached->save('AndroidAppVersion',$VersionData, 3600 * 24); // Expire in every 24 
+                }
                 return $VersionData;
             }
         }
@@ -455,10 +461,12 @@ class Utility_model extends CI_Model
             exit;
         }
         /* To get All Match Types */
-        $MatchTypesData = $this->cache->memcached->get('MatchTypes');
+        $MatchTypesData = (MEMCACHE) ? $this->cache->memcached->get('MatchTypes') : array();
         if(empty($MatchTypesData)){
             $MatchTypesData = $this->Sports_model->getMatchTypes();
-            $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+            if(MEMCACHE){
+                $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+            }
         }
         $MatchTypeIdsData = array_column($MatchTypesData, 'MatchTypeID', 'MatchTypeName');
 
@@ -590,10 +598,12 @@ class Utility_model extends CI_Model
             }
 
             /* To get All Match Types */
-            $MatchTypesData = $this->cache->memcached->get('MatchTypes');
+            $MatchTypesData = (MEMCACHE) ? $this->cache->memcached->get('MatchTypes') : array();
             if(empty($MatchTypesData)){
                 $MatchTypesData = $this->Sports_model->getMatchTypes();
-                $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+                if(MEMCACHE){
+                    $this->cache->memcached->save('MatchTypes', $MatchTypesData, 3600 * 24); // Expire in every 24 hours
+                }
             }
             $MatchTypeIdsData = array_column($MatchTypesData, 'MatchTypeID', 'MatchTypeNameCricketAPI');
             foreach ($LiveMatchesData as $key => $Value) {
@@ -745,7 +755,9 @@ class Utility_model extends CI_Model
 
             $MatchID = $Value['MatchID'];
             $SeriesID = $Value['SeriesID'];
-            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
+            if(MEMCACHE){
+                $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
+            }
             $Response = $this->callSportsAPI(SPORTS_API_URL_ENTITY . '/v2/competitions/' . $Value['SeriesIDLive'] . '/squads/' . $Value['MatchIDLive'] . '?token=');
             if (empty($Response['response']['squads']))
                 continue;
@@ -952,7 +964,9 @@ class Utility_model extends CI_Model
                     if (!$IsNewTeam && !empty($MatchIds)) {
                         $TeamPlayersData = array();
                         foreach ($MatchIds as $MatchID) {
-                            $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
+                            if(MEMCACHE){
+                                $this->cache->memcached->delete('UserTeamPlayers_' . $MatchID);
+                            }
                             $Query = $this->db->query('SELECT MatchID FROM sports_team_players WHERE PlayerID = ' . $PlayerID . ' AND SeriesID = ' . $Value['SeriesID'] . ' AND TeamID = ' . $TeamID . ' AND MatchID =' . $MatchID . ' LIMIT 1');
                             $IsMatchID = ($Query->num_rows() > 0) ? $Query->row()->MatchID : false;
                             if (!$IsMatchID) {
