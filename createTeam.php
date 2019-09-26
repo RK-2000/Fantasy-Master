@@ -397,7 +397,7 @@
 
 
     </div>
-</div>
+
 <!--Main container sec end-->
 <!--addmoney-->
 <div class="modal fade centerPopup" id="selectCaptainViceCaptainModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
@@ -631,6 +631,8 @@
             </div>
         </div>
     </div>
+</div>
+
 </div>
 <!--User team list to join contest-->
 <?php include('innerFooter.php'); ?>

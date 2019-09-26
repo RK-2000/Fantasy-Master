@@ -995,12 +995,18 @@ app.controller('createTeamController', ['$scope', '$rootScope', '$location', 'en
             /*
              Description : To join Contest after Team Create
              */
-
+            $scope.join = {};
+            $scope.joinSubmitted = false;
             $rootScope.JoinContest = function () {
+                $scope.joinSubmitted = true;
+                if (!form.$valid) {
+                    return false;
+                }
                 var $data = {};
+                $data = $scope.join;
                 $data.ContestGUID = $rootScope.ContestGUID;
                 $data.MatchGUID = $rootScope.MatchGUID;
-                $data.UserTeamGUID = $rootScope.UserTeamGUID;
+                //$data.UserTeamGUID = $rootScope.UserTeamGUID;
                 $data.SessionKey = $localStorage.user_details.SessionKey;
                 if ($scope.UserInvitationCode) {
                     $data.UserInvitationCode = $scope.UserInvitationCode;
