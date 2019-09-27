@@ -203,81 +203,17 @@
                     <div class="bdr_lr">
                         <h3> Pro Fantasy Gamers </h3>
                     </div>
-                    <div class="" id="clientSlider">
-
-                       <div class="clientslide">
-                            <p> Very good app and payments is very fast  . I get payment within 1 day . Very trusted app.
-                             Always helped if i faced some problem ,got quick response . Please try it and recover your loss on other app.  </p>
+                    <div class="" id="clientSlider" testimonial-slider ng-if="testimonial_silder_visible">
+                        <div class="clientslide" ng-repeat="test in TestimonialList">
+                            <p>{{test.PostContent}} </p>
                             <div class="clientImgbox">
                                 <div class="clientImg">
-                                    <img src="assets/images/sumanbiswas.jpg" class="img-circle" alt="" />
+                                    <img ng-src="{{test.Media.Records[0].MediaThumbURL}}" class="img-circle" alt="testimonials" />
                                 </div>
-                                <h4> Suman Biswas </h4>
+                                <h4> {{test.PostCaption}}</h4>
+                                <!-- <span> Freelancer </span> -->
                             </div>
                         </div>
-
-                        <div class="clientslide">
-                            <p> I enjoy playing fantasy cricket at FSL11. Everything is totally hassle free here and 
-                                therefore I have referred a lot of friends. I become a fan of FSL11 now.  </p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/team2.jpg" class="img-circle" alt="" />
-                                </div>
-                                <h4> Mohit Bakshi </h4>
-                            </div>
-                        </div>
-                        <div class="clientslide">
-                            <p> My first year at FSL11 is going awesome. Thank You for providing an amazing gaming 
-                                experience. I tried so many platforms to play fantasy cricket and finally got what I
-                                 was looking for from a long time.</p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/client.png" class="img-circle" alt="" />
-                                </div>
-                                <h4> Sneha Mishra </h4>
-                            </div>
-                        </div>
-                        <div class="clientslide">
-                            <p> FSL11 made my favorite sport “Cricket” more interesting. The concept of the app is unique and 
-                                exciting. I would really like to recommend the app to everyone. </p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/team3.png" class="img-circle" alt=""/>
-                                </div>
-                                <h4> Anjali Khare </h4>
-                            </div>
-                        </div>
-                        <div class="clientslide">
-                            <p> The user interface of the app is really wonderful. 
-                                Easy and quick withdrawal makes this platform more trustworthy in comparing to others. </p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/team1.jpg" class="img-circle" alt=""/>
-                                </div>
-                                <h4> Vivan Pandit</h4>
-                            </div>
-                        </div>
-                        <div class="clientslide">
-                            <p> Both website and apps of FSL11 works smoothly. My cricketing skills helped me in winning 
-                                a good amount at FSL11. I have a very good experience till now and I am sure that they will 
-                                make me and all other users feel delight in future as well. </p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/team4.jpg" class="img-circle" alt=""/>
-                                </div>
-                                <h4> Rohan Patil </h4>
-                            </div>
-                        </div>
-                        <div class="clientslide">
-                            <p> This is the best fantasy app according To me, the app system is very fast and smooth, I play daily and win lot more money. Thanks To FSL11 app and the Team. </p>
-                            <div class="clientImgbox">
-                                <div class="clientImg">
-                                    <img src="assets/images/team5.jpg" class="img-circle" alt=""/>
-                                </div>
-                                <h4> Santoo Sumit </h4>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </section>
