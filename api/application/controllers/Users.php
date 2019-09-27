@@ -88,6 +88,10 @@ class Users extends API_Controller_Secure
         /* Basic fields to select */
         $UserData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array('UserID' => $this->UserID));
         if ($UserData) {
+
+            /* To Get Withdrawal Configurations */
+            $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => 'MinimumWithdrawalLimitBank'));
+            $UserData['ConfigTypeValue'] = $ConfigData['Data']['Records'][0]['ConfigTypeValue'];
             $this->Return['Data'] = $UserData;
         }
     }

@@ -46,7 +46,7 @@
                             <button class="btn btn-submit theme_bgclr text-center" ng-click="withdrawRequest(withdrawForm, WinningAmount, mode)">Withdraw</button>
                         </div>
                         <ul class="mt-2">
-                            <li>* Minimum withdrawal amount is ₹200.</li>
+                            <li>* Minimum withdrawal amount is ₹{{profileDetails.ConfigTypeValue}}.</li>
                             <li>* Only amount from winnings can be withdrawn.</li>
                         </ul>
                     </div>

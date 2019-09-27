@@ -313,6 +313,7 @@ app.directive('timerText', ["$interval", "$filter", function ($interval, $filter
                 var date3 = $filter('date')(date1, "medium");
                 var date2 = new Date();
                 var date1 = date; */
+                var date1 = date;
                 if (date1) {
                     date1 = $filter('convertIntoUserTimeZone')(date1);
 
