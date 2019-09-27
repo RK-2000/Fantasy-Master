@@ -189,7 +189,7 @@
                                     </li>
                                     <li>{{Contest.MatchStartDateTime | myDateFormat}}</li>
                                     <li class="bat text-right">
-                                        <button class="btn btn-submit bggreen mr-2" ng-click="SelectTeamToJoinContest(Contest, 'Join')" ng-show="Contest.IsJoined == 'No' && Contest.Status == 'Pending'">Join</button> 
+                                        <button class="btn btn-submit bggreen mr-2  {{Contest.TotalJoined == Contest.ContestSize ? 'disabled-btn' : ''}}" ng-click="SelectTeamToJoinContest(Contest, 'Join')" ng-show="Contest.IsJoined == 'No' && Contest.Status == 'Pending'">Join</button> 
 
                                         <a class="btn btn-submit light_bg mr-2" href="javascript:void(0)" ng-show="Contest.IsJoined == 'Yes' && Contest.Status == 'Pending' && Contest.EntryType == 'Multiple'" ng-click="SelectTeamToJoinContest(Contest, 'Rejoin')" >Rejoin</a>
                                         

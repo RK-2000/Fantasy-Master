@@ -162,7 +162,7 @@ class Upload extends API_Controller_Secure
 		$this->Media_model->deleteMedia($this->MediaID);
 
 		/* Delete Banner Caching */
-		if($MediaData['SectionID'] == 'Banner'){
+		if(MEMCACHE && $MediaData['SectionID'] == 'Banner'){
 			$this->cache->memcached->delete('Banners');
 		}
 		$this->Return['Message'] =	"Deleted successfully.";
