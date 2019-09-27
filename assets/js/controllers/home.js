@@ -49,6 +49,50 @@ app.controller('HomeController', ['$scope', '$rootScope', '$location', 'environm
                             });
         }
 
+        $scope.TestimonialList = [];
+        $scope.getTestimonial = function () {
+            var $data = {};
+            $scope.testimonial_silder_visible = false;
+            $data.PostType = 'Testimonial';
+            appDB
+                    .callPostForm('utilities/getPosts', $data)
+                    .then(
+                            function successCallback(data) {
+                                if (data.ResponseCode == 200) {
+                                    $scope.TestimonialList = data.Data.Records;
+                                    $scope.testimonial_silder_visible = true;
+                                }
+                                if (data.ResponseCode == 500) {
+                                    var toast = toastr.warning(data.Message, {
+                                        closeButton: true
+                                    });
+                                    toastr.refreshTimer(toast, 5000);
+                                }
+                                if (data.ResponseCode == 501) {
+                                    var toast = toastr.warning(data.Message, {
+                                        closeButton: true
+                                    });
+                                    toastr.refreshTimer(toast, 5000);
+                                }
+                                if (data.ResponseCode == 502) {
+                                    var toast = toastr.warning(data.Message, {
+                                        closeButton: true
+                                    });
+                                    toastr.refreshTimer(toast, 5000);
+
+                                }
+                            },
+                            function errorCallback(data) {
+
+                                if (typeof data == 'object') {
+                                    var toast = toastr.error(data.Message, {
+                                        closeButton: true
+                                    });
+                                    toastr.refreshTimer(toast, 5000);
+                                }
+                            });
+        }
+
         /*Social Login*/
         $scope.SocialLogin = function (Source) {
 
@@ -238,3 +282,49 @@ app.directive('slickCustomCarousel', ["$timeout", function ($timeout) {
             }
         }
     }]);
+
+app.directive('testimonialSlider', ["$timeout", function ($timeout) {
+    return {
+        restrict: "A",
+        link: {
+            post: function (scope, elem, attr) {
+                $timeout(function () {
+                    $('#clientSlider').slick({
+                        dots: false,
+                        infinite: false,
+                        speed: 300,
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                        responsive: [
+                            {
+                                breakpoint: 1024,
+                                settings: {
+                                    slidesToShow: 3,
+                                    slidesToScroll: 3,
+                                    infinite: true,
+                                    dots: true
+                                }
+                            },
+                            {
+                                breakpoint: 768,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 2
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1
+                                }
+                            }
+                        ]
+                    });
+
+                }, 1);
+
+            }
+        }
+    }
+}]);
