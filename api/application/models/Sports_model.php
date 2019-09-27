@@ -1727,7 +1727,12 @@ class Sports_model extends CI_Model
                     if ($Value['ContestFormat'] == 'Head to Head') {
                         $IsCancelled = ($Value['TotalJoined'] == 2) ? 0 : 1;
                     } else {
-                        $IsCancelled = ($Value['IsConfirm'] == 'Yes') ? 0 : (((($Value['TotalJoined'] * 100) / $Value['ContestSize']) >= CONTEST_FILL_PERCENT_LIMIT) ? 0 : 1);
+                        if($Value['IsConfirm'] == 'Yes'){
+                            $IsCancelled = 0;
+                        }else{
+                            $JoinedPercent = ($Value['TotalJoined'] * 100)/$Value['ContestSize'];
+                            $IsCancelled = ($JoinedPercent >= CONTEST_FILL_PERCENT_LIMIT) ? 0 : 1;
+                        }
                     }
                 }
                 if ($IsCancelled == 0) {
