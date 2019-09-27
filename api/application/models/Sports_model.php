@@ -46,8 +46,8 @@ class Sports_model extends CI_Model
                 'DraftUserLimit' => 'S.DraftUserLimit',
                 'DraftTeamPlayerLimit' => 'S.DraftTeamPlayerLimit',
                 'DraftPlayerSelectionCriteria' => 'S.DraftPlayerSelectionCriteria',
-                'SeriesStartDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesStartDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") SeriesStartDate',
-                'SeriesEndDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesEndDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "' . DATE_FORMAT . '") SeriesEndDate',
+                'SeriesStartDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesStartDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") SeriesStartDate',
+                'SeriesEndDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesEndDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") SeriesEndDate',
                 'TotalMatches' => '(SELECT COUNT(MatchIDLive) FROM sports_matches WHERE sports_matches.SeriesID =  S.SeriesID ) TotalMatches',
                 'Status' => 'CASE E.StatusID
                     when "2" then "Active"
