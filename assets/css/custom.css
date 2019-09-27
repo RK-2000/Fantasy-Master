@@ -5112,3 +5112,7 @@ p.captaine {
 .withoutLogin + .mrTop {
     margin-top: 0rem;
 }
+.disabled-btn{
+    opacity: .65;
+    pointer-events: none;
+}

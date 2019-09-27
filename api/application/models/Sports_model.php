@@ -874,7 +874,9 @@ class Sports_model extends CI_Model
             $this->db->update_batch('sports_setting_points', $UpdateArray, 'PointsTypeGUID');
 
             /* Clear Cache */
-            $this->cache->memcached->delete('CricketPoints');
+            if(MEMCACHE){
+                $this->cache->memcached->delete('CricketPoints');
+            }
         }
     }
 
@@ -1175,10 +1177,12 @@ class Sports_model extends CI_Model
         if (!empty($LiveMatches['Data']['Records'])) { 
 
             /* Get Points Data */
-            $PointsDataArr = $this->cache->memcached->get('CricketPoints');
+            $PointsDataArr = (MEMCACHE) ? $this->cache->memcached->get('CricketPoints') : array();
             if(empty($PointsDataArr)){
                 $PointsDataArr   = $this->getPoints(array("StatusID" => 1))['Data']['Records'];
-                $this->cache->memcached->save('CricketPoints', $PointsDataArr, 3600 * 12); // Expire in every 12 hours
+                if(MEMCACHE){
+                    $this->cache->memcached->save('CricketPoints', $PointsDataArr, 3600 * 12); // Expire in every 12 hours
+                }
             }
             $StatringXIArr             = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'StatringXI');
             $CaptainPointMPArr         = $this->findSubArray($PointsDataArr, 'PointsTypeGUID', 'CaptainPointMP');
@@ -1196,7 +1200,9 @@ class Sports_model extends CI_Model
                 }
 
                 /* Delete Cache Key */
-                $this->cache->memcached->delete('getJoinedContestPlayerPoints_' . $Value['MatchID']);
+                if(MEMCACHE){
+                    $this->cache->memcached->delete('getJoinedContestPlayerPoints_' . $Value['MatchID']);
+                }
                 $StatringXIPoints          = (isset($StatringXIArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($StatringXIArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
                 $CaptainPointMPPoints      = (isset($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($CaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "2";
                 $ViceCaptainPointMPPoints  = (isset($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]])) ? strval($ViceCaptainPointMPArr[0][$MatchTypes[$Value['MatchType']]]) : "1.5";
@@ -1205,12 +1211,12 @@ class Sports_model extends CI_Model
                 $MinimumOverEconomyRate    = (isset($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]])) ? strval($MinimumOverEconomyRate[0][$MatchTypes[$Value['MatchType']]]) : "1";
 
                 /* Get Match Players */
-                $MatchPlayers = $this->cache->memcached->get('PlayerPoints_' . $Value['MatchID']);
+                $MatchPlayers = (MEMCACHE) ? $this->cache->memcached->get('PlayerPoints_' . $Value['MatchID']) : array();
                 if (empty($MatchPlayers)) {
                     $MatchPlayers = $this->db->query('SELECT P.`PlayerID`,P.`PlayerIDLive`,TP.`PlayerRole` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $Value['MatchID'] . ' AND TP.IsPlaying = "Yes" LIMIT 50');
                     if ($MatchPlayers->num_rows() == 0) {
                         continue;
-                    } else {
+                    } else if(MEMCACHE && $MatchPlayers->num_rows() > 0) {
                         $this->cache->memcached->save('PlayerPoints_' . $Value['MatchID'], $MatchPlayers->result_array(), 3600 * 10); // Expire in every 10 hours
                     }
                 }
@@ -1416,10 +1422,12 @@ class Sports_model extends CI_Model
                 $ContestIdArr[] = $Value['ContestID'];
 
                 /* To Get Match Players */
-                $MatchPlayers = $this->cache->memcached->get('getJoinedContestPlayerPoints_' . $Value['MatchID']);
+                $MatchPlayers = (MEMCACHE) ? $this->cache->memcached->get('getJoinedContestPlayerPoints_' . $Value['MatchID']) : array();
                 if (empty($MatchPlayers)) {
                     $MatchPlayers = $this->db->query('SELECT P.PlayerGUID,TP.PlayerID,TP.TotalPoints FROM sports_players P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $Value['MatchID'])->result_array();
-                    $this->cache->memcached->save('getJoinedContestPlayerPoints_' . $Value['MatchID'], $MatchPlayers, 3600);
+                    if(MEMCACHE){
+                        $this->cache->memcached->save('getJoinedContestPlayerPoints_' . $Value['MatchID'], $MatchPlayers, 3600);
+                    }
                 }
                 $PlayersPointsArr = array_column($MatchPlayers, 'TotalPoints', 'PlayerGUID');
                 $PlayersIdsArr    = array_column($MatchPlayers, 'PlayerID', 'PlayerGUID');

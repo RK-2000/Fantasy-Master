@@ -621,7 +621,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                                                     'PlayerPosition': value.PlayerPosition,
                                                     'PlayerName': value.PlayerName,
                                                     'PlayerPic': value.PlayerPic,
-                                                    'Points': value.PointCredits,
+                                                    'Points': value.PlayerSalary,
                                                     'SelectedPlayerTeam': (value.TeamGUID == $scope.MatchesDetail.TeamGUIDLocal) ? 'A' : 'B'
                                                 });
                                                 $scope.teamStructure['WicketKeeper'].occupied++;
@@ -632,7 +632,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                                                     'PlayerPosition': value.PlayerPosition,
                                                     'PlayerName': value.PlayerName,
                                                     'PlayerPic': value.PlayerPic,
-                                                    'Points': value.PointCredits,
+                                                    'Points': value.PlayerSalary,
                                                     'SelectedPlayerTeam': (value.TeamGUID == $scope.MatchesDetail.TeamGUIDLocal) ? 'A' : 'B'
                                                 });
                                                 $scope.teamStructure['Batsman'].occupied++;
@@ -643,7 +643,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                                                     'PlayerPosition': value.PlayerPosition,
                                                     'PlayerName': value.PlayerName,
                                                     'PlayerPic': value.PlayerPic,
-                                                    'Points': value.PointCredits,
+                                                    'Points': value.PlayerSalary,
                                                     'SelectedPlayerTeam': (value.TeamGUID == $scope.MatchesDetail.TeamGUIDLocal) ? 'A' : 'B'
                                                 });
                                                 $scope.teamStructure['AllRounder'].occupied++;
@@ -654,7 +654,7 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                                                     'PlayerPosition': value.PlayerPosition,
                                                     'PlayerName': value.PlayerName,
                                                     'PlayerPic': value.PlayerPic,
-                                                    'Points': value.PointCredits,
+                                                    'Points': value.PlayerSalary,
                                                     'SelectedPlayerTeam': (value.TeamGUID == $scope.MatchesDetail.TeamGUIDLocal) ? 'A' : 'B'
                                                 });
                                                 $scope.teamStructure['Bowler'].occupied++;

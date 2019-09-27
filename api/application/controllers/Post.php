@@ -48,9 +48,9 @@ class Post extends API_Controller_Secure
 			if (!empty($this->Post['MediaGUIDs'])) {
 				$MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
 				foreach ($MediaGUIDsArray as $MediaGUID) {
-					$EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 6));
-					if ($EntityData) {
-						$this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $PostData['PostID']);
+					$MediaData = $this->Media_model->getMedia('MediaID', array('MediaGUID' => $MediaGUID));
+					if ($MediaData) {
+						$this->Media_model->addMediaToEntity($MediaData['MediaID'], $this->SessionUserID, $PostData['PostID']);
 					}
 				}
 			}
