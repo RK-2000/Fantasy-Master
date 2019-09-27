@@ -473,12 +473,14 @@ class Contest_model extends CI_Model
         $this->db->insert('sports_users_teams', $InsertData);
 
         /* Get Players */
-        $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_' . $MatchID);
+        $PlayersIdsData = (MEMCACHE) ? $this->cache->memcached->get('UserTeamPlayers_' . $MatchID) : array();
         if (empty($PlayersIdsData)) {
             $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100'); // Max 100 Players
             if ($PlayersData->num_rows() > 0) {
                 $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
-                $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours
+                if(MEMCACHE){
+                    $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours
+                }
             }
         }
 
@@ -522,12 +524,14 @@ class Contest_model extends CI_Model
         if (!empty($Input['UserTeamPlayers'])) {
 
             /* Get Players */
-            $PlayersIdsData = $this->cache->memcached->get('UserTeamPlayers_' . $MatchID);
+            $PlayersIdsData = (MEMCACHE) ? $this->cache->memcached->get('UserTeamPlayers_' . $MatchID) : array();
             if (empty($PlayersIdsData)) {
                 $PlayersData = $this->db->query('SELECT P.`PlayerID`,P.`PlayerGUID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100'); // Max 100 Players
                 if ($PlayersData->num_rows() > 0) {
                     $PlayersIdsData = array_column($PlayersData->result_array(), 'PlayerID', 'PlayerGUID');
-                    $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours
+                    if(MEMCACHE){
+                        $this->cache->memcached->save('UserTeamPlayers_' . $MatchID, $PlayersIdsData, 3600 * 6); // Expire in every 6 hours
+                    }
                 }
             }
 
