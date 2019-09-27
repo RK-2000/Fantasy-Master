@@ -90,8 +90,15 @@ class Users extends API_Controller_Secure
         if ($UserData) {
 
             /* To Get Withdrawal Configurations */
-            $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => 'MinimumWithdrawalLimitBank'));
-            $UserData['ConfigTypeValue'] = $ConfigData['Data']['Records'][0]['ConfigTypeValue'];
+            $ConfigTypeValue = (MEMCACHE) ? $this->cache->memcached->get('MinimumWithdrawalLimitBank') : '';
+            if(empty($ConfigData)){
+                $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => 'MinimumWithdrawalLimitBank'));
+                $ConfigTypeValue = (!$ConfigData) ? 200 : $ConfigData['Data']['Records'][0]['ConfigTypeValue'];
+                if(MEMCACHE){
+                    $this->cache->memcached->save('MinimumWithdrawalLimitBank',$ConfigTypeValue, 3600 * 24 * 10); // Expire in every 10 Days 
+                }
+            }
+            $UserData['ConfigTypeValue'] = $ConfigTypeValue;
             $this->Return['Data'] = $UserData;
         }
     }
