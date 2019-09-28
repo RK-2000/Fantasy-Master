@@ -34,7 +34,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         if ($scope.data.listLoading || $scope.data.noRecords)
             return;
         $scope.data.listLoading = true;
-        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm1').serialize();
+        var data = 'SessionKey=' + SessionKey  + '&PageNo=' + $scope.data.pageNo + '&PageSize=' + $scope.data.pageSize + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,Status,UserJoinLimit&Privacy=All&OrderBy=PredraftContestID&Sequence=DESC&' + $('#filterForm1').serialize();
         $http.post(API_URL + 'admin/predraftContest/getPredraft', data, contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -1014,21 +1014,18 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
 
     /*load edit form*/
 
-    $scope.loadFormStatus = function (Position, ContestGUID)
+    $scope.loadFormStatus = function (Position, PredraftContestID)
     {
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/updateStatus_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=ContestName,ContestType,Status,StatusID', contentType).then(function (response) {
+        $http.post(API_URL + 'admin/PredraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=DraftName,Status', contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
                 $scope.data.pageLoading = false;
-                $scope.formData = response.Data
-
-
+                $scope.formData = response.Data.Records[0]
                 $('#status_model').modal({show: true});
-
                 $timeout(function () {
 
                     $(".chosen-select").chosen({width: '100%', "disable_search_threshold": 8, "placeholder_text_multiple": "Please Select", }).trigger("chosen:updated");
@@ -1078,52 +1075,22 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
     }
 
     /*edit status*/
-    $scope.editStatus = function (Status, contestGUID)
+    $scope.editStatus = function (Status, PredraftContestID)
     {
-        if (Status == 'Cancelled') {
-            if(confirm('Are you sure, want to cancel contest ?')){
-                var req = 'SessionKey=' + SessionKey + '&ContestGUID=' + contestGUID;
-                $http.post(API_URL + 'admin/contest/cancel', req, contentType).then(function (response) {
-                    var response = response.data;
-                    manageSession(response.ResponseCode);
-                    if (response.ResponseCode == 200) { /* success case */
-                        $scope.editDataLoading = true;
-                        var data = 'SessionKey=' + SessionKey + '&' + $("form[name='update_form']").serialize();
-                        $http.post(API_URL + 'admin/contest/changeStatus', data, contentType).then(function (response) {
-                            var response = response.data;
-                            manageSession(response.ResponseCode);
-                            if (response.ResponseCode == 200) { /* success case */
-                                alertify.success(response.Message);
-                                $scope.data.dataList[$scope.data.Position] = response.Data;
-                                $('.modal-header .close').click();
-                                setTimeout(function () {
-                                    window.location.reload();
-                                }, 1000);
-
-                            } else {
-                                alertify.error(response.Message);
-                            }
-                            $scope.editDataLoading = false;
-                        });
-                    }
-                });
+        $scope.editDataLoading = true;
+        var data = 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Status=' + Status;
+        $http.post(API_URL + 'admin/PredraftContest/changeStatus', data, contentType).then(function (response) {
+            var response = response.data;
+            manageSession(response.ResponseCode);
+            if (response.ResponseCode == 200) { /* success case */
+                alertify.success(response.Message);
+                $scope.data.dataList[$scope.data.Position].Status = Status;
+                $('.modal-header .close').click();
+            } else {
+                alertify.error(response.Message);
             }
-        } else {
-            $scope.editDataLoading = true;
-            var data = 'SessionKey=' + SessionKey + '&contestGUID=' + contestGUID + '&Status=' + Status;
-            $http.post(API_URL + 'admin/contest/changeStatus', data, contentType).then(function (response) {
-                var response = response.data;
-                manageSession(response.ResponseCode);
-                if (response.ResponseCode == 200) { /* success case */
-                    alertify.success(response.Message);
-                    $scope.data.dataList[$scope.data.Position] = response.Data;
-                    $('.modal-header .close').click();
-                } else {
-                    alertify.error(response.Message);
-                }
-                $scope.editDataLoading = false;
-            });
-        }
+            $scope.editDataLoading = false;
+        });
     }
 
         // load predraft contest detail
@@ -1132,7 +1099,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
             $scope.data.Position = Position;
             $scope.templateURLEdit = PATH_TEMPLATE + module + '/deatil_form.htm?' + Math.random();
             $scope.data.pageLoading = true;
-            $http.post(API_URL + 'admin/PredraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit,DraftFormat,DraftName,ShowJoinedDraft,UnfilledWinningPercent,IsAutoCreate,IsConfirm,MatchStartDateTime', contentType).then(function (response) {
+            $http.post(API_URL + 'admin/PredraftContest/getPredraft', 'SessionKey=' + SessionKey + '&PredraftContestID=' + PredraftContestID + '&Params=Privacy,AdminPercent,IsPaid,WinningAmount,DraftSize,EntryFee,NoOfWinners,EntryType,Status,CustomizeWinning,DraftType,TotalJoined,CashBonusContribution,UserJoinLimit,DraftFormat,DraftName,ShowJoinedDraft,UnfilledWinningPercent,IsAutoCreate,IsConfirm,MatchStartDateTime', contentType).then(function (response) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */

@@ -73,6 +73,11 @@
 						<label>Cash Bonus Contribution : {{predraftData.CashBonusContribution}}%</label>
 					</div>
 				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Status : <span ng-class="{Inactive:'text-danger', Active:'text-success'}[predraftData.Status]">{{predraftData.Status}}</span></label>
+					</div>
+				</div>
 				<div class="col-md-12" ng-if="predraftData.CustomizeWinning.length">
 					<table class="table table-striped table-condensed table-hover table-sortable">
 						<thead>

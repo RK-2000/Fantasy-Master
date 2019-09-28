@@ -134,7 +134,12 @@ class PredraftContest_model extends CI_Model {
                 'UserJoinLimit' => 'C.UserJoinLimit',
                 'CashBonusContribution' => 'C.CashBonusContribution',
                 'EntryType' => 'C.EntryType',
-                'AdminPercent' => 'C.AdminPercent'
+                'AdminPercent' => 'C.AdminPercent',
+                'Status' => 'CASE C.StatusID
+                    when "2" then "Active"
+                    when "6" then "Inactive"
+                END as Status'
+
             );
             if ($Params) {
                 foreach ($Params as $Param) {
@@ -182,6 +187,9 @@ class PredraftContest_model extends CI_Model {
         if (!empty($Where['NoOfWinners'])) {
             $this->db->where("C.NoOfWinners", $Where['NoOfWinners']);
         }
+        if (!empty($Where['StatusID'])) {
+            $this->db->where("StatusID", $Where['StatusID']);
+        }
         if (!empty($Where['EntryType'])) {
             $this->db->where("C.EntryType", $Where['EntryType']);
         }
@@ -208,12 +216,16 @@ class PredraftContest_model extends CI_Model {
                 $Records = array();
                 foreach ($Query->result_array() as $key => $Record) {
                     $Records[] = $Record;
-                    $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
+                    if (in_array('CustomizeWinning', $Params)) {
+                        $Records[$key]['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
+                    }
                 }
                 $Return['Data']['Records'] = $Records;
             } else {
                 $Record = $Query->row_array();
-                $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
+                if (in_array('CustomizeWinning', $Params)) {
+                    $Record['CustomizeWinning'] = (!empty($Record['CustomizeWinning'])) ? json_decode($Record['CustomizeWinning'], true) : array();
+                }
                 return $Record;
             }
         }
@@ -227,7 +239,7 @@ class PredraftContest_model extends CI_Model {
     function createPreDraftContest($PredraftContestID = NULL)
     {
         /* Get Pre Draft Contest Data */
-        $DraftData = ((!empty($PredraftContestID))) ? $this->db->query('SELECT * FROM sports_predraft_contest WHERE PredraftContestID = '.$PredraftContestID) : $this->db->query('SELECT * FROM sports_predraft_contest');
+        $DraftData = ((!empty($PredraftContestID))) ? $this->db->query('SELECT * FROM sports_predraft_contest WHERE PredraftContestID = '.$PredraftContestID) : $this->db->query('SELECT * FROM sports_predraft_contest WHERE StatusID = 2');
         if ($DraftData->num_rows() > 0) {
 
             /* Get next 10 matches */ 
@@ -267,5 +279,16 @@ class PredraftContest_model extends CI_Model {
                 }
             }
         }
+    }
+
+    /*
+    Description:    Use to update status
+    */
+    function changeStatus($PredraftContestID,$Input)
+    {
+        $this->db->where(array("PredraftContestID" => $PredraftContestID));
+        $this->db->limit(1);
+        $this->db->update('sports_predraft_contest',array('StatusID' => $Input['StatusID']));
+        return TRUE;
     }
 }

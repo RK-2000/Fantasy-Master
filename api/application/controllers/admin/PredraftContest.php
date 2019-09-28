@@ -218,6 +218,21 @@ class PredraftContest extends API_Controller_Secure
 		}
 	}
 
+    /*
+      Description:  Use to update predraftcontest status.
+      URL:          /admin/predraftcontest/changeStatus/
+     */
+    public function changeStatus_post() {
+        /* Validation section */
+        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim|required|callback_validatePredraftContestID');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        /* Change Status */
+        $this->PredraftContest_model->changeStatus($this->Post['PredraftContestID'], array("StatusID" => $this->StatusID));
+    }
+
 	/**
      * Function Name: validatePredraftContestID
      * Description:   To validate predraft contest ID
