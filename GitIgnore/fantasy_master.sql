@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 20, 2019 at 09:40 AM
+-- Generation Time: Sep 30, 2019 at 10:20 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-11+ubuntu16.04.1+deb.sury.org+1
 
@@ -997,7 +997,8 @@ CREATE TABLE `sports_predraft_contest` (
   `AdminPercent` float(6,2) DEFAULT NULL,
   `CustomizeWinning` text COLLATE utf8_unicode_ci,
   `EntryDate` datetime NOT NULL,
-  `ModifiedDate` datetime DEFAULT NULL
+  `ModifiedDate` datetime DEFAULT NULL,
+  `StatusID` int(11) NOT NULL DEFAULT '2'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1588,7 +1589,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-09-17 10:18:29', '2019-06-07 10:42:15'),
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-09-26 06:52:22', '2019-06-07 10:42:15'),
 (945, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:16:42', '2019-09-03 09:16:45', NULL),
 (946, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:17:01', '2019-09-03 09:17:04', NULL);
 
@@ -1628,7 +1629,9 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '7f8a8bb3-4215-8f55-99dc-40810d534ef4', NULL, 1, 1, NULL, NULL, '2019-09-17 10:15:50'),
 (125, 'c4dbc297-c57d-f0bb-afbd-0c79a1fe147d', NULL, 1, 1, NULL, NULL, '2019-09-17 10:16:01'),
 (125, '107c7e1e-4a0f-3d25-e3e0-76a7e8ca078e', NULL, 1, 1, NULL, NULL, '2019-09-17 10:17:41'),
-(125, '50cc7360-4be0-eda3-25d0-ad9be9d6dc80', NULL, 1, 1, NULL, NULL, '2019-09-17 10:18:29');
+(125, '50cc7360-4be0-eda3-25d0-ad9be9d6dc80', NULL, 1, 1, NULL, NULL, '2019-09-17 10:18:29'),
+(125, '2bfe9592-4d91-fcc5-e2d5-7fb93289e38a', NULL, 1, 1, NULL, NULL, '2019-09-26 06:52:22'),
+(125, '9509b033-3a1e-36bb-979c-876cfc74efac', NULL, 1, 1, NULL, NULL, '2019-09-26 06:52:22');
 
 -- --------------------------------------------------------
 
@@ -1925,7 +1928,8 @@ ALTER TABLE `sports_players`
 -- Indexes for table `sports_predraft_contest`
 --
 ALTER TABLE `sports_predraft_contest`
-  ADD PRIMARY KEY (`PredraftContestID`);
+  ADD PRIMARY KEY (`PredraftContestID`),
+  ADD KEY `StatusID` (`StatusID`);
 
 --
 -- Indexes for table `sports_series`
@@ -2382,6 +2386,12 @@ ALTER TABLE `sports_matches`
 --
 ALTER TABLE `sports_players`
   ADD CONSTRAINT `sports_players_ibfk_1` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `sports_predraft_contest`
+--
+ALTER TABLE `sports_predraft_contest`
+  ADD CONSTRAINT `sports_predraft_contest_ibfk_1` FOREIGN KEY (`StatusID`) REFERENCES `set_status` (`StatusID`);
 
 --
 -- Constraints for table `sports_series`
