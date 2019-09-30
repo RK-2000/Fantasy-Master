@@ -206,6 +206,12 @@ class Utility_model extends CI_Model
             if(MEMCACHE && in_array($ConfigTypeGUID, array('AndridAppUrl','AndroidAppVersion','IsAndroidAppUpdateMandatory'))){
                 $this->cache->memcached->delete('AndroidAppVersion');
             }
+
+            /* Delete MinimumWithdrawalLimitBank Caching */
+            if(MEMCACHE && in_array($ConfigTypeGUID, array('MinimumWithdrawalLimitBank'))){
+                $this->cache->memcached->delete('MinimumWithdrawalLimitBank');
+            }
+
         }
     }
 

@@ -128,7 +128,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         $('#add_model').modal({show:true});
         $timeout(function(){        
            $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
-           $('input[name=CouponValidTillDate]').datetimepicker({format: "yyyy-mm-dd",minView: 2, startDate: new Date()});
+           $('input[name=CouponValidTillDate]').datetimepicker({format: "yyyy-mm-dd",autoclose: true,minView: 2, startDate: new Date()});
        }, 500);
     }
 
@@ -148,7 +148,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
                 $('#Edit_model').modal({show:true});
                 $timeout(function(){            
                  $(".chosen-select").chosen({ width: '100%',"disable_search_threshold": 8 ,"placeholder_text_multiple": "Please Select",}).trigger("chosen:updated");
-                 $('input[name=CouponValidTillDate]').datetimepicker({format: "yyyy-mm-dd",minView: 2, startDate: new Date()});
+                 $('input[name=CouponValidTillDate]').datetimepicker({format: "yyyy-mm-dd",autoclose: true,minView: 2, startDate: new Date()});
              }, 300);
             }
         });

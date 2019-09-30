@@ -197,8 +197,16 @@ class Wallet extends API_Controller_Secure
      */
     public function validateWithdrawalAmount($Amount)
     {
-        $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => ($this->Post['PaymentGateway'] == 'Bank') ? 'MinimumWithdrawalLimitBank' : 'MinimumWithdrawalLimitPaytm'));
-        if ($Amount < $ConfigData['Data']['Records'][0]['ConfigTypeValue']) {
+        /* To Get Withdrawal Configurations */
+        $ConfigTypeValue = (MEMCACHE) ? $this->cache->memcached->get('MinimumWithdrawalLimitBank') : '';
+        if(empty($ConfigData)){
+            $ConfigData = $this->Utility_model->getConfigs(array('ConfigTypeGUID' => 'MinimumWithdrawalLimitBank'));
+            $ConfigTypeValue = (!$ConfigData) ? 200 : $ConfigData['Data']['Records'][0]['ConfigTypeValue'];
+            if(MEMCACHE){
+                $this->cache->memcached->save('MinimumWithdrawalLimitBank',$ConfigTypeValue, 3600 * 24 * 10); // Expire in every 10 Days 
+            }
+        }
+        if ($Amount < $ConfigTypeValue) {
             $this->form_validation->set_message('validateWithdrawalAmount', 'Minimum withdrawal amount limit is ' . DEFAULT_CURRENCY . $ConfigData['Data']['Records'][0]['ConfigTypeValue']);
             return FALSE;
         }

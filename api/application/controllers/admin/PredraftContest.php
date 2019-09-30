@@ -31,7 +31,7 @@ class PredraftContest extends API_Controller_Secure
         $this->form_validation->set_rules('DraftSize', 'DraftSize', 'trim' . (!empty($this->Post['DraftFormat']) && $this->Post['DraftFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric' : ''));
         $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|integer' : ''));
-        $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
+        $this->form_validation->set_rules('EntryType', 'EntryType', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|in_list[Single,Multiple]' : ''));
 		$this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
 		$this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
@@ -117,7 +117,7 @@ class PredraftContest extends API_Controller_Secure
         $this->form_validation->set_rules('DraftSize', 'DraftSize', 'trim' . (!empty($this->Post['DraftFormat']) && $this->Post['DraftFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric' : ''));
         $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|integer' : ''));
-        $this->form_validation->set_rules('EntryType', 'EntryType', 'trim|required|in_list[Single,Multiple]');
+        $this->form_validation->set_rules('EntryType', 'EntryType', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|in_list[Single,Multiple]' : ''));
 		$this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
 		$this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
@@ -217,6 +217,21 @@ class PredraftContest extends API_Controller_Secure
 			$this->Return['Message']      	=	"An error occurred, please try again later.";
 		}
 	}
+
+    /*
+      Description:  Use to update predraftcontest status.
+      URL:          /admin/predraftcontest/changeStatus/
+     */
+    public function changeStatus_post() {
+        /* Validation section */
+        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim|required|callback_validatePredraftContestID');
+        $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        /* Change Status */
+        $this->PredraftContest_model->changeStatus($this->Post['PredraftContestID'], array("StatusID" => $this->StatusID));
+    }
 
 	/**
      * Function Name: validatePredraftContestID

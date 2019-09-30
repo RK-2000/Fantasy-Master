@@ -555,6 +555,13 @@ app.controller('lobbyController', ['$scope', '$rootScope', '$location', 'environ
                 }
             }
 
+            /**-- Show Date Time --**/ 
+            $scope.CustomDateTimeFormate = function (date) {
+                var dateOut = new Date(date);
+                return dateOut;
+            };
+
+
             /*
              Description : To get user team details on ground
              */
