@@ -20,7 +20,7 @@
         <link rel="stylesheet" href="assets/custom.css?version=<?= VERSION ?>">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138966359-1"></script>
     </head>
-    <body ng-controller="HomeController" ng-init="getMatches()" ng-cloak>
+    <body ng-controller="HomeController" ng-init="getMatches();getTestimonial()" ng-cloak>
    
         <nav class="navbar navbar-expand-lg  site_header">
             <div class="container d-block">
