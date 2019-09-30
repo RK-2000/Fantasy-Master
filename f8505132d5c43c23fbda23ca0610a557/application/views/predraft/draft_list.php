@@ -28,15 +28,16 @@
 			<!-- table heading -->
 			<thead>
 				<tr>
-					<th>Draft Name</th>
+					<th style="width: 100px;">Draft Name</th>
 					<th style="width: 100px;">Type</th>
 					<th style="width: 70px;">Is Paid?</th>
 					<th style="width: 70px;">Size</th>
 					<th style="width: 70px;">Privacy</th>
-					<th style="width: 70px;" class="text-center">Fee</th>
-					<th style="width: 70px;" class="text-center">Entry Type</th>
-					<th style="width: 70px;" class="text-center">Winners</th>
-					<th style="width: 100px;" class="text-center">Winning Amount</th>
+					<th style="width: 70px;">Fee</th>
+					<th style="width: 70px;">Entry Type</th>
+					<th style="width: 70px;">Winners</th>
+					<th style="width: 70px;" class="text-center">Winning Amount</th>
+					<th style="width: 100px;" class="text-center">Status</th>
 					<th style="width: 100px;" class="text-center">Action</th>
 					
 					
@@ -77,12 +78,14 @@
 					<td>
 						<p>{{data.DEFAULT_CURRENCY}}{{row.WinningAmount}}</p>
 					</td>
+					<td class="text-center"><span ng-class="{Inactive:'text-danger', Active:'text-success'}[row.Status]">{{row.Status}}</span></td>
 					<td class="text-center">
 						<div class="dropdown">
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
 								<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.PredraftContestID)">Edit</a>
 								<a class="dropdown-item" href="" ng-click="deleteDraft(key, row.PredraftContestID)">Delete</a>
+								<a class="dropdown-item" href="" ng-click="loadFormStatus(key, row.PredraftContestID)">Status</a>
 								<a class="dropdown-item" href="" ng-click="loadPredraftContest(key,row.PredraftContestID)"
                                    >Details</a>
 							</div>
@@ -190,6 +193,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="filter-col" for="Status">Status</label>
+                                        <select id="Status" name="Status" class="form-control chosen-select">
+                                            <option value="">Please Select</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label class="filter-col" for="ParentCategory">Search</label>
                                         <input type="text" class="form-control" name="Keyword" placeholder="Search">
                                     </div>
@@ -245,7 +258,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5"><?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<h3 class="modal-title h5">Pre Draft Change Status</h3>     	
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLEdit"></div>
@@ -288,7 +301,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5"><?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<h3 class="modal-title h5">Pre Draft Details</h3>     	
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLEdit"></div>
