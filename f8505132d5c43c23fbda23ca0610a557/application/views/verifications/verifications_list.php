@@ -100,7 +100,7 @@
 						</td> 
 						<td><span ng-if="row.BankStatus" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.BankStatus]" >{{row.BankStatus}}</span><span ng-if="!row.BankStatus">-</span></td> 
 						<td class="text-center">
-									<div class="form-group" >
+							<div class="form-group" ng-if="row.PanStatus != 'Not Submitted'">
 										<select name="PanStatus" id="PanStatus" ng-model="PanStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'PAN',PanStatus,row.MediaPAN.MediaGUID)" ng-if="row.PanStatus != 'Verified'">
 											<option value="">PAN</option>
 											<option value="Pending" ng-selected="row.PanStatus=='Pending'">Pending</option>
@@ -110,7 +110,7 @@
 										<span ng-if="row.PanStatus == 'Verified'" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PanStatus]" >PAN CARD {{row.PanStatus}}</span>
 									</div>
 								
-									<div class="form-group" >
+									<div class="form-group" ng-if="row.BankStatus != 'Not Submitted'">
 										<select name="BankStatus" id="BankStatus" ng-model="BankStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'BANK',BankStatus,row.MediaBANK.MediaGUID)" ng-if="row.BankStatus != 'Verified'">
 											<option value="">A/C</option>
 											<option value="Pending" ng-selected="row.BankStatus=='Pending'">Pending</option>

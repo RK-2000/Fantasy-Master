@@ -18,76 +18,80 @@ class Users extends API_Controller_Secure
      */
 
     public function broadcast_post()
-	{
-		/* Validation section */
-		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+    {
+        /* Validation section */
+        $this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
         $this->form_validation->set_rules('NotificationType[]', 'NotificationType', 'trim|required');
         $this->form_validation->set_rules('Users[]', 'Select Users', 'trim' . (!isset($this->Post['AllUsers']) ? '|required' : ''));
-		$this->form_validation->set_rules('Title', 'Title', 'trim|required');
-		$this->form_validation->set_rules('Message', 'Message', 'trim|required');
-		$this->form_validation->validation($this);  /* Run validation */
-		/* Validation - ends */
-        
-        if(@$this->Post['AllUsers'] == 'Yes'){
+        $this->form_validation->set_rules('Title', 'Title', 'trim|required');
+        $this->form_validation->set_rules('Message', 'Message', 'trim|required');
+        $this->form_validation->validation($this);  /* Run validation */
+        /* Validation - ends */
+
+        if (@$this->Post['AllUsers'] == 'Yes') {
             $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserTypeID = 2');
             $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
-        }else{
+        } else {
             $UsersIds = array();
-            if(!isset($this->Post['AllUsers'])){
+            if (!isset($this->Post['AllUsers'])) {
                 $TotalUsers = count($this->Post['Users']);
-                if($TotalUsers > 0){
+                if ($TotalUsers > 0) {
                     for ($I = 0; $I < $TotalUsers; $I++) {
                         $UserID = $this->Entity_model->getEntity('E.EntityID', array('EntityGUID' => $this->Post('Users')[$I], 'EntityTypeName' => "User"));
-                        if(!$UserID){ continue; }
+                        if (!$UserID) {
+                            continue;
+                        }
                         $UsersIds[] = $UserID['EntityID'];
                     }
-                }else{
+                } else {
                     $this->Return['ResponseCode'] = 500;
                     $this->Return['Message'] = "Please select users.";
                     exit;
                 }
             }
-            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserID IN ('.implode(",", $UsersIds).')');
+            $Query = $this->db->query('SELECT UserID,Email,PhoneNumber FROM tbl_users WHERE UserID IN (' . implode(",", $UsersIds) . ')');
             $UsersData = ($Query->num_rows() > 0) ? $Query->result_array() : array();
         }
-		if ($UsersData) {
+        if ($UsersData) {
 
             /* Send Push Notification */
-            if(in_array('Push', $this->Post['NotificationType'])){
-                boradcastPushNotifications($this->Post['Title'],$this->Post['Message']);
+            if (in_array('Push', $this->Post['NotificationType'])) {
+                boradcastPushNotifications($this->Post['Title'], $this->Post['Message']);
             }
 
             /* Send Website Notification */
-            if(in_array('Website', $this->Post['NotificationType'])){
-                foreach($UsersData as $Value){
-                    $this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '' , $this->Post['Message']);
-                } 
+            if (in_array('Website', $this->Post['NotificationType'])) {
+                foreach ($UsersData as $Value) {
+                    $this->Notification_model->addNotification('broadcast', $this->Post['Title'], $this->SessionUserID, $Value['UserID'], '', $this->Post['Message']);
+                }
             }
 
-			/* Send Email Notification */
-			if(in_array('Email', $this->Post['NotificationType'])){
-				sendMail(array(
-					'emailTo' => implode(',', array_filter(array_column($UsersData, 'Email'))),
-					'emailSubject' =>  SITE_NAME ."-".$this->Post['Title'],
-					'emailMessage' => emailTemplate($this->load->view('emailer/admin_email', array(
-						"Message" => $this->Post['Message']
-					), TRUE))
-				));
-			}
+            /* Send Email Notification */
+            if (in_array('Email', $this->Post['NotificationType'])) {
+                sendMail(array(
+                    'emailTo' => implode(',', array_filter(array_column($UsersData, 'Email'))),
+                    'emailSubject' =>  SITE_NAME . "-" . $this->Post['Title'],
+                    'emailMessage' => emailTemplate($this->load->view('emailer/admin_email', array(
+                        "Message" => $this->Post['Message']
+                    ), TRUE))
+                ));
+            }
 
             /* Send SMS Notification */
-            if(in_array('SMS', $this->Post['NotificationType'])){
-                foreach($UsersData as $Value){
-                    if(empty($Value['PhoneNumber'])){ continue; }
+            if (in_array('SMS', $this->Post['NotificationType'])) {
+                foreach ($UsersData as $Value) {
+                    if (empty($Value['PhoneNumber'])) {
+                        continue;
+                    }
                     $this->Utility_model->sendMobileSMS(array(
-                                'PhoneNumber' => $Value['PhoneNumber'],
-                                'Text' =>  $this->Post['Message']
-                            ));
-                } 
+                        'PhoneNumber' => $Value['PhoneNumber'],
+                        'Text' =>  $this->Post['Message']
+                    ));
+                }
             }
-		}
-		$this->Return['Message'] = 'Success';
-	}
+        }
+        $this->Return['Message'] = 'Success';
+    }
 
 
     /*
@@ -109,7 +113,7 @@ class Users extends API_Controller_Secure
         /* Validation - ends */
 
         $UsersData = $this->Users_model->getUsers((!empty($this->Post['Params']) ? $this->Post['Params'] : ''), array_merge($this->Post, array("StatusID" => @$this->StatusID)), TRUE, @$this->Post['PageNo'], @$this->Post['PageSize']);
-   
+
         if ($UsersData) {
             $this->Return['Data'] = $UsersData['Data'];
         }
@@ -137,7 +141,7 @@ class Users extends API_Controller_Secure
         ));
 
         /* Update Email Status */
-        if(@$this->Post['EmailStatus'] == 'Verified' && !empty($UserData['EmailForChange'])){
+        if (@$this->Post['EmailStatus'] == 'Verified' && !empty($UserData['EmailForChange'])) {
             if ($this->Users_model->updateEmail($this->UserID, $UserData['EmailForChange'])) {
                 send_mail(array(
                     'emailTo'       => $UserData['Email'],
@@ -149,7 +153,7 @@ class Users extends API_Controller_Secure
         }
 
         /* Update Phone Number Status */
-        if(@$this->Post['PhoneStatus'] == 'Verified' && !empty($UserData['PhoneNumberForChange'])){
+        if (@$this->Post['PhoneStatus'] == 'Verified' && !empty($UserData['PhoneNumberForChange'])) {
             $this->Users_model->updatePhoneNumber($this->UserID, $UserData['PhoneNumberForChange']);
         }
 
@@ -168,14 +172,25 @@ class Users extends API_Controller_Secure
         /* Validation section */
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('VetificationType', 'VetificationType', 'trim|required|in_list[PAN,BANK]');
-        $this->form_validation->set_rules('PanStatus', 'PanStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'PAN' ? '|required|callback_validateStatus' : ''));
-        $this->form_validation->set_rules('BankStatus', 'BankStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'BANK' ? '|required|callback_validateStatus' : ''));
+        if ($this->Post['VetificationType'] == 'PAN') {
+            $this->form_validation->set_rules('PanStatus', 'PanStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'PAN' ? '|required|callback_validateStatus' : ''));
+        }
+        if ($this->Post['VetificationType'] == 'BANK') {
+            $this->form_validation->set_rules('BankStatus', 'BankStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'BANK' ? '|required|callback_validateStatus' : ''));
+        }
         $this->form_validation->set_rules('Comments', 'Comments', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
+        $UpdateData = array('Comments' => @$this->Post['Comments']);
+        if ($this->Post['VetificationType'] == 'PAN' && !empty($this->Post['PanStatus'])) {
+            $UpdateData = array("PanStatus" => $this->StatusID);
+        }
+        if ($this->Post['VetificationType'] == 'BANK' && !empty($this->Post['BankStatus'])) {
+            $UpdateData = array("BankStatus" => $this->StatusID);
+        }
         /* Update User Details */
-        $this->Users_model->updateUserInfo($this->UserID, array('PanStatus' => @$this->StatusID,'BankStatus' => @$this->StatusID,'Comments' => @$this->Post['Comments']));
+        $this->Users_model->updateUserInfo($this->UserID, $UpdateData);
 
         /* Get User Data */
         $UserData = $this->Users_model->getUsers('FirstName,LastName,Email,ProfilePic,Status,PanStatus,BankStatus,PhoneNumber', array("UserID" => $this->UserID));
@@ -297,19 +312,19 @@ class Users extends API_Controller_Secure
 	Description: 	Use to update user profile info.
 	URL: 			/api_admin/entity/changeWithdrawalStatus/	
 	*/
-	public function changeWithdrawalStatus_post()
-	{
-		/* Validation section */
-		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-		$this->form_validation->set_rules('Comments', 'Comments', 'trim' . (!empty($this->Post['Status']) && $this->Post['Status'] == 'Rejected' ? '|required' : ''));
-		$this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required|callback_validateWithdrawalStatus');
-		$this->form_validation->validation($this);  /* Run validation */	
+    public function changeWithdrawalStatus_post()
+    {
+        /* Validation section */
+        $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
+        $this->form_validation->set_rules('Comments', 'Comments', 'trim' . (!empty($this->Post['Status']) && $this->Post['Status'] == 'Rejected' ? '|required' : ''));
+        $this->form_validation->set_rules('WithdrawalID', 'WithdrawalID', 'trim|required|callback_validateWithdrawalStatus');
+        $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
-        
-		$this->Users_model->updateWithdrawal(array_merge(@$this->Post, array("StatusID"=>$this->StatusID)));
-		$this->Return['Data']=$this->Users_model->getWithdrawals(@$this->Post['Params'],array("WithdrawalID" => @$this->Post['WithdrawalID']));
-		$this->Return['Message'] =	"Status has been changed.";
-	}
+
+        $this->Users_model->updateWithdrawal(array_merge(@$this->Post, array("StatusID" => $this->StatusID)));
+        $this->Return['Data'] = $this->Users_model->getWithdrawals(@$this->Post['Params'], array("WithdrawalID" => @$this->Post['WithdrawalID']));
+        $this->Return['Message'] =    "Status has been changed.";
+    }
 
     /*
       Description : To add cash bonus to user
@@ -361,17 +376,17 @@ class Users extends API_Controller_Secure
         if ($WithdrawalData['Data']['TotalRecords'] > 0) {
             foreach ($WithdrawalData['Data']['Records'] as $Key => $Value) {
                 $DataArr[] = array(
-                            's_no'          => $Key++,
-                            'FirstName'     => $Value['FirstName'],
-                            'Email'         => $Value['Email'],
-                            'PhoneNumber'   => $Value['PhoneNumber'],
-                            'Amount'        => $Value['Amount'],
-                            'AccountNumber' => $Value['MediaBANK']['MediaCaption']->AccountNumber,
-                            'Bank'          => $Value['MediaBANK']['MediaCaption']->Bank,
-                            'IFSCCode'      => $Value['MediaBANK']['MediaCaption']->IFSCCode,
-                            'EntryDate'     => $Value['EntryDate'],
-                            'Status'        => $Value['Status']
-                        );
+                    's_no'          => $Key++,
+                    'FirstName'     => $Value['FirstName'],
+                    'Email'         => $Value['Email'],
+                    'PhoneNumber'   => $Value['PhoneNumber'],
+                    'Amount'        => $Value['Amount'],
+                    'AccountNumber' => $Value['MediaBANK']['MediaCaption']->AccountNumber,
+                    'Bank'          => $Value['MediaBANK']['MediaCaption']->Bank,
+                    'IFSCCode'      => $Value['MediaBANK']['MediaCaption']->IFSCCode,
+                    'EntryDate'     => $Value['EntryDate'],
+                    'Status'        => $Value['Status']
+                );
             }
             $FP = fopen('WithdrawalList.csv', 'w');
             header('Content-type: application/csv');
@@ -454,37 +469,38 @@ class Users extends API_Controller_Secure
      * Function Name: validateWithdrawalStatus
      * Description:   To validate withdrawal details
      */
-    public function validateWithdrawalStatus($WithdrawalID) {
+    public function validateWithdrawalStatus($WithdrawalID)
+    {
 
-		/* Validate Withdrawal ID */
-		$WithdrawalData = $this->Users_model->getWithdrawals('Status,Amount,UserID,Email', array('WithdrawalID' => $WithdrawalID));
+        /* Validate Withdrawal ID */
+        $WithdrawalData = $this->Users_model->getWithdrawals('Status,Amount,UserID,Email', array('WithdrawalID' => $WithdrawalID));
         if (!$WithdrawalData) {
             $this->form_validation->set_message('validateWithdrawalStatus', 'Invalid Withdrawal ID.');
             return FALSE;
-		}
+        }
 
-		/* Check Withdrawal request is pending ? */
-		if ($WithdrawalData['Status'] != "Pending") {
-			$this->form_validation->set_message('validateWithdrawalStatus', 'You can update only Pending withdrawal request.');
-			return FALSE;
-		}
-		$this->Post['WithdrawalAmount'] = round($WithdrawalData['Amount'], 1);
-		$this->Post['WithdrawalUserID'] = $WithdrawalData['UserID'];
-		$this->Post['UserFullName']     = $WithdrawalData['FullName'];
-		$this->Post['UserEmail']        = $WithdrawalData['Email'];
-		return TRUE;
-    }
-    
-        /*-------------- Callback UserTypeId -------------*/
-        function validateUserTypeId($UserTypeID)
-        {
-            $ExistUserType = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeID" => $UserTypeID));
-            if ($ExistUserType) {
-                $this->UserTypeID = $ExistUserType['UserTypeID'];
-                return TRUE;
-            }
-            $this->form_validation->set_message('validateUserTypeId', 'Invalid {field}.');
+        /* Check Withdrawal request is pending ? */
+        if ($WithdrawalData['Status'] != "Pending") {
+            $this->form_validation->set_message('validateWithdrawalStatus', 'You can update only Pending withdrawal request.');
             return FALSE;
         }
-        /*---------------End-----------*/
+        $this->Post['WithdrawalAmount'] = round($WithdrawalData['Amount'], 1);
+        $this->Post['WithdrawalUserID'] = $WithdrawalData['UserID'];
+        $this->Post['UserFullName']     = $WithdrawalData['FullName'];
+        $this->Post['UserEmail']        = $WithdrawalData['Email'];
+        return TRUE;
+    }
+
+    /*-------------- Callback UserTypeId -------------*/
+    function validateUserTypeId($UserTypeID)
+    {
+        $ExistUserType = $this->Common_model->getUserTypes('UserTypeID', array("UserTypeID" => $UserTypeID));
+        if ($ExistUserType) {
+            $this->UserTypeID = $ExistUserType['UserTypeID'];
+            return TRUE;
+        }
+        $this->form_validation->set_message('validateUserTypeId', 'Invalid {field}.');
+        return FALSE;
+    }
+    /*---------------End-----------*/
 }
