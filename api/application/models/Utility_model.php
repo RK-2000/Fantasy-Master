@@ -120,7 +120,7 @@ class Utility_model extends CI_Model
       Description : To add banner
      */
 
-    function addBanner($UserID, $Input = array(), $StatusID)
+    function addBanner($UserID, $Input = array(), $StatusID) 
     {
         $this->db->trans_start();
         $EntityGUID = get_guid();
@@ -211,7 +211,6 @@ class Utility_model extends CI_Model
             if(MEMCACHE && in_array($ConfigTypeGUID, array('MinimumWithdrawalLimitBank'))){
                 $this->cache->memcached->delete('MinimumWithdrawalLimitBank');
             }
-
         }
     }
 
