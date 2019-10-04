@@ -1320,7 +1320,7 @@ class Contest_model extends CI_Model
                     SELECT COUNT(J.EntryDate) FROM `sports_contest_join` J, `sports_contest` C WHERE C.ContestID = J.ContestID AND J.UserID = "' . $SessionUserID . '" AND C.MatchID = "' . $MatchID . '" 
                     ) JoinedContest,( 
                     SELECT COUNT(UserTeamName) FROM `sports_users_teams`WHERE UserID = "' . $SessionUserID . '" AND MatchID = "' . $MatchID . '"
-                ) TotalTeams')->row();
+                ) TotalTeams')->row_array();
     }
 
     /*
