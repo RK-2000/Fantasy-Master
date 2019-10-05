@@ -14,6 +14,9 @@
 		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
+		<div class="float-right mr-2">
+            <button class="btn btn-success btn-sm ml-1 float-right" ng-click="loadFormAdd();">Add User</button>
+        </div>
 	</div>
 	<!-- Top container/ -->
 
@@ -333,7 +336,19 @@
 			</div>
 		</div>
 	</div>
-
+ <!-- add Modal -->
+ <div class="modal fade" id="add_model">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title h5">Add <?php echo $this->ModuleData['ModuleName'];?></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div ng-include="templateURLAdd"></div>
+            </div>
+        </div>
+    </div>
 
 </div><!-- Body/ -->
 

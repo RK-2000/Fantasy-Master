@@ -159,6 +159,24 @@ class Users extends API_Controller_Secure
 
         $this->Users_model->updateUserInfo($this->UserID, array("IsPrivacyNameDisplay" => @$this->Post['IsPrivacyNameDisplay']));
         $this->Entity_model->updateEntityInfo($this->UserID, array("StatusID" => $this->StatusID));
+                 /* check for media present - associate media with this Post */
+                 if (!empty($this->Post['MediaGUIDs'])) {
+                    $MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
+                    foreach ($MediaGUIDsArray as $MediaGUID) {
+                        $EntityData = $this->Entity_model->getEntity('E.EntityID MediaID', array('EntityGUID' => $MediaGUID, 'EntityTypeID' => 1));
+                        if ($EntityData) {
+                            $this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $this->PlayerID);
+                        }
+                        $MediaData = $this->Media_model->getMedia(
+                            'MediaGUID,M.MediaName',
+                            array("SectionID" => "ProfilePic", "MediaID" => $EntityData['MediaID']),
+                            FALSE
+                        );
+                        /* Update Player Pic Media Name */
+                        $this->db->query('UPDATE tbl_users AS U, tbl_media AS M SET U.ProfilePic = "'.$MediaData['MediaName'].'" WHERE U.UserID = "' . $this->UserID.'"');
+        
+                    }
+                }
         $this->Return['Data'] = $this->Users_model->getUsers('FirstName,LastName,Email,ProfilePic,Status', array("UserID" => $this->UserID));
         $this->Return['Message'] = "Success.";
     }
@@ -239,12 +257,13 @@ class Users extends API_Controller_Secure
      */
     public function add_post()
     {
+       
         /* Validation section */
         $this->form_validation->set_rules('Email', 'Email', 'trim|required|valid_email|callback_validateEmail');
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim|required');
         $this->form_validation->set_rules('LastName', 'LastName', 'trim');
-        $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|callback_validateUserTypeId');
+        $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|in_list[1,2,3,4,5,6]');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber');
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
@@ -257,6 +276,21 @@ class Users extends API_Controller_Secure
             $this->Return['ResponseCode'] = 500;
             $this->Return['Message'] = "An error occurred, please try again later.";
         } else {
+            if (!empty($this->Post['MediaGUIDs'])) {
+                $MediaGUIDsArray = explode(",", $this->Post['MediaGUIDs']);
+              foreach ($MediaGUIDsArray as $MediaGUID) {
+              if ($EntityData) {
+                  $this->Media_model->addMediaToEntity($EntityData['MediaID'], $this->SessionUserID, $UserID);
+              }
+              $MediaData = $this->Media_model->getMedia(
+                  'MediaGUID,M.MediaName',
+                  array("SectionID" => "ProfilePic", "MediaID" => $EntityData['MediaID']),
+                  FALSE
+              );
+                    /* update media for user profile or cover picture */
+                  $this->Users_model->updateUserInfo($UserID, array('ProfilePic' => $MediaData['MediaName']));
+                }
+          }
             send_mail(array(
                 'emailTo' => $this->Post['Email'],
                 'template_id' => 'd-2baba49071954ed98fee6f146b5168e2',
