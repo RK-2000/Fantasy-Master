@@ -22,7 +22,6 @@ class Contest extends API_Controller_Secure
     public function add_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('ContestName', 'ContestName', 'trim');
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
         $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
@@ -30,7 +29,6 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . ($this->Post['ContestFormat'] ==  'League' && $this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryType', 'EntryType', 'trim' . ($this->Post['ContestFormat'] ==  'League' ? '|required|in_list[Single,Multiple]' : ''));
         $this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
-        $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|required|callback_validateEntityGUID[Matches,MatchID]|callback_validateMatchDateTime[Contest]');
         if ($this->Post['WinningAmount'] > 0 && $this->Post['ContestSize'] > 2 && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
@@ -102,11 +100,8 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->set_rules('UserInvitationCode', 'UserInvitationCode', 'trim' . (!empty($this->Post['Privacy']) && $this->Post['Privacy'] == 'Yes' ? '|required' : ''));
-        $this->form_validation->set_rules('StatusID', 'StatusID', 'trim');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
+       
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
-        $this->form_validation->set_rules('ContestType', 'ContestType', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -127,9 +122,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal,Head to Head]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -245,9 +238,7 @@ class Contest extends API_Controller_Secure
         $this->form_validation->set_rules('ContestGUID', 'ContestGUID', 'trim|callback_validateEntityGUID[Contest,ContestID]');
         $this->form_validation->set_rules('UserTeamGUID', 'UserTeamGUID', 'trim|callback_validateEntityGUID[User Teams,UserTeamID]');
         $this->form_validation->set_rules('UserTeamType', 'UserTeamType', 'trim|required|in_list[Normal,InPlay,All]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
@@ -304,9 +295,7 @@ class Contest extends API_Controller_Secure
     public function getJoinedContests_post()
     {
         $this->form_validation->set_rules('MatchGUID', 'MatchGUID', 'trim|callback_validateEntityGUID[Matches,MatchID]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal,Head to Head]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */

@@ -18,8 +18,6 @@ class Wallet extends API_Controller
 		$this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim' . (empty($this->Post['CouponCode']) ? '|required|callback_validateEntityGUID[User,UserID]' : ''));
 		$this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-		$this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
 		$this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
 		$this->form_validation->validation($this);  /* Run validation */
 
@@ -38,8 +36,6 @@ class Wallet extends API_Controller
 	public function getWithdrawals_post()
 	{
 		$this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-		$this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
 		$this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
 		$this->form_validation->validation($this);  /* Run validation */
 

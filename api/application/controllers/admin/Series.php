@@ -15,8 +15,6 @@ class Series extends API_Controller_Secure
 	public function getSeries_post()
     {
 		$this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|callback_validateEntityGUID[Series,SeriesID]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
@@ -36,7 +34,6 @@ class Series extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('SeriesGUID', 'SeriesGUID', 'trim|required|callback_validateEntityGUID[Series,SeriesID]');
-		$this->form_validation->set_rules('SeriesName', 'SeriesName', 'trim');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */

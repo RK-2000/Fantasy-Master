@@ -21,7 +21,6 @@ class Store extends API_Controller
 		$this->form_validation->set_rules('CouponValue', 'CouponValue', 'trim|required');
 		$this->form_validation->set_rules('CouponType', 'CouponType', 'trim|required');
 		$this->form_validation->set_rules('CouponTitle', 'CouponTitle', 'trim|required');
-		$this->form_validation->set_rules('CouponDescription', 'CouponDescription', 'trim');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */

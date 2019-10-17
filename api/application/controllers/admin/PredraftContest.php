@@ -19,7 +19,6 @@ class PredraftContest extends API_Controller_Secure
       
 
         /* Validation section */
-        $this->form_validation->set_rules('DraftName', 'DraftName', 'trim');
         $this->form_validation->set_rules('DraftFormat', 'Draft Format', 'trim|required|in_list[Head to Head,League]');
 		$this->form_validation->set_rules('DraftType', 'Draft Type', 'trim' . (!empty($this->Post['DraftFormat']) && $this->Post['DraftFormat'] == 'League' ? '|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners]' : ''));
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
@@ -35,7 +34,7 @@ class PredraftContest extends API_Controller_Secure
 		$this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
 		$this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
-        $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
+    
 		if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
@@ -105,7 +104,6 @@ class PredraftContest extends API_Controller_Secure
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim|required|callback_validatePredraftContestID');
-        $this->form_validation->set_rules('DraftName', 'DraftName', 'trim');
         $this->form_validation->set_rules('DraftFormat', 'Draft Format', 'trim|required|in_list[Head to Head,League]');
 		$this->form_validation->set_rules('DraftType', 'Draft Type', 'trim' . (!empty($this->Post['DraftFormat']) && $this->Post['DraftFormat'] == 'League' ? '|required|in_list[Normal,Hot,Champion,Practice,More,Mega,Winner Takes All,Only For Beginners]' : ''));
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|required|in_list[Yes,No]');
@@ -121,7 +119,7 @@ class PredraftContest extends API_Controller_Secure
 		$this->form_validation->set_rules('UserJoinLimit', 'UserJoinLimit', 'trim' . (!empty($this->Post['EntryType']) && $this->Post['EntryType'] == 'Multiple' ? '|required|integer' : ''));
 		$this->form_validation->set_rules('AdminPercent', 'AdminPercent', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
         $this->form_validation->set_rules('CashBonusContribution', 'CashBonusContribution', 'trim' . (!empty($this->Post['IsPaid']) && $this->Post['IsPaid'] == 'Yes' ? '|required|numeric|regex_match[/^[0-9][0-9]?$|^100$/]' : ''));
-        $this->form_validation->set_rules('CustomizeWinning', 'Customize Winning', 'trim');
+
 		if ($this->Post['IsPaid'] == 'Yes' && !empty($this->Post['CustomizeWinning']) && is_array($this->Post['CustomizeWinning'])) {
             $TotalWinners = $TotalPercent = $TotalWinningAmount = 0;
             foreach ($this->Post['CustomizeWinning'] as $Key => $Value) {
@@ -182,13 +180,9 @@ class PredraftContest extends API_Controller_Secure
     */
     public function getPredraft_post()
     {
-        $this->form_validation->set_rules('PredraftContestID', 'PredraftContestID', 'trim');
         $this->form_validation->set_rules('Privacy', 'Privacy', 'trim|in_list[Yes,No,All]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('DraftType', 'DraftType', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Normal]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 

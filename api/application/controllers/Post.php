@@ -23,7 +23,7 @@ class Post extends API_Controller_Secure
 		$this->form_validation->set_rules('PostType', 'PostType', 'trim|required|in_list[Activity,Comment,Review,Question,Testimonial]');
 		$this->form_validation->set_rules('Privacy', 'Privacy', 'trim|in_list[Public,Friends,Private]');
 		$this->form_validation->set_rules('PostContent', 'PostContent', 'trim' . (empty($this->Post['MediaGUIDs']) ? '|required' : ''));
-		$this->form_validation->set_rules('MediaGUIDs', 'MediaGUIDs', 'trim'); /* Media GUIDs */
+		
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
@@ -110,7 +110,6 @@ class Post extends API_Controller_Secure
 		$this->form_validation->set_rules('PostType', 'PostType', 'trim|required|in_list[Activity,Review,Question,Comment,Testimonial]');
 		$this->form_validation->set_rules('PostGUID', 'PostGUID', 'trim|callback_validateEntityGUID[Post,PostID]');
 		$this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Popular,Saved,MyPosts]');
-		$this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
 		$this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
 		$this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
 		$this->form_validation->validation($this);  /* Run validation */
