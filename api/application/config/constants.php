@@ -161,7 +161,6 @@ define('MSG91_AUTH_KEY', '273511AObV1jwyuds43f33dds');
 define('MSG91_SENDER_ID', 'DEMO');
 define('MSG91_FROM_EMAIL', 'info@demo.com');
 
-define('POST_PICTURE_URL', BASE_URL . 'uploads/Post/');
 switch (ENVIRONMENT)
 {
 	case 'local':
@@ -375,6 +374,7 @@ case 'production':
 define('BASE_URL', SITE_HOST . ROOT_FOLDER .'api/');
 define('ASSET_BASE_URL', BASE_URL . 'asset/');
 define('PROFILE_PICTURE_URL', BASE_URL . 'uploads/profile/picture');
+define('POST_PICTURE_URL', BASE_URL . 'uploads/Post/');
 
 /* S3 Bucket Settings */
 define('BUCKET', 'BucketName');
