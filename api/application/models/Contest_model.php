@@ -596,11 +596,15 @@ class Contest_model extends CI_Model
      */
     function switchUserTeam($UserID, $ContestID, $UserTeamID, $OldUserTeamGUID)
     {
-
         /* Switch Team */
         $this->db->where(array('UserID' => $UserID, 'ContestID' => $ContestID, 'UserTeamID' => $OldUserTeamGUID));
         $this->db->limit(1);
         $this->db->update('sports_contest_join', array('UserTeamID' => $UserTeamID));
+
+        /* Update New UserTeamID */
+        $this->db->where(array('UserID' => $UserID, 'ContestID' => $ContestID, 'UserTeamID' => $OldUserTeamGUID));
+        $this->db->limit(1);
+        $this->db->update('tbl_users_wallet', array('UserTeamID' => $UserTeamID));
     }
 
     /*
