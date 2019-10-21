@@ -19,8 +19,6 @@ class Teams extends API_Controller_Secure
 		/* Validation section */
 		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
 		$this->form_validation->set_rules('TeamGUID', 'teamGUID', 'trim|required|callback_validateEntityGUID[Teams,TeamID]');
-		$this->form_validation->set_rules('TeamName', 'Team Name', 'trim');
-		$this->form_validation->set_rules('TeamNameShort', 'Team Short Name', 'trim');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 

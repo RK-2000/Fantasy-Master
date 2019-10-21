@@ -104,8 +104,6 @@ class Users extends API_Controller_Secure
     {
         /* Validation section */
         $this->form_validation->set_rules('StoreGUID', 'StoreGUID', 'trim' . ($this->UserTypeID == 4 ? '|required' : '') . '|callback_validateEntityGUID[Store,StoreID]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('AdminUsers', 'AdminUsers', 'trim');
         $this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
@@ -131,7 +129,7 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
         $this->form_validation->set_rules('EmailStatus', 'EmailStatus', 'trim|in_list[Pending,Verified]');
         $this->form_validation->set_rules('PhoneStatus', 'PhoneStatus', 'trim|in_list[Pending,Verified]');
-        $this->form_validation->set_rules('IsPrivacyNameDisplay', 'IsPrivacyNameDisplay', 'trim');
+
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -196,7 +194,7 @@ class Users extends API_Controller_Secure
         if ($this->Post['VetificationType'] == 'BANK') {
             $this->form_validation->set_rules('BankStatus', 'BankStatus', 'trim' . (!empty($this->Post['VetificationType']) && $this->Post['VetificationType'] == 'BANK' ? '|required|callback_validateStatus' : ''));
         }
-        $this->form_validation->set_rules('Comments', 'Comments', 'trim');
+
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
@@ -262,7 +260,6 @@ class Users extends API_Controller_Secure
         $this->form_validation->set_rules('Email', 'Email', 'trim|required|valid_email|callback_validateEmail');
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
         $this->form_validation->set_rules('FirstName', 'FirstName', 'trim|required');
-        $this->form_validation->set_rules('LastName', 'LastName', 'trim');
         $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|in_list[1,2,3,4,5,6]');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|callback_validatePhoneNumber');
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
@@ -310,8 +307,6 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -329,8 +324,6 @@ class Users extends API_Controller_Secure
      */
     public function getWithdrawals_post()
     {
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
         $this->form_validation->validation($this);  /* Run validation */
@@ -443,8 +436,6 @@ class Users extends API_Controller_Secure
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
@@ -488,7 +479,6 @@ class Users extends API_Controller_Secure
     public function getReferredUsers_post()
     {
         $this->form_validation->set_rules('UserGUID', 'UserGUID', 'trim|required|callback_validateEntityGUID[User,UserID]');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 

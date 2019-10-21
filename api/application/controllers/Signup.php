@@ -24,9 +24,6 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('Email', 'Email', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : '') . '|valid_email|callback_validateEmail', array('validateEmail' => 'Sorry, But this email is already registered.'));
         $this->form_validation->set_rules('Username', 'Username', 'trim|alpha_dash|callback_validateUsername');
         $this->form_validation->set_rules('Password', 'Password', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Direct' ? '|required' : ''));
-        $this->form_validation->set_rules('FirstName', 'FirstName', 'trim');
-        $this->form_validation->set_rules('MiddleName', 'MiddleName', 'trim');
-        $this->form_validation->set_rules('LastName', 'LastName', 'trim');
         $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|required|in_list[2,3]');
         $this->form_validation->set_rules('Gender', 'Gender', 'trim|in_list[Male,Female,Other]');
         $this->form_validation->set_rules('BirthDate', 'BirthDate', 'trim|callback_validateDate');
@@ -108,11 +105,7 @@ class Signup extends API_Controller
         $this->form_validation->set_rules('OTP', 'OTP', 'trim|required|callback_validateToken[2]');
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
-        $this->form_validation->set_rules('DeviceGUID', 'DeviceGUID', 'trim');
-        $this->form_validation->set_rules('DeviceToken', 'DeviceToken', 'trim');
         $this->form_validation->set_rules('IPAddress', 'IPAddress', 'trim|callback_validateIP');
-        $this->form_validation->set_rules('Latitude', 'Latitude', 'trim');
-        $this->form_validation->set_rules('Longitude', 'Longitude', 'trim');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */
 

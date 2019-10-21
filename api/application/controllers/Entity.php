@@ -18,8 +18,6 @@ class Entity extends API_Controller_Secure
 		/* Validation section */
 		$this->form_validation->set_rules('EntityGUID', 'EntityGUID', 'trim|required|callback_validateEntityGUID');
 		$this->form_validation->set_rules('Action', 'Action', 'trim|required|in_list[Liked,Flagged,Saved,Blocked,Vote]');
-		$this->form_validation->set_rules('Text1', 'Text1', 'trim');
-		$this->form_validation->set_rules('Text2', 'Text2', 'trim');
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 

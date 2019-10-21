@@ -21,10 +21,7 @@ class Utilities extends API_Controller
     public function contact_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('Name', 'Name', 'trim');
         $this->form_validation->set_rules('Email', 'Email', 'trim|required|valid_email');
-        $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim');
-        $this->form_validation->set_rules('Title', 'Title', 'trim');
         $this->form_validation->set_rules('Message', 'Message', 'trim|required');
         $this->form_validation->validation($this); /* Run validation */
         /* Validation - ends */

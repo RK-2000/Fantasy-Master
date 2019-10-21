@@ -21,7 +21,6 @@ class Category extends API_Controller_Secure
 		$this->form_validation->set_rules('CategoryName', 'Category Name', 'trim|required');
 		$this->form_validation->set_rules('ParentCategoryGUID', 'Parent Category', 'trim|callback_validateEntityGUID[Category,ParentCategoryID]');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|required|callback_validateStatus');
-		$this->form_validation->set_rules('MediaGUIDs', 'MediaGUIDs', 'trim'); /* Media GUIDs */
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 

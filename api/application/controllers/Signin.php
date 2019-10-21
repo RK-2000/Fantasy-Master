@@ -26,11 +26,7 @@ class Signin extends API_Controller
         $this->form_validation->set_rules('OTP', 'OTP', 'trim' . (empty($this->Post['Source']) || $this->Post['Source'] == 'Otp' ? '|required' : ''));
         $this->form_validation->set_rules('Source', 'Source', 'trim|required|callback_validateSource');
         $this->form_validation->set_rules('DeviceType', 'Device type', 'trim|required|callback_validateDeviceType');
-        $this->form_validation->set_rules('DeviceGUID', 'DeviceGUID', 'trim');
-        $this->form_validation->set_rules('DeviceToken', 'DeviceToken', 'trim');
         $this->form_validation->set_rules('IPAddress', 'IPAddress', 'trim|callback_validateIP');
-        $this->form_validation->set_rules('Latitude', 'Latitude', 'trim');
-        $this->form_validation->set_rules('Longitude', 'Longitude', 'trim');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 

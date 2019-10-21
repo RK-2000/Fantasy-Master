@@ -48,11 +48,8 @@ class Users extends API_Controller_Secure
     public function search_post()
     {
         /* Validation section */
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
         $this->form_validation->set_rules('Filter', 'Filter', 'trim|in_list[Friend,Follow,Followers,Blocked]');
         $this->form_validation->set_rules('UserTypeID', 'UserTypeID', 'trim|in_list[2,3]');
-        $this->form_validation->set_rules('Latitude', 'Latitude', 'trim');
-        $this->form_validation->set_rules('Longitude', 'Longitude', 'trim');
         $this->form_validation->set_rules('PageNo', 'PageNo', 'trim|integer');
         $this->form_validation->set_rules('PageSize', 'PageSize', 'trim|integer');
         $this->form_validation->validation($this);  /* Run validation */

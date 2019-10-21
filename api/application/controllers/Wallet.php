@@ -23,7 +23,6 @@ class Wallet extends API_Controller_Secure
         $this->form_validation->set_rules('CouponGUID', 'CouponGUID', 'trim|callback_validateEntityGUID[Coupon,CouponID]');
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay,CashFree]');
         $this->form_validation->set_rules('Amount', 'Amount', 'trim|required|numeric|callback_validateMinimumDepositAmount');
-        $this->form_validation->set_rules('FirstName', 'FirstName', 'trim');
         $this->form_validation->set_rules('Email', 'Email', 'trim|valid_email');
         $this->form_validation->set_rules('PhoneNumber', 'PhoneNumber', 'trim|numeric');
         $this->form_validation->validation($this);  /* Run validation */
@@ -50,7 +49,6 @@ class Wallet extends API_Controller_Secure
         $this->form_validation->set_rules('PaymentGateway', 'PaymentGateway', 'trim|required|in_list[PayUmoney,Paytm,Razorpay,CashFree]');
         $this->form_validation->set_rules('PaymentGatewayStatus', 'PaymentGatewayStatus', 'trim|required|in_list[Success,Failed,Cancelled]');
         $this->form_validation->set_rules('WalletID', 'WalletID', 'trim|required|numeric|callback_validateWalletID');
-        $this->form_validation->set_rules('PaymentGatewayResponse', 'PaymentGatewayResponse', 'trim');
         $this->form_validation->set_rules('RazorPaymentId', 'RazorPaymentId', 'trim' . (!empty($this->Post['PaymentGateway']) && $this->Post['PaymentGateway'] == 'Razorpay' ? '|required' : ''));
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
@@ -73,8 +71,6 @@ class Wallet extends API_Controller_Secure
     public function getWallet_post()
     {
         $this->form_validation->set_rules('TransactionMode', 'TransactionMode', 'trim|required|in_list[All,WalletAmount,WinningAmount,CashBonus]');
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 
@@ -142,8 +138,6 @@ class Wallet extends API_Controller_Secure
 
     public function getWithdrawals_post()
     {
-        $this->form_validation->set_rules('Keyword', 'Search Keyword', 'trim');
-        $this->form_validation->set_rules('OrderBy', 'OrderBy', 'trim');
         $this->form_validation->set_rules('Sequence', 'Sequence', 'trim|in_list[ASC,DESC]');
         $this->form_validation->validation($this);  /* Run validation */
 

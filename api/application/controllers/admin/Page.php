@@ -38,8 +38,7 @@ class Page extends API_Controller
 	{
 		/* Validation section */
 		$this->form_validation->set_rules('PageGUID', 'PageGUID', 'trim|required');
-		$this->form_validation->set_rules('Title', 'Page Title', 'trim');
-		$this->form_validation->set_rules('Content', 'Content', 'trim');
+
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
