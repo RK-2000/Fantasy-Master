@@ -33,6 +33,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
                     $scope.getList();
+                    location.reload();
                     alertify.success(response.Message);
                 } else {
                     alertify.error(response.Message);
@@ -42,16 +43,13 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         }
     }
 
-        /*load edit form*/
-        $scope.viewAPILog = function (Position)
-        { 
-            $scope.templateURLEdit = PATH_TEMPLATE+module+'/view_form.htm?'+Math.random();
-            $scope.formData = Position
-            console.log($scope.formData);
-            $('#view_model').modal({show:true});
-
-            
-        }
+    /*load view form*/
+    $scope.viewAPILog = function (Position) {
+        $scope.templateURLEdit = PATH_TEMPLATE + module + '/view_form.htm?' + Math.random();
+        $scope.formData = Position
+        console.log($scope.formData);
+        $('#view_model').modal({ show: true });
+    }
 
 });
 

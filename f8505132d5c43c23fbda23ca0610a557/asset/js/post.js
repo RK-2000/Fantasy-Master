@@ -63,7 +63,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
 
 
     /*load delete form*/
-    $scope.loadFormDelete = function(Position, PostGUID) { 
+    $scope.loadFormDelete = function(Position, PostGUID) {  
         $scope.data.Position = Position;
         $scope.templateURLDelete = PATH_TEMPLATE + module + '/delete_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
