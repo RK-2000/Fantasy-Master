@@ -20,7 +20,8 @@ class Common_model extends CI_Model
 			'URL' 		=> current_url(),
 			'RawData'	=> @file_get_contents("php://input"),
 			'DataJ'		=> array_merge(array("API" => $this->classFirstSegment = $this->uri->segment(2)), $this->Post, $_FILES),
-			'Response'	=> $Response
+			'Response'	=> $Response,
+			'EntryDate'    => date('Y-m-d H:i:s')
 		));
 	}
 
@@ -75,6 +76,20 @@ class Common_model extends CI_Model
 			'EntryDate'    => date('Y-m-d H:i:s')
 		));
 	}
+
+	/*
+      Description: Use to get api logs (MongoDB)
+     */
+    function getApiLogs($Where = array(), $PageNo = 1, $PageSize = 15)
+    {
+		$Logs = iterator_to_array($this->fantasydb->log_api->find([], ['projection' => ['_id' => 1, 'URL' => 1, 'DataJ' => 1, 'Response' => 1,'EntryDate' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['EntryDate' => 1]]));
+        if (count($Logs) > 0) {
+            $Return['Data']['TotalRecords'] = $this->fantasydb->log_api->count();
+            $Return['Data']['Records'] = $Logs;
+            return $Return;
+        }
+        return FALSE;
+    }
 
 	/*
 	Description: 	Use to get EntityTypeID by EntityTypeName

@@ -79,4 +79,18 @@ class Config extends API_Controller_Secure
 		$this->Return['Data'] = array();
 		$this->Return['Message'] = "Banner added successfully.";
 	}
+
+	/*
+	Name: 			get
+	Description: 	Use to get api logs
+	URL: 			/config/getApiLogs/	
+	*/
+	public function getApiLogs_post()
+	{
+		$LogsData = $this->Common_model->getApiLogs(@$this->Post);
+		if (!empty($LogsData)) {
+			$this->Return['Data'] = $LogsData['Data'];
+		}
+		$this->Return['Data']['IsAPILogs'] = API_SAVE_LOG;
+	}
 }
