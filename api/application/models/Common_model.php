@@ -80,9 +80,13 @@ class Common_model extends CI_Model
 	/*
       Description: Use to get api logs (MongoDB)
      */
-    function getApiLogs($Where = array(), $PageNo = 1, $PageSize = 15)
+    function getApiLogs($Where = array(), $PageNo = 1, $PageSize = 10)
     {
-		$Logs = iterator_to_array($this->fantasydb->log_api->find([], ['projection' => ['_id' => 1, 'URL' => 1, 'DataJ' => 1, 'Response' => 1,'EntryDate' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['EntryDate' => -1]]));
+		$SearchArr = array();
+		if(!empty($Where['Keyword'])){
+			$SearchArr['URL'] = new MongoDB\BSON\Regex('^'.$Where['Keyword'], 'i');
+		}
+		$Logs = iterator_to_array($this->fantasydb->log_api->find($SearchArr, ['projection' => ['_id' => 1, 'URL' => 1, 'DataJ' => 1, 'Response' => 1,'EntryDate' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => 50, 'sort' => ['EntryDate' => 1]]));
         if (count($Logs) > 0) {
             $Return['Data']['TotalRecords'] = $this->fantasydb->log_api->count();
             $Return['Data']['Records'] = $Logs;
