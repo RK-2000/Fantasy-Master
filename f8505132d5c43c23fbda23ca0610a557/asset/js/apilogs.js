@@ -8,7 +8,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();
     }
-    
+
     /*list append*/
     $scope.getList = function () {
         if ($scope.data.listLoading || $scope.data.noRecords) return;
@@ -19,6 +19,7 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200 && response.Data.Records) { /* success case */
                 $scope.data.totalRecords = response.Data.TotalRecords;
+                $scope.data.IsAPILogs = response.Data.IsAPILogs;
                 for (var i in response.Data.Records) {
                     $scope.data.dataList.push(response.Data.Records[i]);
                 }
@@ -31,10 +32,29 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     }
 
     /*load delete form*/
-    $scope.deleteAPILog = function (Position, oid) {
+    $scope.deleteAPILog = function (Position, LogId) {
         if (confirm('Are you sure, want to delete this api log ?')) {
             $scope.addDataLoading = true;
-            $http.post(API_URL + 'admin/config/deleteApiLogs', 'SessionKey=' + SessionKey + '&oid=' + oid, contentType).then(function (response) {
+            $http.post(API_URL + 'admin/config/deleteApiLogs', 'SessionKey=' + SessionKey + '&LogId=' + LogId, contentType).then(function (response) {
+                var response = response.data;
+                manageSession(response.ResponseCode);
+                if (response.ResponseCode == 200) { /* success case */
+                    $scope.getList();
+                    location.reload();
+                    alertify.success(response.Message);
+                } else {
+                    alertify.error(response.Message);
+                }
+                $scope.addDataLoading = false;
+            });
+        }
+    }
+
+    //delete all api logs
+    $scope.deleteAll = function () {
+        if (confirm('Are you sure, want to delete all api log ?')) {
+            $scope.addDataLoading = true;
+            $http.post(API_URL + 'admin/config/deleteAllApiLogs', 'SessionKey=' + SessionKey, contentType).then(function (response) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */

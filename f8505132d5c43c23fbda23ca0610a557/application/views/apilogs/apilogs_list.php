@@ -9,6 +9,9 @@
         <span class="float-left records d-none d-sm-block">
             <span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
         </span>
+        <div class="float-right mr-2">		
+			<button class="btn btn-success btn-sm ml-1 float-right" ng-click="deleteAll();">Delete All</button>
+		</div>
         <div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
@@ -21,7 +24,7 @@
         infinite-scroll-distance="0">
         <!-- loading -->
         <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
-
+       <p><strong>Api Log : {{data.IsAPILogs == true ? 'On' : 'Off'}}</strong></p>
         <!-- data table -->
         <table class="table table-striped table-condensed table-hover table-sortable" ng-if="data.dataList.length">
             <!-- table heading -->
@@ -41,7 +44,7 @@
                         {{row._id.$oid}} 
                     </td>
                     <td>
-                        {{row.DataJ.API}} 
+                        {{row.DataJ.API}}  
 					</td>
                     <td>
                         {{row.URL}} 

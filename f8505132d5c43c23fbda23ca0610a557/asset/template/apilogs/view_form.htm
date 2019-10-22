@@ -18,8 +18,9 @@ pre {
                             <td>{{formData.URL}}</td>
                         </tr>
                         <tr>
-                            <td>Request</td>
+                            <td class="p1">Request</td>
                             <td><pre>{{formData.DataJ | json}}</pre></td>
+                            <td><button class="copy" ng-click="copyToClipboard()">Copy</button></td>
                         </tr>
                         <tr>
                             <td>Response</td>

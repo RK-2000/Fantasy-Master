@@ -82,7 +82,7 @@ class Common_model extends CI_Model
      */
     function getApiLogs($Where = array(), $PageNo = 1, $PageSize = 15)
     {
-		$Logs = iterator_to_array($this->fantasydb->log_api->find([], ['projection' => ['_id' => 1, 'URL' => 1, 'DataJ' => 1, 'Response' => 1,'EntryDate' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['EntryDate' => 1]]));
+		$Logs = iterator_to_array($this->fantasydb->log_api->find([], ['projection' => ['_id' => 1, 'URL' => 1, 'DataJ' => 1, 'Response' => 1,'EntryDate' => 1], 'skip' => paginationOffset($PageNo, $PageSize), 'limit' => (int) $PageSize, 'sort' => ['EntryDate' => -1]]));
         if (count($Logs) > 0) {
             $Return['Data']['TotalRecords'] = $this->fantasydb->log_api->count();
             $Return['Data']['Records'] = $Logs;
@@ -96,7 +96,15 @@ class Common_model extends CI_Model
      */
     function deleteApiLogs($Input)
     {
-		$this->fantasydb->log_api->deleteOne( array( '_id' => new MongoDB\BSON\ObjectId ($Input['oid'] )) );
+		$this->fantasydb->log_api->deleteOne( array( '_id' => new MongoDB\BSON\ObjectId ($Input['LogId'] )) );
+	}
+	
+	/*
+      Description: Use to delete all api logs (MongoDB)
+     */
+    function deleteAllApiLogs($Input)
+    {
+		$this->fantasydb->log_api->drop();
     }
 
 	/*
