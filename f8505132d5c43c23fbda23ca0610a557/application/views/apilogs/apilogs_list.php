@@ -47,6 +47,7 @@
 							<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#8230;</button>
 							<div class="dropdown-menu dropdown-menu-left">
                                 <a class="dropdown-item" href="" ng-click="deleteAPILog(key, row._id.$oid)">Delete</a>
+                                <a class="dropdown-item" href="" ng-click="viewAPILog(row)">View Details</a>
 							</div>
 						</div>
 					</td>
@@ -151,4 +152,17 @@
             </div>
         </div>
     </div>
+
+    	<!-- view Modal -->
+	<div class="modal fade" id="view_model">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title h5">View Api Request & Response</h3>     	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div ng-include="templateURLEdit"></div>
+			</div>
+		</div>
+	</div>
 </div><!-- Body/ -->

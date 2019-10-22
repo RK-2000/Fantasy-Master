@@ -25,10 +25,10 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     }
 
     /*load delete form*/
-    $scope.loadFormDelete = function (Position, MediaGUID) {
-        if (confirm('Are you sure, want to delete this banner ?')) {
+    $scope.deleteAPILog = function (Position, oid) {
+        if (confirm('Are you sure, want to delete this api log ?')) {
             $scope.addDataLoading = true;
-            $http.post(API_URL + 'upload/delete', 'SessionKey=' + SessionKey + '&MediaGUID=' + MediaGUID, contentType).then(function (response) {
+            $http.post(API_URL + 'admin/config/deleteApiLogs', 'SessionKey=' + SessionKey + '&oid=' + oid, contentType).then(function (response) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
@@ -41,6 +41,17 @@ app.controller('PageController', function ($scope, $http, $timeout) {
             });
         }
     }
+
+        /*load edit form*/
+        $scope.viewAPILog = function (Position)
+        { 
+            $scope.templateURLEdit = PATH_TEMPLATE+module+'/view_form.htm?'+Math.random();
+            $scope.formData = Position
+            console.log($scope.formData);
+            $('#view_model').modal({show:true});
+
+            
+        }
 
 });
 

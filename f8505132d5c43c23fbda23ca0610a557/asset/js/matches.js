@@ -85,7 +85,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
     }
 
     /*list*/
-    $scope.applyFilter = function ()
+    $scope.applyFilter = function () 
     {
         $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
         $scope.getList();

@@ -93,4 +93,18 @@ class Config extends API_Controller_Secure
 		}
 		$this->Return['Data']['IsAPILogs'] = API_SAVE_LOG;
 	}
+
+	/*
+	Name: 			delete
+	Description: 	Use to delete api logs
+	URL: 			/config/deleteApiLogs/	
+	*/
+	public function deleteApiLogs_post()
+	{
+		$LogsData = $this->Common_model->deleteApiLogs(@$this->Post);
+		if (!empty($LogsData)) {
+			$this->Return['Data'] = $LogsData['Data'];
+		}
+		$this->Return['Data']['IsAPILogs'] = API_SAVE_LOG;
+	}
 }

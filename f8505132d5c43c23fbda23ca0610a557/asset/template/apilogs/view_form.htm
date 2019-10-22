@@ -1,0 +1,32 @@
+<div class="modal-body">
+    <div class="form-area">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Api</td>
+                            <td>{{formData.DataJ.API}}</td>
+                        </tr>
+                        <tr>
+                            <td>Url</td>
+                            <td>{{formData.URL}}</td>
+                        </tr>
+                        <tr>
+                            <td>Data</td>
+                            <td>{{formData.DataJ | json}}</td>
+                        </tr>
+                        <tr>
+                            <td>Response</td>
+                            <td>{{formData.Response | json}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+</div>

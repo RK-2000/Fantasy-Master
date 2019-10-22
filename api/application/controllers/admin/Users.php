@@ -150,7 +150,7 @@ class Users extends API_Controller_Secure
             }
         }
 
-        /* Update Phone Number Status */
+        /* Update Phone Number Status */ 
         if (@$this->Post['PhoneStatus'] == 'Verified' && !empty($UserData['PhoneNumberForChange'])) {
             $this->Users_model->updatePhoneNumber($this->UserID, $UserData['PhoneNumberForChange']);
         }
