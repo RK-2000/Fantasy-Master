@@ -1,3 +1,8 @@
+<style>
+pre {
+    max-width: 695px;
+}
+</style>
 <div class="modal-body">
     <div class="form-area">
         <div class="row">
@@ -5,20 +10,20 @@
                 <table class="table">
                     <tbody>
                         <tr>
-                            <td>Api</td>
+                            <td>API</td>
                             <td>{{formData.DataJ.API}}</td>
                         </tr>
                         <tr>
-                            <td>Url</td>
+                            <td>URL</td>
                             <td>{{formData.URL}}</td>
                         </tr>
                         <tr>
-                            <td>Data</td>
-                            <td>{{formData.DataJ | json}}</td>
+                            <td>Request</td>
+                            <td><pre>{{formData.DataJ | json}}</pre></td>
                         </tr>
                         <tr>
                             <td>Response</td>
-                            <td>{{formData.Response | json}} </td>
+                            <td><pre>{{formData.Response | json}}</pre></td>
                         </tr>
                     </tbody>
                 </table>

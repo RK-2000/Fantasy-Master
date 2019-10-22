@@ -1,7 +1,6 @@
 <header class="panel-heading">
     <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
 </header>
-
 <div class="panel-body" ng-controller="PageController">
     <!-- Body -->
 
@@ -31,6 +30,7 @@
                     <th>ID</th>
                     <th>API</th>
                     <th>URL</th>
+                    <th>Entry Date</th>
                     <th style="width: 100px;" class="text-center">Action</th>
                 </tr>
             </thead>
@@ -45,6 +45,9 @@
 					</td>
                     <td>
                         {{row.URL}} 
+                    </td>
+                    <td>
+                        {{row.EntryDate}} 
 					</td>
 					<td class="text-center">
 						<div class="dropdown">
@@ -107,37 +110,6 @@
         </div>
     </div>
 
-
-
-    <!-- add Modal -->
-    <div class="modal fade" id="add_model">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title h5">Add Banner</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div ng-include="templateURLAdd"></div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- edit Modal -->
-    <div class="modal fade" id="edit_model">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title h5">Edit <?php echo $this->ModuleData['ModuleName']; ?></h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div ng-include="templateURLEdit"></div>
-            </div>
-        </div>
-    </div>
-
-
     <!-- delete Modal -->
     <div class="modal fade" id="delete_model">
         <div class="modal-dialog modal-md" role="document">
@@ -159,7 +131,7 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">View Api Request & Response</h3>     	
+					<h3 class="modal-title h5">View API Details</h3>     	
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div ng-include="templateURLEdit"></div>
