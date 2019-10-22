@@ -60,7 +60,6 @@ class Config extends API_Controller_Secure
 	*/
 	public function addBanner_post()
 	{
-		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
 		$this->form_validation->set_rules('MediaGUIDs', 'MediaGUIDs', 'trim|required');
 		$this->form_validation->set_rules('Status', 'Status', 'trim|callback_validateStatus');
 		$this->form_validation->validation($this);  /* Run validation */
@@ -101,7 +100,6 @@ class Config extends API_Controller_Secure
 	*/
 	public function deleteApiLogs_post()
 	{
-		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
 		$this->form_validation->set_rules('LogId', 'LogId', 'trim|required');
 		$this->form_validation->validation($this);  
 		/* Run validation */
