@@ -101,6 +101,21 @@ class Config extends API_Controller_Secure
 	*/
 	public function deleteApiLogs_post()
 	{
-		$this->Common_model->deleteApiLogs(@$this->Post);
+		$this->form_validation->set_rules('SessionKey', 'SessionKey', 'trim|required|callback_validateSession');
+		$this->form_validation->set_rules('LogId', 'LogId', 'trim|required');
+		$this->form_validation->validation($this);  
+		/* Run validation */
+		
+	    $this->Common_model->deleteApiLogs(@$this->Post);
+	}
+
+	/*
+	Name: 			delete all
+	Description: 	Use to delete all api logs
+	URL: 			/config/deleteAllApiLogs/	
+	*/
+	public function deleteAllApiLogs_post()
+	{
+		$LogsData = $this->Common_model->deleteAllApiLogs(@$this->Post);
 	}
 }
