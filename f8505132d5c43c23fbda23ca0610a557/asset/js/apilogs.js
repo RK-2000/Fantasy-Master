@@ -3,6 +3,12 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     $scope.data.ParentCategoryGUID = ParentCategoryGUID;
     /*----------------*/
 
+    /*list*/
+    $scope.applyFilter = function () {
+        $scope.data = angular.copy($scope.orig); /*copy and reset from original scope*/
+        $scope.getList();
+    }
+    
     /*list append*/
     $scope.getList = function () {
         if ($scope.data.listLoading || $scope.data.noRecords) return;

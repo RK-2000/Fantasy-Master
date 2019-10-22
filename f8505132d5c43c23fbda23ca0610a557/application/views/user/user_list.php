@@ -336,7 +336,7 @@
 			</div>
 		</div>
 	</div>
- <!-- add Modal -->
+ <!-- add Modal --> 
  <div class="modal fade" id="add_model">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">

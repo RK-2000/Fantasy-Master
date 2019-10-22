@@ -10,6 +10,9 @@
         <span class="float-left records d-none d-sm-block">
             <span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
         </span>
+        <div class="float-right">
+			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
+		</div>
     </div>
     <!-- Top container/ -->
 
@@ -82,15 +85,12 @@
                         <div class="form-area">
 
                             <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label class="filter-col" for="CategoryTypeName">Category Type</label>
-                                        <select id="CategoryTypeName" name="CategoryTypeName" class="form-control chosen-select">
-                                            <option value="">All Categories</option>
-                                            <option ng-repeat="row in filterData.CategoryTypes" value="{{row.CategoryTypeName}}">{{row.CategoryTypeName}}</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+							</div>
                             </div>
 
                         </div> <!-- form-area /-->
@@ -166,4 +166,4 @@
 			</div>
 		</div>
 	</div>
-</div><!-- Body/ -->
+</div><!-- Body/ --> 
