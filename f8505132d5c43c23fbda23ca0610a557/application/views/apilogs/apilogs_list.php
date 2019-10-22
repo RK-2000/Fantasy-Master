@@ -15,7 +15,8 @@
 
 
     <!-- Data table -->
-    <div class="table-responsive block_pad_md" ng-init="getList()">
+    <div class="table-responsive block_pad_md" infinite-scroll="getList()" infinite-scroll-disabled='data.listLoading'
+        infinite-scroll-distance="0">
         <!-- loading -->
         <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
 
