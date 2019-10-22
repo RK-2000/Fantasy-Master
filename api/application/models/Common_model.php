@@ -96,7 +96,7 @@ class Common_model extends CI_Model
      */
     function deleteApiLogs($Input)
     {
-		$this->fantasydb->log_api->deleteOne(['_id' => $Input['oid']]);
+		$this->fantasydb->log_api->deleteOne( array( '_id' => new MongoDB\BSON\ObjectId ($Input['oid'] )) );
     }
 
 	/*
