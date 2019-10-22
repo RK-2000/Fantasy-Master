@@ -81,7 +81,7 @@ class Config extends API_Controller_Secure
 	}
 
 	/*
-	Name: 			get
+	Name: 			getApiLogs
 	Description: 	Use to get api logs
 	URL: 			/config/getApiLogs/	
 	*/
@@ -95,7 +95,7 @@ class Config extends API_Controller_Secure
 	}
 
 	/*
-	Name: 			delete
+	Name: 			deleteApiLogs
 	Description: 	Use to delete api logs
 	URL: 			/config/deleteApiLogs/	
 	*/
@@ -105,17 +105,17 @@ class Config extends API_Controller_Secure
 		$this->form_validation->set_rules('LogId', 'LogId', 'trim|required');
 		$this->form_validation->validation($this);  
 		/* Run validation */
-		
+
 	    $this->Common_model->deleteApiLogs(@$this->Post);
 	}
 
 	/*
-	Name: 			delete all
+	Name: 			deleteAllApiLogs
 	Description: 	Use to delete all api logs
 	URL: 			/config/deleteAllApiLogs/	
 	*/
 	public function deleteAllApiLogs_post()
 	{
-		$LogsData = $this->Common_model->deleteAllApiLogs(@$this->Post);
+		$LogsData = $this->Common_model->deleteAllApiLogs();
 	}
 }
