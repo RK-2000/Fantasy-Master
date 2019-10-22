@@ -87,7 +87,7 @@ class Config extends API_Controller_Secure
 	*/
 	public function getApiLogs_post()
 	{
-		$LogsData = $this->Common_model->getApiLogs(@$this->Post);
+		$LogsData = $this->Common_model->getApiLogs(@$this->Post, @$this->Post['PageNo'], @$this->Post['PageSize']);
 		if (!empty($LogsData)) {
 			$this->Return['Data'] = $LogsData['Data'];
 		}
@@ -101,10 +101,6 @@ class Config extends API_Controller_Secure
 	*/
 	public function deleteApiLogs_post()
 	{
-		$LogsData = $this->Common_model->deleteApiLogs(@$this->Post);
-		if (!empty($LogsData)) {
-			$this->Return['Data'] = $LogsData['Data'];
-		}
-		$this->Return['Data']['IsAPILogs'] = API_SAVE_LOG;
+		$this->Common_model->deleteApiLogs(@$this->Post);
 	}
 }

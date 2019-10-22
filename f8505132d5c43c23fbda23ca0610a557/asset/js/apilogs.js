@@ -1,5 +1,5 @@
 app.controller('PageController', function ($scope, $http, $timeout) {
-    $scope.data.pageSize = 100;
+    $scope.data.pageSize = 10;
     $scope.data.ParentCategoryGUID = ParentCategoryGUID;
     /*----------------*/
 
