@@ -18,13 +18,11 @@ class Store_model extends CI_Model
 		$this->db->select('C.CouponID CouponIDForUse,IF(C.CouponBanner IS NULL,CONCAT("' . BASE_URL . '","uploads/Coupon/","default-coupon.png"), CONCAT("' . BASE_URL . '","uploads/Coupon/",C.CouponBanner)) CouponBanner');
 		$this->db->select($Field);
 		$this->db->select('
-		CASE E.StatusID
+		CASE C.StatusID
 		when "2" then "Active"
 		when "6" then "Inactive"
 		END as Status', false);
-		$this->db->from('tbl_entity E');
 		$this->db->from('ecom_coupon C');
-		$this->db->where("C.CouponID", "E.EntityID", FALSE);
 		if (!empty($Where['CouponID'])) {
 			$this->db->where("C.CouponID", $Where['CouponID']);
 		}
@@ -35,7 +33,7 @@ class Store_model extends CI_Model
 			$this->db->where("C.CouponType", $Where['CouponType']);
 		}
 		if (!empty($Where['StatusID'])) {
-			$this->db->where("E.StatusID", $Where['StatusID']);
+			$this->db->where("C.StatusID", $Where['StatusID']);
 		}
 		if (!empty($Where['ValidFrom'])) {
             $this->db->where("C.CouponValidTillDate >=", $Where['ValidFrom']);
@@ -101,6 +99,7 @@ class Store_model extends CI_Model
 			"MiniumAmount" 			=>	@$Input['MiniumAmount'],
 			"MaximumAmount" 		=>	@$Input['MaximumAmount'],
 			"NumberOfUses" 			=>	@$Input['NumberOfUses'],
+			"StatusID" 			    =>	$StatusID
 		));
 		$this->db->insert('ecom_coupon', $InsertArray);
 		$this->db->trans_complete();
@@ -128,6 +127,7 @@ class Store_model extends CI_Model
 			"MiniumAmount" 			=>	@$Input['MiniumAmount'],
 			"MaximumAmount" 		=>	@$Input['MaximumAmount'],
 			"NumberOfUses" 			=>	@$Input['NumberOfUses'],
+			"StatusID" 			    =>	@$Input['StatusID']
 		));
 
 		if (isset($Input['CouponDescription']) && $Input['CouponDescription'] == '') {
@@ -138,10 +138,6 @@ class Store_model extends CI_Model
 			$this->db->where('CouponID', $CouponID);
 			$this->db->limit(1);
 			$this->db->update('ecom_coupon', $UpdateArray);
-		}
-		/*Update Status*/
-		if (!empty($Input['StatusID'])) {
-			$this->Entity_model->updateEntityInfo($CouponID, array('StatusID' => @$Input['StatusID']));
 		}
 		return TRUE;
 	}

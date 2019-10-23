@@ -634,7 +634,8 @@ class Utility_model extends CI_Model
                             'SeriesID' => $SeriesID,
                             'SeriesGUID' => $SeriesGUID,
                             'SeriesIDLive' => $MatchValue['season']['key'],
-                            'SeriesName' => $MatchValue['season']['name']
+                            'SeriesName' => $MatchValue['season']['name'],
+                            'StatusID' => 2
                         ));
 
                         $this->db->insert('sports_series', $SeriesData);
@@ -663,7 +664,8 @@ class Utility_model extends CI_Model
                             'TeamGUID' => $TeamGUID,
                             'TeamIDLive' => $LocalTeam['key'],
                             'TeamName' => $LocalTeam['name'],
-                            'TeamNameShort' => strtoupper($LocalTeam['key'])
+                            'TeamNameShort' => strtoupper($LocalTeam['key']),
+                            'StatusID' => 2
                         );
                     }
 
@@ -680,7 +682,8 @@ class Utility_model extends CI_Model
                             'TeamGUID' => $TeamGUID,
                             'TeamIDLive' => $VisitorTeam['key'],
                             'TeamName' => $VisitorTeam['name'],
-                            'TeamNameShort' => strtoupper($VisitorTeam['key'])
+                            'TeamNameShort' => strtoupper($VisitorTeam['key']),
+                            'StatusID' => 2
                         );
                     }
                     $TeamsData = array_merge($VisitorTeamData, $LocalTeamData);
@@ -904,20 +907,11 @@ class Utility_model extends CI_Model
                         'TeamGUID' => $TeamGUID,
                         'TeamIDLive' => $TeamKey,
                         'TeamName' => $Response['data']['name'],
-                        'TeamNameShort' => strtoupper($TeamKey)
+                        'TeamNameShort' => strtoupper($TeamKey),
+                        'StatusID' => 2
                     ));
                     $IsNewTeam = true;
                     $this->db->insert('sports_teams', $TeamData);
-
-                    /* Add Into MongoDB */
-                    $TeamsDataMongo = array(
-                        '_id'           => $TeamGUID,
-                        'TeamID'        => (int) $TeamID,
-                        'TeamName'      => $Response['data']['name'],
-                        'TeamNameShort' => strtoupper($TeamKey),
-                        'TeamFlag'      => 'team.png'
-                    );
-                    $this->fantasydb->sports_teams->insertOne($TeamsDataMongo);
                 }
                 if (!$IsNewTeam) {
 
@@ -950,18 +944,9 @@ class Utility_model extends CI_Model
                             'PlayerIDLive' => $PlayerIDLive,
                             'PlayerName' => $Response['data']['players'][$PlayerIDLive]['name'],
                             'PlayerBattingStyle' => @$Response['data']['players'][$PlayerIDLive]['batting_style'][0],
-                            'PlayerBowlingStyle' => @$Response['data']['players'][$PlayerIDLive]['bowling_style'][0],
+                            'PlayerBowlingStyle' => @$Response['data']['players'][$PlayerIDLive]['bowling_style'][0]
                         );
                         $this->db->insert('sports_players', $PlayersAPIData);
-
-                        /* Add Into MongoDB */
-                        $PlayersDataMongo = array(
-                            '_id'         => $PlayerGUID,
-                            'PlayerID'    => (int) $PlayerID,
-                            'PlayerName'  => $Response['data']['players'][$PlayerIDLive]['name'],
-                            'PlayerPic'   => 'player.png'
-                        );
-                        $this->fantasydb->sports_players->insertOne($PlayersDataMongo);
                     }
                     $PlayersData[$PlayerIDLive] = $PlayerID;
 

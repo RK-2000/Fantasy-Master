@@ -608,8 +608,8 @@ class Contest_model extends CI_Model
             $Params = array_map('trim', explode(',', $Field));
             $Field = '';
             $FieldArray = array(
-                'UserTeamID' => 'UT.UserTeamID',
-                'MatchID' => 'UT.MatchID',
+                'UserTeamID'  => 'UT.UserTeamID',
+                'MatchID'     => 'UT.MatchID',
                 'MatchInning' => 'UT.MatchInning',
                 'TotalPoints' => 'JC.TotalPoints',
                 'TotalJoinedContests' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE UserTeamID = UT.UserTeamID) TotalJoinedContests',
@@ -627,13 +627,10 @@ class Contest_model extends CI_Model
         $this->db->select('UT.UserTeamGUID,UT.UserTeamName,UT.UserTeamType,UT.UserTeamID UserTeamIDAsUse,UT.MatchID MatchIDAsUse,UT.UserID UserIDAsUse');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
+        $this->db->from('sports_users_teams UT');
         if (in_array('TotalPoints', $Params)) {
-            $this->db->from('tbl_entity E, sports_users_teams UT,sports_contest_join JC');
-            $this->db->where("UT.UserTeamID", "E.EntityID", false);
-            $this->db->where("JC.UserTeamID", "UT.UserTeamID", false);
-        } else {
-            $this->db->from('tbl_entity E, sports_users_teams UT');
-            $this->db->where("UT.UserTeamID", "E.EntityID", false);
+            $this->db->from('sports_contest_join JC');
+            $this->db->where("JC.UserTeamID", "UT.UserTeamID", FALSE);
         }
         if (!empty($Where['Keyword'])) {
             $this->db->like("UT.UserTeamName", $Where['Keyword']);
@@ -656,10 +653,6 @@ class Contest_model extends CI_Model
         if (!empty($Where['UserID']) && empty($Where['UserTeamID'])) { // UserTeamID used to manage other user team details (On live score page)
             $this->db->where("UT.UserID", $Where['UserID']);
         }
-        if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
-        }
-
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
         } else {

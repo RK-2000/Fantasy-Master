@@ -312,29 +312,6 @@ class Utilities extends API_Controller
     }
 
     /*
-      Description: 	Cron jobs to get auction joined player points.
-      URL: 			/api/utilities/getAuctionJoinedUserTeamsPlayerPoints
-     */
-    public function getAuctionJoinedUserTeamsPlayerPoints_get()
-    {
-        $CronID = $this->Common_model->insertCronLogs('getAuctionJoinedUserTeamsPlayerPoints');
-        $this->Sports_model->getAuctionJoinedUserTeamsPlayerPoints($CronID);
-        $this->Common_model->updateCronLogs($CronID);
-    }
-
-    /*
-      Description: 	Cron jobs to auto add minute in every hours.
-      URL: 			/api/utilities/liveAuctionAddMinuteInEveryHours
-     */
-    public function auctionLiveAddMinuteInEveryHours_get()
-    {
-        $CronID = $this->Common_model->insertCronLogs('liveAuctionAddMinuteInEveryHours');
-        $this->load->model('AuctionDrafts_model');
-        $this->AuctionDrafts_model->auctionLiveAddMinuteInEveryHours($CronID);
-        $this->Common_model->updateCronLogs($CronID);
-    }
-
-    /*
       Description:  Cron jobs to create pre draft contest
       URL:      /api/utilities/createPreDraftContest
     */

@@ -34,7 +34,7 @@ class Matches extends API_Controller_Secure
     }
 
     /*
-      Description: 	Use to update user profile info.
+      Description: 	Use to update match status
       URL: /admin/matches/changeStatus/
      */
     public function changeStatus_post()
@@ -61,7 +61,7 @@ class Matches extends API_Controller_Secure
     }
 
     /*
-      Description: 	Use to update user profile info.
+      Description: 	Use to get filter data
       URL: 			/admin/matches/getFilterData/
      */
     public function getFilterData_post()
@@ -132,14 +132,6 @@ class Matches extends API_Controller_Secure
 
                     /* Update Player Pic Media Name */
                     $this->db->query('UPDATE sports_players AS P, tbl_media AS M SET P.PlayerPic = M.MediaName WHERE M.EntityID = P.PlayerID AND M.MediaID = ' . $EntityData['MediaID']);
-
-                    /* Edit Into MongoDB */
-                    mongoDBConnection();
-                    $this->fantasydb->sports_players->updateOne(
-                        ['_id' => $this->Post['PlayerGUID']],
-                        ['$set'   => array('PlayerID' => (int) $this->PlayerID,'PlayerPic' => $MediaData['MediaName'])],
-                        ['upsert' => true]
-                    );
                 }
             }
         }

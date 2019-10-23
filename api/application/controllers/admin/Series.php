@@ -38,8 +38,8 @@ class Series extends API_Controller_Secure
 		$this->form_validation->validation($this);  /* Run validation */
 		/* Validation - ends */
 
-		$this->Entity_model->updateEntityInfo($this->SeriesID, array("StatusID"=>$this->StatusID));
-		$this->Sports_model->updateSeriesData($this->SeriesID, array("SeriesName"=>$this->Post['SeriesName']));
+		/* Update Series Details */
+		$this->Sports_model->updateSeriesData($this->SeriesID, array("SeriesName"=>$this->Post['SeriesName'],"StatusID"=>$this->StatusID));
 		$this->Return['Data']=$this->Sports_model->getSeries('SeriesName,Status,',array('SeriesID' => $this->SeriesID));
 		$this->Return['Message'] =	"Success.";
 	}

@@ -39,17 +39,13 @@ class Sports_model extends CI_Model
             $Field = '';
             $FieldArray = array(
                 'SeriesID' => 'S.SeriesID',
-                'StatusID' => 'E.StatusID',
+                'StatusID' => 'S.StatusID',
                 'SeriesIDLive' => 'S.SeriesIDLive',
                 'SportsType' => 'S.SportsType',
-                'AuctionDraftIsPlayed' => 'S.AuctionDraftIsPlayed',
-                'DraftUserLimit' => 'S.DraftUserLimit',
-                'DraftTeamPlayerLimit' => 'S.DraftTeamPlayerLimit',
-                'DraftPlayerSelectionCriteria' => 'S.DraftPlayerSelectionCriteria',
                 'SeriesStartDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesStartDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") SeriesStartDate',
                 'SeriesEndDate' => 'DATE_FORMAT(CONVERT_TZ(S.SeriesEndDate,"+00:00","' . DEFAULT_TIMEZONE . '"), "%Y-%m-%d") SeriesEndDate',
                 'TotalMatches' => '(SELECT COUNT(MatchIDLive) FROM sports_matches WHERE sports_matches.SeriesID =  S.SeriesID ) TotalMatches',
-                'Status' => 'CASE E.StatusID
+                'Status' => 'CASE S.StatusID
                     when "2" then "Active"
                     when "6" then "Inactive"
                 END as Status',
@@ -63,22 +59,15 @@ class Sports_model extends CI_Model
         $this->db->select('S.SeriesGUID,S.SeriesName');
         if (!empty($Field))
             $this->db->select($Field, FALSE);
-        $this->db->from('tbl_entity E, sports_series S');
-        $this->db->where("S.SeriesID", "E.EntityID", FALSE);
+        $this->db->from('sports_series S');
         if (!empty($Where['Keyword'])) {
             $this->db->like("S.SeriesName", $Where['Keyword']);
-        }
-        if (!empty($Where['DraftAuctionPlay']) && $Where['DraftAuctionPlay'] == "Yes") {
-            $this->db->where("S.AuctionDraftIsPlayed", "Yes");
         }
         if (!empty($Where['SeriesID'])) {
             $this->db->where("S.SeriesID", $Where['SeriesID']);
         }
         if (!empty($Where['SportsType'])) {
             $this->db->where("S.SportsType", $Where['SportsType']);
-        }
-        if (!empty($Where['AuctionDraftIsPlayed'])) {
-            $this->db->where("S.AuctionDraftIsPlayed", $Where['AuctionDraftIsPlayed']);
         }
         if (!empty($Where['SeriesStartDate'])) {
             $this->db->where("S.SeriesStartDate >=", $Where['SeriesStartDate']);
@@ -87,16 +76,16 @@ class Sports_model extends CI_Model
             $this->db->where("S.SeriesEndDate >=", $Where['SeriesEndDate']);
         }
         if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
+            $this->db->where("S.StatusID", $Where['StatusID']);
         }
 
         if (!empty($Where['OrderBy']) && !empty($Where['Sequence'])) {
             $this->db->order_by($Where['OrderBy'], $Where['Sequence']);
         } else if (!empty($Where['OrderByToday']) && $Where['OrderByToday'] == 'Yes') {
             $this->db->order_by('DATE(S.SeriesEndDate)="' . date('Y-m-d') . '" ASC', null, FALSE);
-            $this->db->order_by('E.StatusID=2 DESC', null, FALSE);
+            $this->db->order_by('S.StatusID=2 DESC', null, FALSE);
         } else {
-            $this->db->order_by('E.StatusID', 'ASC');
+            $this->db->order_by('S.StatusID', 'ASC');
             $this->db->order_by('S.SeriesStartDate', 'DESC');
             $this->db->order_by('S.SeriesName', 'ASC');
         }
@@ -162,13 +151,13 @@ class Sports_model extends CI_Model
             $Field = '';
             $FieldArray = array(
                 'TeamID' => 'T.TeamID',
-                'StatusID' => 'E.StatusID',
+                'StatusID' => 'T.StatusID',
                 'TeamIDLive' => 'T.TeamIDLive',
                 'TeamName' => 'T.TeamName',
                 'TeamNameShort' => 'T.TeamNameShort',
                 'SportsType' => 'T.SportsType',
                 'TeamFlag' => 'IF(T.TeamFlag IS NULL,CONCAT("' . BASE_URL . '","uploads/TeamFlag/","team.png"), CONCAT("' . BASE_URL . '","uploads/TeamFlag/",T.TeamFlag)) TeamFlag',
-                'Status' => 'CASE E.StatusID
+                'Status' => 'CASE T.StatusID
                                 when "2" then "Active"
                                 when "6" then "Inactive"
                                 END as Status',
@@ -184,8 +173,7 @@ class Sports_model extends CI_Model
         if (!empty($Field)) {
             $this->db->select($Field, FALSE);
         }
-        $this->db->from('tbl_entity E, sports_teams T');
-        $this->db->where("T.TeamID", "E.EntityID", FALSE);
+        $this->db->from('sports_teams T');
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
             $this->db->group_start();
@@ -203,7 +191,7 @@ class Sports_model extends CI_Model
             $this->db->where("T.SportsType", $Where['SportsType']);
         }
         if (!empty($Where['StatusID'])) {
-            $this->db->where("E.StatusID", $Where['StatusID']);
+            $this->db->where("T.StatusID", $Where['StatusID']);
         }
         if (!empty($Where['SeriesID'])) {
             $this->db->where('T.TeamID IN(SELECT DISTINCT TeamID FROM `sports_team_players` WHERE `SeriesID` = ' . $Where['SeriesID'] . ')', NULL, FALSE);
@@ -569,11 +557,6 @@ class Sports_model extends CI_Model
         if (array_keys_exist($Params, array('SeriesGUID'))) {
             $this->db->from('sports_series S');
             $this->db->where("S.SeriesID", "TP.SeriesID", FALSE);
-        }
-        if (!empty($Where['StatusID'])) {
-            $this->db->from('tbl_entity E');
-            $this->db->where("P.PlayerID", "E.EntityID", FALSE);
-            $this->db->where("E.StatusID", $Where['StatusID']);
         }
         if (!empty($Where['Keyword'])) {
             $Where['Keyword'] = trim($Where['Keyword']);
@@ -1809,88 +1792,6 @@ class Sports_model extends CI_Model
                     /* Send Refund Notification */
                     $this->Notification_model->addNotification('refund', 'Contest Cancelled Refund', $JoinValue['UserID'], $JoinValue['UserID'], $Value['ContestID'], 'Your ' . DEFAULT_CURRENCY . $InsertData['Amount'] . ' has been refunded.');
                 }
-            }
-        }
-    }
-
-    /*
-      Description: 	Cron jobs to get auction joined player points.
-     */
-    function getAuctionJoinedUserTeamsPlayerPoints($CronID)
-    {
-        /** get series play in auction * */
-        $SeriesData = $this->getSeries('SeriesIDLive,SeriesID', array('StatusID' => 2, 'SeriesEndDate' => date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d')))), "AuctionDraftIsPlayed" => "Yes"), true, 0);
-        if ($SeriesData['Data']['TotalRecords'] == 0) {
-            $this->db->where('CronID', $CronID);
-            $this->db->limit(1);
-            $this->db->update('log_cron', array('CronStatus' => 'Exit'));
-            exit;
-        }
-
-        foreach ($SeriesData['Data']['Records'] as $Rows) {
-            /* Get Matches Live */
-            $LiveMatcheContest = $this->AuctionDrafts_model->getContests('ContestID,SeriesID', array('StatusID' => 1, "AuctionStatusID" => 5, "LeagueType" => "Auction", "SeriesID" => $Rows['SeriesID']), true, 0);
-
-            foreach ($LiveMatcheContest['Data']['Records'] as $Value) {
-                $MatchIDLive = $Value['MatchIDLive'];
-                $SeriesID = $Value['SeriesID'];
-                $ContestID = $Value['ContestID'];
-                $Contests = $this->AuctionDrafts_model->getJoinedContests('ContestID,UserID,UserTeamID', array('StatusID' => 1, 'ContestID' => $ContestID, "SeriesID" => $SeriesID), true, 0);
-
-                if (!empty($Contests['Data']['Records'])) {
-                    /* Get Vice Captain Points */
-                    $ViceCaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "ViceCaptainPointMP" LIMIT 1')->row_array();
-
-                    /* Get Captain Points */
-                    $CaptainPointsData = $this->db->query('SELECT * FROM sports_setting_points WHERE PointsTypeGUID = "CaptainPointMP" LIMIT 1')->row_array();
-
-                    /* Match Types */
-                    $MatchTypesArr = array('1' => 'PointsODI', '3' => 'PointsT20', '4' => 'PointsT20', '5' => 'PointsTEST', '7' => 'PointsT20', '9' => 'PointsODI');
-                    $ContestIDArray = array();
-                    foreach ($Contests['Data']['Records'] as $Value) {
-                        $ContestIDArray[] = $Value['ContestID'];
-                        /* Player Points Multiplier */
-                        $UserID = $Value["UserID"];
-                        $PositionPointsMultiplier = array('ViceCaptain' => 1.5, 'Captain' => 2, 'Player' => 1);
-                        $UserTotalPoints = 0;
-
-                        /* To Get Match Players */
-                        $MatchPlayers = $this->AuctionDrafts_model->getAuctionPlayersPoints('SeriesID,PlayerID,TotalPoints', array('SeriesID' => $SeriesID), true, 0);
-
-                        $PlayersPointsArr = array_column($MatchPlayers['Data']['Records'], 'TotalPoints', 'PlayerGUID');
-                        $PlayersIdsArr = array_column($MatchPlayers['Data']['Records'], 'PlayerID', 'PlayerGUID');
-
-                        /* To Get User Team Players */
-                        $UserTeamPlayers = $this->AuctionDrafts_model->getUserTeams('PlayerID,PlayerPosition,UserTeamPlayers', array('UserTeamID' => $Value['UserTeamID']), 0);
-                        foreach ($UserTeamPlayers['UserTeamPlayers'] as $UserTeamValue) {
-                            if (!isset($PlayersPointsArr[$UserTeamValue['PlayerGUID']]))
-                                continue;
-
-                            $Points = ($PlayersPointsArr[$UserTeamValue['PlayerGUID']] != 0) ? $PlayersPointsArr[$UserTeamValue['PlayerGUID']] * $PositionPointsMultiplier[$UserTeamValue['PlayerPosition']] : 0;
-                            $UserTotalPoints = ($Points > 0) ? $UserTotalPoints + $Points : $UserTotalPoints - abs($Points);
-
-                            /* Update Player Points */
-                            $this->db->where('UserTeamID', $Value['UserTeamID']);
-                            $this->db->where('PlayerID', $PlayersIdsArr[$UserTeamValue['PlayerGUID']]);
-                            $this->db->limit(1);
-                            $this->db->update('sports_users_team_players', array('Points' => $Points));
-                        }
-
-                        $UserTeamPlayersTotal = $this->AuctionDrafts_model->getUserTeamPlayersAuction('TotalPoints', array('UserTeamID' => $Value['UserTeamID']));
-
-                        if (!empty($UserTeamPlayersTotal)) {
-                            $UserTotalPoints = $UserTeamPlayersTotal[0]['TotalPoints'];
-                        }
-                        /* Update Player Total Points */
-                        $this->db->where('UserID', $UserID);
-                        $this->db->where('ContestID', $Value['ContestID']);
-                        $this->db->limit(1);
-                        $this->db->update('sports_contest_join', array('TotalPoints' => $UserTotalPoints, 'ModifiedDate' => date('Y-m-d H:i:s')));
-                        $AB[] = $this->db->last_query();
-                    }
-                    $ContestIDArray = array_unique($ContestIDArray);
-                }
-                $this->updateRankByContest($ContestID);
             }
         }
     }
