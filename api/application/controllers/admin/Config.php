@@ -104,7 +104,7 @@ class Config extends API_Controller_Secure
 		$this->form_validation->validation($this);  
 		/* Run validation */
 
-	    $this->Common_model->deleteApiLogs(@$this->Post);
+	    $this->Common_model->deleteApiLogs($this->Post['LogId']);
 	}
 
 	/*
