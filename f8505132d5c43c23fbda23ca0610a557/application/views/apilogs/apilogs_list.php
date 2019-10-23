@@ -24,7 +24,7 @@
         infinite-scroll-distance="0">
         <!-- loading -->
         <p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
-       <p><strong>Api Log : {{data.IsAPILogs == true ? 'On' : 'Off'}}</strong></p>
+       <p><strong>API Save Log Current Status : {{data.IsAPILogs == true ? 'On' : 'Off'}}</strong></p>
         <!-- data table -->
         <table class="table table-striped table-condensed table-hover table-sortable" ng-if="data.dataList.length">
             <!-- table heading -->
