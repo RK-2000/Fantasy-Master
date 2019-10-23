@@ -39,9 +39,8 @@ app.controller('PageController', function ($scope, $http, $timeout) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
-                    $scope.getList();
-                    location.reload();
                     alertify.success(response.Message);
+                    location.reload();
                 } else {
                     alertify.error(response.Message);
                 }
@@ -52,15 +51,14 @@ app.controller('PageController', function ($scope, $http, $timeout) {
 
     //delete all api logs
     $scope.deleteAll = function () {
-        if (confirm('Are you sure, want to delete all api log ?')) {
+        if (confirm('Are you sure, want to delete all api logs ?')) {
             $scope.addDataLoading = true;
             $http.post(API_URL + 'admin/config/deleteAllApiLogs', 'SessionKey=' + SessionKey, contentType).then(function (response) {
                 var response = response.data;
                 manageSession(response.ResponseCode);
                 if (response.ResponseCode == 200) { /* success case */
-                    $scope.getList();
-                    location.reload();
                     alertify.success(response.Message);
+                    location.reload();
                 } else {
                     alertify.error(response.Message);
                 }
@@ -73,8 +71,28 @@ app.controller('PageController', function ($scope, $http, $timeout) {
     $scope.viewAPILog = function (Position) {
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/view_form.htm?' + Math.random();
         $scope.formData = Position
-        console.log($scope.formData);
         $('#view_model').modal({ show: true });
+    }
+
+    /* To Copy Data */
+    $scope.copyToClipboard = function (Section) {
+        var $body = document.getElementsByTagName('body')[0];
+        var $btnCopy = document.getElementById(Section+'-btn');
+        var secretInfo = (document.getElementById(Section)) ? document.getElementById(Section).innerHTML : "";
+        var copyToClipboardJs = function (secretInfo) {
+            var $tempInput = document.createElement('INPUT');
+            $body.appendChild($tempInput);
+            $tempInput.setAttribute('value', secretInfo)
+            $tempInput.select();
+            document.execCommand('copy');
+            $body.removeChild($tempInput);
+            alertify.success('Copied !');
+        }
+        if (document.getElementById(Section)) {
+            $btnCopy.addEventListener('click', function (ev) {
+                copyToClipboardJs(secretInfo);
+            });
+        }
     }
 
 });

@@ -567,27 +567,18 @@ class Contest_model extends CI_Model
     {
         /* Get Total Teams */
         $TotalTeams = $this->db->query('SELECT COUNT(UserTeamID) TotalTeams FROM sports_users_teams WHERE MatchID='. $MatchID)->row()->TotalTeams;
-        if($TotalTeams > 0){
 
-            /* Get Match Players */
-            $MatchPlayers = $this->db->query('SELECT P.`PlayerID` FROM `sports_players` P,sports_team_players TP WHERE P.PlayerID = TP.PlayerID AND TP.MatchID = ' . $MatchID . ' LIMIT 100');
-            if ($MatchPlayers->num_rows() > 0) {
-                foreach(array_column($MatchPlayers->result_array(), 'PlayerID') as $PlayerID){
+        /* Reset Match Player Selection Percent */
+        $this->db->where('MatchID', $MatchID);
+        $this->db->update('sports_team_players', array('SelectionPercent' => 0));
 
-                    /* Get Total Players */
-                    $this->db->select('COUNT(SUTP.PlayerID) TotalPlayer');
-                    $this->db->from('sports_users_teams SUT,sports_users_team_players SUTP');
-                    $this->db->where("SUTP.UserTeamID", "SUT.UserTeamID", FALSE);
-                    $this->db->where(array("SUTP.PlayerID" => $PlayerID,"SUTP.MatchID" => $MatchID));
-                    $Players = $this->db->get()->row();
-                    $PlayerSelectedPercent = (($Players->TotalPlayer * 100 ) / $TotalTeams) > 100 ? 100 : (($Players->TotalPlayer * 100 ) / $TotalTeams);
+        /* Get Match Players */
+        foreach($this->db->query('SELECT PlayerID, COUNT(PlayerID) TotalPlayer FROM `sports_users_team_players` WHERE MatchID = '.$MatchID.' GROUP BY PlayerID')->result_array() as $Player){
 
-                    /* Update Player Selection Percent */
-                    $this->db->where(array('PlayerID' => $PlayerID,'MatchID' => $MatchID));
-                    $this->db->limit(1);
-                    $this->db->update('sports_team_players', array('SelectionPercent' => $PlayerSelectedPercent));
-                }
-            }
+            /* Update Player Selection Percent */
+            $this->db->where(array('PlayerID' => $Player['PlayerID'],'MatchID' => $MatchID));
+            $this->db->limit(1);
+            $this->db->update('sports_team_players', array('SelectionPercent' => (($Player['TotalPlayer'] * 100 ) / $TotalTeams) > 100 ? 100 : (($Player['TotalPlayer'] * 100 ) / $TotalTeams)));
         }
     }
 

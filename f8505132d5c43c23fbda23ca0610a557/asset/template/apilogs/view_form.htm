@@ -1,6 +1,6 @@
 <style>
 pre {
-    max-width: 695px;
+    max-width: 615px;
 }
 </style>
 <div class="modal-body">
@@ -19,12 +19,13 @@ pre {
                         </tr>
                         <tr>
                             <td class="p1">Request</td>
-                            <td><pre>{{formData.DataJ | json}}</pre></td>
-                            <td><button class="copy" ng-click="copyToClipboard()">Copy</button></td>
+                            <td><pre id="request">{{formData.DataJ | json}}</pre></td>
+                            <td><button class="btn btn-secondary btn-sm copy" id="request-btn" title="Double Click Here To Copy JSON Request Data" ng-click="copyToClipboard('request')">Copy</button></td>
                         </tr>
                         <tr>
                             <td>Response</td>
-                            <td><pre>{{formData.Response | json}}</pre></td>
+                            <td><pre id="response">{{formData.Response | json}}</pre></td>
+                            <td><button class="btn btn-secondary btn-sm copy" id="response-btn" title="Double Click Here To Copy JSON Response Data" ng-click="copyToClipboard('response')">Copy</button></td>
                         </tr>
                     </tbody>
                 </table>
