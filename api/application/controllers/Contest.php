@@ -23,7 +23,7 @@ class Contest extends API_Controller_Secure
     {
         /* Validation section */
         $this->form_validation->set_rules('ContestFormat', 'Contest Format', 'trim|required|in_list[Head to Head,League]');
-        $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer');
+        $this->form_validation->set_rules('WinningAmount', 'WinningAmount', 'trim|required|integer|less_than_equal_to[10000]');
         $this->form_validation->set_rules('ContestSize', 'ContestSize', 'trim' . (!empty($this->Post['ContestFormat']) && $this->Post['ContestFormat'] == 'League' ? '|required|integer' : ''));
         $this->form_validation->set_rules('EntryFee', 'EntryFee', 'trim|required|numeric');
         $this->form_validation->set_rules('NoOfWinners', 'NoOfWinners', 'trim' . ($this->Post['ContestFormat'] ==  'League' && $this->Post['WinningAmount'] > 0 ? '|required|integer' : ''));
@@ -75,6 +75,7 @@ class Contest extends API_Controller_Secure
 			$this->Return['Message'] = "Customize winning data is required.";
 			exit;
         }
+        $this->form_validation->set_message('less_than_equal_to', '{field} value should be less than or equals to {param}.');
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
