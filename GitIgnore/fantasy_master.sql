@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 30, 2019 at 10:20 AM
+-- Generation Time: Oct 23, 2019 at 11:28 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-11+ubuntu16.04.1+deb.sury.org+1
 
@@ -64,7 +64,14 @@ INSERT INTO `admin_control` (`ControlID`, `ControlName`, `ModuleID`, `ParentCont
 (49, 'Banner', 30, 9, 1, 'flaticon-user'),
 (52, 'Pre Draft Contest', 35, 36, 7, 'flaticon-user'),
 (54, 'Roles/Permissions', 39, 55, 1, 'flaticon-user'),
-(55, 'Setup', NULL, NULL, 1, 'fas fa-user-tag');
+(55, 'Setup', NULL, NULL, 1, 'fas fa-user-tag'),
+(56, 'Private Cricket Sport', NULL, NULL, 6, 'flaticon-user'),
+(57, 'Series', 41, 56, 1, 'flaticon-user'),
+(58, 'Teams', 42, 56, 2, 'flaticon-user'),
+(59, 'Players', 43, 56, 3, 'flaticon-user'),
+(60, 'Matches', 44, 56, 4, 'flaticon-user'),
+(61, 'Assign Team Players', 45, 56, 5, 'flaticon-user'),
+(62, 'API Logs', 50, 9, 2, 'flaticon-user');
 
 -- --------------------------------------------------------
 
@@ -109,7 +116,17 @@ INSERT INTO `admin_modules` (`ModuleID`, `ModuleTitle`, `ModuleName`) VALUES
 (36, 'Referral History', 'referral'),
 (37, 'Joined Users', 'joinedusers'),
 (39, 'Roles/Permissions', 'setup/group'),
-(40, 'Coupon History', 'couponhistory');
+(40, 'Coupon History', 'couponhistory'),
+(41, 'Private Series', 'private/cricket/series'),
+(42, 'Private Teams', 'private/cricket/teams'),
+(43, 'Private Players', 'private/cricket/players'),
+(44, 'Private Matches', 'private/cricket/matches'),
+(45, 'Assign Team Players', 'private/cricket/assignTeamPlayers'),
+(46, 'Add Private Match', 'private/cricket/matches/addmatch'),
+(47, 'Edit Private Match', 'private/cricket/matches/editmatch'),
+(48, 'Private Players', 'private/cricket/matches/privateplayers'),
+(49, 'Manage Live Score', 'private/cricket/matches/managelivescore'),
+(50, 'API Logs', 'apilogs');
 
 -- --------------------------------------------------------
 
@@ -155,6 +172,14 @@ INSERT INTO `admin_user_type_permission` (`UserTypeID`, `ModuleID`, `IsDefault`)
 (1, 37, NULL),
 (1, 39, NULL),
 (1, 40, NULL),
+(1, 41, NULL),
+(1, 42, NULL),
+(1, 43, NULL),
+(1, 44, NULL),
+(1, 45, NULL),
+(1, 46, NULL),
+(1, 47, NULL),
+(1, 50, NULL),
 (2, 1, NULL),
 (2, 3, NULL),
 (2, 11, NULL),
@@ -256,16 +281,9 @@ CREATE TABLE `ecom_coupon` (
   `MiniumAmount` mediumint(8) DEFAULT NULL,
   `MaximumAmount` mediumint(8) DEFAULT NULL,
   `NumberOfUses` smallint(6) DEFAULT NULL,
-  `CouponValidTillDate` date DEFAULT NULL
+  `CouponValidTillDate` date DEFAULT NULL,
+  `StatusID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `ecom_coupon`
---
-
-INSERT INTO `ecom_coupon` (`CouponID`, `CouponTitle`, `CouponDescription`, `CouponBanner`, `CouponCode`, `CouponType`, `CouponValue`, `CouponValueLimit`, `MiniumAmount`, `MaximumAmount`, `NumberOfUses`, `CouponValidTillDate`) VALUES
-(942, 'sdcsd', 'dscds', NULL, 'sdvcds', 'Flat', 12, 0, 10, 5, 1, '2019-09-02'),
-(947, 'ewr', 'wer', NULL, '324', 'Flat', 234, 0, 34, 234, 3, '2019-09-10');
 
 -- --------------------------------------------------------
 
@@ -818,6 +836,18 @@ CREATE TABLE `social_subscribers` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `sports_assign_team_players`
+--
+
+CREATE TABLE `sports_assign_team_players` (
+  `SeriesID` int(11) NOT NULL,
+  `TeamID` int(11) NOT NULL,
+  `PlayerID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sports_auction_draft_player_point`
 --
 
@@ -870,14 +900,6 @@ CREATE TABLE `sports_contest` (
   `IsWinningAssigned` enum('No','Yes','Moved') NOT NULL DEFAULT 'No',
   `IsWinningDistributed` enum('No','Yes') NOT NULL DEFAULT 'No',
   `MinimumUserJoined` int(11) DEFAULT NULL,
-  `AuctionStatusID` int(11) NOT NULL DEFAULT '1',
-  `AuctionUpdateTime` datetime DEFAULT NULL,
-  `AuctionTimeBreakAvailable` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `AuctionIsBreakTimeStatus` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `AuctionBreakDateTime` datetime DEFAULT NULL,
-  `DraftTotalRounds` smallint(6) DEFAULT NULL,
-  `DraftLiveRound` smallint(6) DEFAULT NULL,
-  `DraftUserTeamSubmitted` enum('Yes','No') NOT NULL DEFAULT 'No',
   `IsRefund` enum('Yes','No') NOT NULL DEFAULT 'No',
   `IsVirtualUserJoined` enum('Yes','No','Completed') NOT NULL DEFAULT 'No',
   `IsDummyJoined` int(11) NOT NULL DEFAULT '0',
@@ -904,14 +926,6 @@ CREATE TABLE `sports_contest_join` (
   `UserWinningAmount` float(8,2) NOT NULL DEFAULT '0.00',
   `TaxAmount` float(8,2) NOT NULL DEFAULT '0.00',
   `EntryDate` datetime NOT NULL,
-  `AuctionTimeBank` smallint(6) NOT NULL DEFAULT '180',
-  `AuctionBudget` bigint(20) NOT NULL DEFAULT '1000000000',
-  `AuctionUserStatus` enum('Online','Offline') NOT NULL DEFAULT 'Offline',
-  `IsHold` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `AuctionHoldDateTime` datetime DEFAULT NULL,
-  `DraftUserPosition` smallint(6) DEFAULT NULL,
-  `DraftUserLive` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `DraftUserLiveTime` datetime DEFAULT NULL,
   `IsRefund` enum('Yes','No') NOT NULL DEFAULT 'No',
   `IsWinningAssigned` enum('No','Yes') NOT NULL DEFAULT 'No' COMMENT '(From MongoDB To MySQL)',
   `IsWinningDistributed` enum('No','Yes') NOT NULL DEFAULT 'No'
@@ -944,7 +958,8 @@ CREATE TABLE `sports_matches` (
   `LastUpdatedOn` datetime DEFAULT NULL,
   `IsPlayingXINotificationSent` enum('No','Yes') NOT NULL DEFAULT 'No',
   `IsPlayerPointsUpdated` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `IsUserPointsUpdated` enum('Yes','No') NOT NULL DEFAULT 'No'
+  `IsUserPointsUpdated` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `IsCustom` enum('Yes','No') NOT NULL DEFAULT 'No'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -965,7 +980,9 @@ CREATE TABLE `sports_players` (
   `PlayerBattingStats` text,
   `PlayerBowlingStats` text,
   `PlayerSalary` float(4,2) DEFAULT NULL,
+  `InitialPlayerRole` varchar(50) DEFAULT NULL,
   `IsAdminSalaryUpdated` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `IsCustom` enum('Yes','No') NOT NULL DEFAULT 'No',
   `LastUpdatedOn` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1015,11 +1032,8 @@ CREATE TABLE `sports_series` (
   `SportsType` enum('Cricket','Football','Kabaddi') NOT NULL DEFAULT 'Cricket',
   `SeriesStartDate` date DEFAULT NULL,
   `SeriesEndDate` date DEFAULT NULL,
-  `AuctionDraftIsPlayed` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `DraftUserLimit` int(11) NOT NULL DEFAULT '0' COMMENT 'Snake & Auction Draft',
-  `DraftTeamPlayerLimit` smallint(6) DEFAULT NULL,
-  `DraftPlayerSelectionCriteria` varchar(255) DEFAULT NULL,
-  `AuctionDraftStatusID` int(11) NOT NULL DEFAULT '1'
+  `IsCustom` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `StatusID` int(11) NOT NULL DEFAULT '2'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -1137,7 +1151,9 @@ CREATE TABLE `sports_teams` (
   `TeamName` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
   `TeamNameShort` varchar(10) CHARACTER SET utf8mb4 DEFAULT NULL,
   `TeamFlag` text,
-  `SportsType` enum('Cricket','Football','Kabaddi') NOT NULL DEFAULT 'Cricket'
+  `SportsType` enum('Cricket','Football','Kabaddi') NOT NULL DEFAULT 'Cricket',
+  `IsCustom` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `StatusID` int(11) NOT NULL DEFAULT '2'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -1276,15 +1292,7 @@ CREATE TABLE `tbl_entity` (
 --
 
 INSERT INTO `tbl_entity` (`EntityID`, `EntityGUID`, `EntityTypeID`, `CreatedByUserID`, `Rating`, `LikedCount`, `ViewCount`, `SharedCount`, `FlaggedCount`, `SavedCount`, `BlockedCount`, `EntryDate`, `ModifiedDate`, `MenuOrder`, `StatusID`) VALUES
-(125, 'abcd', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2017-12-30 12:19:27', '2019-04-25 12:08:29', NULL, 2),
-(942, '2716f740-afd4-dbb6-7a28-db713abe0d1c', 13, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-02 07:43:09', NULL, NULL, 2),
-(945, 'f1f1ec49-7835-2f12-8485-e4695f2e6e17', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-09-03 09:16:42', NULL, NULL, 1),
-(946, '44e6576f-8868-6ca7-9f91-48527e64353d', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2019-09-03 09:17:01', NULL, NULL, 1),
-(947, 'e8b7e8a4-2d22-0b13-3e39-c163722a929d', 13, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-09 09:14:26', NULL, NULL, 2),
-(948, '836982e6-7fa4-f4bf-8c82-4ca697ff0d28', 14, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-09 09:14:55', NULL, NULL, 2),
-(949, '45aef1ee-1775-b507-6b9b-3f9e3aa672f2', 14, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-09 09:15:17', NULL, NULL, 2),
-(950, '1df7655a-f1db-0187-4d47-c4901ac7a12d', 14, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-09 09:16:45', NULL, NULL, 2),
-(951, '30f904ab-4243-7aa2-ebc7-5f1395b1dc1e', 14, 125, '0', 0, 0, 0, 0, 0, 0, '2019-09-09 09:35:46', NULL, NULL, 2);
+(125, 'abcd', 1, NULL, '0', 0, 0, 0, 0, 0, 0, '2017-12-30 12:19:27', '2019-10-05 09:06:00', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -1367,8 +1375,24 @@ INSERT INTO `tbl_media` (`MediaID`, `MediaGUID`, `IsImage`, `UserID`, `SectionID
 (1, '27892f73-2e3a-d208-9ad8-e4062fbffa3a', 1, 125, 'Coupon', NULL, 'player.png', 'player_1567410172.png', 5.15, '.png', NULL, '2019-09-02 07:42:52'),
 (2, '09b6fb44-d4d8-80ac-da83-c221c8bf64fd', 1, 125, 'Coupon', NULL, 'Aparna Pandey PAN.JPEG', 'aparna_pandey_pan_1568020452.jpeg', 64.38, '.jpeg', NULL, '2019-09-09 09:14:12'),
 (3, '2e76bcc4-3644-390e-b6d1-bf31300930f4', 1, 125, 'Coupon', NULL, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1568020454.png', 58.85, '.png', NULL, '2019-09-09 09:14:14'),
-(7, '601a40e1-c642-404c-24b9-1f70101afd4d', 1, 125, 'Banner', NULL, '1564064585-c761bf76-0f7e-2355-536a-5095e3a617d3.png', '1564064585-c761bf76-0f7e-2355-536a-5095e3a617d3_1568021744.png', 108.67, '.png', NULL, '2019-09-09 09:35:44'),
-(8, 'dcce60a3-6ac3-3263-baba-ecc554625b4f', 1, 125, 'Coupon', NULL, 'Aparna Pandey PAN.JPEG', 'aparna_pandey_pan_1568021802.jpeg', 64.38, '.jpeg', NULL, '2019-09-09 09:36:42');
+(8, 'dcce60a3-6ac3-3263-baba-ecc554625b4f', 1, 125, 'Coupon', NULL, 'Aparna Pandey PAN.JPEG', 'aparna_pandey_pan_1568021802.jpeg', 64.38, '.jpeg', NULL, '2019-09-09 09:36:42'),
+(9, '9e668cca-92c8-ba5c-8c9c-bb1668403eef', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265473.png', 58.85, '.png', NULL, '2019-10-05 08:51:13'),
+(10, 'ed0ecb99-06da-6ccd-e076-7d9ba5ed4a44', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265693.png', 58.85, '.png', NULL, '2019-10-05 08:54:53'),
+(11, '24c2a558-364e-d581-55f7-be71d2aeaff9', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265725.png', 58.85, '.png', NULL, '2019-10-05 08:55:25'),
+(12, '686e12ec-5f56-5585-847f-b579decb07c8', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265729.png', 58.85, '.png', NULL, '2019-10-05 08:55:29'),
+(13, '05eaccb1-fe6e-9ae2-e8bf-b39cebf15939', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265740.png', 58.85, '.png', NULL, '2019-10-05 08:55:40'),
+(14, '9d71b500-0b3f-f440-f92b-389799c49c92', 1, 125, 'ProfilePic', 125, '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19.png', '1564064568-ad4fcf3d-7f54-c1b4-f841-14f229fcfc19_1570265747.png', 58.85, '.png', NULL, '2019-10-05 08:55:47'),
+(15, 'be858feb-3d49-eaca-b151-f9d727410865', 1, 125, 'ProfilePic', 125, 'icons8-instagram-16.png', 'icons8-instagram-16_1570265762.png', 0.97, '.png', NULL, '2019-10-05 08:56:02'),
+(16, '6ebc98d1-1be5-d94c-addc-289e79ff9866', 1, 125, 'ProfilePic', 125, 'lancher 1024.png', 'lancher_1024_1570266207.png', 24.03, '.png', NULL, '2019-10-05 09:03:27'),
+(17, '4f6cc7c8-01e4-dc08-257b-4bb8e8bc30a7', 1, 125, 'ProfilePic', 125, '1.png', '1_1570266226.png', 26.26, '.png', NULL, '2019-10-05 09:03:46'),
+(18, '6c455441-3105-54cf-3b63-1b957375bf84', 1, 125, 'ProfilePic', 125, '1.png', '1_1570266360.png', 26.26, '.png', NULL, '2019-10-05 09:06:00'),
+(19, '18ab13b1-6442-0a91-82df-6c75ae89ff2a', 1, 125, 'TeamFlag', NULL, 'download.jpeg', 'download_1571116690.jpeg', 12.72, '.jpeg', NULL, '2019-10-15 05:18:10'),
+(20, 'bf4825f1-5058-a89c-4088-20b32a10dc60', 1, 125, 'TeamFlag', NULL, 'delhicapitals.jpg', 'delhicapitals_1571116832.jpg', 14.41, '.jpg', NULL, '2019-10-15 05:20:32'),
+(21, 'e8349913-ac0d-f575-1bed-200da9024614', 1, 125, 'TeamFlag', NULL, 'delhicapitals.jpg', 'delhicapitals_1571117136.jpg', 14.41, '.jpg', NULL, '2019-10-15 05:25:36'),
+(22, 'f11b1161-6f14-d5e9-f278-2b707aa61b1c', 1, 125, 'PlayerPic', NULL, 'A Rajpoot.jpg', 'a_rajpoot_1571117164.jpg', 9.2, '.jpg', NULL, '2019-10-15 05:26:04'),
+(23, 'afc79498-b661-9c3f-b7d3-fb5acfe031e0', 1, 125, 'Post', 1744, 'download.jpeg', 'download_1571721880.jpeg', 12.72, '.jpeg', NULL, '2019-10-22 05:24:40'),
+(24, 'b3f228d2-afb8-c38e-93d7-6c7b2731115c', 1, 125, 'Post', 1745, 'download.png', 'download_1571721903.png', 6.8, '.png', NULL, '2019-10-22 05:25:03'),
+(26, 'dddf9aff-ae54-3bdc-fc47-755cd644e5f4', 1, 125, 'Post', 1747, 'A Tye.jpg', 'a_tye_1571737059.jpg', 10.23, '.jpg', NULL, '2019-10-22 09:37:39');
 
 -- --------------------------------------------------------
 
@@ -1419,18 +1443,6 @@ CREATE TABLE `tbl_notifications` (
   `StatusID` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `tbl_notifications`
---
-
-INSERT INTO `tbl_notifications` (`NotificationID`, `NotificationPatternID`, `UserID`, `ToUserID`, `RefrenceID`, `NotificationText`, `NotificationMessage`, `EntryDate`, `ModifiedDate`, `StatusID`) VALUES
-(20, 7, 945, 945, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-09-03 09:16:42', NULL, 1),
-(21, 1, 945, 945, NULL, 'Welcome to Fantasy Master!', 'Hi preetibirle, Verify your Email and PAN Details and Earn more Cash Bonus.', '2019-09-03 09:16:45', NULL, 1),
-(22, 1, 945, 125, NULL, 'preetibirle, got Registered', NULL, '2019-09-03 09:16:45', NULL, 1),
-(23, 7, 946, 946, NULL, 'Signup Bonus', 'Rs.50has been credited in your Wallet', '2019-09-03 09:17:01', NULL, 1),
-(24, 1, 946, 946, NULL, 'Welcome to Fantasy Master!', 'Hi preetibirle, Verify your Email and PAN Details and Earn more Cash Bonus.', '2019-09-03 09:17:04', NULL, 1),
-(25, 1, 946, 125, NULL, 'preetibirle, got Registered', NULL, '2019-09-03 09:17:04', NULL, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -1478,8 +1490,8 @@ CREATE TABLE `tbl_referral_codes` (
 --
 
 INSERT INTO `tbl_referral_codes` (`ReferralCodeID`, `UserID`, `ReferralCode`, `StatusID`) VALUES
-(4, 945, 'cnvZEX', 1),
-(5, 946, 'ksB2Uh', 1);
+(4, NULL, 'cnvZEX', 1),
+(5, NULL, 'ksB2Uh', 1);
 
 -- --------------------------------------------------------
 
@@ -1494,16 +1506,6 @@ CREATE TABLE `tbl_tokens` (
   `EntryDate` datetime NOT NULL,
   `StatusID` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `tbl_tokens`
---
-
-INSERT INTO `tbl_tokens` (`Type`, `Token`, `UserID`, `EntryDate`, `StatusID`) VALUES
-('2', '392168', 945, '2019-09-03 09:16:42', 1),
-('3', '294350', 945, '2019-09-03 09:16:45', 1),
-('2', '749653', 946, '2019-09-03 09:17:01', 1),
-('3', '143589', 946, '2019-09-03 09:17:03', 1);
 
 -- --------------------------------------------------------
 
@@ -1565,9 +1567,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`UserID`, `UserGUID`, `UserTypeID`, `FirstName`, `MiddleName`, `LastName`, `About`, `About1`, `About2`, `ProfilePic`, `ProfileCoverPic`, `Email`, `EmailForChange`, `Username`, `IsUsernameUpdateded`, `Gender`, `BirthDate`, `Age`, `Height`, `Weight`, `Address`, `Address1`, `Postal`, `CountryCode`, `CityName`, `StateName`, `Latitude`, `Longitude`, `PhoneNumber`, `PhoneNumberForChange`, `Website`, `FacebookURL`, `TwitterURL`, `GoogleURL`, `InstagramURL`, `LinkedInURL`, `WhatsApp`, `ReferralCodeID`, `ReferredByUserID`, `WalletAmount`, `WinningAmount`, `CashBonus`, `WithdrawalHoldAmount`, `PanStatus`, `BankStatus`, `IsPrivacyNameDisplay`) VALUES
-(125, 'daac5fd7-adcb-b881-40e7-b4edaeef9311', 1, 'Admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin@mailinator.com', 'alexm@mailinator.com', NULL, 'No', 'Male', '1984-05-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 23, 76, '9898989899', '9981823755', NULL, NULL, 'native', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, 0.00, 9, 9, 'No'),
-(945, 'f1f1ec49-7835-2f12-8485-e4695f2e6e17', 2, 'Preetibirle', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'preeti.mobiwebtech@gmail.com', '8cgzmu', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9753589610', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No'),
-(946, '44e6576f-8868-6ca7-9f91-48527e64353d', 2, 'Preetibirle', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'preeti.mobiwebtech@gmail.com', 'yzazye', 'No', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9753589610', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 50.00, 0.00, 9, 9, 'No');
+(125, 'daac5fd7-adcb-b881-40e7-b4edaeef9311', 1, 'Admin', NULL, NULL, NULL, NULL, NULL, '1_1570266360.png', NULL, 'admin@mailinator.com', 'alexm@mailinator.com', NULL, 'No', 'Male', '1984-05-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 23, 76, '9898989899', '9981823755', NULL, NULL, 'native', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, 0.00, 9, 9, 'No');
 
 -- --------------------------------------------------------
 
@@ -1589,9 +1589,7 @@ CREATE TABLE `tbl_users_login` (
 --
 
 INSERT INTO `tbl_users_login` (`UserID`, `Password`, `SourceID`, `EntryDate`, `LastLoginDate`, `ModifiedDate`) VALUES
-(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-09-26 06:52:22', '2019-06-07 10:42:15'),
-(945, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:16:42', '2019-09-03 09:16:45', NULL),
-(946, '181478ad7869aed751fb556c11ed7a0b', 1, '2019-09-03 09:17:01', '2019-09-03 09:17:04', NULL);
+(125, 'e10adc3949ba59abbe56e057f20f883e', 1, '2018-01-03 06:31:01', '2019-10-23 04:32:18', '2019-06-07 10:42:15');
 
 -- --------------------------------------------------------
 
@@ -1620,8 +1618,6 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '3de08242-661d-1eaa-87de-bc3f45cd1a76', NULL, 1, 1, NULL, NULL, '2019-08-30 06:44:15'),
 (125, '7c8d3ae7-3220-ca19-6b70-2054a18474e6', NULL, 1, 1, NULL, NULL, '2019-08-30 06:51:43'),
 (125, 'fd68ac59-d68d-2d44-74d2-9ebfa833b663', NULL, 1, 1, NULL, NULL, '2019-09-02 08:41:29'),
-(945, 'c44195f3-d988-94db-ef8d-5b1071fbbf06', NULL, 1, 1, NULL, NULL, '2019-09-03 09:16:45'),
-(946, '7a11c140-1136-00fc-a23c-f154d79950ff', NULL, 1, 1, NULL, NULL, '2019-09-03 09:17:04'),
 (125, 'b6875c3c-bc57-da98-7483-8a2193cb7efd', NULL, 1, 1, NULL, NULL, '2019-09-09 06:33:07'),
 (125, 'd940b17c-f3d3-2051-8727-51dc47135b4f', NULL, 1, 1, NULL, NULL, '2019-09-09 09:13:56'),
 (125, '2b509700-dcad-254a-df37-e3f705adc058', NULL, 1, 1, NULL, NULL, '2019-09-10 06:00:16'),
@@ -1631,7 +1627,20 @@ INSERT INTO `tbl_users_session` (`UserID`, `SessionKey`, `IPAddress`, `SourceID`
 (125, '107c7e1e-4a0f-3d25-e3e0-76a7e8ca078e', NULL, 1, 1, NULL, NULL, '2019-09-17 10:17:41'),
 (125, '50cc7360-4be0-eda3-25d0-ad9be9d6dc80', NULL, 1, 1, NULL, NULL, '2019-09-17 10:18:29'),
 (125, '2bfe9592-4d91-fcc5-e2d5-7fb93289e38a', NULL, 1, 1, NULL, NULL, '2019-09-26 06:52:22'),
-(125, '9509b033-3a1e-36bb-979c-876cfc74efac', NULL, 1, 1, NULL, NULL, '2019-09-26 06:52:22');
+(125, '9509b033-3a1e-36bb-979c-876cfc74efac', NULL, 1, 1, NULL, NULL, '2019-09-26 06:52:22'),
+(125, '8a5eedb8-e5aa-50be-a425-64391258d9ec', NULL, 1, 1, NULL, NULL, '2019-10-05 09:53:25'),
+(125, 'd0459a11-b9c6-75fc-b165-1e8de79e3d3a', NULL, 1, 1, NULL, NULL, '2019-10-09 05:23:05'),
+(125, 'ec65ab8f-9b9b-96c0-82f1-88a8471cd142', NULL, 1, 1, NULL, NULL, '2019-10-09 12:49:43'),
+(125, '248cea3a-5a23-0d53-dd16-0a08c2aef69f', NULL, 1, 1, NULL, NULL, '2019-10-10 05:05:36'),
+(125, '91374189-f8bd-31ba-95a7-4dcf7ee391d4', NULL, 1, 1, NULL, NULL, '2019-10-11 06:17:54'),
+(125, '0db0021d-f017-a4fb-64f5-9dae50fa80d8', NULL, 1, 1, NULL, NULL, '2019-10-14 10:33:26'),
+(125, 'a71efc5d-0e8b-835a-4fb2-2ee3a201707f', NULL, 1, 1, NULL, NULL, '2019-10-15 04:35:34'),
+(125, '7244e06b-8434-5993-d200-b3a78df4973e', NULL, 1, 1, NULL, NULL, '2019-10-15 05:27:01'),
+(125, 'ea545b1b-6b18-97bf-729b-abe6f04a469f', NULL, 1, 1, NULL, NULL, '2019-10-15 05:42:56'),
+(125, 'de570e75-255d-f18f-196b-5de54e9e66ea', NULL, 1, 1, NULL, NULL, '2019-10-22 04:19:44'),
+(125, '33aa33e0-11a8-7caf-6fd4-8640e9e9fdb8', NULL, 1, 1, NULL, NULL, '2019-10-22 05:21:24'),
+(125, '3418f752-2265-a8c6-e297-e4aa7eec0c34', NULL, 1, 1, NULL, NULL, '2019-10-22 10:17:42'),
+(125, 'b3f1d0e4-296f-49e6-a2b1-29a23cbcc81a', NULL, 1, 1, NULL, NULL, '2019-10-23 04:32:18');
 
 -- --------------------------------------------------------
 
@@ -1645,14 +1654,6 @@ CREATE TABLE `tbl_users_settings` (
   `PrivacyPhone` enum('Public','Private') NOT NULL DEFAULT 'Public',
   `PrivacyLocation` enum('Public','Private') NOT NULL DEFAULT 'Public'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `tbl_users_settings`
---
-
-INSERT INTO `tbl_users_settings` (`UserID`, `PushNotification`, `PrivacyPhone`, `PrivacyLocation`) VALUES
-(945, 'Yes', 'Public', 'Public'),
-(946, 'Yes', 'Public', 'Public');
 
 -- --------------------------------------------------------
 
@@ -1718,14 +1719,6 @@ CREATE TABLE `tbl_users_wallet` (
   `StatusID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `tbl_users_wallet`
---
-
-INSERT INTO `tbl_users_wallet` (`WalletID`, `UserID`, `Amount`, `OpeningWalletAmount`, `OpeningWinningAmount`, `OpeningCashBonus`, `WalletAmount`, `WinningAmount`, `CashBonus`, `ClosingWalletAmount`, `ClosingWinningAmount`, `ClosingCashBonus`, `Currency`, `PaymentGateway`, `TransactionType`, `TransactionID`, `Narration`, `EntityID`, `UserTeamID`, `PaymentGatewayResponse`, `CouponDetails`, `CouponCode`, `EntryDate`, `ModifiedDate`, `StatusID`) VALUES
-(16, 945, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', 'd382d291c1968b80c63c', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-09-03 09:16:42', NULL, 5),
-(17, 946, 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00, 0.00, 0.00, 50.00, 'INR', NULL, 'Cr', '29f37de7ed022f20e5fa', 'Signup Bonus', NULL, NULL, NULL, NULL, NULL, '2019-09-03 09:17:01', NULL, 5);
-
 -- --------------------------------------------------------
 
 --
@@ -1783,7 +1776,8 @@ ALTER TABLE `dummy_names`
 -- Indexes for table `ecom_coupon`
 --
 ALTER TABLE `ecom_coupon`
-  ADD PRIMARY KEY (`CouponID`);
+  ADD PRIMARY KEY (`CouponID`),
+  ADD KEY `StatusID` (`StatusID`);
 
 --
 -- Indexes for table `log_api`
@@ -1867,6 +1861,14 @@ ALTER TABLE `social_subscribers`
   ADD KEY `social_subscribers_ibfk_5` (`UserID`);
 
 --
+-- Indexes for table `sports_assign_team_players`
+--
+ALTER TABLE `sports_assign_team_players`
+  ADD KEY `SeriesID` (`SeriesID`),
+  ADD KEY `TeamID` (`TeamID`),
+  ADD KEY `PlayerID` (`PlayerID`);
+
+--
 -- Indexes for table `sports_auction_draft_player_point`
 --
 ALTER TABLE `sports_auction_draft_player_point`
@@ -1887,7 +1889,6 @@ ALTER TABLE `sports_contest`
   ADD KEY `ContestType` (`ContestType`),
   ADD KEY `Privacy` (`Privacy`),
   ADD KEY `IsPaid` (`IsPaid`),
-  ADD KEY `sports_contest_ibfk_8` (`AuctionStatusID`),
   ADD KEY `LeagueType` (`LeagueType`),
   ADD KEY `GameType` (`GameType`),
   ADD KEY `ContestID` (`ContestID`,`LeagueType`,`MatchID`);
@@ -1939,7 +1940,7 @@ ALTER TABLE `sports_series`
   ADD UNIQUE KEY `SeriesIDLive_2` (`SeriesIDLive`),
   ADD KEY `SeriesIDLive` (`SeriesIDLive`),
   ADD KEY `SeriesGUID` (`SeriesGUID`),
-  ADD KEY `sports_series_ibfk_2` (`AuctionDraftStatusID`);
+  ADD KEY `StatusID` (`StatusID`);
 
 --
 -- Indexes for table `sports_setting_points`
@@ -1963,7 +1964,8 @@ ALTER TABLE `sports_set_match_types`
 --
 ALTER TABLE `sports_teams`
   ADD PRIMARY KEY (`TeamID`),
-  ADD UNIQUE KEY `TeamIDLive` (`TeamIDLive`);
+  ADD UNIQUE KEY `TeamIDLive` (`TeamIDLive`),
+  ADD KEY `StatusID` (`StatusID`);
 
 --
 -- Indexes for table `sports_team_players`
@@ -2179,12 +2181,12 @@ ALTER TABLE `tbl_users_withdrawal`
 -- AUTO_INCREMENT for table `admin_control`
 --
 ALTER TABLE `admin_control`
-  MODIFY `ControlID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `ControlID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 --
 -- AUTO_INCREMENT for table `admin_modules`
 --
 ALTER TABLE `admin_modules`
-  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `ModuleID` tinyint(2) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 --
 -- AUTO_INCREMENT for table `dummy_names`
 --
@@ -2244,7 +2246,7 @@ ALTER TABLE `sports_set_match_types`
 -- AUTO_INCREMENT for table `tbl_entity`
 --
 ALTER TABLE `tbl_entity`
-  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=952;
+  MODIFY `EntityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1747;
 --
 -- AUTO_INCREMENT for table `tbl_entity_type`
 --
@@ -2254,12 +2256,12 @@ ALTER TABLE `tbl_entity_type`
 -- AUTO_INCREMENT for table `tbl_media`
 --
 ALTER TABLE `tbl_media`
-  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `MediaID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 --
 -- AUTO_INCREMENT for table `tbl_notifications`
 --
 ALTER TABLE `tbl_notifications`
-  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `tbl_notification_pattern`
 --
@@ -2279,7 +2281,7 @@ ALTER TABLE `tbl_users_type`
 -- AUTO_INCREMENT for table `tbl_users_wallet`
 --
 ALTER TABLE `tbl_users_wallet`
-  MODIFY `WalletID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `WalletID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `tbl_users_withdrawal`
 --
@@ -2306,7 +2308,8 @@ ALTER TABLE `admin_user_type_permission`
 -- Constraints for table `ecom_coupon`
 --
 ALTER TABLE `ecom_coupon`
-  ADD CONSTRAINT `ecom_coupon_ibfk_3` FOREIGN KEY (`CouponID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `ecom_coupon_ibfk_3` FOREIGN KEY (`CouponID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ecom_coupon_ibfk_4` FOREIGN KEY (`StatusID`) REFERENCES `set_status` (`StatusID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `set_categories`
@@ -2357,8 +2360,7 @@ ALTER TABLE `sports_contest`
   ADD CONSTRAINT `sports_contest_ibfk_3` FOREIGN KEY (`SeriesID`) REFERENCES `sports_series` (`SeriesID`) ON DELETE CASCADE,
   ADD CONSTRAINT `sports_contest_ibfk_5` FOREIGN KEY (`ContestID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE,
   ADD CONSTRAINT `sports_contest_ibfk_6` FOREIGN KEY (`UserID`) REFERENCES `tbl_users` (`UserID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `sports_contest_ibfk_7` FOREIGN KEY (`MatchID`) REFERENCES `sports_matches` (`MatchID`) ON DELETE CASCADE ON UPDATE SET NULL,
-  ADD CONSTRAINT `sports_contest_ibfk_8` FOREIGN KEY (`AuctionStatusID`) REFERENCES `set_status` (`StatusID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `sports_contest_ibfk_7` FOREIGN KEY (`MatchID`) REFERENCES `sports_matches` (`MatchID`) ON DELETE CASCADE ON UPDATE SET NULL;
 
 --
 -- Constraints for table `sports_contest_join`
@@ -2398,7 +2400,7 @@ ALTER TABLE `sports_predraft_contest`
 --
 ALTER TABLE `sports_series`
   ADD CONSTRAINT `sports_series_ibfk_1` FOREIGN KEY (`SeriesID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `sports_series_ibfk_2` FOREIGN KEY (`AuctionDraftStatusID`) REFERENCES `set_status` (`StatusID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `sports_series_ibfk_3` FOREIGN KEY (`StatusID`) REFERENCES `set_status` (`StatusID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `sports_setting_points`
@@ -2410,7 +2412,8 @@ ALTER TABLE `sports_setting_points`
 -- Constraints for table `sports_teams`
 --
 ALTER TABLE `sports_teams`
-  ADD CONSTRAINT `sports_teams_ibfk_1` FOREIGN KEY (`TeamID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `sports_teams_ibfk_1` FOREIGN KEY (`TeamID`) REFERENCES `tbl_entity` (`EntityID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sports_teams_ibfk_2` FOREIGN KEY (`StatusID`) REFERENCES `set_status` (`StatusID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `sports_team_players`

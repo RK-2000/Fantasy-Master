@@ -129,6 +129,11 @@
 						<label>Created Type : {{contestData.CreatedType}}</label>
 					</div>
 				</div>
+				<div class="col-md-6" ng-if="contestData.Status == 'Cancelled'">
+					<div class="form-group">
+						<label>Cancelled By : {{contestData.CancelledBy}}</label>
+					</div>
+				</div>
 				<div class="col-md-6">
 					<div class="form-group">
 						<label>Status : <span ng-class="{Pending:'text-secondary', Completed:'text-success',Cancelled:'text-danger',Running:'text-primary'}[contestData.Status]">{{contestData.Status}}</span></label>

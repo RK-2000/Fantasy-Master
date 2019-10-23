@@ -119,6 +119,11 @@ class Contest_model extends CI_Model
         $this->db->where('EntityID', $ContestID);
         $this->db->limit(1);
         $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
+
+        /* Update Cancelled By */
+        $this->db->where('ContestID', $ContestID);
+        $this->db->limit(1);
+        $this->db->update('sports_contest', array('CancelledBy' => 'Manually'));
     }
 
     /*
@@ -166,6 +171,7 @@ class Contest_model extends CI_Model
                 'IsWinningDistributed' => 'C.IsWinningDistributed',
                 'UserInvitationCode' => 'C.UserInvitationCode',
                 'IsPrivacyNameDisplay' => 'C.IsPrivacyNameDisplay',
+                'CancelledBy'  => 'C.CancelledBy',
                 'SeriesID' => 'M.SeriesID',
                 'TeamNameLocal' => 'TL.TeamName AS TeamNameLocal',
                 'TeamGUIDLocal' => 'TL.TeamGUID AS TeamGUIDLocal',

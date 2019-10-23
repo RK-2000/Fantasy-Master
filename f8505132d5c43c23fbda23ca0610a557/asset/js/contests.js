@@ -887,7 +887,7 @@ app.controller('PageController', function ($scope, $http, $timeout, $rootScope) 
         $scope.data.Position = Position;
         $scope.templateURLEdit = PATH_TEMPLATE + module + '/joinedContest_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime,CreatedType', contentType).then(function (response) {
+        $http.post(API_URL + 'contest/getContests', 'SessionKey=' + SessionKey + '&ContestGUID=' + ContestGUID + '&Params=Privacy,IsPaid,WinningAmount,ContestSize,EntryFee,NoOfWinners,EntryType,TeamNameLocal,TeamNameShortLocal,TeamFlagLocal,TeamNameVisitor,TeamNameShortVisitor,TeamFlagVisitor,SeriesName,CustomizeWinning,ContestType,CashBonusContribution,UserJoinLimit,ContestFormat,IsConfirm,ShowJoinedContest,TotalJoined,AdminPercent,UnfilledWinningPercent,TotalAmountReceived,TotalWinningAmount,Status,MatchStartDateTime,CreatedType,CancelledBy', contentType).then(function (response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */

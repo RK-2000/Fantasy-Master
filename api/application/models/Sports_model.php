@@ -1726,10 +1726,18 @@ class Sports_model extends CI_Model
         }
 
         /* Update Contest Status */
-        if(!empty($ContestIds)){
+        $TotalContests = count($ContestIds);
+        if($TotalContests > 0){
+
+            /* Update Status */
             $this->db->where_in('EntityID', $ContestIds);
-            $this->db->limit(count($ContestIds));
+            $this->db->limit($TotalContests);
             $this->db->update('tbl_entity', array('ModifiedDate' => date('Y-m-d H:i:s'), 'StatusID' => 3));
+
+            /* Update Cancelled By */
+            $this->db->where_in('ContestID', $ContestIds);
+            $this->db->limit($TotalContests);
+            $this->db->update('sports_contest', array('CancelledBy' => 'Automated'));
         }
     }
 
