@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 23, 2019 at 11:28 AM
+-- Generation Time: Oct 23, 2019 at 11:44 AM
 -- Server version: 5.7.27-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-11+ubuntu16.04.1+deb.sury.org+1
 
@@ -904,7 +904,8 @@ CREATE TABLE `sports_contest` (
   `IsVirtualUserJoined` enum('Yes','No','Completed') NOT NULL DEFAULT 'No',
   `IsDummyJoined` int(11) NOT NULL DEFAULT '0',
   `VirtualUserJoinedPercentage` int(6) DEFAULT NULL,
-  `IsPrivacyNameDisplay` enum('Yes','No') DEFAULT 'No'
+  `IsPrivacyNameDisplay` enum('Yes','No') DEFAULT 'No',
+  `CancelledBy` enum('Automated','Manually') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
