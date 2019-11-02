@@ -575,7 +575,7 @@ class Contest_model extends CI_Model
         $TotalTeams = $this->db->query('SELECT COUNT(UserTeamID) TotalTeams FROM sports_users_teams WHERE MatchID='. $MatchID)->row()->TotalTeams;
 
         /* Reset Match Player Selection Percent */
-        $this->db->where('MatchID', $MatchID);
+        $this->db->where(array('MatchID' => $MatchID,'SelectionPercent >' => 0));
         $this->db->update('sports_team_players', array('SelectionPercent' => 0));
 
         /* Get Match Players */
