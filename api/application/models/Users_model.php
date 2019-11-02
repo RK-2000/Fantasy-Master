@@ -646,6 +646,12 @@ class Users_model extends CI_Model
         if (!empty($Where['IsAdmin'])) {
             $this->db->where("UT.IsAdmin", $Where['IsAdmin']);
         }
+        if (!empty($Where['IsPanBank']) && $Where['IsPanBank'] == 1) {
+            $this->db->group_start();
+            $this->db->where("U.PanStatus !=", 9);
+            $this->db->or_where("U.BankStatus !=", 9);
+            $this->db->group_end();
+        }
         if (!empty($Where['StatusID'])) {
             $this->db->where("E.StatusID", $Where['StatusID']);
         }

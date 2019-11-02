@@ -1,9 +1,10 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <header class="panel-heading">
-  <h1 class="h4"><?php echo $this->ModuleData['ModuleTitle'];?></h1>
+	<h1 class="h4"><?php echo $this->ModuleData['ModuleTitle']; ?></h1>
 </header>
-<div class="panel-body" ng-controller="PageController" ><!-- Body -->
+<div class="panel-body" ng-controller="PageController">
+	<!-- Body -->
 
 	<!-- Top container -->
 	<div class="clearfix mt-2 mb-2">
@@ -20,7 +21,7 @@
 
 
 	<!-- Data table -->
-	<div class="table-responsive block_pad_md" infinite-scroll="getList()" infinite-scroll-disabled='data.listLoading' infinite-scroll-distance="0"> 
+	<div class="table-responsive block_pad_md" infinite-scroll="getList()" infinite-scroll-disabled='data.listLoading' infinite-scroll-distance="0">
 
 		<!-- loading -->
 		<p ng-if="data.listLoading" class="text-center data-loader"><img src="asset/img/loader.svg"></p>
@@ -30,7 +31,7 @@
 				<!-- table heading -->
 				<thead>
 					<tr>
-						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->	
+						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->
 						<th style="width: 300px;min-width:200px;">User</th>
 						<th style="width: 120px;">Pan Card</th>
 						<th style="width: 120px;">PAN Details</th>
@@ -43,20 +44,21 @@
 				</thead>
 				<!-- table body -->
 				<tbody>
-					<tr scope="row" ng-repeat="(key, row) in data.dataList"  >
+					<tr scope="row" ng-repeat="(key, row) in data.dataList">
 
-						<td class="listed sm clearfix">
-						<a href="userdetails?UserGUID={{row.UserGUID}}"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
-							<div class="content float-left"><strong>{{row.FullName}}</strong>
-							<div ng-if="row.Email"><a href="javascript:void(0)" target="_top">{{row.Email}}</a></div><div ng-if="!row.Email">-</div>
+					<td class="listed sm clearfix">
+							<a href="userdetails?UserGUID={{row.UserGUID}}" target="_blank"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
+							<div class="content float-left"><strong><a target="_blank" href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
+							<div ng-if="row.Email || row.EmailForChange"><a href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}" target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div><div ng-if="!row.Email && !row.EmailForChange">-</div>
 							</div>
+
 						</td>
 
-                       <td class="text-center">
-                       		<p ng-if="!row.MediaPAN.MediaURL">-</p>
-                       		<a ng-if="row.MediaPAN.MediaURL"  ng-click="loadFormVerification(key,row.UserGUID,'PAN')"><span class="btn btn-default btn-secondary btn-sm ng-scope" ng-if="row.MediaPAN.MediaURL">View Pan</span></a>
-                       		<p ng-if="row.PanStatus == 'Pending'">(<span am-time-ago="row.MediaPAN.EntryDate" ></span>)</p>
-                       </td>
+						<td class="text-center">
+							<p ng-if="!row.MediaPAN.MediaURL">-</p>
+							<a ng-if="row.MediaPAN.MediaURL" ng-click="loadFormVerification(key,row.UserGUID,'PAN')"><span class="btn btn-default btn-secondary btn-sm ng-scope" ng-if="row.MediaPAN.MediaURL">View Pan</span></a>
+							<p ng-if="row.PanStatus == 'Pending'">(<span am-time-ago="row.MediaPAN.EntryDate"></span>)</p>
+						</td>
 
 						<td>
 							<div class="form-group" ng-if="row.MediaPAN.MediaCaption.FullName">
@@ -74,16 +76,16 @@
 							<div class="form-group">
 								<span ng-if="!row.MediaPAN.MediaCaption">-</span>
 							</div>
-						</td> 
-							
-						<td><span ng-if="row.PanStatus" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PanStatus]" >{{row.PanStatus}}</span><span ng-if="!row.PanStatus">-</span></td> 
+						</td>
 
-                        <td class="text-center">
-                        	<p ng-if="!row.MediaBANK.MediaURL">-</p>
-                        	<a ng-if="row.MediaBANK.MediaURL" ng-click="loadFormVerification(key,row.UserGUID,'BANK')"><span ng-if="row.MediaBANK.MediaURL" class="btn btn-default btn-secondary btn-sm ng-scope">View Bank</span></a>
-                        	<p ng-if="row.BankStatus == 'Pending'">(<span am-time-ago="row.MediaBANK.EntryDate" ></span>)</p>
-                    	</td>
-						
+						<td><span ng-if="row.PanStatus" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PanStatus]">{{row.PanStatus}}</span><span ng-if="!row.PanStatus">-</span></td>
+
+						<td class="text-center">
+							<p ng-if="!row.MediaBANK.MediaURL">-</p>
+							<a ng-if="row.MediaBANK.MediaURL" ng-click="loadFormVerification(key,row.UserGUID,'BANK')"><span ng-if="row.MediaBANK.MediaURL" class="btn btn-default btn-secondary btn-sm ng-scope">View Bank</span></a>
+							<p ng-if="row.BankStatus == 'Pending'">(<span am-time-ago="row.MediaBANK.EntryDate"></span>)</p>
+						</td>
+
 						<td>
 							<div class="form-group">
 								<label class="control-label">Name</label>
@@ -97,30 +99,28 @@
 								<label class="control-label">IFSC Code</label>
 								<p class="text-muted">{{row.MediaBANK.MediaCaption.IFSCCode}}</p>
 							</div>
-						</td> 
-						<td><span ng-if="row.BankStatus" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.BankStatus]" >{{row.BankStatus}}</span><span ng-if="!row.BankStatus">-</span></td> 
+						</td>
+						<td><span ng-if="row.BankStatus" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.BankStatus]">{{row.BankStatus}}</span><span ng-if="!row.BankStatus">-</span></td>
 						<td class="text-center">
 							<div class="form-group" ng-if="row.PanStatus != 'Not Submitted'">
-										<select name="PanStatus" id="PanStatus" ng-model="PanStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'PAN',PanStatus,row.MediaPAN.MediaGUID)" ng-if="row.PanStatus != 'Verified'">
-											<option value="">PAN</option>
-											<option value="Pending" ng-selected="row.PanStatus=='Pending'">Pending</option>
-											<option value="Verified" ng-selected="row.PanStatus=='Verified'">Verified</option>
-											<option value="Rejected" ng-selected="row.PanStatus=='Rejected'">Rejected</option>
-										</select>
-										<span ng-if="row.PanStatus == 'Verified'" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PanStatus]" >PAN CARD {{row.PanStatus}}</span>
-									</div>
-								
-									<div class="form-group" ng-if="row.BankStatus != 'Not Submitted'">
-										<select name="BankStatus" id="BankStatus" ng-model="BankStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'BANK',BankStatus,row.MediaBANK.MediaGUID)" ng-if="row.BankStatus != 'Verified'">
-											<option value="">A/C</option>
-											<option value="Pending" ng-selected="row.BankStatus=='Pending'">Pending</option>
-											<option value="Verified" ng-selected="row.BankStatus=='Verified'">Verified</option>
-											<option value="Rejected" ng-selected="row.BankStatus=='Rejected'">Rejected</option>
-										</select>
-										<span ng-if="row.BankStatus == 'Verified'" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.BankStatus]" >Bank Details {{row.BankStatus}}</span>
-									</div>
-									
-								
+								<select name="PanStatus" id="PanStatus" ng-model="PanStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'PAN',PanStatus,row.MediaPAN.MediaGUID)" ng-if="row.PanStatus != 'Verified'">
+									<option value="">PAN</option>
+									<option value="Pending" ng-selected="row.PanStatus=='Pending'">Pending</option>
+									<option value="Verified" ng-selected="row.PanStatus=='Verified'">Verified</option>
+									<option value="Rejected" ng-selected="row.PanStatus=='Rejected'">Rejected</option>
+								</select>
+								<span ng-if="row.PanStatus == 'Verified'" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.PanStatus]">PAN CARD {{row.PanStatus}}</span>
+							</div>
+
+							<div class="form-group" ng-if="row.BankStatus != 'Not Submitted'">
+								<select name="BankStatus" id="BankStatus" ng-model="BankStatus" class="form-control chosen-select" ng-change="verifyDetails(row.UserGUID,'BANK',BankStatus,row.MediaBANK.MediaGUID)" ng-if="row.BankStatus != 'Verified'">
+									<option value="">A/C</option>
+									<option value="Pending" ng-selected="row.BankStatus=='Pending'">Pending</option>
+									<option value="Verified" ng-selected="row.BankStatus=='Verified'">Verified</option>
+									<option value="Rejected" ng-selected="row.BankStatus=='Rejected'">Rejected</option>
+								</select>
+								<span ng-if="row.BankStatus == 'Verified'" ng-class="{Pending:'text-danger', Verified:'text-success',Deleted:'text-danger',Blocked:'text-danger'}[row.BankStatus]">Bank Details {{row.BankStatus}}</span>
+							</div>
 						</td>
 					</tr>
 				</tbody>
@@ -133,12 +133,12 @@
 		</p>
 	</div>
 	<!-- Data table/ -->
-	
+
 	<div class="modal fade" id="filter_model" ng-init="initDateRangePicker()">
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Filters</h3>     	
+					<h3 class="modal-title h5">Filters</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 
@@ -156,7 +156,7 @@
 											<option value="2">Verified</option>
 											<option value="3">Rejected</option>
 											<option value="9">Not Submitted</option>
-										</select>   
+										</select>
 									</div>
 								</div>
 								<div class="col-md-6">
@@ -168,7 +168,7 @@
 											<option value="2">Verified</option>
 											<option value="3">Rejected</option>
 											<option value="9">Not Submitted</option>
-										</select>   
+										</select>
 									</div>
 								</div>
 								<div class="col-md-6">
@@ -176,17 +176,17 @@
 										<label class="filter-col" for="ParentCategory">Registered Between</label>
 										<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
 											<i class="fa fa-calendar"></i>&nbsp;
-											<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
+											<span>Select Date Range</span> <i class="fa fa-caret-down"></i>
 										</div>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-									<label class="filter-col" for="ParentCategory">Search</label>
-									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+										<label class="filter-col" for="ParentCategory">Search</label>
+										<input type="text" class="form-control" name="Keyword" placeholder="Search">
 									</div>
 								</div>
-								
+
 							</div>
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
@@ -206,7 +206,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Edit <?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<h3 class="modal-title h5">Edit <?php echo $this->ModuleData['ModuleName']; ?></h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<!-- form -->
@@ -221,7 +221,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Verification</h3>     	
+					<h3 class="modal-title h5">Verification</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<!-- form -->
@@ -236,7 +236,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Add Cash Bonus</h3>     	
+					<h3 class="modal-title h5">Add Cash Bonus</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<!-- form -->
@@ -253,7 +253,7 @@
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title h5">Delete <?php echo $this->ModuleData['ModuleName'];?></h3>     	
+					<h3 class="modal-title h5">Delete <?php echo $this->ModuleData['ModuleName']; ?></h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<!-- form -->
@@ -266,6 +266,3 @@
 
 
 </div><!-- Body/ -->
-
-
-

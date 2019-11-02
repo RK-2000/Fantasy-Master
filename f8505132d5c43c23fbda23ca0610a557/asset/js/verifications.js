@@ -71,7 +71,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         }else{
             var UserGUID = '';
         }
-        var data = 'SessionKey='+SessionKey+'&ForVerify=Yes&UserGUID='+UserGUID+'&EntryFrom=' + FromDate + '&EntryTo=' + ToDate +'&Params=FullName, Email, Username, ProfilePic, PhoneNumber,MediaPAN,MediaBANK,PanStatus,ModifiedDate,BankStatus&OrderBy=ModifiedDate&Sequence=DESC&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize +'&'+ $('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
+        var data = 'SessionKey='+SessionKey+'&ForVerify=Yes&UserGUID='+UserGUID+'&EntryFrom=' + FromDate + '&EntryTo=' + ToDate +'&Params=FullName, Email, Username, ProfilePic, PhoneNumber,MediaPAN,MediaBANK,PanStatus,ModifiedDate,BankStatus&IsPanBank=1&UserTypeID=2&OrderBy=ModifiedDate&Sequence=DESC&PageNo='+$scope.data.pageNo+'&PageSize='+$scope.data.pageSize +'&'+ $('#filterForm1').serialize()+'&'+$('#filterForm').serialize();
         $http.post(API_URL+'admin/users', data, contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
@@ -145,7 +145,7 @@ app.controller('PageController', function ($scope, $http,$timeout){
         }
         $scope.templateURLEdit = PATH_TEMPLATE + 'user/verification_form.htm?' + Math.random();
         $scope.data.pageLoading = true;
-        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params='+Mode+',UserTypeName,ProfilePic,FullName', contentType).then(function(response) {
+        $http.post(API_URL + 'users/getProfile', 'SessionKey=' + SessionKey + '&UserGUID=' + UserGUID + '&Params='+Mode+',UserTypeName,ProfilePic,FullName,Email', contentType).then(function(response) {
             var response = response.data;
             manageSession(response.ResponseCode);
             if (response.ResponseCode == 200) { /* success case */
