@@ -4,20 +4,15 @@
 <div class="panel-body" ng-controller="PageController" ><!-- Body -->
 
 	<!-- Top container -->
-	<div class="clearfix mt-2 mb-2">
+	<div class="clearfix mt-2">
 		<span class="float-left records hidden-sm-down">
 			<span ng-if="data.dataList.length" class="h5">Total records: {{data.totalRecords}}</span>
 		</span>
 
 		<div class="float-right">
-			<form id="filterForm" role="form" autocomplete="off" ng-submit="applyFilter()" class="ng-pristine ng-valid">
-				<input type="text" class="form-control" name="Keyword" placeholder="Search">
-			</form>
-		</div>
-		<div class="float-right">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" data-toggle="modal" data-target="#filter_model"><img src="asset/img/filter.svg"></button>&nbsp;
 		</div>
-		<div class="float-right">
+		<div class="float-right d-none">
 			<button class="btn btn-default btn-secondary btn-sm ng-scope" ng-click="ExportList('WithdrawalList','WithdrawalList.csv')">Export</button>&nbsp;
 		</div>
 	</div>
@@ -36,14 +31,14 @@
 				<!-- table heading -->
 				<thead>
 					<tr>
-						<!-- <th style="width: 50px;" class="text-center" ng-if="data.dataList.length>1"><input type="checkbox" name="select-all" id="select-all" class="mt-1" ></th> -->	
 						<th style="width: 300px;min-width:200px;">User</th>
-						<th style="width: 100px;min-width:200px;">Amount</th>
+						<th>Phone No.</th>
+						<th>Amount</th>
 						<th>Payment Gateway</th>
 						<th>Bank Details</th>
-						<th style="width: 120px;">Status</th>
-						<th style="width: 120px;">Entry Date</th>
-						<th style="width: 100px;" class="text-center">Action</th>
+						<th style="width:120px;">Status</th>
+						<th style="width:120px;">Entry Date</th>
+						<th style="width:100px;" class="text-center">Action</th>
 
 					</tr>
 				</thead>
@@ -51,12 +46,19 @@
 				<tbody>
 					<tr scope="row" ng-repeat="(key, row) in data.dataList">
 						<td class="listed sm clearfix">
-							<span >{{row.FirstName}}</span>
-							<div ng-if="row.Email"><a href="mailto:{{row.Email}}" target="_top">{{row.Email}}</a></div><div ng-if="!row.Email">-</div>
-							
-						</td>
+							<a href="userdetails?UserGUID={{row.UserGUID}}" target="_blank"><img class="rounded-circle float-left" ng-src="{{row.ProfilePic}}"></a>
+							<div class="content float-left"><strong><a target="_blank" href="userdetails?UserGUID={{row.UserGUID}}">{{row.FullName}}</a></strong>
+							<div ng-if="row.Email || row.EmailForChange"><a href="mailto:{{row.Email == '' ? row.EmailForChange : row.Email}}" target="_top">{{row.Email == "" ? row.EmailForChange : row.Email}}</a></div><div ng-if="!row.Email && !row.EmailForChange">-</div>
+							</div>
+
+						</td> 
 						<td>
-							<span ng-if="row.Amount">{{row.Amount}}</span><span ng-if="!row.Amount">-</span>
+							<div ng-if="row.PhoneNumber || row.PhoneNumberForChange"><a href="javascript:void(0);">{{row.PhoneNumber == "" ? row.PhoneNumberForChange : row.PhoneNumber}}</a>
+							</div>
+							<div ng-if="!row.PhoneNumber && !row.PhoneNumberForChange">-</div>
+						</td> 
+						<td>
+							<span ng-if="row.Amount">{{DEFAULT_CURRENCY}}{{row.Amount}}</span><span ng-if="!row.Amount">-</span>
 						</td>
 						<td>
 							<span ng-if="row.PaymentGateway">{{row.PaymentGateway}}</span><span ng-if="!row.Amount">-</span>
@@ -78,12 +80,13 @@
 							<span ng-if="row.EntryDate">{{row.EntryDate}}</span><span ng-if="!row.EntryDate">-</span>
 						</td> 
 						<td class="text-center">
-							<div class="dropdown">
+							<div class="dropdown" ng-if="row.Status == 'Pending'">
 								<button class="btn btn-secondary  btn-sm action" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="data.UserGUID!=row.UserGUID">&#8230;</button>
 								<div class="dropdown-menu dropdown-menu-left">
 									<a class="dropdown-item" href="" ng-click="loadFormEdit(key, row.WithdrawalID)">Action</a>
 								</div>
 							</div>
+							<div ng-if="row.Status == 'Rejected'"><strong>Reject Reason</strong> {{row.Comments}}</div>
 						</td>
 					</tr>
 				</tbody>
@@ -97,7 +100,7 @@
 	</div>
 	<!-- Data table/ -->
 	
-	<div class="modal fade" id="filter_model"  ng-init="getFilterData()">
+	<div class="modal fade" id="filter_model" ng-init="initDateRangePicker()">
 		<div class="modal-dialog modal-md" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -108,40 +111,40 @@
 				<!-- Filter form -->
 				<form id="filterForm1" role="form" autocomplete="off" class="ng-pristine ng-valid">
 					<div class="modal-body">
-						<div class="form-area">
-
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label class="filter-col">From</label>
-										<input type="date" name="FromDate" ng-model="FromDate" class="form-control">
-										<label class="filter-col">To</label>
-										<input type="date" name="ToDate" ng-model="ToDate" class="form-control">
+					<div class="form-area">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">From & End Date Between</label>
+									<div id="dateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+										<i class="fa fa-calendar"></i>&nbsp;
+										<span>Select Date Range</span> <i class="fa fa-caret-down"></i> 
 									</div>
 								</div>
 							</div>
-
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label class="filter-col" for="Status">Status</label>
-										<select id="Status" name="Status" class="form-control chosen-select">
-											<option value="">Please Select</option>
-											<option value="Verified">Verified</option>
-											<option value="Pending">Pending</option>
-											<option value="Deleted">Deleted</option>
-											<option value="Blocked">Blocked</option>
-											<option value="Hidden">Hidden</option>
-										</select>   
-									</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="Status">Withdrawal Status</label>
+									<select id="Status" name="Status" class="form-control chosen-select">
+										<option value="">Please Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Verified">Verified</option>
+										<option value="Rejected">Rejected</option>
+									</select>   
 								</div>
 							</div>
-
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="filter-col" for="ParentCategory">Search</label>
+									<input type="text" class="form-control" name="Keyword" placeholder="Search">
+								</div>
+							</div>
+						</div>
 						</div> <!-- form-area /-->
 					</div> <!-- modal-body /-->
 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="$('#filterForm1').trigger('reset'); $('.chosen-select').trigger('chosen:updated');">Reset</button>
+						<button type="button" class="btn btn-secondary btn-sm" ng-click="resetUserForm()">Reset</button>
 						<button type="submit" class="btn btn-success btn-sm" data-dismiss="modal" ng-disabled="editDataLoading" ng-click="applyFilter()">Apply</button>
 					</div>
 

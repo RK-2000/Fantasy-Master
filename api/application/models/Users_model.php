@@ -1677,8 +1677,12 @@ class Users_model extends CI_Model
             $FieldArray = array(
                 'UserID' => 'W.UserID',
                 'Amount' => 'W.Amount',
+                'UserGUID' => 'U.UserGUID',
                 'Email' => 'U.Email',
+                'EmailForChange' => 'U.EmailForChange',
+                'FullName' => 'CONCAT_WS(" ",U.FirstName,U.LastName) FullName',
                 'PhoneNumber' => 'U.PhoneNumber',
+                'PhoneNumberForChange' => 'U.PhoneNumberForChange',
                 'FirstName' => 'U.FirstName',
                 'Middlename' => 'U.Middlename',
                 'LastName' => 'U.LastName',

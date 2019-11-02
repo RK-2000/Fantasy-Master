@@ -348,7 +348,7 @@ class Users extends API_Controller_Secure
         $this->form_validation->validation($this);  /* Run validation */
         /* Validation - ends */
 
-        $this->Users_model->updateWithdrawal(array_merge(@$this->Post, array("StatusID" => $this->StatusID)));
+        $this->Users_model->updateWithdrawal($this->Post['WithdrawalID'],array_merge(@$this->Post, array("StatusID" => $this->StatusID)));
         $this->Return['Data'] = $this->Users_model->getWithdrawals(@$this->Post['Params'], array("WithdrawalID" => @$this->Post['WithdrawalID']));
         $this->Return['Message'] =    "Status has been changed.";
     }
