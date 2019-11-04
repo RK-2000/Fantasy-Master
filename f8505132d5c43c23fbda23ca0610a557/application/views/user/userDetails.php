@@ -44,13 +44,13 @@
                 <div class="mt-4 d-flex flex-wrap">
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
-                            <label><b>First Name : </b></label>
+                            <label><b>Full Name : </b></label>
                             <span>{{userData.FullName}}</span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
-                            <label><b>Email : </b></label>
+                            <label><b>Email ID: </b></label>
                             <span>{{userData.Email ? userData.Email : userData.EmailForChange }}</span>
                         </div>
                     </div>
@@ -62,13 +62,13 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
-                            <label><b>BirthDate : </b></label>
+                            <label><b>Birth Date : </b></label>
                             <span>{{userData.BirthDate}}</span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group d-flex border p-2 d-flex justify-content-between align-items-center">
-                            <label><b>PhoneNumber : </b></label>
+                            <label><b>Phone Number : </b></label>
                             <span>{{userData.PhoneNumber ? userData.PhoneNumber : userData.PhoneNumberForChange }}</span>
                         </div>
                     </div>	
@@ -87,11 +87,11 @@
                 <div class="d-flex mt-3">
                     <div class="col-sm-4">
                         <label>PAN : </label>
-                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger',Not Submitted:'text-danger'}[userData.PanStatus]">{{userData.PanStatus}}</span>
+                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger'}[userData.PanStatus]">{{userData.PanStatus}}</span>
                     </div>
                     <div class="col-sm-4">
                         <label>Bank : </label>
-                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger',Not Submitted:'text-danger'}[userData.BankStatus]">{{userData.BankStatus}}</span>
+                        <span ng-class="{Pending:'text-danger', Verified:'text-success',Rejected:'text-danger'}[userData.BankStatus]">{{userData.BankStatus}}</span>
                     </div>
                     <div class="col-sm-4">
                         <label>Phone : </label>
