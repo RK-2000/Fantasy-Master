@@ -319,7 +319,8 @@ class Sports_model extends CI_Model
                 'MatchType' => 'MT.MatchTypeName AS MatchType',
                 'LastUpdateDiff' => 'IF(M.LastUpdatedOn IS NULL, 0, TIME_TO_SEC(TIMEDIFF("' . date('Y-m-d H:i:s') . '", M.LastUpdatedOn))) LastUpdateDiff',
                 'TotalUserWinning' => '(SELECT IFNULL(SUM(UserWinningAmount),0) FROM sports_contest_join WHERE MatchID = M.MatchID AND UserID=' . @$Where['SessionUserID'] . ') TotalUserWinning',
-                'isJoinedContest' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . @$Where['StatusID'] . ') JoinedContests'
+                'isJoinedContest' => '(SELECT COUNT(EntryDate) FROM sports_contest_join WHERE MatchID = M.MatchID AND UserID = "' . @$Where['SessionUserID'] . '" AND E.StatusID=' . @$Where['StatusID'] . ') JoinedContests',
+                'IsPlayingXIAnnounced' => '(SELECT IF( EXISTS(SELECT COUNT(PlayerID) PlayingCount FROM `sports_team_players` WHERE `MatchID` = M.MatchID AND `IsPlaying` = "Yes" HAVING PlayingCount >= 11), "Yes", "No"))  IsPlayingXIAnnounced'
             );
             if ($Params) {
                 foreach ($Params as $Param) {
