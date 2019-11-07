@@ -869,7 +869,7 @@ class Utility_model extends CI_Model
     function getPlayersLive_Cricket_CricketApi($CronID)
     {
         /* Get matches data */
-        $MatchesData = $this->Sports_model->getMatches('MatchStartDateTime,MatchIDLive,MatchID,MatchType,SeriesIDLive,SeriesID,TeamIDLiveLocal,TeamIDLiveVisitor,LastUpdateDiff', array('StatusID' => array(1, 2),'SportsType' => 'Cricket'), true, 1, 15);
+        $MatchesData = $this->Sports_model->getMatches('MatchStartDateTime,MatchIDLive,MatchID,MatchType,SeriesIDLive,SeriesID,TeamIDLiveLocal,TeamIDLiveVisitor,LastUpdateDiff', array('StatusID' => array(1, 2),'SportsType' => 'Cricket', "MatchStartDateTime" => date('Y-m-d H:i', strtotime('+5 days', strtotime(date('Y-m-d H:i'))))), true, 1, 15);
         if (empty($MatchesData['Data']['Records'])) {
             $this->db->where('CronID', $CronID);
             $this->db->limit(1);
