@@ -173,12 +173,13 @@ class Wallet extends API_Controller_Secure
      */
     public function validateWalletID($WalletID)
     {
-        $WalletData = $this->Users_model->getWallet('Amount,TransactionID,CouponDetails', array('UserID' => $this->SessionUserID, 'WalletID' => $WalletID));
+        $WalletData = $this->Users_model->getWallet('Amount,TransactionID,Status,CouponDetails', array('UserID' => $this->SessionUserID, 'WalletID' => $WalletID));
         if (!$WalletData) {
             $this->form_validation->set_message('validateWalletID', 'Invalid {field}.');
             return FALSE;
         } else {
             $this->Post['Amount'] = round($WalletData['Amount'], 1);
+            $this->Post['Status'] = $WalletData['Status'];
             $this->Post['TransactionID'] = $WalletData['TransactionID'];
             $this->Post['CouponDetails'] = $WalletData['CouponDetails'];
             return TRUE;

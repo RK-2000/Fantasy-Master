@@ -1074,6 +1074,9 @@ class Users_model extends CI_Model
         if ($Input['PaymentGateway'] == 'Razorpay') {
             return TRUE; // Manage via WebHook
         } else if ($Input['PaymentGateway'] == 'CashFree') {
+            if($Input['PaymentGatewayStatus'] == 'Success' && $Input['Status'] == 'Completed'){
+                return $this->getWalletDetails($UserID);
+            }
             $CURL = curl_init();
             curl_setopt_array($CURL, array(
                 CURLOPT_URL => CASHFREE_URL . "api/v1/order/info/status",
