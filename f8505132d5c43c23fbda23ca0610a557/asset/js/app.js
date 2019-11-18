@@ -155,6 +155,11 @@ app.controller('MainController', ["$scope", "$http", "$timeout", function($scope
         $('.select-all-checkbox').not(this).prop('checked', this.checked);
     });
 
+    // To restrict enter key
+    $('body').on('keypress','input[name="Keyword"]',function(e){
+        return event.keyCode != 13;
+    })
+
     $(document).on('click', ".select-all-checkbox", function(event) {
         var anyBoxesChecked = false;
         $('.select-all-checkbox').each(function() {
