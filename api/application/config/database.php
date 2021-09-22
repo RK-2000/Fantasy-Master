@@ -79,7 +79,7 @@ $db['default'] = array(
     'hostname' => '',
     'username' => '',
     'password' => '',
-    'database' => '534--play2win',
+    'database' => 'win365',
     // 'database' => 'pla2win_live',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
@@ -98,9 +98,9 @@ $db['default'] = array(
 );
 switch (ENVIRONMENT) {
     case 'local':
-        $db['default']['hostname'] = '192.168.1.251';
-        $db['default']['username'] = 'mwdemoserver';
-        $db['default']['password'] = 'z3vG?adJM_nQ@$4DMFhvUY!eFg^@4u';
+        $db['default']['hostname'] = 'localhost';
+        $db['default']['username'] = 'root';
+        $db['default']['password'] = 'Sorav@123';
         break;
     case 'testing':
         $db['default']['hostname'] = 'localhost';
